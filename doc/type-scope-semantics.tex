@@ -51,15 +51,14 @@ types of environment values, he considers \AB{⧫}, an arbitrary
 
 \begin{enumerate}
   \item
-    One should be able to turn any environment value
-    (\AB{⧫} \AB{σ} \AB{Γ}) into a term (\AD{Tm} \AB{σ} \AB{Γ)}.
+    One should be able to turn any environment value into a term of
+    the same type and defined in the same scope (\ARF{var});
   \item
-    One should be able to craft a fresh environment value
-    associated to the zeroth variable (\AB{⧫} \AB{σ} (\AB{σ} \AIC{∷} \AB{Γ}))
+    One should be able to craft a fresh environment value associated
+    to the zeroth variable of a scope (\ARF{zro});
   \item
-    One should be able to embed environment values defined in a
-    scope \AB{Γ} into ones in a scope extended with a fresh variable
-    (\AB{σ} \AIC{∷} \AB{Γ}).
+    One should be able to embed environment values defined in a given
+    scope into ones in a scope extended with a fresh variable (\ARF{wkn}).
 \end{enumerate}
 
 \begin{figure}[h]
@@ -67,15 +66,21 @@ types of environment values, he considers \AB{⧫}, an arbitrary
 \caption{\AR{Kit} as a set of constraints on \AB{⧫}}
 \end{figure}
 
-Whenever these constraints are met we can define a traversal which,
-provided an environment of \AB{⧫}-values will turn a term into another
-term in a scope and kind preserving manner. This is the fundamental
-lemma of \AR{Kit}s:
+Whenever these constraints are met we can define a type and scope preserving
+traversal which is based on an environment of \AB{⧫}-values. This is the
+fundamental lemma of \AR{Kit}s:
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitsem}
 \caption{Fundamental lemma of \AR{Kit}}
 \end{figure}
+
+Unsurprisingly, we can recover renaming and substitution as two instances
+of this fundamental lemma. We spell out the two \AR{Kit}s in~\cref{rensubkits}. The careful
+reader will notice that, just like we needed \AF{ren} to define \AF{sub},
+we need \AF{ren} to define the \AR{Kit} for substitution. This is not an
+issue as we can instantiate the fundamental lemma a first time with
+\AF{ren\textasciicircum{}Kit} before defining \AF{sub\textasciicircum{}Kit}.
 
 \begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
@@ -84,26 +89,37 @@ lemma of \AR{Kit}s:
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{subkit}
 \end{minipage}
-\caption{Renaming and Substitution as \AR{Kit}s}
+\caption{Renaming and Substitution as \AR{Kit}s\label{rensubkits}}
 \end{figure}
+
+\section{Opportunities for Further Generalizations}
+
+After noticing that renaming and substitution fit the pattern, it is
+natural to wonder about other traversals. It is not clear whether any
+other fitting \emph{exactly} the \AR{Kit} approach exist but some come
+pretty close. The evaluation function used in normalization by evaluation
+for instance relies on the same general structure: the variable case is
+nothing more than a lookup in the environment; the application case is
+defined by combining the results of two structural calls; and the lambda
+case corresponds to the evaluation of the lambda's body in an extended
+context provided that we can get a value for the newly-bound variable.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{nbe}
 \caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
 \end{figure}
 
-The uses of \ARF{Kit.─} operations in the generalising
-the traversal function \AF{kit} are shown (in pink) in \cref{kit}.
-
-The contributions of the present paper are twofold:
+Our contributions here are twofold:
 \begin{itemize}
-\item{} We generalise the ``Kit'' approach from syntax to semantics
-bringing operations like normalisation (cf.~\cref{nbe}) and printing
-with a name supply into our framework.
+  \item
+    We generalise the ``Kit'' approach from syntax to semantics bringing
+    operations like normalisation by evaluation (cf.~\cref{nbe}) but also
+    printing with a name supply, or continutation passing style translation
+    into our framework.
 
-\item{} We  prove
-generic results about simulations between and fusions of semantics
-given by, and enabled by, Kit.
+  \item
+    We prove generic results about simulations between and fusions of
+    semantics given by, and enabled by, Kit.
 \end{itemize}
 
 \paragraph{Outline} We start by defining the simple calculus we will
