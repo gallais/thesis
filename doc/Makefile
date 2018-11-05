@@ -33,7 +33,7 @@ latex/unicode.tex: unicode.tex
 
 latex/agda.sty: $(AGDA_OUTPUT)
 	@mkdir -p $(dir $@)
-	cp latex-agda-output/agda.sty $@
+	cp latex-agda-output/shared/agda.sty $@
 
 latex/commands.tex: commands.tex
 	@mkdir -p $(dir $@)
@@ -69,3 +69,9 @@ latex-agda-output/type-scope-semantics/%.tex: type-scope-semantics/%.lagda
 	${AGDA} --latex $< \
 	        --latex-dir=latex-agda-output/type-scope-semantics/ \
 		> $(basename $@).log
+
+clean:
+	rm -rf latex/
+
+fullclean: clean
+	rm -rf latex-agda-output/
