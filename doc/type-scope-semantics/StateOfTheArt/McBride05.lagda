@@ -90,9 +90,9 @@ Val : Type ─Scoped
 Val base      Γ = Tm base Γ
 Val (arr σ τ) Γ = ∀ {Δ} → Thinning Γ Δ → Val σ Δ → Val τ Δ
 
-th^Val : ∀ σ → Thinnable (Val σ)
-th^Val base      v ρ = ren ρ v
-th^Val (arr σ τ) v ρ = v ∘ (select ρ)
+th^Val : ∀ {σ} → Thinning Γ Δ → Val σ Γ → Val σ Δ
+th^Val {σ = base   } ρ v = ren ρ v
+th^Val {σ = arr σ τ} ρ v = v ∘ (select ρ)
 
 APP : Val (arr σ τ) Γ →  Val σ Γ → Val τ Γ
 APP f t = f (pack id) t
@@ -105,12 +105,6 @@ LAM = id
 nbe : (Γ ─Env) Val Δ → Tm σ Γ → Val σ Δ
 nbe ρ (`var v)  = lookup ρ v
 nbe ρ (f `$ t)  = APP (nbe ρ f) (nbe ρ t)
-nbe ρ (`λ t)    = LAM (λ re v → nbe (lift ρ re v) t)
+nbe ρ (`λ t)    = LAM (λ re v → nbe ((th^Val re <$> ρ) ∙ v) t)
 \end{code}
 %</nbe>
-\begin{code}
-  where
-
-  lift : (Γ ─Env) Val Δ → Thinning Δ Θ → Val σ Θ → ((σ ∷ Γ) ─Env) Val Θ
-  lift ρ re v = th^Env (th^Val _) ρ re ∙ v
-\end{code}

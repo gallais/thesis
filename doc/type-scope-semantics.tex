@@ -95,21 +95,26 @@ issue as we can instantiate the fundamental lemma a first time with
 \section{Opportunities for Further Generalizations}
 
 After noticing that renaming and substitution fit the pattern, it is
-natural to wonder about other traversals. It is not clear whether any
-other fitting \emph{exactly} the \AR{Kit} approach exist but some come
-pretty close. The evaluation function used in normalization by evaluation
-for instance relies on the same general structure: the variable case is
-nothing more than a lookup in the environment; the application case is
-defined by combining the results of two structural calls; and the lambda
-case corresponds to the evaluation of the lambda's body in an extended
-context provided that we can get a value for the newly-bound variable.
+natural to wonder about other traversals.
+
+The evaluation function used in normalization by evaluation, although
+not fitting \emph{exactly} in the \AR{Kit}-based approach, relies on
+the same general structure. The variable case is nothing more than a
+lookup in the environment; the application case is defined by combining
+the results of two structural calls; and the lambda case corresponds to
+the evaluation of the lambda's body in an extended context provided that
+we can get a value for the newly-bound variable. Ignoring for now the
+definitions of \AF{APP} and \AF{LAM}, we can see the similarities
+in~\cref{nbe}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{nbe}
 \caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
 \end{figure}
 
-Our contributions here are twofold:
+\subsection{Outline} Building on this observation, our contributions
+here are twofold:
+
 \begin{itemize}
   \item
     We generalise the ``Kit'' approach from syntax to semantics bringing
@@ -122,7 +127,7 @@ Our contributions here are twofold:
     semantics given by, and enabled by, Kit.
 \end{itemize}
 
-\paragraph{Outline} We start by defining the simple calculus we will
+We start by defining the simple calculus we will
 use as a running example. We then introduce a notion of environments
 and one well known instance: the category of renamings. This leads us
 to defining a generic notion of type and scope-preserving Semantics
