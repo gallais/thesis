@@ -1,0 +1,85 @@
+\chapter{Refactoring Common Traversals}
+
+\section{McBride's Kit}
+
+A programmer implementing an embedded language with bindings has a
+wealth of possibilities. However, should she want to be able to inspect
+the terms produced by her users in order to optimise or even compile
+them, she will have to work with a deep embedding. Which means that she
+will have to (re)implement a great number of traversals doing such
+mundane things as renaming, substitution, or partial evaluation.
+Should she want to get help from the typechecker in order to fend
+off common bugs, she can opt for inductive families~\cite{dybjer1991inductive}
+to enforce precise invariants. But the traversals now have to be
+invariant preserving too!
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{ren}
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{sub}
+\caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
+
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitdef}
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitsem}
+\caption{Kit traversal for the ST$λ$C\label{kit}, for $K$ of type \AR{Kit} ⧫}
+
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{nbe}
+\caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
+\end{figure}
+
+In an unpublished manuscript, McBride~(\citeyear{mcbride2005type})
+observes the similarity between the types and implementations of
+renaming and substitution for simply typed $λ$-calculus (ST$λ$C) in a
+dependently typed language as shown in \cref{ren}. There are three
+differences between the implemenations of renaming and substitution:
+(1) in the variable case, after renaming a variable we must wrap it in
+a \AIC{`var} constructor whereas a substitution directly produces a
+term; (2) when weakening a renaming to push it under a $λ$ we need
+only post-compose the remaning with the De Bruijn variable successor
+constructor \AIC{su} (which is essentially weakening for variables)
+whereas for a substitution we need a weakening operation for terms
+which can be given by renaming via the successor constructor \AF{ren}
+\AIC{su}. (3) also in the $λ$ case when pushing a renaming or
+substitution under a binder we must extend it to ensure that the
+variable bound by the $λ$ mapped to itself. For renaming this involves
+extended by the zeroth variable \AIC{ze} whereas for subsitutions we
+must extend by the zeroth variable seen as a term \AIC{`var}
+\AIC{ze}. He defines a notion of ``Kit'' abstracting these
+differences.  The uses of \ARF{Kit.─} operations in the generalising
+the traversal function \AF{kit} are shown (in pink) in \cref{kit}.
+
+The contributions of the present paper are twofold:
+\begin{itemize}
+\item{} We generalise the ``Kit'' approach from syntax to semantics
+bringing operations like normalisation (cf.~\cref{nbe}) and printing
+with a name supply into our framework.
+
+\item{} We  prove
+generic results about simulations between and fusions of semantics
+given by, and enabled by, Kit.
+\end{itemize}
+
+\paragraph{Outline} We start by defining the simple calculus we will
+use as a running example. We then introduce a notion of environments
+and one well known instance: the category of renamings. This leads us
+to defining a generic notion of type and scope-preserving Semantics
+together with a generic evaluation function. We then showcase the
+ground covered by these Semantics: from the syntactic ones
+corresponding to renaming and substitution to printing with names,
+variations of Normalisation by Evaluation or CPS transformations.
+Finally, given the generic
+definition of Semantics, we can prove fundamental lemmas about these
+evaluation functions: we characterise the semantics which can simulate
+one another and give an abstract treatment of composition yielding
+compaction and reuse of proofs compared to Benton et
+al.~(\citeyear{benton2012strongly}).
+
+\section{The Calculus and Its Embedding}
+
+
+\[
+\begin{array}{lcl}
+⟨\type{}⟩ & ::=    & \unit{} \\
+          & \mid{} & \bool{} \\
+          & \mid{} & \arrow{⟨\type{}⟩}{⟨\type{}⟩}
+\end{array}
+\]
