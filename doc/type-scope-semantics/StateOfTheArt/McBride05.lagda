@@ -45,10 +45,9 @@ sub ρ (`λ b)    = `λ (sub ρ′ b)
 %<*kitdef>
 \begin{code}
 record Kit (⧫ : Type ─Scoped) : Set where
-  field
-    var  : ∀[ ⧫ σ ⇒ Tm σ ]
-    zro  : ∀[ (σ ∷_) ⊢ ⧫ σ ]
-    wkn  : ∀[ ⧫ τ ⇒ (σ ∷_) ⊢ ⧫ τ ]
+  field  var  : ∀[ ⧫ σ ⇒ Tm σ ]
+         zro  : ∀[ (σ ∷_) ⊢ ⧫ σ ]
+         wkn  : ∀[ ⧫ τ ⇒ (σ ∷_) ⊢ ⧫ τ ]
 \end{code}
 %</kitdef>
 \begin{code}
@@ -65,6 +64,24 @@ kit K ρ (`λ b)    = `λ (kit K ρ′ b)
   where ρ′ =  (K .wkn <$> ρ) ∙ K .zro
 \end{code}
 %</kitsem>
+
+%<*renkit>
+\begin{code}
+ren^Kit : Kit Var
+ren^Kit .var = `var
+ren^Kit .zro = z
+ren^Kit .wkn = s
+\end{code}
+%</renkit>
+
+%<*subkit>
+\begin{code}
+sub^Kit : Kit Tm
+sub^Kit .var = id
+sub^Kit .zro = `var z
+sub^Kit .wkn = ren (pack s)
+\end{code}
+%</subkit>
 \begin{code}
 
 

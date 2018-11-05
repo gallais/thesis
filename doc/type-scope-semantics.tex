@@ -45,12 +45,46 @@ differences between the implemenations of renaming and substitution:
 \end{figure}
 
 McBride then defines a notion of ``Kit'' abstracting these differences.
+Rather than considering \AD{Var} and \AD{Tm} in isolation as different
+types of environment values, he considers \AB{⧫}, an arbitrary
+(\AD{Type} \AR{−Scoped}) and designs three constraints:
 
+\begin{enumerate}
+  \item
+    One should be able to turn any environment value
+    (\AB{⧫} \AB{σ} \AB{Γ}) into a term (\AD{Tm} \AB{σ} \AB{Γ)}.
+  \item
+    One should be able to craft a fresh environment value
+    associated to the zeroth variable (\AB{⧫} \AB{σ} (\AB{σ} \AIC{∷} \AB{Γ}))
+  \item
+    One should be able to embed environment values defined in a
+    scope \AB{Γ} into ones in a scope extended with a fresh variable
+    (\AB{σ} \AIC{∷} \AB{Γ}).
+\end{enumerate}
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitdef}
+\caption{\AR{Kit} as a set of constraints on \AB{⧫}}
+\end{figure}
+
+Whenever these constraints are met we can define a traversal which,
+provided an environment of \AB{⧫}-values will turn a term into another
+term in a scope and kind preserving manner. This is the fundamental
+lemma of \AR{Kit}s:
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitsem}
-\caption{Kit traversal for the ST$λ$C\label{kit}, for $K$ of type \AR{Kit} ⧫}
+\caption{Fundamental lemma of \AR{Kit}}
+\end{figure}
+
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{renkit}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{subkit}
+\end{minipage}
+\caption{Renaming and Substitution as \AR{Kit}s}
 \end{figure}
 
 \begin{figure}[h]
