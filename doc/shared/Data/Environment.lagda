@@ -10,11 +10,24 @@ open import Relation.Binary.PropositionalEquality as PEq hiding ([_])
 
 open import Data.Var hiding (_<$>_)
 
-infix 3 _─Env
+private
 
+  variable
+    i σ : I
+    T : List I → Set
+    𝓥 𝓦 : I ─Scoped
+    Γ Δ Θ : List I
+
+infix 3 _─Env
+\end{code}
+%<*env>
+\begin{code}
 record _─Env (Γ : List I) (𝓥 : I ─Scoped) (Δ : List I) : Set where
   constructor pack
-  field lookup : ∀ {i} → Var i Γ → 𝓥 i Δ
+  field lookup : Var i Γ → 𝓥 i Δ
+\end{code}
+%</env>
+\begin{code}
 
 open _─Env public
 
@@ -25,12 +38,15 @@ Thinning : List I → List I → Set
 Thinning Γ Δ = (Γ ─Env) Var Δ
 \end{code}
 %</thinning>
+%<*empty>
+\begin{code}
+ε : ([] ─Env) 𝓥 Δ
+lookup ε ()
+\end{code}
+%</empty>
 \begin{code}
 
-ε : ∀ {𝓥 n} → ([] ─Env) 𝓥 n
-lookup ε ()
-
-_<$>_ : {𝓥 𝓦 : I ─Scoped} {Γ Δ Θ : List I} → ({i : I} → 𝓥 i Δ → 𝓦 i Θ) → (Γ ─Env) 𝓥 Δ → (Γ ─Env) 𝓦 Θ
+_<$>_ : (∀ {i} → 𝓥 i Δ → 𝓦 i Θ) → (Γ ─Env) 𝓥 Δ → (Γ ─Env) 𝓦 Θ
 lookup (f <$> ρ) k = f (lookup ρ k)
 
 data Split (i : I) Γ Δ : Var i (Γ ++ Δ) → Set where
@@ -66,14 +82,21 @@ injectʳ->> : ∀ {𝓥 Γ Δ Θ i} (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ �
 injectʳ->> {Γ = Γ} ρ₁ ρ₂ v rewrite split-injectʳ Γ v = refl
 
 infixl 10 _∙_
-_∙_ : ∀ {𝓥 Γ Δ σ} → (Γ ─Env) 𝓥 Δ → 𝓥 σ Δ → (σ ∷ Γ ─Env) 𝓥 Δ
+\end{code}
+%<*extension>
+\begin{code}
+_∙_ : (Γ ─Env) 𝓥 Δ → 𝓥 σ Δ → ((σ ∷ Γ) ─Env) 𝓥 Δ
 lookup (ρ ∙ v) z    = v
 lookup (ρ ∙ v) (s k) = lookup ρ k
+\end{code}
+%</extension>
+\begin{code}
 
-select : ∀ {Γ Δ Θ 𝓥} → Thinning Γ Δ → (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ
+
+select : Thinning Γ Δ → (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ
 lookup (select ren ρ) k = lookup ρ (lookup ren k)
 
-extend : ∀ {Γ σ} → Thinning Γ (σ ∷ Γ)
+extend : Thinning Γ (σ ∷ Γ)
 lookup extend v = s v
 
 -- Like the flipped version of _>>_ but it computes. Which is convenient when
@@ -96,29 +119,35 @@ injectʳ-<+> (x ∷ Γ) ρ₁ ρ₂ v = injectʳ-<+> Γ ρ₁ (select extend ρ�
 □ : (List I → Set) → (List I → Set)
 (□ T) Γ = ∀[ Thinning Γ ⇒ T ]
 
-extract    : {T : List I → Set} → ∀[ □ T ⇒ T        ]
-duplicate  : {T : List I → Set} → ∀[ □ T ⇒ □ (□ T)  ]
+extract    : ∀[ □ T ⇒ T        ]
+duplicate  : ∀[ □ T ⇒ □ (□ T)  ]
 
 extract t = t (pack id)
 duplicate t ρ σ = t (select ρ σ)
 
-join : {T : List I → Set} → ∀[ □ (□ T) ⇒ □ T ]
+join : ∀[ □ (□ T) ⇒ □ T ]
 join = extract
 
+\end{code}
+%<*thinnable>
+\begin{code}
 Thinnable : (List I → Set) → Set
 Thinnable T = ∀[ T ⇒ □ T ]
+\end{code}
+%</thinnable>
+\begin{code}
 
 
 th^Var : {i : I} → Thinnable (Var i)
 th^Var v ρ = lookup ρ v
 
-th^Env : ∀ {Γ 𝓥} → ({i : I} → Thinnable (𝓥 i)) → Thinnable ((Γ ─Env) 𝓥)
+th^Env : (∀ {i} → Thinnable (𝓥 i)) → Thinnable ((Γ ─Env) 𝓥)
 lookup (th^Env th^𝓥 ρ ren) k = th^𝓥 (lookup ρ k) ren
 
-th^□ : {T : List I → Set} → Thinnable (□ T)
+th^□ : Thinnable (□ T)
 th^□ = duplicate
 
-Kripke :  (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
+Kripke : (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
 Kripke 𝓥 𝓒 []  i = 𝓒 i
 Kripke 𝓥 𝓒 Γ   i = □ ((Γ ─Env) 𝓥 ⇒ 𝓒 i)
 
@@ -128,7 +157,7 @@ module _ {𝓥 𝓒 : I ─Scoped} where
   _$$_ {[]}    f ts = f
   _$$_ {_ ∷ _} f ts = extract f ts
 
-  th^Kr : (Γ : List I) → ({i : I} → Thinnable (𝓒 i)) →
+  th^Kr : (Γ : List I) → (∀ {i} → Thinnable (𝓒 i)) →
           {i : I} → Thinnable (Kripke 𝓥 𝓒 Γ i)
   th^Kr []       th^𝓒 = th^𝓒
   th^Kr (_ ∷ _)  th^𝓒 = th^□

@@ -6,7 +6,10 @@ all: latex/$(THESIS).pdf
 AGDA_FILES:=\
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
-  type-scope-semantics/StateOfTheArt/McBride05.lagda
+  type-scope-semantics/StateOfTheArt/McBride05.lagda \
+  type-scope-semantics/Syntax/Type.lagda \
+  type-scope-semantics/Syntax/Calculus.lagda \
+  type-scope-semantics/Semantics/Specification.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -19,6 +22,7 @@ THESIS_DEPENDENCIES:=\
   latex/unicode.tex \
   latex/commands.tex \
   latex/main.bib \
+  latex/indexed-combinators.tex \
   latex/type-scope-semantics.tex \
   latex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
@@ -43,6 +47,10 @@ latex/$(THESIS).pdf: $(THESIS_DEPENDENCIES)
 	cd latex; latexmk -pdf -bibtex $(THESIS).tex
 
 latex/$(THESIS).tex: $(THESIS).tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/indexed-combinators.tex: indexed-combinators.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 

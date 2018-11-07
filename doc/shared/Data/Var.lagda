@@ -26,9 +26,19 @@ I ─Scoped = I → List I → Set
 
 module _ {I : Set} where
 
+ private
+   variable
+     σ τ : I
+
+\end{code}
+%<*var>
+\begin{code}
  data Var : I ─Scoped where
-   z : {i : I} →    ∀[          (i ∷_) ⊢ Var i ]
-   s : {i j : I} →  ∀[ Var i ⇒  (j ∷_) ⊢ Var i ]
+   z : ∀[          (σ  ∷_) ⊢ Var σ ]
+   s : ∀[ Var σ ⇒  (τ  ∷_) ⊢ Var σ ]
+\end{code}
+%</var>
+\begin{code}
 
  infixl 3 _─_
  _─_ : {i : I} (Γ : List I) → Var i Γ → List I

@@ -144,11 +144,226 @@ al.~(\citeyear{benton2012strongly}).
 
 \section{The Calculus and Its Embedding}
 
+We work with a deeply embedded simply typed λ-calculus (STλC). It has \unit{} and \bool{}
+as base types and serves as a minimal example of a system with a record type equipped
+with an η-rule and a sum type. We describe the types both as a grammar and the
+corresponding inductive type in Agda in~\cref{fig:type}.
 
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
 \[
 \begin{array}{lcl}
-⟨\type{}⟩ & ::=    & \unit{} \\
-          & \mid{} & \bool{} \\
-          & \mid{} & \arrow{⟨\type{}⟩}{⟨\type{}⟩}
+\nonterminal{\type{}}
+  & ::=    & \unit{}
+  ~ \mid{} ~ \bool{} \\
+  & \mid{} & \arrow{\nonterminal{\type{}}}{\nonterminal{\type{}}}
 \end{array}
 \]
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics/Syntax/Type.tex]{type}
+\end{minipage}
+\caption{Types used in our Running Example\label{fig:type}}
+\end{figure}
+
+The language we are going to study\todo{expand}
+
+\begin{figure}[h]
+\[
+\begin{array}{lcl}
+\nonterminal{\term{}}
+  & ::=    & x
+  ~ \mid{} ~ \app{\nonterminal{\term{}}}{\nonterminal{\term{}}}
+  ~ \mid{} ~ \lam{x}{\nonterminal{\term{}}} \\
+  & \mid{} & \uni{} \\
+  & \mid{} & \tru{}
+  ~ \mid{} ~ \fls{}
+  ~ \mid{} ~ \ifte{\nonterminal{\term{}}}{\nonterminal{\term{}}}{\nonterminal{\term{}}}
+\end{array}
+\]
+\caption{Grammar of our Language\label{fig:grammar:term}}
+\end{figure}
+
+\subsection{Well Scoped by Construction}
+
+To talk about the variables in scope and their type, we need \emph{contexts}. We
+choose to represent them as lists of types; \AIC{[]} denotes the empty list and
+(\AB{σ} \AIC{∷} \AB{Γ}) the list \AB{Γ} extended with a fresh variable of type \AB{σ}.
+
+\todo{introduce scoped}
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Var.tex]{scoped}
+\caption{\label{fig:scoped}}
+\end{figure}
+
+
+Variables are then positions in such a context represented as typed de
+Bruijn~(\citeyear{de1972lambda}) indices. This amounts to an inductive definition
+of context membership. We use the combinators defined above to show only local
+changes to the context.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Var.tex]{var}
+\caption{Well Scoped and Typed de Bruijn indices\label{fig:variable}}
+\end{figure}
+
+The syntax for this calculus guarantees that terms are well scoped-and-typed
+by construction. This presentation due to
+Altenkirch and Reus~(\citeyear{altenkirch1999monadic}) relies heavily on
+Dybjer's~(\citeyear{dybjer1991inductive}) inductive families. Rather than
+having untyped pre-terms and a typing relation assigning a type to
+them, the typing rules are here enforced in the syntax. Notice that
+the only use of \AF{\_⊢\_} to extend the context is for the body of
+a \AIC{λ}.
+
+\begin{figure}
+\ExecuteMetaData[type-scope-semantics/Syntax/Calculus.tex]{term}
+\caption{\label{fig:term}}
+\end{figure}
+
+\section{A Generic Notion of Environment}
+
+All the semantics we are interested in defining associate to a term \AB{t}
+of type \AD{Term} \AB{σ} \AB{Γ}, a value of type \AB{𝓒} \AB{σ} \AB{Δ} given
+an interpretation \AB{𝓥} \AB{Δ} {τ} for each one of its free variables
+\AB{τ} in \AB{Γ}. We call the collection of these interpretations an
+\AB{𝓥}-(evaluation) environment. We leave out \AB{𝓥} when it can easily
+be inferred from the context.
+
+The content of environments may vary wildly between different semantics:
+when defining renaming, the environments will carry variables whilst the
+ones used for normalisation by evaluation contain elements of the model.
+But their structure stays the same which prompts us to define the notion
+of evaluation environment generically for any (\AB{I} \AR{−Scoped}).
+
+Formally, this translates to \AB{𝓥}-environments being the
+pointwise lifting of the relation \AB{𝓥} between contexts and types to a
+relation between two contexts. Rather than using a datatype to represent
+such a lifting, we choose to use a function space. This decision is based
+on Jeffrey's observation~(\citeyear{jeffrey2011assoc}) that one can obtain
+associativity of append for free by using difference lists. In our case the
+interplay between various combinators (e.g. \AF{refl} and \AF{select})
+defined later on is vastly simplified by this rather simple decision.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{env}
+\caption{Generic Notion of Environment\label{fig:env}}
+\end{figure}
+
+Just as an environment interprets variables in model, a computation gives a meaning
+to terms into a model. We can define \AF{─Comp} to make this parallel explicit.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{comp}
+\caption{Generic Notion of Computation\label{fig:comp}}
+\end{figure}
+
+An appropriate notion of semantics for the calculus is one that
+will map environments to computations. In other words, a set of
+constraints on $𝓥$ and $𝓒$ guaranteeing the existence of a function
+of type ((\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Δ} \AS{→} (\AB{Γ} \AF{─Comp}) \AB{𝓒} \AB{Δ}).
+
+These environments naturally behave like the contexts they are indexed by:
+there is a trivial environment for the empty context and one can easily
+extend an existing one by providing an appropriate value. The packaging of
+the function representing to the environment in a record allows for two
+things: it helps the typechecker by stating explicitly which type family
+the values correspond to and it empowers us to define environments by
+copattern-matching~\cite{abel2013copatterns} thus defining environments
+by their use cases.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{empty}
+\ExecuteMetaData[shared/Data/Environment.tex]{extension}
+\caption{Constructing Environments with Combinators\label{fig:envcombinators}}
+\end{figure}
+
+\subsection{The Category of Thinnings}
+\label{sec:categoryrenamings}
+
+A key instance of environments playing a predominant role in this paper is the
+notion of thinning. The reader may be accustomed to the more restrictive
+notion of renamings as described variously as Order Preserving
+Embeddings~\cite{chapman2009type}, thinnings (which we use), context
+inclusions, or just weakenings~\cite{altenkirch1995categorical}.
+Writing non-injective or non-order
+preserving renamings would take perverse effort given that we only
+implement generic interpretations. In practice, although the type of
+thinnings is more generous, we only introduce weakenings (skipping
+variables at the beginning of the context) that become thinnings
+(skipping variables at arbitrary points in the context) when we push
+them under binders.
+
+A thinning (\AF{Thinning} \AB{Γ} \AB{Δ}) is an environment pairing each variable
+of type \AB{σ} in \AB{Γ} to one of the same type in \AB{Δ}.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{thinning}
+\caption{Thinning as Environments\label{fig:thinnings}}
+\end{figure}
+
+\todo{use Thinnable from generic-syntax}
+
+We formulate a thinning principle called \AF{Thinnable}. By a ``thinning
+principle'', we mean that if \AB{P} holds of \AB{Γ} and we have a proof
+(\AF{Thinning} \AB{Γ} \AB{Δ}) then \AB{P} holds for \AB{Δ} too. In the
+case of variables, thinning merely corresponds to applying the renaming
+function in order to obtain a new variable. The environments' case is also
+quite simple: being a pointwise lifting of a relation \AB{𝓥} between
+contexts and types, they enjoy thinning if \AB{𝓥} does.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{thinnable}
+\caption{Thinning Principle and Instances for \AF{Var} and \AR{─Env}\label{fig:thinnable}}
+\end{figure}
+
+These simple observations allow us to prove that thinnings
+form a category which, in turn, lets us provide the user with the
+constructors Altenkirch, Hofmann and Streicher's ``Category of
+Weakening"~(\citeyear{altenkirch1995categorical}) is based on.
+
+The modal operator \AF{□} states that a given predicate holds for
+all thinnings of a context. It is a closure operator for \AF{Thinnable}.
+
+
+Now that we are equipped with the notion of inclusion, we have all
+the pieces necessary to describe the Kripke structure of our models
+of the simply typed λ-calculus.
+
+\section{Semantics and Their Generic Evaluators}
+
+The upcoming sections demonstrate that renaming, substitution, printing with names,
+and normalisation by evaluation all share the same structure. We start by abstracting
+away a notion of \AR{Semantics} encompassing all these constructions. This approach
+will make it possible for us to implement a generic traversal parametrised by such
+a \AR{Semantics} once and for all and to focus on the interesting model constructions
+instead of repeating the same pattern over and over again.
+
+A \AR{Semantics} is indexed by two (\AD{Type} \AR{−Scoped}) type families
+\AB{𝓥} and \AB{𝓒} describing respectively the values in the environment
+and the computations the evaluator will deliver. In cases such as substitution
+or normalisation by evaluation, \AB{𝓥} and \AB{𝓒} will happen to coincide but
+keeping these two relations distinct is precisely what makes it possible to go
+beyond these and also model renaming or printing with names.
+
+Concretely, we define \AR{Semantics} as a record packing the properties these
+families need to satisfy for the evaluation function to exist.
+
+\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{semantics}
+
+The type we chose for \ARF{lam} makes the \AF{Semantics} notion
+powerful enough that even logical predicates are instances of it. And we
+indeed exploit this power when defining normalisation by evaluation
+as a semantics: the model construction is, after all, nothing but a logical
+predicate. As a consequence it seems rather natural to call \AF{sem}, the
+fundamental lemma of semantics. We prove it in a module parameterised by a
+\AF{Semantics}, which would correspond to using a Section in Coq. It is
+defined by structural recursion on the term. Each constructor is replaced
+by its semantic counterpart which combines the induction hypotheses
+for its subterms.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{fundamental}
+\caption{Fundamental Lemma of \AR{Semantics}\label{fig:fundsem}}
+\end{figure}
