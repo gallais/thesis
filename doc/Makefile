@@ -4,6 +4,7 @@ AGDA=agda-2.6.0
 all: latex/$(THESIS).pdf
 
 AGDA_FILES:=\
+  shared/Stdlib.lagda \
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
   type-scope-semantics/StateOfTheArt/McBride05.lagda \
@@ -22,7 +23,7 @@ THESIS_DEPENDENCIES:=\
   latex/unicode.tex \
   latex/commands.tex \
   latex/main.bib \
-  latex/indexed-combinators.tex \
+  latex/introduction-agda.tex \
   latex/type-scope-semantics.tex \
   latex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
@@ -50,7 +51,7 @@ latex/$(THESIS).tex: $(THESIS).tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
-latex/indexed-combinators.tex: indexed-combinators.tex
+latex/introduction-agda.tex: introduction-agda.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
