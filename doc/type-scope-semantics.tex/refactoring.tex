@@ -39,8 +39,8 @@ differences between the implemenations of renaming and substitution:
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Base.tex]{ren}
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Base.tex]{sub}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
 \caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
 \end{figure}
 
@@ -62,7 +62,7 @@ types of environment values, he considers \AB{⧫}, an arbitrary
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitdef}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{kitdef}
 \caption{\AR{Kit} as a set of constraints on \AB{⧫}}
 \end{figure}
 
@@ -71,7 +71,7 @@ traversal which is based on an environment of \AB{⧫}-values. This is the
 fundamental lemma of \AR{Kit}s:
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{kitsem}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
 \caption{Fundamental lemma of \AR{Kit}}
 \end{figure}
 
@@ -81,10 +81,10 @@ and \AF{ren} defined this time as a corrolary of \AF{kit}
 
 \begin{figure}[h]
 \begin{minipage}{0.35\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{renkit}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{renkit}
 \end{minipage}
 \begin{minipage}{0.65\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{ren}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
 \end{minipage}
 \caption{\AR{Kit} for Renaming, Renaming as a Corrolary of \AF{kit}\label{fig:renkit}}
 \end{figure}
@@ -94,10 +94,10 @@ we can define the \AR{Kit} for substitution.
 
 \begin{figure}[h]
 \begin{minipage}{0.35\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{subkit}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{subkit}
 \end{minipage}
 \begin{minipage}{0.65\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{sub}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
 \end{minipage}
 \caption{\AR{Kit} for Substitution, Substitution as a Corrolary of \AF{kit}\label{fig:subkit}}
 \end{figure}
@@ -118,7 +118,7 @@ definitions of \AF{APP} and \AF{LAM}, we can see the similarities
 in~\cref{nbe}.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{nbe}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{nbe}
 \caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
 \end{figure}
 
@@ -171,7 +171,7 @@ corresponding inductive type in Agda in~\cref{fig:type}.
 \]
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics/Syntax/Type.tex]{type}
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/Type.tex]{type}
 \end{minipage}
 \caption{Types used in our Running Example\label{fig:type}}
 \end{figure}
@@ -228,7 +228,7 @@ the only use of \AF{\_⊢\_} to extend the context is for the body of
 a \AIC{λ}.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Syntax/Calculus.tex]{term}
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{term}
 \caption{Well Scoped and Typed Calculus\label{fig:term}}
 \end{figure}
 
@@ -265,7 +265,7 @@ Just as an environment interprets variables in model, a computation gives a mean
 to terms into a model. We can define \AF{─Comp} to make this parallel explicit.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{comp}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{comp}
 \caption{Generic Notion of Computation\label{fig:comp}}
 \end{figure}
 
@@ -359,7 +359,7 @@ beyond these and also model renaming or printing with names.
 Concretely, we define \AR{Semantics} as a record packing the properties these
 families need to satisfy for the evaluation function to exist.
 
-\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{semantics}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics}
 
 The type we chose for \ARF{lam} makes the \AF{Semantics} notion
 powerful enough that even logical predicates are instances of it. And we
@@ -373,7 +373,7 @@ by its semantic counterpart which combines the induction hypotheses
 for its subterms.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{fundamental}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{fundamental}
 \caption{Fundamental Lemma of \AR{Semantics}\label{fig:fundsem}}
 \end{figure}
 
@@ -393,8 +393,8 @@ the \AF{syntactic} function turning its inhabitants into associated
 \AR{Semantics}.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Specification.tex]{syntactic}
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Specification.tex]{syntacticsem}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Specification.tex]{syntactic}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Specification.tex]{syntacticsem}
 \caption{Every \AR{Syntactic} gives rise to a \AR{Semantics}\label{fig:syntactic}}
 \end{figure}
 
@@ -416,8 +416,8 @@ the \AIC{`var} constructor. The type of \AF{sem} specialised to this
 semantics is then precisely the proof that terms are thinnable.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{synren}
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{ren}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synren}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{ren}
 \caption{Thinning as a \AR{Syntactic} Instance\label{fig:synren}}
 \end{figure}
 
@@ -429,8 +429,8 @@ previous example. Again, specialising the type of \AF{sem}
 reveals that it delivers precisely the simultaneous substitution.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{synsub}
-\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{sub}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synsub}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{sub}
 \caption{Parallel Substitution as a \AR{Syntactic} Instance\label{fig:synren}}
 \end{figure}
 
@@ -462,13 +462,13 @@ of the printer.
 
 \begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{name}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{name}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{printer}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printer}
 \end{minipage}
 
-\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{printing}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printing}
 \caption{Printing with Names as \AR{Semantics}\label{fig:semprint}}
 \end{figure}
 
@@ -488,7 +488,7 @@ of the name supply of the appropriate length. The definition of \AF{print}
 follows.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{print}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{print}
 \caption{Printer\label{fig:printer}}
 \end{figure}
 
@@ -500,78 +500,6 @@ the binder receives the name \AStr{"c"} because \AStr{"a"} and \AStr{"b"} have
 already been assigned to the free variables in scope.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{test}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{test}
 \caption{Printing an Open Term\label{fig:printer}}
 \end{figure}
-
-\section{Normalisation by Evaluation}
-
-Normalisation by Evaluation (NBE) is a technique leveraging the computational
-power of a host language in order to normalise expressions of a deeply
-embedded one. The process is based on a model construction describing a
-family of types by induction on its \AF{Type} index. Two
-procedures are then defined: the first (\AF{eval}) constructs an element
-of \AB{𝓒} \AB{σ} \AB{Γ} provided a well typed term of the corresponding
-\AD{Term} \AB{σ} \AB{Γ} type whilst the second (\AF{reify}) extracts, in
-a type-directed manner, normal forms \AD{Nf} \AB{σ} \AB{Γ} from elements
-of the model \AB{𝓒} \AB{σ} \AB{Γ}. NBE composes the two procedures. The
-definition of this \AF{eval} function is a natural candidate for our
-\AF{Semantics} framework. NBE is always defined \emph{for} a
-given equational theory; we start by recalling the various
-rules a theory may satisfy.
-
-Thanks to \AF{Renaming} and \AF{Substitution} respectively, we can formally
-define η-expansion and β-reduction. The η-rules say that for some types,
-terms have a canonical form: functions will all be λ-headed whilst records will
-collect their fields -- here this makes all elements of \AIC{\unit{}} equal to \AIC{`one}.
-
-\todo{insert definition of eta}
-
-\begin{figure}[h]
-\begin{mathpar}
-\inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
-  }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
-  }{η_1}
-\and \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ \AIC{`Unit}~ \AB{Γ}
-  }{\AB{t} \leadsto{} \AIC{`one}
-  }{η_2}
-\and
-\inferrule{
-  }{\AIC{`app} ~(\AIC{`lam}~\AB{t})~ \AB{u} \leadsto \AB{t}~ \AF{⟨}~ \AB{u} ~\AF{/0⟩}
-  }{β}
-\end{mathpar}
-\caption{βη Rules for our Calculus\label{fig:betaetarules}}
-\end{figure}
-
-The β-rule is the main driver for actual computation,
-but the presence of an inductive data type (\AIC{`Bool}) and its eliminator
-(\AIC{`ifte}) means we have further redexes: whenever the
-boolean the eliminator branches on is in canonical form, we may apply
-a ι-rule. Finally, the ξ-rule lets us reduce under
-λ-abstractions --- the distinction between weak-head normalisation and
-strong normalisation.
-
-\begin{figure}[h]
-\begin{mathpar}
-\inferrule{
-  }{\AIC{`ifte}~\AIC{`tt}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{l}
-  }{ι_1}
-\and
-\inferrule{
-  }{\AIC{`ifte}~\AIC{`ff}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{r}
-  }{ι_2}
-\and
-\inferrule{\AB{t} ~\leadsto{}~ \AB{u}
-  }{\AIC{`lam}~ \AB{t} ~\leadsto{}~ \AIC{`lam}~\AB{u}
-  }{ξ}
-\end{mathpar}
-\caption{ιξ Rules for our Calculus\label{fig:betaetarules}}
-\end{figure}
-
-Now that we have recalled all these rules, we can talk precisely about the
-sort of equational theory decided by the model construction we choose to
-perform. We start with the usual definition of NBE
-which goes under λs and produces η-long βι-short normal forms.
-
-\subsection{Normalisation by Evaluation for βιξη}
-\label{normbye}

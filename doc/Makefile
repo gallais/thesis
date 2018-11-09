@@ -7,14 +7,15 @@ AGDA_FILES:=\
   shared/Stdlib.lagda \
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
-  type-scope-semantics/StateOfTheArt/McBride05/Base.lagda \
-  type-scope-semantics/StateOfTheArt/McBride05/Kit.lagda \
-  type-scope-semantics/Syntax/Type.lagda \
-  type-scope-semantics/Syntax/Calculus.lagda \
-  type-scope-semantics/Semantics/Specification.lagda \
-  type-scope-semantics/Semantics/Syntactic/Specification.lagda \
-  type-scope-semantics/Semantics/Syntactic/Instances.lagda \
-  type-scope-semantics/Semantics/Printing.lagda
+  type-scope-semantics.agda/StateOfTheArt/McBride05/Base.lagda \
+  type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.lagda \
+  type-scope-semantics.agda/Syntax/Type.lagda \
+  type-scope-semantics.agda/Syntax/Calculus.lagda \
+  type-scope-semantics.agda/Syntax/Normal.lagda \
+  type-scope-semantics.agda/Semantics/Specification.lagda \
+  type-scope-semantics.agda/Semantics/Syntactic/Specification.lagda \
+  type-scope-semantics.agda/Semantics/Syntactic/Instances.lagda \
+  type-scope-semantics.agda/Semantics/Printing.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -28,7 +29,8 @@ THESIS_DEPENDENCIES:=\
   latex/commands.tex \
   latex/main.bib \
   latex/introduction-agda.tex \
-  latex/type-scope-semantics.tex \
+  latex/type-scope-semantics.tex/refactoring.tex \
+  latex/type-scope-semantics.tex/normalization.tex \
   latex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
@@ -59,7 +61,7 @@ latex/introduction-agda.tex: introduction-agda.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
-latex/type-scope-semantics.tex: type-scope-semantics.tex
+latex/type-scope-semantics.tex/%.tex: type-scope-semantics.tex/%.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
@@ -77,10 +79,10 @@ latex-agda-output/shared/%.tex: shared/%.lagda
 	        --latex-dir=latex-agda-output/shared/ \
 		> $(basename $@).log
 
-latex-agda-output/type-scope-semantics/%.tex: type-scope-semantics/%.lagda
+latex-agda-output/type-scope-semantics.agda/%.tex: type-scope-semantics.agda/%.lagda
 	@mkdir -p $(dir $@)
 	${AGDA} --latex $< \
-	        --latex-dir=latex-agda-output/type-scope-semantics/ \
+	        --latex-dir=latex-agda-output/type-scope-semantics.agda/ \
 		> $(basename $@).log
 
 clean:

@@ -1,0 +1,100 @@
+\chapter{Variations on Normalisation by Evaluation}
+
+Normalisation by Evaluation (NBE) is a technique leveraging the computational
+power of a host language in order to normalise expressions of a deeply
+embedded one. The process is based on a model construction describing a
+family of types by induction on its \AF{Type} index. Two
+procedures are then defined: the first (\AF{eval}) constructs an element
+of \AB{𝓒} \AB{σ} \AB{Γ} provided a well typed term of the corresponding
+\AD{Term} \AB{σ} \AB{Γ} type whilst the second (\AF{reify}) extracts, in
+a type-directed manner, normal forms \AD{Nf} \AB{σ} \AB{Γ} from elements
+of the model \AB{𝓒} \AB{σ} \AB{Γ}. NBE composes the two procedures. The
+definition of this \AF{eval} function is a natural candidate for our
+\AF{Semantics} framework. NBE is always defined \emph{for} a
+given equational theory; we start by recalling the various
+rules a theory may satisfy.
+
+\subsection{Reduction Rules}
+
+Thanks to \AF{Renaming} and \AF{Substitution} respectively, we can formally
+define η-expansion and β-reduction. The η-rules say that for some types,
+terms have a canonical form: functions will all be λ-headed whilst records will
+collect their fields -- here this makes all elements of \AIC{\unit{}} equal to \AIC{`one}.
+
+\todo{insert definition of eta}
+
+\begin{figure}[h]
+\begin{mathpar}
+\inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
+  }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
+  }{η_1}
+\and \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ \AIC{`Unit}~ \AB{Γ}
+  }{\AB{t} \leadsto{} \AIC{`one}
+  }{η_2}
+\and
+\inferrule{
+  }{\AIC{`app} ~(\AIC{`lam}~\AB{t})~ \AB{u} \leadsto \AB{t}~ \AF{⟨}~ \AB{u} ~\AF{/0⟩}
+  }{β}
+\end{mathpar}
+\caption{βη Rules for our Calculus\label{fig:betaetarules}}
+\end{figure}
+
+The β-rule is the main driver for actual computation,
+but the presence of an inductive data type (\AIC{`Bool}) and its eliminator
+(\AIC{`ifte}) means we have further redexes: whenever the
+boolean the eliminator branches on is in canonical form, we may apply
+a ι-rule. Finally, the ξ-rule lets us reduce under
+λ-abstractions --- the distinction between weak-head normalisation and
+strong normalisation.
+
+\begin{figure}[h]
+\begin{mathpar}
+\inferrule{
+  }{\AIC{`ifte}~\AIC{`tt}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{l}
+  }{ι_1}
+\and
+\inferrule{
+  }{\AIC{`ifte}~\AIC{`ff}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{r}
+  }{ι_2}
+\and
+\inferrule{\AB{t} ~\leadsto{}~ \AB{u}
+  }{\AIC{`lam}~ \AB{t} ~\leadsto{}~ \AIC{`lam}~\AB{u}
+  }{ξ}
+\end{mathpar}
+\caption{ιξ Rules for our Calculus\label{fig:betaetarules}}
+\end{figure}
+
+Now that we have recalled all these rules, we can talk precisely about the
+sort of equational theory decided by the model construction we choose to
+perform. We start with the usual definition of NBE
+which goes under λs and produces η-long βι-short normal forms.
+
+\subsection{Normal and Neutral Forms}
+
+We parametrise the mutually defined inductive families \AD{Ne} and \AD{Nf}
+by a predicate \AB{R} constraining the types at which one may embed a neutral
+as a normal form. This make it possible to control the way NBE η-expands all
+terms at certain types.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/Normal.tex]{normal}
+\caption{Neutral and Normal Forms}
+\end{figure}
+
+Once more, the expected notions of thinning \AF{th\textasciicircum{}Ne} and \AF{th\textasciicircum{}Nf}
+are induced as \AD{Ne} and \AD{Nf} are syntaxes. We omit their purely
+structural implementation here and wish we could do so in source code,
+too: our constructions so far have been syntax-directed and could
+surely be leveraged by a generic account of syntaxes with binding.
+We will tackle this in~\cref{a-universe}.
+
+\section{Normalisation by Evaluation for βιξη}
+\label{normbye}
+
+In the case of NBE, the environment values and the computations in the model
+will both use the same type family \AF{Model}, defined by induction on the
+\AD{Type} argument.
+The η-rules allow us to represent functions (resp. inhabitants
+of \AIC{`Unit}) in the source language as function spaces (resp. \AR{⊤}).
+In Agda, there are no such rules for boolean values. We thus need
+a notion of syntactic normal forms.
