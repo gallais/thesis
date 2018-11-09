@@ -73,28 +73,134 @@ which goes under λs and produces η-long βι-short normal forms.
 
 We parametrise the mutually defined inductive families \AD{Ne} and \AD{Nf}
 by a predicate \AB{R} constraining the types at which one may embed a neutral
-as a normal form. This make it possible to control the way NBE η-expands all
-terms at certain types.
+as a normal form. This constraint shows up in the type of \AIC{`neu}; it makes
+it possible to control whether the NBE should η-expands all terms at certain
+types by prohibiting the existence of neutral terms at said type.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/Normal.tex]{normal}
 \caption{Neutral and Normal Forms}
 \end{figure}
 
-Once more, the expected notions of thinning \AF{th\textasciicircum{}Ne} and \AF{th\textasciicircum{}Nf}
-are induced as \AD{Ne} and \AD{Nf} are syntaxes. We omit their purely
+Once more, the expected notions of thinning \AF{th\textasciicircum{}Ne} and
+\AF{th\textasciicircum{}Nf} are induced as \AD{Ne} and \AD{Nf} are syntaxes.
+We omit their purely
 structural implementation here and wish we could do so in source code,
 too: our constructions so far have been syntax-directed and could
 surely be leveraged by a generic account of syntaxes with binding.
-We will tackle this in~\cref{a-universe}.
+We will tackle this problem in~\cref{a-universe}.
 
 \section{Normalisation by Evaluation for βιξη}
 \label{normbye}
 
 In the case of NBE, the environment values and the computations in the model
 will both use the same type family \AF{Model}, defined by induction on the
-\AD{Type} argument.
-The η-rules allow us to represent functions (resp. inhabitants
-of \AIC{`Unit}) in the source language as function spaces (resp. \AR{⊤}).
-In Agda, there are no such rules for boolean values. We thus need
-a notion of syntactic normal forms.
+\AD{Type} argument. The η-rules allow us to represent functions (respetively
+inhabitants of \AIC{`Unit}) in the source language as function spaces
+(respectively values of type \AR{⊤}). Evaluating a \AIC{`Bool} may however
+yield a stuck term so we can't expect the model to give us anything more than
+an open term in normal form.
+
+The model construction then follows the usual pattern pioneered by
+Berger~(\citeyear{berger1993program}) and formally analysed and thoroughly
+explained by Catarina Coquand~(\citeyear{coquand2002formalised}). We work
+by induction on the type and describe η-expanded values: all inhabitants
+of (\AF{Model} \AIC{`Unit} \AB{Γ}) are equal and all elements
+of (\AF{Model} (\AB{σ} \AIC{`→} \AB{τ}) \AB{Γ}) are functions in Agda.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{model}
+\caption{Model for Normalisation by Evaluation\label{fig:nbemodel}}
+\end{figure}
+
+This model is defined by induction on the type in terms either of
+syntactic objects (\AD{Nf}) or using the \AF{□}-operator which is
+a closure operator for Thinnings. As such, it is trivial to prove
+that for all type \AB{σ}, (\AF{Model} \AB{σ}) is \AF{Thinnable}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{thmodel}
+\caption{Values in the Model are Thinnable\label{fig:thnbemodel}}
+\end{figure}
+
+Application's semantic counterpart is easy to define: given that \AB{𝓥}
+and \AB{𝓒} are equal in this instance definition we can feed the argument
+directly to the function, with the identity renaming. This corresponds to
+\AF{extract} for the comonad \AF{□}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{app}
+\caption{Semantic Counterpart of \AIC{`app}\label{fig:nbeapp}}
+\end{figure}
+
+Conditional branching however is more subtle: the boolean value \AIC{`if} branches on
+may be a neutral term in which case the whole elimination form is stuck. This forces
+us to define \AF{reify} and \AF{reflect} first. These functions, also known as quote
+and unquote respectively, give the interplay between neutral terms, model values and
+normal forms. \AF{reflect} performs a form of semantic η-expansion: all stuck \AIC{`Unit}
+terms are equated and all functions are λ-headed. It allows us to define \AF{var0}, the
+semantic counterpart of (\AIC{`var} \AIC{z}).
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{reifyreflect}
+\caption{Reify and Reflect\label{fig:nbeifte}}
+\end{figure}
+
+We can then give the semantics of \AIC{`ifte}: if the boolean is a value, the
+appropriate branch is picked; if it is stuck then the whole expression is stuck.
+It is then turned into a neutral form by reifying the two branches and then reflected
+in the model.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{ifte}
+\caption{Semantic Counterpart of \AIC{`ifte}\label{fig:nbeifte}}
+\end{figure}
+
+We can then combine these components. The semantics of a λ-abstraction is simply the
+identity function: the structure of the functional case in the definition of the model
+matches precisely the shape expected in a \AF{Semantics}. Because the environment
+carries model values, the variable case is trivial.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{eval}
+\caption{Evaluation is a \AR{Semantics}\label{fig:evalnbe}}
+\end{figure}
+
+We can define a normaliser by kickstarting the evaluation with an environment of
+placeholder values obtained by reflecting the term's free variables and then reifying
+the result.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{norm}
+\caption{Normalisation as Reification of an Evaluated Term\label{fig:evalnbe}}
+\end{figure}
+
+\section{Normalisation by Evaluation for βιξ}
+
+As seen above, the traditional typed model construction leads to an NBE
+procedure outputting βι-normal η-long terms. However actual proof systems
+rely on evaluation strategies that avoid applying η-rules
+as much as possible: unsurprisingly, it is a rather bad idea to η-expand proof
+terms which are already large when typechecking complex developments.
+
+In these systems, normal forms are neither η-long nor η-short: the η-rule is
+never deployed except when comparing a neutral and a constructor-headed term
+for equality. Instead of declaring
+them distinct, the algorithm does one step of η-expansion on the
+neutral term and compares their subterms structurally. The conversion test
+fails only when confronted with neutral terms with distinct head
+variables or normal forms with different head constructors.
+
+To reproduce this behaviour, NBE must be amended.
+It is possible to alter the model definition described earlier so that it
+avoids unnecessary η-expansions. We proceed by enriching the traditional
+model with extra syntactical artefacts in a manner reminiscent of Coquand
+and Dybjer's~(\citeyear{CoqDybSK}) approach to defining an NBE procedure for the SK combinator calculus. Their resorting to glueing
+terms to elements of the model was dictated by the sheer impossibily to write
+a sensible reification procedure but, in hindsight, it provides us with a
+powerful technique to build models internalizing alternative equational
+theories.
+
+This leads us to using a predicate \AF{R} allowing embedding of neutrals
+into normal forms at all types and mutually defining the model (\AF{Kr})
+together with the \emph{acting} model (\AF{Go}).

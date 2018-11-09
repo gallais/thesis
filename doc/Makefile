@@ -15,7 +15,8 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Semantics/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Instances.lagda \
-  type-scope-semantics.agda/Semantics/Printing.lagda
+  type-scope-semantics.agda/Semantics/Printing.lagda \
+  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
