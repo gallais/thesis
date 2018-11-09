@@ -7,10 +7,14 @@ AGDA_FILES:=\
   shared/Stdlib.lagda \
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
-  type-scope-semantics/StateOfTheArt/McBride05.lagda \
+  type-scope-semantics/StateOfTheArt/McBride05/Base.lagda \
+  type-scope-semantics/StateOfTheArt/McBride05/Kit.lagda \
   type-scope-semantics/Syntax/Type.lagda \
   type-scope-semantics/Syntax/Calculus.lagda \
-  type-scope-semantics/Semantics/Specification.lagda
+  type-scope-semantics/Semantics/Specification.lagda \
+  type-scope-semantics/Semantics/Syntactic/Specification.lagda \
+  type-scope-semantics/Semantics/Syntactic/Instances.lagda \
+  type-scope-semantics/Semantics/Printing.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))

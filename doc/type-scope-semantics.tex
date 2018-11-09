@@ -39,8 +39,8 @@ differences between the implemenations of renaming and substitution:
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{ren}
-\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{sub}
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Base.tex]{ren}
+\ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Base.tex]{sub}
 \caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
 \end{figure}
 
@@ -75,21 +75,31 @@ fundamental lemma of \AR{Kit}s:
 \caption{Fundamental lemma of \AR{Kit}}
 \end{figure}
 
-Unsurprisingly, we can recover renaming and substitution as two instances
-of this fundamental lemma. We spell out the two \AR{Kit}s in~\cref{rensubkits}. The careful
-reader will notice that, just like we needed \AF{ren} to define \AF{sub},
-we need \AF{ren} to define the \AR{Kit} for substitution. This is not an
-issue as we can instantiate the fundamental lemma a first time with
-\AF{ren\textasciicircum{}Kit} before defining \AF{sub\textasciicircum{}Kit}.
+Thankfully, we can indeed recover renaming and substitution as two instances of
+the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
+and \AF{ren} defined this time as a corrolary of \AF{kit}
 
 \begin{figure}[h]
-\begin{minipage}{0.5\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{renkit}
+\begin{minipage}{0.35\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{renkit}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05.tex]{subkit}
+\begin{minipage}{0.65\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{ren}
 \end{minipage}
-\caption{Renaming and Substitution as \AR{Kit}s\label{rensubkits}}
+\caption{\AR{Kit} for Renaming, Renaming as a Corrolary of \AF{kit}\label{fig:renkit}}
+\end{figure}
+
+Just like we needed \AF{ren} to define \AF{sub}, once we have recovered \AF{ren}
+we can define the \AR{Kit} for substitution.
+
+\begin{figure}[h]
+\begin{minipage}{0.35\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{subkit}
+\end{minipage}
+\begin{minipage}{0.65\textwidth}
+  \ExecuteMetaData[type-scope-semantics/StateOfTheArt/McBride05/Kit.tex]{sub}
+\end{minipage}
+\caption{\AR{Kit} for Substitution, Substitution as a Corrolary of \AF{kit}\label{fig:subkit}}
 \end{figure}
 
 \section{Opportunities for Further Generalizations}
@@ -217,9 +227,9 @@ them, the typing rules are here enforced in the syntax. Notice that
 the only use of \AF{\_⊢\_} to extend the context is for the body of
 a \AIC{λ}.
 
-\begin{figure}
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics/Syntax/Calculus.tex]{term}
-\caption{\label{fig:term}}
+\caption{Well Scoped and Typed Calculus\label{fig:term}}
 \end{figure}
 
 \section{A Generic Notion of Environment}
@@ -326,7 +336,6 @@ Weakening"~(\citeyear{altenkirch1995categorical}) is based on.
 The modal operator \AF{□} states that a given predicate holds for
 all thinnings of a context. It is a closure operator for \AF{Thinnable}.
 
-
 Now that we are equipped with the notion of inclusion, we have all
 the pieces necessary to describe the Kripke structure of our models
 of the simply typed λ-calculus.
@@ -367,3 +376,202 @@ for its subterms.
 \ExecuteMetaData[type-scope-semantics/Semantics/Specification.tex]{fundamental}
 \caption{Fundamental Lemma of \AR{Semantics}\label{fig:fundsem}}
 \end{figure}
+
+\section{Syntax Is the Identity Semantics}
+\label{syntactic}
+
+As we have explained earlier, this work has been directly influenced by
+McBride's ~(\citeyear{mcbride2005type}) manuscript. It seems appropriate
+to start our exploration of \AR{Semantics} with the two operations he
+implements as a single traversal. We call these operations syntactic
+because the computations in the model are actual terms and almost all term
+constructors are kept as their own semantic counterpart. As observed by
+McBride, it is enough to provide three operations describing the properties
+of the values in the environment to get a full-blown \AR{Semantics}. This
+fact is witnessed by our simple \AR{Syntactic} record type together with
+the \AF{syntactic} function turning its inhabitants into associated
+\AR{Semantics}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Specification.tex]{syntactic}
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Specification.tex]{syntacticsem}
+\caption{Every \AR{Syntactic} gives rise to a \AR{Semantics}\label{fig:syntactic}}
+\end{figure}
+
+The shape of \ARF{lam} or \ARF{one} should not trick the reader
+into thinking that this definition performs some sort of η-expansion:
+the fundamental \AF{lemma} indeed only ever uses one of these when the
+evaluated term's head constructor is already respectively a \AIC{`lam}
+or a \AIC{`one}. It is therefore absolutely possible to define renaming
+or substitution using this approach. We can now port McBride's definitions
+to our framework.
+
+
+\subsection{Functoriality, also known as Renaming}
+
+Our first example of a \AR{Syntactic} operation works with variables as
+environment values. We have already defined thinning earlier (see
+Section \ref{category}) and we can turn a variable into a term by using
+the \AIC{`var} constructor. The type of \AF{sem} specialised to this
+semantics is then precisely the proof that terms are thinnable.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{synren}
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{ren}
+\caption{Thinning as a \AR{Syntactic} Instance\label{fig:synren}}
+\end{figure}
+
+\subsection{Simultaneous Substitution}
+
+Our second example of a semantics is another spin on the syntactic model:
+environment values are now terms. We get thinning for terms from the
+previous example. Again, specialising the type of \AF{sem}
+reveals that it delivers precisely the simultaneous substitution.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{synsub}
+\ExecuteMetaData[type-scope-semantics/Semantics/Syntactic/Instances.tex]{sub}
+\caption{Parallel Substitution as a \AR{Syntactic} Instance\label{fig:synren}}
+\end{figure}
+
+\section{Printing with Names}
+\label{prettyprint}
+
+Before considering the various model constructions involved in defining
+normalisation functions deciding different equational theories, let us
+make a detour to a perhaps slightly more surprising example of a
+\AF{Semantics}: printing with names. A user-facing project would naturally
+avoid directly building a \AD{String} and rather construct an inhabitant of
+a more sophisticated datatype in order to generate a prettier output~\cite{hughes1995design,wadler2003prettier}.
+But we stick to the simpler setup as \emph{pretty} printing is not our focus here.
+
+This example is interesting for two reasons. Firstly, the distinction between
+values and computations is once more instrumental: we get to give the procedure
+a precise type guiding our implementation. The environment carries \emph{names}
+for the variables currently in scope whilst the computations thread a name-supply
+(a stream of strings) to be used to generate fresh names for bound variables.
+If the values in the environment had to be computations too, we would not root
+out some faulty implementations e.g a program picking a new name each time a
+variable is mentioned.
+
+Secondly, the fact that the model's computation type is a monad and that this
+poses no problem whatsoever in this framework means it is appropriate for
+handling languages with effects~\cite{moggi1991notions}, or effectful
+semantics e.g. logging the various function calls. Here is the full definition
+of the printer.
+
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{name}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{printer}
+\end{minipage}
+
+\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{printing}
+\caption{Printing with Names as \AR{Semantics}\label{fig:semprint}}
+\end{figure}
+
+The fundamental \AF{lemma} of \AR{Semantics} will deliver a printer which needs to be run
+on a \AD{Stream} of distinct \AD{String}s. Our definition of \AF{names} (not
+shown here) simply cycles through the letters of the alphabet and guarantess
+uniqueness by appending a natural number incremented each time we are back at
+the beginning of the cycle. This crude name generation strategy would naturally
+be replaced with a more sophisticated one in a user-facing language: we could
+e.g. use naming hints for user-introduced binders and type-based schemes otherwise
+($f$ or $g$ for functions, $i$ or $j$ for integers, etc.).
+
+In order to kickstart the evaluation, we still need to provide \AR{Name}s
+for each one of the free variables in scope. We deliver that environment
+by a simple stateful computation \AF{init} chopping off an initial segment
+of the name supply of the appropriate length. The definition of \AF{print}
+follows.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{print}
+\caption{Printer\label{fig:printer}}
+\end{figure}
+
+We can observe \AF{print}'s behaviour by writing a test; we state it as a
+propositional equality and prove it using \AIC{refl}, forcing the typechecker
+to check that both expressions indeed compute to the same normal form. Here
+we display the identity function defined in a context of size 2. As we can see,
+the binder receives the name \AStr{"c"} because \AStr{"a"} and \AStr{"b"} have
+already been assigned to the free variables in scope.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics/Semantics/Printing.tex]{test}
+\caption{Printing an Open Term\label{fig:printer}}
+\end{figure}
+
+\section{Normalisation by Evaluation}
+
+Normalisation by Evaluation (NBE) is a technique leveraging the computational
+power of a host language in order to normalise expressions of a deeply
+embedded one. The process is based on a model construction describing a
+family of types by induction on its \AF{Type} index. Two
+procedures are then defined: the first (\AF{eval}) constructs an element
+of \AB{𝓒} \AB{σ} \AB{Γ} provided a well typed term of the corresponding
+\AD{Term} \AB{σ} \AB{Γ} type whilst the second (\AF{reify}) extracts, in
+a type-directed manner, normal forms \AD{Nf} \AB{σ} \AB{Γ} from elements
+of the model \AB{𝓒} \AB{σ} \AB{Γ}. NBE composes the two procedures. The
+definition of this \AF{eval} function is a natural candidate for our
+\AF{Semantics} framework. NBE is always defined \emph{for} a
+given equational theory; we start by recalling the various
+rules a theory may satisfy.
+
+Thanks to \AF{Renaming} and \AF{Substitution} respectively, we can formally
+define η-expansion and β-reduction. The η-rules say that for some types,
+terms have a canonical form: functions will all be λ-headed whilst records will
+collect their fields -- here this makes all elements of \AIC{\unit{}} equal to \AIC{`one}.
+
+\todo{insert definition of eta}
+
+\begin{figure}[h]
+\begin{mathpar}
+\inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
+  }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
+  }{η_1}
+\and \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ \AIC{`Unit}~ \AB{Γ}
+  }{\AB{t} \leadsto{} \AIC{`one}
+  }{η_2}
+\and
+\inferrule{
+  }{\AIC{`app} ~(\AIC{`lam}~\AB{t})~ \AB{u} \leadsto \AB{t}~ \AF{⟨}~ \AB{u} ~\AF{/0⟩}
+  }{β}
+\end{mathpar}
+\caption{βη Rules for our Calculus\label{fig:betaetarules}}
+\end{figure}
+
+The β-rule is the main driver for actual computation,
+but the presence of an inductive data type (\AIC{`Bool}) and its eliminator
+(\AIC{`ifte}) means we have further redexes: whenever the
+boolean the eliminator branches on is in canonical form, we may apply
+a ι-rule. Finally, the ξ-rule lets us reduce under
+λ-abstractions --- the distinction between weak-head normalisation and
+strong normalisation.
+
+\begin{figure}[h]
+\begin{mathpar}
+\inferrule{
+  }{\AIC{`ifte}~\AIC{`tt}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{l}
+  }{ι_1}
+\and
+\inferrule{
+  }{\AIC{`ifte}~\AIC{`ff}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{r}
+  }{ι_2}
+\and
+\inferrule{\AB{t} ~\leadsto{}~ \AB{u}
+  }{\AIC{`lam}~ \AB{t} ~\leadsto{}~ \AIC{`lam}~\AB{u}
+  }{ξ}
+\end{mathpar}
+\caption{ιξ Rules for our Calculus\label{fig:betaetarules}}
+\end{figure}
+
+Now that we have recalled all these rules, we can talk precisely about the
+sort of equational theory decided by the model construction we choose to
+perform. We start with the usual definition of NBE
+which goes under λs and produces η-long βι-short normal forms.
+
+\subsection{Normalisation by Evaluation for βιξη}
+\label{normbye}

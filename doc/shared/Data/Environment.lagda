@@ -99,6 +99,9 @@ lookup (select ren ρ) k = lookup ρ (lookup ren k)
 extend : Thinning Γ (σ ∷ Γ)
 lookup extend v = s v
 
+bind : ∀ σ → Thinning Γ (σ ∷ Γ)
+bind _ = extend
+
 -- Like the flipped version of _>>_ but it computes. Which is convenient when
 -- dealing with concrete Γs (cf. βred)
 _<+>_ : ∀ {Γ 𝓥 Δ Θ} → (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
