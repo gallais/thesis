@@ -32,6 +32,7 @@ THESIS_DEPENDENCIES:=\
   latex/introduction-agda.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
+  latex/type-scope-semantics.tex/cps-translation.tex \
   latex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
 

@@ -202,5 +202,88 @@ powerful technique to build models internalizing alternative equational
 theories.
 
 This leads us to using a predicate \AF{R} allowing embedding of neutrals
-into normal forms at all types and mutually defining the model (\AF{Kr})
-together with the \emph{acting} model (\AF{Go}).
+into normal forms at all types and mutually defining the model (\AF{Model})
+together with the \emph{acting} model (\AF{Go}).\todo{find good name}
+
+\todo{add model def}
+\begin{figure}[h]
+\caption{Model Definition for βιξ\label{nbestuckmodel}}
+\end{figure}
+
+These mutual definitions allow us to make a careful distinction between values
+arising from (non expanded) stuck terms and the ones wich are constructor headed
+and have a computational behaviour associated to them. The values in the acting
+model are storing these behaviours be it either actual proofs of \AF{⊤}, actual
+\AIC{`Bool}eans or actual Agda functions depending on the type of the term. It is
+important to note that the functions in the acting model have the model as both
+domain and codomain: there is no reason to exclude the fact that either the argument
+or the body may or may not be stuck.
+
+\todo{thinning}
+
+
+What used to be called reflection in the previous model is now trivial:
+stuck terms are indeed perfectly valid model values. Reification becomes
+quite straightforward too because no η-expansion is needed. When facing
+a stuck term, we simply embed it in the set of normal forms. Even though
+\AF{reify} may look like it is performing some η-expansions, it is not
+the case: all the values in the acting model are notionally obtained
+from constructor-headed terms.
+
+\todo{reify reflect}
+
+Most combinators acting on this model follow a pattern similar to their
+counterpart's in the previous section. Semantic application is
+more interesting: in case the function is a stuck term, we grow its
+spine by reifying its argument; otherwise we have an Agda function ready
+to be applied. We proceed similarly for the definition of the semantical
+\AIC{`ifte} (omitted here). Altogether, we get another
+normaliser which is, this time, \emph{not} producing η-long normal forms.
+
+\todo{app}
+
+Finally, we have all the necessary components to show that evaluating
+the term whilst not η-expanding all stuck terms is a perfectly valid
+\AR{Semantics}. As usual, normalisation is defined by composing
+reification and evaluation on a diagonal environment made of placeholders.
+
+\todo{norm}
+
+\section{Normalisation by Evaluation for βι}
+
+The decision to apply the η-rule lazily can be pushed even further: one may
+forgo using the ξ-rule too and simply perform weak-head normalisation. This
+drives computation only when absolutely necessary, e.g.
+when two terms compared for equality have matching head constructors
+and one needs to inspect these constructors' arguments to conclude.
+
+For that purpose, we introduce an inductive family describing terms in weak-head
+normal forms. Naturally, it is possible to define the corresponding thinnings
+\AF{th\textasciicircum{}WHNE} and \AF{th\textasciicircum{}WHNF} as well as erasure
+functions \AF{erase\textasciicircum{}WHNE} and \AF{erase\textasciicircum{}WHNF}
+with codomain \AD{Term} (we omit their simple definitions here).
+
+The model construction is much like the previous one except
+that source terms are now stored in the model too. This means that
+from an element of the model, one can pick either the reduced version
+of the input term (i.e. a stuck term or the term's computational
+content) or the original. We exploit this ability most
+notably in reification where once we have obtained either a
+head constructor or a head variable, no subterms need to
+be evaluated.
+
+\todo{Add model}
+
+Thinnable, reflection, and reification can all be defined rather
+straightforwardly based on the template provided by the previous
+section. The application and conditional branching rules are more
+interesting: one important difference with respect to the previous
+subsection is that we do not grow the spine of a stuck term using
+reified versions of its arguments but rather the corresponding
+\emph{source} term thus staying true to the idea that we only head
+reduce enough to expose either a constructor or a variable.
+
+We can finally put together all of these semantic counterparts to
+obtain a \AR{Semantics} corresponding to weak-head normalisation.
+We omit the now self-evident definition of \AF{norm\textasciicircum{}βι} as the
+composition of evaluation and reification.
