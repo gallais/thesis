@@ -201,12 +201,12 @@ a sensible reification procedure but, in hindsight, it provides us with a
 powerful technique to build models internalizing alternative equational
 theories.
 
-This leads us to using a predicate \AF{R} allowing embedding of neutrals
-into normal forms at all types and mutually defining the model (\AF{Model})
-together with the \emph{acting} model (\AF{Go}).\todo{find good name}
+This leads us to using a predicate \AF{R} which holds for all types thus allowing
+us to embed all neutrals into normal forms, and to  mutually defining the model
+(\AF{Model}) together with the \emph{acting} model (\AF{Value}).
 
-\todo{add model def}
 \begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{model}
 \caption{Model Definition for βιξ\label{nbestuckmodel}}
 \end{figure}
 
@@ -219,8 +219,7 @@ important to note that the functions in the acting model have the model as both
 domain and codomain: there is no reason to exclude the fact that either the argument
 or the body may or may not be stuck.
 
-\todo{thinning}
-
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{thmodel}
 
 What used to be called reflection in the previous model is now trivial:
 stuck terms are indeed perfectly valid model values. Reification becomes
@@ -230,7 +229,7 @@ a stuck term, we simply embed it in the set of normal forms. Even though
 the case: all the values in the acting model are notionally obtained
 from constructor-headed terms.
 
-\todo{reify reflect}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reifyreflect}
 
 Most combinators acting on this model follow a pattern similar to their
 counterpart's in the previous section. Semantic application is
@@ -240,14 +239,18 @@ to be applied. We proceed similarly for the definition of the semantical
 \AIC{`ifte} (omitted here). Altogether, we get another
 normaliser which is, this time, \emph{not} producing η-long normal forms.
 
-\todo{app}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{app}
+
+\todo{Discuss IFTE}
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{ifte}
 
 Finally, we have all the necessary components to show that evaluating
 the term whilst not η-expanding all stuck terms is a perfectly valid
 \AR{Semantics}. As usual, normalisation is defined by composing
 reification and evaluation on a diagonal environment made of placeholders.
 
-\todo{norm}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{norm}
 
 \section{Normalisation by Evaluation for βι}
 
