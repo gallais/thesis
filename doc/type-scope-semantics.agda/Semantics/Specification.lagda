@@ -60,7 +60,7 @@ one extra free variable, prompting us to extend the environment with a~
 value for it. In the special case where \AB{𝓥} = \AB{𝓒} (normalisation~
 by evaluation for instance), we recover the usual Kripke structure.
 \begin{code}
-    lam    :  ∀[ Kripke 𝓥 𝓒 σ τ ⇒ 𝓒 (σ `→ τ) ]
+    lam    :  ∀[ □ (𝓥 σ ⇒ 𝓒 τ) ⇒ 𝓒 (σ `→ τ) ]
 \end{code}
 The remaining fields' types are a direct translation of the types
 of the constructor they correspond to: substructures have simply
