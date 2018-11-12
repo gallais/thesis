@@ -12,12 +12,14 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Syntax/Type.lagda \
   type-scope-semantics.agda/Syntax/Calculus.lagda \
   type-scope-semantics.agda/Syntax/Normal.lagda \
+  type-scope-semantics.agda/Syntax/WeakHead.lagda \
   type-scope-semantics.agda/Semantics/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Instances.lagda \
   type-scope-semantics.agda/Semantics/Printing.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.lagda \
-  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.lagda
+  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.lagda \
+  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))

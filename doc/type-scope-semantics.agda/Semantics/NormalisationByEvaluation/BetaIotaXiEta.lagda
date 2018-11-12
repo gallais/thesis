@@ -35,7 +35,7 @@ Model (σ `→ τ)  Γ = □ (Model σ ⇒ Model τ) Γ
 %<*thmodel>
 \begin{code}
 th^Model : ∀ σ → Thinnable (Model σ)
-th^Model `Unit     = _
+th^Model `Unit     = th^const
 th^Model `Bool     = th^Nf
 th^Model (σ `→ τ)  = th^□
 \end{code}

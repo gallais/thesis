@@ -13,6 +13,7 @@ open import Data.Var hiding (_<$>_)
 private
 
   variable
+    A : Set
     i σ : I
     T : List I → Set
     𝓥 𝓦 : I ─Scoped
@@ -149,6 +150,9 @@ lookup (th^Env th^𝓥 ρ ren) k = th^𝓥 (lookup ρ k) ren
 
 th^□ : Thinnable (□ T)
 th^□ = duplicate
+
+th^const : Thinnable (const A)
+th^const a _ = a
 
 Kripke : (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
 Kripke 𝓥 𝓒 []  i = 𝓒 i

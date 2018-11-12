@@ -261,10 +261,23 @@ when two terms compared for equality have matching head constructors
 and one needs to inspect these constructors' arguments to conclude.
 
 For that purpose, we introduce an inductive family describing terms in weak-head
-normal forms. Naturally, it is possible to define the corresponding thinnings
+normal forms.
+
+\subsection{Weak-Head Normal Forms}
+
+\todo{discuss whne}
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/WeakHead.tex]{weakhead}
+\caption{Weak-Head Normal and Neutral Forms\label{fig:weakhead}}
+\end{figure}
+
+Naturally, it is possible to define the corresponding thinnings
 \AF{th\textasciicircum{}WHNE} and \AF{th\textasciicircum{}WHNF} as well as erasure
 functions \AF{erase\textasciicircum{}WHNE} and \AF{erase\textasciicircum{}WHNF}
 with codomain \AD{Term} (we omit their simple definitions here).
+
+\subsection{Model Construction}
 
 The model construction is much like the previous one except
 that source terms are now stored in the model too. This means that
@@ -272,10 +285,13 @@ from an element of the model, one can pick either the reduced version
 of the input term (i.e. a stuck term or the term's computational
 content) or the original. We exploit this ability most
 notably in reification where once we have obtained either a
-head constructor or a head variable, no subterms need to
+head constructor or a head variable, no subterm needs to
 be evaluated.
 
-\todo{Add model}
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{model}
+\caption{Model Definition for Computing Weak-Head Normal Forms\label{fig:betaiotamodel}}
+\end{figure}
 
 Thinnable, reflection, and reification can all be defined rather
 straightforwardly based on the template provided by the previous
@@ -285,6 +301,23 @@ subsection is that we do not grow the spine of a stuck term using
 reified versions of its arguments but rather the corresponding
 \emph{source} term thus staying true to the idea that we only head
 reduce enough to expose either a constructor or a variable.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{app}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{ifte}
+\caption{Semantical Counterparts of \AIC{`app} and \AIC{`ifte}\label{fig:betaiotaappifte}}
+\end{figure}
+
+The semantical counterpart of \AIC{`lam} is slightly trickier than before. Indeed, we
+need to recover the source term the value corresponds. Luckily we know it has to be
+λ-headed and once we have introduced a fresh variable with \AIC{`lam}, we can project
+out the source term of the body evaluated using this fresh variable as a placeholder
+value.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{lam}
+\caption{Semantical Counterparts of \AIC{`lam}\label{fig:betaiotalam}}
+\end{figure}
 
 We can finally put together all of these semantic counterparts to
 obtain a \AR{Semantics} corresponding to weak-head normalisation.
