@@ -13,6 +13,8 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Syntax/Calculus.lagda \
   type-scope-semantics.agda/Syntax/Normal.lagda \
   type-scope-semantics.agda/Syntax/WeakHead.lagda \
+  type-scope-semantics.agda/Syntax/MoggiML/Type.lagda \
+  type-scope-semantics.agda/Syntax/MoggiML/Calculus.lagda \
   type-scope-semantics.agda/Semantics/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Instances.lagda \
