@@ -219,7 +219,10 @@ important to note that the functions in the acting model have the model as both
 domain and codomain: there is no reason to exclude the fact that either the argument
 or the body may or may not be stuck.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{thmodel}
+\caption{The \AF{Model} is \AF{Thinnable}}
+\end{figure}
 
 What used to be called reflection in the previous model is now trivial:
 stuck terms are indeed perfectly valid model values. Reification becomes
@@ -229,7 +232,10 @@ a stuck term, we simply embed it in the set of normal forms. Even though
 the case: all the values in the acting model are notionally obtained
 from constructor-headed terms.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reifyreflect}
+\caption{Reflect, Reify and Interpretation for Fresh Variables}
+\end{figure}
 
 Most combinators acting on this model follow a pattern similar to their
 counterpart's in the previous section. Semantic application is
@@ -239,11 +245,22 @@ to be applied. We proceed similarly for the definition of the semantical
 \AIC{`ifte} (omitted here). Altogether, we get another
 normaliser which is, this time, \emph{not} producing η-long normal forms.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{app}
+\caption{Semantical Counterpart of \AIC{`app}}
+\end{figure}
 
-\todo{Discuss IFTE}
+When defining the semantical counterpart of \AIC{`ifte}, the value case is similar to
+that of the previous section: depending on the boolean value we pick either the left
+or the right branch which are precisely of the right type already. If the boolean
+evaluates to a stuck term, we once again reify the two branches and assemble a neutral
+term. However this time we do not need to η-expand it: it is a perfectly valid inhabitant
+of the \AF{Model} as is.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{ifte}
+\caption{Semantical Counterpart of \AIC{`ifte}}
+\end{figure}
 
 Finally, we have all the necessary components to show that evaluating
 the term whilst not η-expanding all stuck terms is a perfectly valid
@@ -265,17 +282,24 @@ normal forms.
 
 \subsection{Weak-Head Normal Forms}
 
-\todo{discuss whne}
+A weak-head normal form (respectively a weak-head neutral form) is a term which has
+been evaluated just enough to reveal a head constructor (respectively to reach a
+stuck elimination). There are no additional constraints on the subterms: a λ-headed
+term is in weak-head normal form no matter the shape of its body. Similarly an
+application composed of a variable as the function and a term as the argument is in
+weak-head neutral form no matter what the argument looks like. This means in particular
+that unlike with \AD{Ne} and \AD{Nf} there is no mutual dependency between the definitions
+of \AD{WHNE} (defined first) and \AD{WHNF}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/WeakHead.tex]{weakhead}
 \caption{Weak-Head Normal and Neutral Forms\label{fig:weakhead}}
 \end{figure}
 
-Naturally, it is possible to define the corresponding thinnings
+Naturally, it is possible to define the thinnings
 \AF{th\textasciicircum{}WHNE} and \AF{th\textasciicircum{}WHNF} as well as erasure
 functions \AF{erase\textasciicircum{}WHNE} and \AF{erase\textasciicircum{}WHNF}
-with codomain \AD{Term} (we omit their simple definitions here).
+with codomain \AD{Term}. We omit their simple definitions here.
 
 \subsection{Model Construction}
 
@@ -293,14 +317,19 @@ be evaluated.
 \caption{Model Definition for Computing Weak-Head Normal Forms\label{fig:betaiotamodel}}
 \end{figure}
 
-Thinnable, reflection, and reification can all be defined rather
-straightforwardly based on the template provided by the previous
-section. The application and conditional branching rules are more
-interesting: one important difference with respect to the previous
-subsection is that we do not grow the spine of a stuck term using
+\AF{Thinnable} can be defined rather straightforwadly based on the template provided
+in the previous section: once more all the notions used in the model definition
+are \AF{Thinnable} themselves. Reflection and reification also follow the same recipe
+as in the previous section.
+
+
+The application and conditional branching rules are more
+interesting. One important difference with respect to the previous
+section is that we do not grow the spine of a stuck term using
 reified versions of its arguments but rather the corresponding
-\emph{source} term thus staying true to the idea that we only head
-reduce enough to expose either a constructor or a variable.
+\emph{source} term. Thus staying true to the idea that we only head
+reduce enough to expose either a constructor or a variable and let
+the other subterms untouched.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{app}
@@ -308,7 +337,7 @@ reduce enough to expose either a constructor or a variable.
 \caption{Semantical Counterparts of \AIC{`app} and \AIC{`ifte}\label{fig:betaiotaappifte}}
 \end{figure}
 
-The semantical counterpart of \AIC{`lam} is slightly trickier than before. Indeed, we
+The semantical counterpart of \AIC{`lam} is also slightly trickier than before. Indeed, we
 need to recover the source term the value corresponds. Luckily we know it has to be
 λ-headed and once we have introduced a fresh variable with \AIC{`lam}, we can project
 out the source term of the body evaluated using this fresh variable as a placeholder

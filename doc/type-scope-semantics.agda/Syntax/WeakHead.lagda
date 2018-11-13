@@ -21,18 +21,16 @@ private
 \end{code}
 %<*weakhead>
 \begin{code}
-mutual
+data WHNE : Type ─Scoped where
+  `var   : ∀[ Var σ ⇒ WHNE σ ]
+  `app   : ∀[ WHNE (σ `→ τ) ⇒ Term σ ⇒ WHNE τ ]
+  `ifte  : ∀[ WHNE `Bool ⇒ Term σ ⇒ Term σ ⇒ WHNE σ ]
 
-  data WHNE : Type ─Scoped where
-    `var   : ∀[ Var σ ⇒ WHNE σ ]
-    `app   : ∀[ WHNE (σ `→ τ) ⇒ Term σ ⇒ WHNE τ ]
-    `ifte  : ∀[ WHNE `Bool ⇒ Term σ ⇒ Term σ ⇒ WHNE σ ]
-
-  data WHNF : Type ─Scoped where
-    `lam     : ∀[ (σ ∷_) ⊢ Term τ ⇒ WHNF (σ `→ τ) ]
-    `one     : ∀[ WHNF `Unit ]
-    `tt `ff  : ∀[ WHNF `Bool ]
-    `whne    : ∀[ WHNE σ ⇒ WHNF σ ]
+data WHNF : Type ─Scoped where
+  `lam     : ∀[ (σ ∷_) ⊢ Term τ ⇒ WHNF (σ `→ τ) ]
+  `one     : ∀[ WHNF `Unit ]
+  `tt `ff  : ∀[ WHNF `Bool ]
+  `whne    : ∀[ WHNE σ ⇒ WHNF σ ]
 \end{code}
 %</weakhead>
 %<*thweakhead>
