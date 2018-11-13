@@ -21,7 +21,9 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Semantics/Printing.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.lagda \
-  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda
+  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda \
+  type-scope-semantics.agda/Semantics/CPS/CBN.lagda \
+  type-scope-semantics.agda/Semantics/CPS/CBV.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
