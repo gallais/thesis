@@ -2,11 +2,13 @@
 
 \usepackage{agda}
 \usepackage{catchfilebetweentags}
-\usepackage{cleveref}
 \usepackage[T1]{fontenc}
 \usepackage{mathpartir}
 \usepackage{natbib}
 \usepackage{todonotes}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 %\renewcommand{\baselinestretch}{1.5}
 \bibliographystyle{abbrvnat}
@@ -20,6 +22,8 @@
 \begin{document}
 
 \maketitle{}
+
+\newpage{}
 \tableofcontents{}
 
 \chapter{Introduction}
@@ -36,6 +40,9 @@
 %\part{A Universe of Well Kinded-and-Scoped Syntaxes with Binding}
 \label{a-universe}
 \input{a-universe}
+
+\newpage{}
+\listoffigures
 
 \bibliography{main}
 
