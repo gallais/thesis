@@ -1,0 +1,119 @@
+\chapter{CPS Transformations}
+\label{cps-transformation}
+
+In their generic account of continuation passing styles, Hatcliff and
+Danvy~(\citeyear{hatcliff1994generic}) decompose both call by name and
+call by value CPS transformations in two phases. The first one, an
+embedding of the source language into Moggi's Meta Language~(\citeyear{moggi1991notions}),
+picks an evaluation strategy whilst the second one is a generic erasure
+from Moggi's ML back to the original language. Looking closely at the
+structure of the first pass, we can see that it is an instance of our
+Semantics framework.
+
+Let us start with the definition of Moggi's Meta Language (ML). Its types
+are fairly straightforward, we simply have an extra constructor \AIC{\#\_}
+for computations and the arrow has been turned into a \emph{computational}
+arrow meaning that its codomain is considered to be a computational type.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/Type.tex]{ctype}
+\caption{Inductive Definition of Types for Moggi's ML}
+\end{figure}
+
+Then comes the Meta-Language itself (cf.~\cref{fig:moggiml}). It incorporates
+\AD{Term} constructors and eliminators with slightly different types: \emph{value}
+constructors are associated to \emph{value} types whilst eliminators (and their
+branches) have \emph{computational} types. Two new term constructors have been
+added: \AIC{`ret} and \AIC{`bind} make \AIC{\#\_} a monad. They can be used to
+explicitly schedule the evaluation order of various subterms.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/Calculus.tex]{calculus}
+\caption{Definition of Moggi's Meta Language\label{fig:moggiml}}
+\end{figure}
+
+As explained in Hatcliff and Danvy's paper, the translation from \AD{Type} to
+\AD{CType} fixes the calling convention the CPS translation will have. Both call
+by name (\AF{CBV}) and call by value (\AF{CBV}) can be encoded. They behave the
+same way on base types but differ on the way they translate function spaces.
+In \AF{CBN} the argument of a function is a computation (i.e. it is wrapped in
+a \AIC{\#\_} type constructor) whilst it is expected to have been fully evaluated
+in CBV. Let us look more closely at these two translations.
+
+\section{Translating our Language into Moggi's Meta-Language}
+
+\subsection{Call by Name}
+
+We define the translation \AF{CBN} of \AF{Type} in a call by name style together
+with a shorthand for the computational version of the translation \AF{\#CBN}. As
+explained earlier, base types are kept identical whilst function spaces are turned
+into function spaces whose domains and codomains are computational.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBN.tex]{cbn}
+\caption{Translation of \AF{Type} in a Call by Name style\label{fig:moggicbn}}
+\end{figure}
+
+Once we know how to translate types, we can start thinking about the way terms are
+handled. The term's type will \emph{have} to be computational as there is no guarantee
+that the input term is in normal form. In a call by name strategy, variables in context
+are also assigned a computational type.
+
+By definition of \AF{Semantics}, our notions of environment values and computations
+will \emph{have} to be of type (\AF{Type} \AF{─Scoped}). This analysis leads us to
+define the generic transformation \AF{\_\textasciicircum{}CBN}:
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBN.tex]{cbntransformer}
+\caption{\AF{\ensuremath{\cdot{}}─Scoped} Transformer for Call by Name\label{fig:cbntransformer}}
+\end{figure}
+
+Our notion of environment values are then (\AD{Var} \AF{\textasciicircum{}CBN})
+whilst computations will the (\AD{ML} \AF{\textasciicircum{}CBN}). Once these
+design decisions are made, we can start drafting the semantical counterpart of
+common combinators.
+
+As usual, we define combinators corresponding to the two eliminators first.
+In these cases, we need to evaluate the subterm the redex is potentially
+stuck on first. This means evaluating the function first in an application
+node (which will then happily consume the thunked argument) and the boolean
+in the case of boolean branching.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBN.tex]{app}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBN.tex]{ifte}
+\caption{Semantical Counterparts for \AIC{`app} and \AIC{`ifte}\label{fig:cbnelim}}
+\end{figure}
+
+Values have a straightforward interpretation: they are already fully evaluated
+and can thus simply be returned as trivial computations (using \AIC{`ret}).
+
+
+\subsection{Call by Value}
+
+As the name suggests, in call by value function arguments are expected to be values
+already. In the definition of \AF{CBV} this translates to function spaces being
+turned into functions spaces where only the \emph{codomain} is made computational.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBV.tex]{cbv}
+\caption{Translation of \AF{Type} in a Call by Value style\label{fig:moggicbv}}
+\end{figure}
+
+
+
+%From these translations, we can described the respective
+%interpretations of variables and terms for the two CPS
+%transformations. In both cases the return type of the
+%compiled term is a computational type: the source term is
+%a simple \AD{Term} and as such can contain redexes. Variables
+%then play different roles: in the by name strategy, they
+%are all computations whereas in the by value one they are
+%expected to be evaluated already. This leads to the following
+% definitions:
+
+Finally, the corresponding \AF{Semantics} can be defined (code omitted here)
+and, just like for normalisation by evaluation, we get the two CPS transformations
+by creating dummy environments to kickstart the evaluation.
+
+\section{Generic CPS Translation of Moggi's ML into STLC}

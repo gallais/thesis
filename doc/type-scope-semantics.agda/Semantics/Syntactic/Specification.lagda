@@ -27,6 +27,7 @@ record Syntactic (𝓣 : Type ─Scoped) : Set where
 
 -- Using copatterns in the definition of syntactic guarantees that these things are
 -- not unfolded when normalising goals thus making them more readable.
+
 \end{code}
 %<*syntacticsem>
 \begin{code}
