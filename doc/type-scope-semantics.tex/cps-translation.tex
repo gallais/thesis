@@ -86,34 +86,90 @@ in the case of boolean branching.
 \end{figure}
 
 Values have a straightforward interpretation: they are already fully evaluated
-and can thus simply be returned as trivial computations (using \AIC{`ret}).
-
+and can thus simply be returned as trivial computations using \AIC{`ret}. This
+gives us everything we need to define the embedding of STLC into Moggi's ML in
+call by name style.
 
 \subsection{Call by Value}
 
-As the name suggests, in call by value function arguments are expected to be values
-already. In the definition of \AF{CBV} this translates to function spaces being
-turned into functions spaces where only the \emph{codomain} is made computational.
+Call by value follows a similar pattern. As the name suggests, in call by value
+function arguments are expected to be values already. In the definition of \AF{CBV}
+this translates to function spaces being turned into functions spaces where only
+the \emph{codomain} is made computational.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBV.tex]{cbv}
 \caption{Translation of \AF{Type} in a Call by Value style\label{fig:moggicbv}}
 \end{figure}
 
+We can then move on to the notion of values and computations for our call by value
+\AF{Semantics}. All the variables in scope should refer to values hence the choice
+to translate \AB{Γ} by mapping \AF{CBV} over it in both cases. As with the call by
+name translation, we need our target type to be computational: the input terms are
+not guaranteed to be in normal form.
 
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBV.tex]{cbvalue}
+\caption{Values and Computations for the \AF{CBN} CPS \AR{Semantics}\label{fig:moggicbvalue}}
+\end{figure}
 
-%From these translations, we can described the respective
-%interpretations of variables and terms for the two CPS
-%transformations. In both cases the return type of the
-%compiled term is a computational type: the source term is
-%a simple \AD{Term} and as such can contain redexes. Variables
-%then play different roles: in the by name strategy, they
-%are all computations whereas in the by value one they are
-%expected to be evaluated already. This leads to the following
-% definitions:
+Albeit being defined at different types, the semantical counterparts of value
+constructors and \AIC{`ifte} are the same as in the call by name case. The
+interpretation of \AIC{`app} is where we can see a clear difference: we need
+to evaluate the function \emph{and} its argument before applying one to the
+other. We pick a left-to-right evaluation order but that is arbitrary: another
+decision would lead to a different but equally valid translation.
 
-Finally, the corresponding \AF{Semantics} can be defined (code omitted here)
-and, just like for normalisation by evaluation, we get the two CPS transformations
-by creating dummy environments to kickstart the evaluation.
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBV.tex]{app}
+\caption{Semantical Counterparts for \AIC{`app}\label{fig:cbvelim}}
+\end{figure}
+
+Finally, the corresponding \AF{Semantics} can be defined (code omitted here).
 
 \section{Translation Back from Moggi's Meta-Language}
+
+Once we have picked an embedding from STLC to Moggi's ML, we can kickstart it by using
+an environment of placeholder values just like we did for normalisation by evaluation.
+The last thing missing to get the full CPS translation is to have the generic function
+elaborating terms in \AD{ML} into \AD{STLC} ones.
+
+We first need to define a translation of types in Moggi's Meta-Language to types in
+the simply-typed lambda-calculus. The translation is parametrised by \AB{r}, the
+\emph{return} type. Type constructors common to both languages are translated to their
+direct counterpart and the computational type constructor is translated as double
+\AB{r}-negation (i.e. (\AB{\ensuremath{\cdot{}}} \AIC{`→} \AB{r}) \AIC{`→} \AB{r}).
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{cps}
+\caption{Translating Moggi's ML's Types to STLC Types\label{fig:cpstypeml}}
+\end{figure}
+
+Once these translations have been defined, we give a generic elaboration function
+getting rid of the additional language constructs available in Moggi's ML. It
+takes any term in Moggi's ML and returns a term in STLC where both the type and
+the context have been translated using (\AF{CPS[} \AB{r} \AF{]}) for an abstract
+parameter \AB{r}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{elabtype}
+
+All the constructors which appear both in Moggi's ML and STLC are translated
+in a purely structural manner. The only two interesting cases are \AIC{`ret}
+and \AIC{`bind} which correpond to the \AIC{\#} monad in Moggi's ML and are
+interpreted as return and bind for the continuation monad in STLC.
+
+First, (\AIC{`ret} \AB{t}) is interpreted as the function which takes the current
+continuation and applies to its translated argument (\AF{cps} \AB{t}).
+
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{elabret}
+
+Then, (\AIC{`bind} \AB{m} \AB{f}) gets translated as the function grabbing the
+current continuation \AB{k}, and running the translation of \AB{m} with the
+continuation which, provided the value \AB{v} obtained by running \AB{m},
+runs \AB{f} applied to \AB{v} and \AB{k}. Because the translations of \AB{m}
+and \AB{f} end up being used in extended contexts, we need to make use of the
+fact \AD{Term}s are thinnable.
+
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{elabbind}
+
+\todo{Conclusion}
