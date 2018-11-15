@@ -1,0 +1,89 @@
+\chapter{Conclusion}
+
+\section{Summary}
+
+We have now seen how to give an intrinsically well-scoped and well-typed
+presentation of a simple calculus. We represent it as an inductive family
+indexed by the term's type and the context it lives in. Variables are
+represented by typed de Bruijn indices.
+
+To make the presentation lighter, we have made heavy use of a small domain
+specific language to define indexed families. This allows us to silently
+thread the context terms live in and only ever explicitly talk about it
+when it gets extended.
+
+We have seen a a handful of vital traversals such as thinning and substitution
+which, now that they act on a well-typed and well-scoped syntax need to be
+guaranteed to be type and scope preserving.
+
+We have then studied how McBride~(\citeyear{mcbride2005type}) identifies the
+structure common to thinning and substitution, introduces a notion of \AR{Kit}
+and refactors the two functions as instances of a more fundamental \AR{Kit}-based
+traversal.
+
+After noticing that other usual programs such as the evaluation function for
+normalisation by evaluation seemed to fit a similar pattern, we have generalised
+McBride's \AR{Kit} to obtain our notion of \AR{Semantics}. The accompanying
+fundamental lemma is the core of this whole chapter. It demonstrates that
+provided a notion of values and a notion of computations abiding by the
+\AR{Semantics} constraints, we can write a scope-and-type preserving traversal
+taking an environment of values, a term and returning a computation.
+
+Thinning, substitution, normalisation by evaluation, printing with names, and
+various continuation passing style translations are all instances of this
+fundamental lemma.
+
+\section{Further Work}
+
+There are three main avenues for future work and we will tackle all of these later on.
+We could focus on the study of instances of \AR{Semantics}, the generalisation of
+\AR{Semantics} to a whole class of syntaxes with binding rather than just our simple
+STLC, or proving properties of the traversals that are instances of \AR{Semantics}.
+
+\subsection{Other instances}
+
+The vast array of traversals captured by this framework from meta-theoretical
+results (stability under thinning and substitution) to programming tools
+(printing with names) and compilation passes (partial evaluation and
+continuation passing style translations) suggests that this method is widely
+applicable. The quest of ever more traversals to refactor as instances of the
+fundamental lemma of \AR{Semantics} is a natural candidate for further work.
+
+We will see later on that once we start considering other languages including
+variants with fewer invariants baked in, we can find new candidates. The fact
+that erasure from a language with strong invariants to an untyped one falls
+into this category may not be too surprising. The fact that the other direction,
+that is type checking of raw terms or even elaboration of such raw terms to a
+typed core language also corresponds to a notion of \AR{Semantics} is perhaps
+more surprising.
+
+\subsection{A Generic Notion of Semantics}
+
+If we look closely at the set of constraints a \AR{Semantics} imposes on the
+notions of values and computations, we can see that it matches tightly the
+structure of our language:
+
+\begin{itemize}
+  \item Each base constructor needs to be associated to a computation of the
+    same type;
+  \item Each eliminator needs to be interpreted as a function combining the
+    interpretation of its subterms into the interpretation of the whole;
+  \item The lambda case is a bit special: it uses a Kripke function space
+    from values to computation as its interpretation
+\end{itemize}
+
+We can apply this recipe mechanically to enrich our language with e.g.
+product and sum types, their constructor and eliminators. This suggests
+that we ought to be able to give a generic description of syntaxes with
+binding and the appropriate notion of Semantics for each syntax.
+
+We will make this intuition precise in~\cref{a-universe}.
+
+\subsection{Properties of Semantics}
+
+Finally, because we know e.g. that we can prove generic theorems for all the
+programs defined using fold (\cite{DBLP:journals/scp/Malcolm90}), the fact
+that all of these traversals are instances of a common fundamental lemma
+suggests that we ought to be able to prove general theorems about its
+computational behaviour and obtain interesting results for each instance
+as corollaries. This is the topic we will focus on for now.
