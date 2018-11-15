@@ -449,16 +449,11 @@ This example is interesting for two reasons. Firstly, the distinction between
 values and computations is once more instrumental: we get to give the procedure
 a precise type guiding our implementation. The environment carries \emph{names}
 for the variables currently in scope whilst the computations thread a name-supply
-(a stream of strings) to be used to generate fresh names for bound variables.
+(a stream of strings) to be used to generate fresh names for bound variables
+(here we use \AF{M} for the state monad threading that name supply).
 If the values in the environment had to be computations too, we would not root
 out some faulty implementations e.g a program picking a new name each time a
 variable is mentioned.
-
-Secondly, the fact that the model's computation type is a monad and that this
-poses no problem whatsoever in this framework means it is appropriate for
-handling languages with effects~\cite{moggi1991notions}, or effectful
-semantics e.g. logging the various function calls. Here is the full definition
-of the printer.
 
 \begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
@@ -470,7 +465,40 @@ of the printer.
 \caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
 \end{figure}
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printing}
+Secondly, the fact that the model's computation type is a monad and that this
+poses no problem whatsoever in this framework means it is appropriate for
+handling languages with effects~\cite{moggi1991notions}, or effectful
+semantics e.g. logging the various function calls. Here is the full definition
+of the printer.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingdef}
+
+Because the output type is not scoped in any way, thinning for \AF{Name}s
+(\ARF{th\textasciicircum{}𝓥}) is trivial: we return the same name. The variable
+case (\ARF{var}) is a bit more interesting: after looking up a variable's \AF{Name}
+in the environment, we use \AF{return} to produce the trivial \AF{Printer} constantly
+returning that name.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingvar}
+
+As often, the case for λ-abstraction (\ARF{lam}) is the most interesting one.
+We first use \AF{fresh} to generate a \AF{Name} for the newly-bound variable,
+then run the printer for the body in the environment extended with that fresh
+name and finally build a string combining the name and the body together.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printinglam}
+
+We then have a collection of base cases for the data constructors of type
+\AIC{`Unit} and \AIC{`Bool}. These give rise to constant printers.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingcons}
+
+Finally we have purely structural cases: we run the printers for each of~
+the subparts and put the results together, throwing in some extra parenthesis~
+to guarantee that the result is unambiguous.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingstruct}
+
 
 The fundamental \AF{lemma} of \AR{Semantics} will deliver a printer which needs to be run
 on a \AD{Stream} of distinct \AD{String}s. Our definition of \AF{names} (not
