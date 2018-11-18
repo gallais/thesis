@@ -2,3 +2,4 @@ name: thesis
 depend: standard-library
 include: shared
        , type-scope-semantics.agda
+       , generic-syntax.agda

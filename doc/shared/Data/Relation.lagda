@@ -12,22 +12,37 @@ open import Relation.Unary hiding (U)
 open import Agda.Builtin.Equality
 open import Function
 
-
+\end{code}
+%<*rel>
+\begin{code}
 record Rel (T U : I ─Scoped) : Set₁ where
   constructor mkRel
-  field rel : ∀ i → ∀[ T i ⇒ U i ⇒ const Set ]
+  field rel : ∀ σ → ∀[ T σ ⇒ U σ ⇒ const Set ]
+\end{code}
+%</rel>
+\begin{code}
 open Rel public
 
-record All {T U} {Δ} (𝓡 : Rel T U) Γ (ρ₁ : (Γ ─Env) T Δ) (ρ₂ : (Γ ─Env) U Δ) : Set where
-  constructor packᴿ
-  field lookupᴿ : ∀ {i} k → rel 𝓡 i (lookup ρ₁ k) (lookup ρ₂ k)
-open All public
+private
+  variable
+    σ : I
+
+module _ {T U} {Δ} where
+\end{code}
+%<*all>
+\begin{code}
+  record All (𝓡 : Rel T U) Γ (ρᵀ : (Γ ─Env) T Δ) (ρᵁ : (Γ ─Env) U Δ) : Set where
+    constructor packᴿ
+    field lookupᴿ : (k : Var σ Γ) → rel 𝓡 σ (lookup ρᵀ k) (lookup ρᵁ k)
+\end{code}
+%</all>
+\begin{code}
+  open All public
 
 module _ {T U : I ─Scoped} {𝓡 : Rel T U} where
 
   private
     variable
-      σ : I
       Γ Δ : List I
       ρᵀ σᵀ : (Γ ─Env) T Δ
       ρᵁ σᵁ : (Γ ─Env) U Δ
@@ -45,7 +60,7 @@ module _ {T U : I ─Scoped} {𝓡 : Rel T U} where
   lookupᴿ (ρ ∙ᴿ v) (s k)  = lookupᴿ ρ k
 
   _>>ᴿ_ :  All 𝓡 Γ ρᵀ ρᵁ → All 𝓡 Δ σᵀ σᵁ →
-           All 𝓡 (Γ ++  Δ) (ρᵀ >> σᵀ) (ρᵁ >> σᵁ)
+           All 𝓡 (Γ ++ Δ) (ρᵀ >> σᵀ) (ρᵁ >> σᵁ)
   lookupᴿ (_>>ᴿ_ {Γ} ρᴿ σᴿ) k with split Γ k
   ... | inj₁ k₁ = lookupᴿ ρᴿ k₁
   ... | inj₂ k₂ = lookupᴿ σᴿ k₂

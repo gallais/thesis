@@ -1,9 +1,9 @@
 \chapter{The Simulation Relation}
 
-Thanks to \AF{Semantics}, we have already saved work by not reiterating the same traversals.
-Moreover, this disciplined approach to building models and
-defining the associated evaluation functions can help us refactor
-the proofs of some properties of these semantics.
+Thanks to \AF{Semantics}, we have already saved work by not reiterating the
+same traversals. Moreover, this disciplined approach to building models and
+defining the associated evaluation functions can help us refactor the proofs
+of some properties of these semantics.
 
 Instead of using proof scripts as Benton et al.~(\citeyear{benton2012strongly})
 do, we describe abstractly the constraints the logical relations~\cite{reynolds1983types}
@@ -17,18 +17,59 @@ However it is no mere bureaucracy: the
 result proven here will actually be useful in the next section
 when considering more complex properties.
 
-\section{}
+This first example is describing the relational interpretation of the terms.
+It should give the reader a good introduction to the setup before we take on
+more complexity. The types involved might look a bit scarily abstract but the
+idea is rather simple: we have a \AR{Simulation} between two \AR{Semantics}
+when evaluating a term in related environments yields related values. The bulk
+of the work is to make this intuition formal.
 
-This first example is describing the relational interpretation
-of the terms. It should give the reader a good introduction to
-the setup before we take on more complexity. The types
-involved might look a bit scarily abstract but the idea is rather simple:
-we have a \AR{Simulation} between
-two \AR{Semantics} when evaluating a term in related environments yields
-related values. The bulk of the work is to make this intuition formal.
+\section{Relations Between Scoped Families}
+
+We start by defining what it means to be a relation between two \scoped{\AB{I}}
+families \AB{T} and \AB{U}: at every type \AB{σ} and every context \AB{Γ}, we
+expect to have a relation between (\AB{T}~\AB{σ}~\AB{Γ}) and (\AB{U}~\AB{σ}~\AB{Γ}).
+We use a \AK{record} wrapper for two reasons. First, we define the relations we
+are interested in by copattern-matching thus preventing their eager unfolding by
+Agda; this makes the goals much more readable during interactive development.
+Second, it is easier for Agda to recover \AB{T} and \AB{U} by unification when
+they appear as explicit parameters of a record rather than as applied families
+in the body of the definition.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Relation.tex]{rel}
+\caption{Relation Between \scoped{\AB{I}} Families}
+\end{figure}
+
+If we have a relation for values, we can lift it in a pointwise manner to a relation
+on environment of values. We call this relation transformer \AR{All}. We also define
+it using a \AK{record} wrapper, for the same reasons.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Relation.tex]{all}
+\caption{Relation Between Environments of Values}
+\end{figure}
+
+For virtually every combinator on environments, we have a corresponding combinator
+for \AR{All}: the empty environment \AF{ε} is associated to \AF{εᴿ} the proof that
+two empty environments are always related, to the environment extension  \AF{\_∙\_}
+corresponds the relation on environment extension \AF{\_∙ᴿ\_} which provided takes a
+proof that two environments are related and that two values are related and returns
+the proof that the environments each extended with the appropriate value are both
+related.
+
+Once we have all of these definitions, we can spell out what it means to simulate
+a semantics with another.
+
+\section{Simulation Constraints}
 
 The evidence that we have a \AR{Simulation} between two \AR{Semantics} is
 packaged in a record indexed by the semantics as well as two relations.
-We call \AF{RModel} (for \emph{R}elational \emph{Model}) the type of these
-relations; the first one (\AB{𝓥\textasciicircum{}R}) relates values in the respective environments
-and the second one (\AB{𝓒\textasciicircum{}R}) describes simulation for computations.
+We call \AF{Rel} the type of these relations; the first one (\AB{𝓥ᴿ})
+relates values in the respective environments and the second one (\AB{𝓒ᴿ})
+describes simulation for computations.
+
+
+
+
+\section{Fundamental Lemma of Simulations}

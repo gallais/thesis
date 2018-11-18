@@ -1,40 +1,6 @@
 
 
-\section{Proving Properties of Semantics}
-\label{properties}
 
-Thanks to \AF{Semantics}, we have already saved work by not reiterating the same traversals.
-Moreover, this disciplined approach to building models and
-defining the associated evaluation functions can help us refactor
-the proofs of some properties of these semantics.
-
-Instead of using proof scripts as Benton et al.~(\citeyear{benton2012strongly})
-do, we describe abstractly the constraints the logical relations~\cite{reynolds1983types}
-defined on computations (and environment values) have to respect to ensure
-that evaluating a term in related environments
-produces related outputs. This gives us a generic framework to
-state and prove, in one go, properties about all of these semantics.
-
-Our first example of such a framework will stay simple on purpose.
-However it is no mere bureaucracy: the
-result proven here will actually be useful in the next section
-when considering more complex properties.
-
-\subsection{The Simulation Relation}
-
-This first example is describing the relational interpretation
-of the terms. It should give the reader a good introduction to
-the setup before we take on more complexity. The types
-involved might look a bit scarily abstract but the idea is rather simple:
-we have a \AR{Simulation} between
-two \AR{Semantics} when evaluating a term in related environments yields
-related values. The bulk of the work is to make this intuition formal.
-
-The evidence that we have a \AR{Simulation} between two \AR{Semantics} is
-packaged in a record indexed by the semantics as well as two relations.
-We call \AF{RModel} (for \emph{R}elational \emph{Model}) the type of these
-relations; the first one (\AB{𝓥^R}) relates values in the respective environments
-and the second one (\AB{𝓒^R}) describes simulation for computations.
 \AgdaHide{
 \begin{code}
 record RModel {ℓ^E ℓ^M : Level} (𝓥 : Model ℓ^E) (𝓒 : Model ℓ^M) (ℓ^R : Level) : Set (ℓ^E ⊔ ℓ^M ⊔ L.suc ℓ^R) where

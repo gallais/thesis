@@ -7,6 +7,7 @@ AGDA_FILES:=\
   shared/Stdlib.lagda \
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
+  shared/Data/Relation.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Base.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.lagda \
   type-scope-semantics.agda/Syntax/Type.lagda \
@@ -25,6 +26,7 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda \
   type-scope-semantics.agda/Semantics/CPS/CBN.lagda \
   type-scope-semantics.agda/Semantics/CPS/CBV.lagda \
+  generic-syntax.agda/Generic/Syntax.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -95,6 +97,12 @@ latex-agda-output/type-scope-semantics.agda/%.tex: type-scope-semantics.agda/%.l
 	@mkdir -p $(dir $@)
 	${AGDA} --latex $< \
 	        --latex-dir=latex-agda-output/type-scope-semantics.agda/ \
+		> $(basename $@).log
+
+latex-agda-output/generic-syntax.agda/%.tex: generic-syntax.agda/%.lagda
+	@mkdir -p $(dir $@)
+	${AGDA} --latex $< \
+	        --latex-dir=latex-agda-output/generic-syntax.agda/ \
 		> $(basename $@).log
 
 clean:
