@@ -8,6 +8,7 @@ AGDA_FILES:=\
   shared/Data/Var.lagda \
   shared/Data/Environment.lagda \
   shared/Data/Relation.lagda \
+  shared/Relation/Binary/PropositionalEquality/Extra.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Base.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.lagda \
   type-scope-semantics.agda/Syntax/Type.lagda \
@@ -26,6 +27,8 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda \
   type-scope-semantics.agda/Semantics/CPS/CBN.lagda \
   type-scope-semantics.agda/Semantics/CPS/CBV.lagda \
+  type-scope-semantics.agda/Properties/Simulation/Specification.lagda \
+  type-scope-semantics.agda/Properties/Simulation/Instances.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))

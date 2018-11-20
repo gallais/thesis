@@ -65,11 +65,103 @@ a semantics with another.
 
 The evidence that we have a \AR{Simulation} between two \AR{Semantics} is
 packaged in a record indexed by the semantics as well as two relations.
-We call \AF{Rel} the type of these relations; the first one (\AB{𝓥ᴿ})
-relates values in the respective environments and the second one (\AB{𝓒ᴿ})
-describes simulation for computations.
+The first one (\AB{𝓥ᴿ}) relates values in the respective environments
+and the second one (\AB{𝓒ᴿ}) describes simulation for computations.
 
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{simulation}
 
+The set of simulation constraints is in one-to-one correspondance with that of
+semantical constructs. We start with value thinnings: provided two values are
+related, their respective thinnings should still be related.
 
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{thV}
+
+Our other constraints are going to heavily feature \AB{𝓒ᴿ} applied to one term evaluated
+twice: once by \AB{𝓢ᴬ} with the environment of values \AB{ρᴬ} and once by \AB{𝓢ᴮ} with
+\AB{ρᴮ}. To make the types more readable, we introduce an intermediate definition \AB{𝓡}
+making this pattern explicit.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{crel}
+
+The relational counterpart of \AIC{`var} and \ARF{var} is the first field to make use
+of \AB{𝓡}: provided that \AB{ρᴬ} and \AB{ρᴮ} carry values related by \AB{𝓥ᴿ}, the result
+of evaluating the variable \AB{v} in each respectively should yield computations related
+by \AB{𝓒ᴿ}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{var}
+
+Value constructors in the language follow a similar pattern: provided that the evaluation
+environment are related, we expect the computations to be related too.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{base}
+
+Then come the structural cases: for language constructs like \AIC{`app} and \AIC{`ifte}
+whose subterms live in the same context as the overall term, the constraints are purely
+structural. Provided that the evaluation environments are related, and that the evaluation
+of the subterms in each environment respectively are related then the evaluations of the
+overall terms should also yield related results.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{struct}
+
+Finally, we reach the most interesting case. The semantics attached to the body of a
+\AIC{`lam} is expressed in terms of a Kripke function space. As a consequence, the
+relational semantics will need a relational notion of Kripke function space (\AF{Kripkeᴿ})
+to spell out the appropriate simulation constraint. This relational Kripke function space
+states that in any thinning of the evaluation context and provided two related inputs,
+the evaluation of the body in each thinned environment extended with the appropriate
+value should yield related computations.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{rkripke}
+
+This allows us to describe the constraint for \AIC{`lam}: provided related environments
+of values, if we have a relational Kripke function space for the body of the \AIC{`lam}
+then both evaluations should yield related results.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{lam}
+
+This specification is only useful if it is accompanied by a a fundamental lemma of
+simulations stating that the evaluation of a term on related inputs yields related
+outputs.
 
 \section{Fundamental Lemma of Simulations}
+
+Given two Semantics \AB{𝓢ᴬ} and \AB{𝓢ᴮ} in simulation with respect to relations
+\AB{𝓥ᴿ} for values and \AB{𝓒ᴿ} for computations, we have that for any term \AB{t}
+and environments \AB{ρᴬ} and \AB{ρᴮ}, if the two environments are \AB{𝓥ᴿ}-related
+in a pointwise manner then the semantics associated to \AB{t} by \AB{𝓢ᴬ} using \AB{ρᴬ}
+is \AB{𝓒ᴿ}-related to the one associated to \AB{t} by \AB{𝓢} using \AB{ρᴮ}.
+
+In a manner reminiscent of our proof of the fundamental lemma of \AR{Semantics}, we
+introduce a \AM{Fundamental} module parametrised by a record packing the evidence
+that two semantics are in \AR{Simulation}. This allows us to bring all of the
+corresponding relational counterpart of term constructors into scope by \AK{open}ing
+the record. The traversal then uses them to combine the induction hypotheses arising
+structurally.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{fundamental}
+
+
+
+\section{Syntactic Traversals are Extensional}
+
+A first corollary of the fundamental lemma of simulations is the fact that semantics
+arising from a \AR{Syntactic} (cf.~\cref{syntactic}) definition are extensional. That
+is to say that the evaluation function yields propositionally equal values provided
+extensionally equal environments of values.
+
+Under the assumption that \AB{Syn} is a \AR{Syntactic} instance, we can define the
+corresponding \AR{Semantics} \AB{𝓢} by setting
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{synsem}.
+Using \AF{Eqᴿ} the \AR{Rel} defined as the pontwise lifting of propositional equality,
+we can make our earlier claim formal and prove it. All the constraints are discharged
+either by reflexivity or by using congruence to combine various hypotheses.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{syn-ext}
+
+Because the \AR{Simulation} statement is not necessarily extremely illuminating, we spell
+out the type of the corollary to clarify what we just proved: whenever two environments
+agree on each variable, evaluating a term with either of them produces equal results.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{synext}
+
+\section{The PER for βιξη-Values is Closed under Evaluation}
