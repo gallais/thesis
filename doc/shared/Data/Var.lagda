@@ -9,7 +9,7 @@
 module Data.Var where
 
 open import Data.Sum hiding (map)
-open import Data.List.Base hiding ([_])
+open import Data.List.Base hiding ([_]; _─_)
 open import Data.List.All using (All ; _∷_)
 open import Relation.Unary
 open import Function
@@ -39,7 +39,6 @@ module _ {I : Set} where
 \end{code}
 %</var>
 \begin{code}
-
  infixl 3 _─_
  _─_ : {i : I} (Γ : List I) → Var i Γ → List I
  _ ∷ Γ ─ z   = Γ
