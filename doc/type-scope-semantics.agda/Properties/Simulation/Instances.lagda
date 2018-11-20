@@ -1,7 +1,7 @@
 \begin{code}
 module Properties.Simulation.Instances where
 
-open import Data.Var
+open import Data.Var hiding (_<$>_)
 open import Data.Environment
 open import Data.List.Base using (List; []; _∷_)
 open import Data.Relation
@@ -51,39 +51,40 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
   syn-ext = Fundamental.lemma Syn-ext
 \end{code}
 %</synext>
-open import Syntax hiding (_<$>_)
-open import Syntax.Normal.Weakening
-open import Semantics.Environment as Env hiding (refl ; trans)
-open import Semantics.Specification using (module Semantics)
-open import Semantics.Instances
-open import Properties.Relation
-open import Properties.Relation.βιξη
-open import Properties.Synchronisable.Specification
 
-open import Data.Unit
-open import Data.Product
-open import Function
-open import Relation.Binary.PropositionalEquality
+%<*varterm>
+\begin{code}
+VarTermᴿ : Rel Var Term
+rel VarTermᴿ σ v t = `var v ≡ t
+\end{code}
+%</varterm>
 
-SynchronisableRenamingSubstitution :
-  Synchronisable 𝓢^Renaming 𝓢^Substitution (mkRModel (λ v t → `var v ≡ t)) Equality
-SynchronisableRenamingSubstitution =
-  record
-    { 𝓔^R‿wk  = λ ren ρ^R → pack^R $ cong (rename ren) ∘ lookup^R ρ^R
-    ; R⟦var⟧    = λ v ρ^R → lookup^R ρ^R v
-    ; R⟦$⟧      = cong₂ _`$_
-    ; R⟦λ⟧      = λ r → cong `λ (r _ refl)
-    ; R⟦⟨⟩⟧     = refl
-    ; R⟦tt⟧     = refl
-    ; R⟦ff⟧     = refl
-    ; R⟦ifte⟧   = λ eqb eql → cong₂ (uncurry `ifte) (cong₂ _,_ eqb eql)
-    }
+\begin{code}
+private
+  variable
+    σ : Type
+    Γ Δ : List Type
+\end{code}
 
-RenamingIsASubstitution :
-  {Γ Δ : Context} {σ : Type} (t : Γ ⊢ σ) (ρ : Renaming Γ Δ) →
-  rename ρ t ≡ substitute t (`var <$> ρ)
-RenamingIsASubstitution t ρ = corollary t (pack^R $ λ _ → refl)
-  where corollary = Fundamental.lemma SynchronisableRenamingSubstitution 
+%<*renissub>
+\begin{code}
+RenIsSub : Simulation Renaming Substitution VarTermᴿ Eqᴿ
+RenIsSub .th^𝓥ᴿ  = λ ρ → cong (λ t → th^Term t ρ)
+RenIsSub .varᴿ   = λ ρᴿ v → lookupᴿ ρᴿ v
+RenIsSub .lamᴿ   = λ ρᴿ b kr → cong `lam (kr extend refl)
+RenIsSub .appᴿ   = λ ρᴿ f t → cong₂ `app
+RenIsSub .ifteᴿ  = λ ρᴿ b l r → cong₃ `ifte
+RenIsSub .oneᴿ   = λ ρᴿ → refl
+RenIsSub .ttᴿ    = λ ρᴿ → refl
+RenIsSub .ffᴿ    = λ ρᴿ → refl
+\end{code}
+%</renissub>
+%<*renassub>
+\begin{code}
+ren-as-sub : (t : Term σ Γ) (ρ : Thinning Γ Δ) → th^Term t ρ ≡ sub (`var <$> ρ) t
+ren-as-sub t ρ = Fundamental.lemma RenIsSub (packᴿ (λ v → refl)) t
+\end{code}
+%</renassub>
 
 ifteRelNorm :
   let open Semantics βιξη.Normalise in

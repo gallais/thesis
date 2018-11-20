@@ -29,11 +29,17 @@ Syn^Ren .var   = `var
 \end{code}
 %</synren>
 
+
+%<*semren>
+\begin{code}
+Renaming : Semantics Var Term
+Renaming = Fundamental.syntactic Syn^Ren
+\end{code}
+%</semren>
 %<*ren>
 \begin{code}
 th^Term : Thinnable (Term σ)
-th^Term t ρ =  let Sem^Ren = Fundamental.syntactic Syn^Ren
-               in Fundamental.lemma Sem^Ren ρ t
+th^Term t ρ = Fundamental.lemma Renaming ρ t
 \end{code}
 %</ren>
 %<*synsub>
@@ -44,10 +50,15 @@ Syn^Sub .th^𝓣  = th^Term
 Syn^Sub .var    = id
 \end{code}
 %</synsub>
+%<*semsub>
+\begin{code}
+Substitution : Semantics Term Term
+Substitution = Fundamental.syntactic Syn^Sub
+\end{code}
+%</semsub>
 %<*sub>
 \begin{code}
 sub : (Γ ─Env) Term Δ → Term σ Γ → Term σ Δ
-sub ρ t =  let Sem^Sub = Fundamental.syntactic Syn^Sub
-           in Fundamental.lemma Sem^Sub ρ t
+sub ρ t = Fundamental.lemma Substitution ρ t
 \end{code}
 %</sub>
