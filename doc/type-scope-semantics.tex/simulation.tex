@@ -197,4 +197,70 @@ have mapped the \AIC{`var} constructor.
 \section{The PER for βιξη-Values is Closed under Evaluation}
 
 Now that we are a bit more used to the simulation framework and simulation lemmas,
-we can look at a more complex examples.
+we can look at a more complex example: the simulation lemma relating normalisation
+by evaluation's eval function to itself. This may seem bureaucratic but it is crucial:
+the model definition uses the host language's function space which contains more functions
+than simply the ones obtained by evaluating a simply-typed $λ$-term. These exotic functions
+have undesirable behaviours and need to be ruled out to ensure that normalisation has good
+properties. This is done by defining a Partial Equivalence Relation (PER) (\cite{mitchell1996foundations})
+on the model which is to say a relation which is symmetric and transitive but may
+not be reflexive for all elements in its domain. The elements equal to themselves will be
+guaranteed to be well behaved. We show that given an environment of values PER-related to
+themselves, the evaluation of a $λ$-term produces a computation equal to itself too.
+
+
+We start by defining the PER for the model. It is constructed by induction on the type
+and ensures that terms which behave the same extensionally are declared equal. Values at
+base types are concrete data: either trivial for values of type \AIC{`Unit} or normal
+forms for values of type \AIC{`Bool}. They are considered equal when they are effectively
+syntactically the same, i.e. propositionally equal. Functions on the other hand are
+declared equal whenever equal inputs map to equal outputs.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{per}
+
+On top of being a PER (i.e. symmetric and transitive), we can prove by a simple case analysis
+on the type that this relation is also stable under thinning for \AF{Model} values.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{thPER}
+
+The interplay of reflect and reify with this notion of equality has to be described
+in one go because of their mutual definition. It confirms that \AF{PER} is an appropriate
+notion of semantic equality: \AF{PER}-related values are reified to propositionally
+equal normal forms whilst propositionally equal neutral terms are reflected
+to \AF{PER}-related values.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{reifyreflect}
+
+Just like in the definition of the evaluation function, conditional branching is the
+interesting case. Provided a pair of boolean values (i.e. normal forms of type
+\AIC{`Bool}) which are PER-equal (i.e. syntactically equal) and two pairs of PER-equal
+\AB{σ}-values corresponding respectively to the left and right branches of the two
+if-then-else, we can prove that the two semantical if-then-else produce PER-equal values.
+Because of the equality constraint on the booleans, Agda allows us to only write the
+three cases we are interested in: all the other ones are trivially impossible.
+
+In case the booleans are either \AIC{`tt} or \AIC{`ff}, we can immediately conclude
+by invoking one of the hypotheses. Otherwise we remember that the evaluation function
+produces a value by reflecting the neutral term obtained after reifying both branches.
+We can play the same game but at the relational level this time and we obtain precisely
+the proof we wanted.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{ifte}
+
+This provides us with all the pieces necessary to prove our simulation lemma. The relational
+counterpart of \AIC{`lam} is trivial as the induction hypothesis corresponds precisely to
+the PER-notion of equality on functions. Similarly the case for \AIC{`app} is easily discharged:
+the PER-notion of equality for functions is precisely the strong induction hypothesis we need
+to be able to make use of the assumption that the respective function's arguments are PER-equal.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{nbe}
+
+As a corollary, we can deduce that evaluating a term in two environments related pointwise
+by \AF{PER} yields two semantic objects themselves related by \AF{PER}. Which, once reified,
+give us two equal terms.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{eval}\todo{add eval}
+
+
+We can now move on to the more complex example of a proof framework built generically
+over our notion of \AF{Semantics}

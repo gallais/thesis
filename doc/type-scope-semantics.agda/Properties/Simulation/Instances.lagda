@@ -7,6 +7,7 @@ open import Data.List.Base using (List; []; _∷_)
 open import Data.Relation
 open import Syntax.Type
 open import Syntax.Calculus
+open import Syntax.Normal.Thinnable
 open import Semantics.Specification hiding (module Fundamental)
 open Semantics.Specification.Fundamental renaming (lemma to eval)
 open import Semantics.Syntactic.Specification
@@ -15,6 +16,7 @@ open import Semantics.Syntactic.Instances
 open import Properties.Simulation.Specification
 open import Relation.Binary.PropositionalEquality.Extra
 
+open import Function
 open Simulation
 
 module _ 𝓣 (Syn : Syntactic 𝓣) where
@@ -37,7 +39,7 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
   Syn-ext : Simulation 𝓢 𝓢 Eqᴿ Eqᴿ
   Syn-ext .th^𝓥ᴿ  = λ ρ eq → cong (λ t → th^𝓣 t ρ) eq
   Syn-ext .varᴿ   = λ ρᴿ v → cong var (lookupᴿ ρᴿ v)
-  Syn-ext .lamᴿ   = λ ρᴿ b kr → cong `lam (kr extend refl)
+  Syn-ext .lamᴿ   = λ ρᴿ b bᴿ → cong `lam (bᴿ extend refl)
   Syn-ext .appᴿ   = λ ρᴿ f t → cong₂ `app
   Syn-ext .ifteᴿ  = λ ρᴿ b l r → cong₃ `ifte
   Syn-ext .oneᴿ   = λ ρᴿ → refl
@@ -68,48 +70,89 @@ private
 
 %<*renissub>
 \begin{code}
-RenIsSub : Simulation Renaming Substitution VarTermᴿ Eqᴿ
-RenIsSub .th^𝓥ᴿ  = λ ρ → cong (λ t → th^Term t ρ)
-RenIsSub .varᴿ   = λ ρᴿ v → lookupᴿ ρᴿ v
-RenIsSub .lamᴿ   = λ ρᴿ b kr → cong `lam (kr extend refl)
-RenIsSub .appᴿ   = λ ρᴿ f t → cong₂ `app
-RenIsSub .ifteᴿ  = λ ρᴿ b l r → cong₃ `ifte
-RenIsSub .oneᴿ   = λ ρᴿ → refl
-RenIsSub .ttᴿ    = λ ρᴿ → refl
-RenIsSub .ffᴿ    = λ ρᴿ → refl
+RenSub^Sim : Simulation Renaming Substitution VarTermᴿ Eqᴿ
+RenSub^Sim .th^𝓥ᴿ  = λ ρ → cong (λ t → th^Term t ρ)
+RenSub^Sim .varᴿ   = λ ρᴿ v → lookupᴿ ρᴿ v
+RenSub^Sim .lamᴿ   = λ ρᴿ b bᴿ → cong `lam (bᴿ extend refl)
+RenSub^Sim .appᴿ   = λ ρᴿ f t → cong₂ `app
+RenSub^Sim .ifteᴿ  = λ ρᴿ b l r → cong₃ `ifte
+RenSub^Sim .oneᴿ   = λ ρᴿ → refl
+RenSub^Sim .ttᴿ    = λ ρᴿ → refl
+RenSub^Sim .ffᴿ    = λ ρᴿ → refl
 \end{code}
 %</renissub>
 %<*renassub>
 \begin{code}
 ren-as-sub : (t : Term σ Γ) (ρ : Thinning Γ Δ) → th^Term t ρ ≡ sub (`var <$> ρ) t
-ren-as-sub t ρ = Fundamental.lemma RenIsSub (packᴿ (λ v → refl)) t
+ren-as-sub t ρ = Fundamental.lemma RenSub^Sim (packᴿ (λ v → refl)) t
 \end{code}
 %</renassub>
 
-ifteRelNorm :
-  let open Semantics βιξη.Normalise in
-  {Γ : Context} {σ : Type} {b^A b^B : Γ βιξη.⊨ `Bool} {l^A l^B r^A r^B : Γ βιξη.⊨ σ} →
-  related _≣_ b^A b^B → related _≣_ l^A l^B → related _≣_ r^A r^B →
-  related _≣_ (⟦ifte⟧ b^A l^A r^A) (⟦ifte⟧ b^B l^B r^B)
-ifteRelNorm {b^A = `tt}       refl l^R r^R = l^R
-ifteRelNorm {b^A = `ff}       refl l^R r^R = r^R
-ifteRelNorm {b^A = `neu _ ne} refl l^R r^R =
-  reflect^≣ _ (cong₂ (`ifte ne) (reify^≣ _ l^R) (reify^≣ _ r^R))
+\begin{code}
+open import Semantics.NormalisationByEvaluation.BetaIotaXiEta
 
-SynchronisableNormalise :  Synchronisable βιξη.Normalise βιξη.Normalise _≣_ _≣_
-SynchronisableNormalise =
-  record  { 𝓔^R‿wk  = λ ren ρ^R → pack^R $ wk^≣ ren ∘ lookup^R ρ^R
-          ; R⟦var⟧   = λ v ρ^R → lookup^R ρ^R v
-          ; R⟦$⟧     = λ f → f Env.refl
-          ; R⟦λ⟧     = λ r → r
-          ; R⟦⟨⟩⟧    = tt
-          ; R⟦tt⟧    = refl
-          ; R⟦ff⟧    = refl
-          ; R⟦ifte⟧  = ifteRelNorm
-          }
 
-refl^βιξη :  {Γ Δ : Context} {σ : Type} (t : Γ ⊢ σ)
-             {ρ^A ρ^B : Var Γ ⇒[ βιξη._⊨_ ] Δ} (ρ^R : `∀[ _≣_ ] ρ^A ρ^B) →
-             related _≣_ (βιξη.eval t ρ^A) (βιξη.eval t ρ^B)
-refl^βιξη t ρ^R = lemma SynchronisableNormalise t ρ^R where
-  open Properties.Synchronisable.Specification.Fundamental
+\end{code}
+%<*per>
+\begin{code}
+PER : Rel Model Model
+rel PER `Unit     t u  = t ≡ u
+rel PER `Bool     t u  = t ≡ u
+rel PER (σ `→ τ)  f g  = ∀ {Δ} (ρ : Thinning _ Δ) {t u} →
+                         rel PER σ t u → rel PER τ (f ρ t) (g ρ u)
+\end{code}
+%</per>
+\begin{code}
+
+\end{code}
+%<*reifyreflect>
+\begin{code}
+mutual
+
+  reflectᴿ : ∀ σ {t u : Ne σ Γ} → t ≡ u → rel PER σ (reflect σ t) (reflect σ u)
+  reflectᴿ `Unit     _ = refl
+  reflectᴿ `Bool     t = cong (`neu `Bool) t
+  reflectᴿ (σ `→ τ)  f = λ ρ t → reflectᴿ τ (cong₂ `app (cong _ f) (reifyᴿ σ t))
+
+  reifyᴿ : ∀ σ {V W : Model σ Γ} → rel PER σ V W → reify σ V ≡ reify σ W
+  reifyᴿ `Unit     EQ = refl
+  reifyᴿ `Bool     EQ = EQ
+  reifyᴿ (σ `→ τ)  EQ = cong `lam (reifyᴿ τ (EQ extend (reflectᴿ σ refl)))
+\end{code}
+%</reifyreflect>
+%<*thPER>
+\begin{code}
+th^PER : ∀ σ {T U} → rel PER σ T U →
+         ∀ (ρ : Thinning Γ Δ) → rel PER σ (th^Model σ T ρ) (th^Model σ U ρ)
+th^PER `Unit     EQ ρ = refl
+th^PER `Bool     EQ ρ = cong (λ t → th^Nf t ρ) EQ
+th^PER (σ `→ τ)  EQ ρ = λ σ → EQ (select ρ σ)
+\end{code}
+%</thPER>
+\begin{code}
+module _ {σ Γ} {L R S T : Model σ Γ} where
+\end{code}
+%<*ifte>
+\begin{code}
+  IFTEᴿ : (B C : Model `Bool Γ) → rel PER `Bool B C →
+          rel PER σ L S → rel PER σ R T → rel PER σ (IFTE B L R) (IFTE C S T)
+  IFTEᴿ `tt         `tt         _     lᴿ rᴿ = lᴿ
+  IFTEᴿ `ff         `ff         _     lᴿ rᴿ = rᴿ
+  IFTEᴿ (`neu _ t)  (`neu _ t)  refl  lᴿ rᴿ =
+    reflectᴿ σ (cong₂ (`ifte t) (reifyᴿ σ lᴿ) (reifyᴿ σ rᴿ))
+\end{code}
+%</ifte>
+%<*nbe>
+\begin{code}
+Eval^Sim : Simulation Eval Eval PER PER
+Eval^Sim .th^𝓥ᴿ  = λ ρ EQ → th^PER _ EQ ρ
+Eval^Sim .varᴿ   = λ ρᴿ v → lookupᴿ ρᴿ v
+Eval^Sim .lamᴿ   = λ ρᴿ b bᴿ → bᴿ
+Eval^Sim .appᴿ   = λ ρᴿ f t fᴿ tᴿ → fᴿ (pack id) tᴿ
+Eval^Sim .ifteᴿ  = λ ρᴿ b l r → IFTEᴿ _ _
+Eval^Sim .oneᴿ   = λ ρᴿ → refl
+Eval^Sim .ttᴿ    = λ ρᴿ → refl
+Eval^Sim .ffᴿ    = λ ρᴿ → refl
+\end{code}
+%</nbe>
+

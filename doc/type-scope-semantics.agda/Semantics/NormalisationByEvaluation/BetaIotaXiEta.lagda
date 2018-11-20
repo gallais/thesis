@@ -14,7 +14,7 @@ open import Function
 data R^βιξη : Type → Set where
   `Bool : R^βιξη `Bool
 
-open import Syntax.Normal R^βιξη
+open import Syntax.Normal R^βιξη public
 open import Syntax.Normal.Thinnable
 open import Semantics.Specification
 
