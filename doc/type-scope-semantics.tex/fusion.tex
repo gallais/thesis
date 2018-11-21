@@ -1,11 +1,90 @@
-\chapter{Fusions of Evaluations}
+\chapter{The Fusion Relation}
 
-When studying the meta-theory of a calculus, one systematically
-needs to prove fusion lemmas for various semantics. For instance,
-Benton et al.~(\citeyear{benton2012strongly}) prove six such lemmas
-relating renaming, substitution and a typeful semantics embedding
-their calculus into Coq. This observation naturally led us to
-defining a fusion framework describing how to relate three semantics:
-the pair we sequence and their sequential composition. The fundamental
-lemma we prove can then be instantiated six times
-to derive the corresponding corollaries.
+When studying the meta-theory of a calculus, one systematically needs to prove
+fusion lemmas for various semantics. For instance, Benton et al.~(\citeyear{benton2012strongly})
+prove six such lemmas relating renaming, substitution and a typeful semantics
+embedding their calculus into Coq. This observation naturally lead us to
+defining a fusion framework describing how to relate three semantics: the pair
+we sequence and their sequential composition. The fundamental lemma we prove
+can then be instantiated six times to derive the corresponding corollaries.
+
+\section{Fusion Constraints}
+
+The evidence that \AB{𝓢ᴬ}, \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} are such that \AB{𝓢ᴬ} followed
+by \AB{𝓢ᴮ} is equivalent to \AB{𝓢ᴬᴮ} (e.g. \AF{Substitution} followed by \AF{Renaming}
+can be reduced to \AF{Substitution}) is packed in a record \AR{Fusion} indexed by the
+three semantics but also three relations. The first one (\AB{𝓥ᴿ}) states what it means
+for two environment values of \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} respectively to be related. The
+second one (\AB{𝓔ᴿ}) characterises the triples of environments (one for each one of
+the semantics) which are compatible. The last one (\AB{𝓒ᴿ}) relates computations
+obtained as results of running \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} respectively.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{fusion}
+
+As before, most of the fields of this record describe what structure these relations
+ceed to have. However, we start with something slightly different: given that we are
+planing to run the \AR{Semantics} \AB{𝓢ᴮ} \emph{after} having run \AB{𝓢ᴬ}, we need
+two components: a way to extract a term from an \AB{𝓢ᴬ} and a way to manufacture a
+dummy \AB{𝓢ᴬ} value when going under a binder. Our first two fields are therefore:
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{reifyvar0}
+
+Then come two constraints dealing with the relations talking about evaluation environments.
+\ARF{\_∙ᴿ\_} tells us how to extend related environments: one should be able to push related
+values onto the environments for \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} whilst merely extending the one
+for \AB{𝓢ᴬ} with the token value \ARF{var0ᴬ}.
+
+\ARF{th\textasciicircum{}𝓔ᴿ} guarantees that it is always possible to thin the environments
+for \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} in a \AB{𝓔ᴿ} preserving manner.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{thV}
+
+Then we have the relational counterpart of the various term constructors. We can once
+more introduce an extra definition \AF{𝓡} which will make the type of the combinators
+defined later on clearer. \AF{𝓡} relates at a given type a term and three environments
+by stating that the computation one gets by sequentially evaluating the term in the first
+and then the second environment is related to the one obtained by directly evaluating
+the term in the third environment. Note the use of \ARF{reifyᴬ} to recover a \AD{Term}
+from a computation in \AB{𝓒ᴬ} before using the second evaluation function \AF{evalᴮ}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{crel}
+
+As with the previous section, only a handful of these combinators are out
+of the ordinary. We will start with the \AIC{`var} case. It states that
+fusion indeed happens when evaluating a variable using related environments.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{var}
+
+Just like for the simulation relation, the relational counterpart of value constructors
+in the language state that provided that the evaluation environment are related,
+we expect the computations to be related too.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{base}
+
+Similarly, we have purely structural constraints for term constructs which have purely
+structural semantical counterparts. For \AIC{`app} and \AIC{`ifte}, provided that the
+evaluation environments are related and that the evaluation of the subterms in each
+environment respectively are related then the evaluations of the overall terms should
+also yield related results.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{struct}
+
+Lastly, the \AIC{`lam}-case puts some rather strong restrictions on the way the $λ$-abstraction's
+body may be used by \AB{𝓢ᴬ}: we assume it is evaluated in an environment thinned by one variable
+and extended using \ARF{var0ᴬ}. But it is quite natural to have these restrictions: given that
+\ARF{reifyᴬ} quotes the result back, we are expecting this type of evaluation in an extended
+context (i.e. under one lambda). And it turns out that this is indeed enough for all of our examples.
+The evaluation environments used by the semantics \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} on the other hand can
+be arbitrarily thinned before being extended with related values to be substituted for the
+variable bound by the \AIC{`lam}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{lam}
+
+\section{Fundamental Lemma of Fusions}
+
+As with simulation, we measure the utility of this framework by the way we can
+prove its fundamental lemma and then obtain useful corollaries. Once again,
+having carefully identified what the constraints should be, proving the fundamental
+lemma is not a problem.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{fundamental}

@@ -107,8 +107,8 @@ module Fundamental (𝓢ᴿ : Simulation 𝓢ᴬ 𝓢ᴮ 𝓥ᴿ 𝓒ᴿ) where
   lemma : All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ t → 𝓡 σ ρᴬ ρᴮ t
   lemma ρᴿ (`var v)       = varᴿ ρᴿ v
   lemma ρᴿ (`app f t)     = appᴿ ρᴿ f t (lemma ρᴿ f) (lemma ρᴿ t)
-  lemma ρᴿ (`lam b)       = lamᴿ ρᴿ b $ λ ren uᴿ →
-                            lemma ((th^𝓥ᴿ ren <$>ᴿ ρᴿ) ∙ᴿ uᴿ) b
+  lemma ρᴿ (`lam b)       = lamᴿ ρᴿ b $ λ ren vᴿ →
+                            lemma ((th^𝓥ᴿ ren <$>ᴿ ρᴿ) ∙ᴿ vᴿ) b
   lemma ρᴿ `one           = oneᴿ ρᴿ
   lemma ρᴿ `tt            = ttᴿ ρᴿ
   lemma ρᴿ `ff            = ffᴿ ρᴿ
