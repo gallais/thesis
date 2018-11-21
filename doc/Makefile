@@ -50,6 +50,7 @@ THESIS_DEPENDENCIES:=\
   latex/type-scope-semantics.tex/program-conclusion.tex \
   latex/type-scope-semantics.tex/simulation.tex \
   latex/type-scope-semantics.tex/fusion.tex \
+  latex/type-scope-semantics.tex/proof-conclusion.tex \
   latex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
 

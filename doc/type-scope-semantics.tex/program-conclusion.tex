@@ -1,4 +1,5 @@
 \chapter{Conclusion}
+\label{chapter:program-conclusion}
 
 \section{Summary}
 
@@ -32,6 +33,72 @@ taking an environment of values, a term and returning a computation.
 Thinning, substitution, normalisation by evaluation, printing with names, and
 various continuation passing style translations are all instances of this
 fundamental lemma.
+
+\section{Related Work}
+
+This part of the work which focuses on programming and not (yet!) on proving,
+can be fully replicated in Haskell.
+% and a translation of the definitions is available in the paper's repository~\cite{repo}
+The subtleties of working with dependent types in Haskell~\cite{lindley2014hasochism}
+are outside the scope of this paper.
+
+If the tagless and typeful normalisation by evaluation procedure derived in Haskell
+from our Semantics framework is to the best of our knowledge the first of its kind,
+Danvy, Keller and Puech have achieved a similar goal in OCaml~(\citeyear{danvytagless}).
+But their formalisation uses parametric higher order abstract syntax~\cite{chlipala2008parametric}
+freeing them from having to deal with variable binding, contexts and use models à
+la Kripke at the cost of using a large encoding. However we find scope safety
+enforced at the type level to be a helpful guide when formalising complex
+type theories. It helps us root out bugs related to fresh name generation,
+name capture or conversion from de Bruijn levels to de Bruijns indices.
+
+This construction really shines in a simply typed setting but it is not
+limited to it: we have successfully used an analogue of our Semantics
+framework to enforce scope safety when implementing the expected traversals
+(renaming, substitution, untyped normalisation by evaluation and printing
+with names) for the untyped λ-calculus (for which the notion of type safety
+does not make sense) or Martin-Löf type theory. Apart from NbE (which relies
+on a non strictly-positive datatype), all of these traversals are total.
+
+This work is at the intersection of two traditions: the formal treatment
+of programming languages and the implementation of embedded Domain Specific
+Languages (eDSL)~\cite{hudak1996building} both require the designer to
+deal with name binding and the associated notions of renaming and substitution
+but also partial evaluation~\cite{danvy1999type}, or even printing when
+emitting code or displaying information back to the user~\cite{wiedijk2012pollack}.
+The mechanisation of a calculus in a \emph{meta language} can use either
+a shallow or a deep embedding~\cite{svenningsson2013combining,gill2014domain}.
+
+
+The well-scoped and well typed final encoding described by Carette, Kiselyov,
+and Shan~(\citeyear{carette2009finally}) allows the mechanisation of a calculus in
+Haskell or OCaml by representing terms as expressions built up from the
+combinators provided by a ``Symantics''. The correctness of the encoding
+relies on parametricity~\cite{reynolds1983types} and although there exists
+an ongoing effort to internalise parametricity~\cite{bernardy2013type} in
+Type Theory, this puts a formalisation effort out of the reach of all the
+current interactive theorem provers.
+
+Because of the strong restrictions on the structure our models may have,
+we cannot represent all the interesting traversals imaginable. Chapman and
+Abel's work on normalisation by evaluation~(\citeyear{chapman2009type,abel2014normalization})
+which decouples the description of the big-step algorithm and its termination
+proof is for instance out of reach for our system. Indeed, in their development
+the application combinator may \emph{restart} the computation by calling the
+evaluator recursively whereas the \ARF{app} constraint we impose means
+that we may only combine induction hypotheses.
+
+McBride's original unpublished work~(\citeyear{mcbride2005type}) implemented
+in Epigram~\cite{mcbride2004view} was inspired by Goguen and McKinna's
+Candidates for Substitution~(\citeyear{goguen1997candidates}). It focuses on
+renaming and substitution for the simply typed $λ$-calculus and was later
+extended to a formalisation of System F~\cite{girard1972interpretation}
+in Coq~\cite{Coq:manual} by Benton, Hur, Kennedy and McBride~(\citeyear{benton2012strongly}).
+Benton et al. both implement a denotational semantics for their language
+and prove the properties of their traversals. However both of these things
+are done in an ad-hoc manner: the meaning function associated to their
+denotational semantics is not defined in terms of the generic traversal
+and the proofs are manually discharged one by one.
 
 \section{Further Work}
 
