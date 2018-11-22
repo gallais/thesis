@@ -31,6 +31,7 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Properties/Simulation/Specification.lagda \
   type-scope-semantics.agda/Properties/Simulation/Instances.lagda \
   type-scope-semantics.agda/Properties/Fusion/Specification.lagda \
+  type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))

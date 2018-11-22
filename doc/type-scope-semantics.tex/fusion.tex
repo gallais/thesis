@@ -69,14 +69,15 @@ also yield related results.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{struct}
 
-Lastly, the \AIC{`lam}-case puts some rather strong restrictions on the way the $λ$-abstraction's
-body may be used by \AB{𝓢ᴬ}: we assume it is evaluated in an environment thinned by one variable
-and extended using \ARF{var0ᴬ}. But it is quite natural to have these restrictions: given that
-\ARF{reifyᴬ} quotes the result back, we are expecting this type of evaluation in an extended
-context (i.e. under one lambda). And it turns out that this is indeed enough for all of our examples.
-The evaluation environments used by the semantics \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} on the other hand can
-be arbitrarily thinned before being extended with related values to be substituted for the
-variable bound by the \AIC{`lam}.
+Lastly, the \AIC{`lam}-case puts some rather strong restrictions on the way the
+$λ$-abstraction's body may be used by \AB{𝓢ᴬ}: we assume it is evaluated in an
+environment thinned by one variable) and extended using \ARF{var0ᴬ}. But it is
+quite natural to have these restrictions: given that \ARF{reifyᴬ} quotes the
+result back, we are expecting this type of evaluation in an extended context
+(i.e. under one lambda). And it turns out that this is indeed enough for all of
+our examples. The evaluation environments used by the semantics \AB{𝓢ᴮ} and
+\AB{𝓢ᴬᴮ} on the other hand can be arbitrarily thinned before being extended with
+related values to be substituted for the variable bound by the \AIC{`lam}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{lam}
 
@@ -88,3 +89,56 @@ having carefully identified what the constraints should be, proving the fundamen
 lemma is not a problem.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{fundamental}
+
+\section{The Special Case of Syntactic Semantics}
+
+The translation from \AR{Syntactic} to \AR{Semantics} uses a lot of constructors
+as their own semantic counterpart, it is hence possible to generate evidence of
+\AR{Syntactic} triplets being fusable with much fewer assumptions. We isolate
+them and prove the result generically to avoid repetition. A \AR{SynFusion}
+record packs the evidence for \AR{Syntactic} semantics \AB{Synᴬ}, \AB{Synᴮ} and
+\AB{Synᴬᴮ}. It is indexed by these three \AR{Syntactic}s as well as two relations
+corresponding to the \AB{𝓥ᴿ} and \AB{𝓔ᴿ} ones of the \AR{Fusion} framework;
+\AB{𝓒ᴿ} will always be \AF{Eqᴿ} as we are talking about terms. It contains the
+same \ARF{∙ᴿ}, \ARF{th\textasciicircum{}𝓥ᴿ} and \ARF{varᴿ} fields as a \AR{Fusion}
+as well as a fourth one (\ARF{var0ᴿ}) saying that \AB{Synᴮ} and \AB{Synᴬᴮ}'s
+respective \ARF{var0}s are producing related values.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{synfusion}
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{crel}
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{thV}
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{var}
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{zro}
+
+
+Given a \AR{SynFusion} relating three \AR{Syntactic} semantics, we get a
+\AR{Fusion} relating the corresponding \AR{Semantics} where \AB{𝓒ᴿ} is the
+propositional equality. The proof relies on the way the translation from
+\AR{Syntactic} to \AR{Semantics} is formulated in \cref{syntactic}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{fundamental}
+
+\section{Interactions of Renaming and Substitution}
+
+\todo{4 fusion lemmas}
+
+
+These four lemmas are usually proven in painful separation. Here we discharged
+them by rapid successive instantiation of our framework, using the earlier
+results to satisfy the later constraints. As we are going to see in the following
+section, we are not limited to \AR{Syntactic} statements.
+
+\section{Examples of Fusable Semantics}
+
+The most simple example of fusable \AR{Semantics} involving a non \AR{Syntactic}
+one is probably the proof that \AR{Renaming} followed by normalization by evaluation's
+\AR{Eval} is equivalent to \AR{Eval} with an adjusted environment.
+
+\todo{insert}
+
+Then, we use the framework to prove that \AR{Eval} after a \AR{Substitution}
+amounts to normalising the original term where the substitution has been
+evaluated first. The constraints imposed on the environments might seem
+quite restrictive but they are actually similar to the Uniformity condition
+described by C. Coquand~(\citeyear{coquand2002formalised}) in her detailed
+account of NBE for a ST$λ$C with explicit substitution.
