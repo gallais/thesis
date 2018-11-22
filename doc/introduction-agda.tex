@@ -8,21 +8,53 @@ introduction to dependently-typed programming in Agda.
 
 \section{(Co)Data and (co)pattern matching}
 
+As is customary, we start our introduction to dependently-typed programming by
+defining the natural numbers. They are defined as an inductive type with two
+conctructors: \AIC{zero} and \AIC{suc}cessor.
+
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
+
+We can also define record types
 
 record types: (+ available projections)
 
-\ExecuteMetaData[introduction.agda/introduction.tex]{unit}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{unit}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \ExecuteMetaData[introduction.agda/introduction.tex]{pair}
+\end{minipage}
 
-Definitions by pattern matching: large elimination
+Definitions taking values of an inductive type as argument are defined by
+pattern matching in a style familiar to Haskell programmers: one lists
+clauses assuming a first-match semantics. If the patterns on the left hand
+side are covering all possible cases and the recursive calls are structurally
+recursive, the function is total.
+
+The main difference with Haskell is that in Agda, we can perform so-called
+``large elimination'': we can define a \AS{Set} by pattern-matching on a
+piece of data. Here we use our unit and pair records to define a tuple of
+size \AB{n} by recursion over \AB{n}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
 
+Because types can now depend on the shape of values, in a definition by pattern
+matching each clause has a type \emph{refined} based on the patterns which appear
+on the left hand side. This will be a familiar for Haskell programmers used to
+manipulating Generalized Algebraic Data Types (GADTs). Let us see two examples of
+a type being refined based on the pattern appearing in a clause.
 
-Definition by pattern matching; types are refined in each branch
+First, the return type of \AF{replicate} reduces to \AR{⊤} when the natural
+number is \AIC{zero} and (\AB{A} \AR{×} (\AF{replicate} \AB{n} \AB{A})) when it is
+(\AIC{suc} \AB{n}).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
+
+Second, both the type of the \AF{-Tuple} argument and the \AF{-Tuple} return type
+are refined based on the patterns the natural number matches. In the second clause,
+this tells us the \AF{-Tuple} argument is a pair, allowing us to match on it with
+the pair constructor \AIC{\_,\_}.
+
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
 Dependent records
@@ -32,7 +64,6 @@ Dependent records
 In Agda, as in all functional programming languages, we can define anonymous functions
 by using a \AS{λ}-abstraction. Additionally, we can define anonymous (co)pattern-matching
 functions by using (\AS{λ} \AK{where}) followed by an indented block of clauses.
-
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
 

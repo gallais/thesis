@@ -13,8 +13,8 @@ variable
 %<*nat>
 \begin{code}
 data ℕ : Set where
-  zero : ℕ
-  suc : ℕ → ℕ
+  zero  : ℕ
+  suc   : ℕ → ℕ
 \end{code}
 %</nat>
 %<*unit>
@@ -31,9 +31,7 @@ infixr 20 _,_
 \begin{code}
 record _×_ (A B : Set) : Set where
   constructor _,_
-  field
-    fst  : A
-    snd  : B
+  field fst : A; snd : B
 \end{code}
 %</pair>
 \begin{code}
