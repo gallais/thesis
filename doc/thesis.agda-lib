@@ -1,5 +1,6 @@
 name: thesis
 depend: standard-library
 include: shared
+       , introduction.agda
        , type-scope-semantics.agda
        , generic-syntax.agda

@@ -1,10 +1,43 @@
-\section{Introduction to Agda}
+\chapter{Introduction to Martin L\"of Type Theory via Agda}
 
-\subsection{Data and pattern matching}
+\section{(Co)Data and (co)pattern matching}
 
-\subsection{Codata and copattern matching}
+\ExecuteMetaData[introduction.agda/introduction.tex]{nat}
 
-\subsubsection{Postfix Projections}
+record types: (+ available projections)
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{unit}
+\ExecuteMetaData[introduction.agda/introduction.tex]{pair}
+
+Definitions by pattern matching: large elimination
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
+
+Definition by pattern matching; types are refined in each branch
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
+\ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
+
+Dependent records
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
+
+Pattern matching lambda with copatterns
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
+
+\section{Sized Types and Termination Checking}
+
+With sized types no need to inline higher order function
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{erose}
+\ExecuteMetaData[introduction.agda/introduction.tex]{maperose}
+
+In practice we make the size argument explicit in the type but implicit in the
+constructors
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{irose}
+\ExecuteMetaData[introduction.agda/introduction.tex]{mapirose}
 
 \section{Combinators}
 

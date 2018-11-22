@@ -9,6 +9,7 @@ AGDA_FILES:=\
   shared/Data/Environment.lagda \
   shared/Data/Relation.lagda \
   shared/Relation/Binary/PropositionalEquality/Extra.lagda \
+  introduction.agda/introduction.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Base.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.lagda \
   type-scope-semantics.agda/Syntax/Type.lagda \
@@ -97,6 +98,12 @@ latex-agda-output/shared/%.tex: shared/%.lagda
 	@mkdir -p $(dir $@)
 	${AGDA} --latex $< \
 	        --latex-dir=latex-agda-output/shared/ \
+		> $(basename $@).log
+
+latex-agda-output/introduction.agda/%.tex: introduction.agda/%.lagda
+	@mkdir -p $(dir $@)
+	${AGDA} --latex $< \
+	        --latex-dir=latex-agda-output/introduction.agda/ \
 		> $(basename $@).log
 
 latex-agda-output/type-scope-semantics.agda/%.tex: type-scope-semantics.agda/%.lagda
