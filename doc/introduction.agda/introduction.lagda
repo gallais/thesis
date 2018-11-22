@@ -92,13 +92,13 @@ module Unsized where
 %<*rose>
 \begin{code}
   data Rose (A : Set) : Set where
-    leaf : A → Rose A
-    node : Tuple (Rose A) → Rose A
+    leaf  : A → Rose A
+    node  : Tuple (Rose A) → Rose A
 \end{code}
 %</rose>
 %<*maprose>
 \begin{code}
-  {-# NON_TERMINATING #-}
+  {-# TERMINATING #-}
   map^Rose : (A → B) → Rose A → Rose B
   map^Rose f (leaf a)   = leaf (f a)
   map^Rose f (node rs)  = node (map^Tuple (map^Rose f) rs)
@@ -131,8 +131,8 @@ module Implicit where
 %<*irose>
 \begin{code}
   data Rose (A : Set) (i : Size) : Set where
-    leaf : A → Rose A i
-    node : {j : Size< i} → Tuple (Rose A j) → Rose A i
+    leaf  : A → Rose A i
+    node  : {j : Size< i} → Tuple (Rose A j) → Rose A i
 \end{code}
 %</irose>
 %<*mapirose>
@@ -148,8 +148,8 @@ module Explicit where
 %<*erose>
 \begin{code}
   data Rose (A : Set) (i : Size) : Set where
-    leaf : A → Rose A i
-    node : (j : Size< i) → Tuple (Rose A j) → Rose A i
+    leaf  : A → Rose A i
+    node  : (j : Size< i) → Tuple (Rose A j) → Rose A i
 \end{code}
 %</erose>
 %<*maperose>

@@ -1,4 +1,4 @@
-\chapter{Introduction to Martin L\"of Type Theory via Agda}
+\chapter{Introduction to Agda}
 
 The techniques and abstractions defined in this thesis are language-independent: all the
 results can be replicated in any Martin L\"of Type Theory equipped with inductive
@@ -27,7 +27,7 @@ Definition by pattern matching; types are refined in each branch
 
 Dependent records
 
-\ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
+\ExecuteMetaData[introduction.agda/introduction.tex]{tuple}
 
 In Agda, as in all functional programming languages, we can define anonymous functions
 by using a \AS{λ}-abstraction. Additionally, we can define anonymous (co)pattern-matching
@@ -44,26 +44,39 @@ realise that we cannot re-use higher order functions on \AR{Tuple} to define rec
 functions on \AD{Rose}. As an example, let us consider \AF{map\textasciicircum{}Rose}.
 In the \AIC{node} case, the termination checker does not realise that the partially
 applied recursive call (\AF{map\textasciicircum{}Rose} \AB{f}) passed to
-\AF{map\textasciicircum{}Tuple} will only ever be used on subterms.
+\AF{map\textasciicircum{}Tuple} will only ever be used on subterms. We need to use
+an unsafe \AK{TERMINATING} pragma to force Agda to accept the definition.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{rose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{maprose}
 
-The usual solution to this issue is to remove the level of indirection introduced by
-the calll to \AF{map\textasciicircum{}Tuple} by mutually defining with
-\AF{map\textasciicircum{}Rose} an inlined version of
+This is not at all satisfactory: we do not want to give up safety to write such a
+simple traversal. The usual solution to this issue is to remove the level of
+indirection introduced by the calll to \AF{map\textasciicircum{}Tuple} by mutually
+defining with \AF{map\textasciicircum{}Rose} an inlined version of
 (\AF{map\textasciicircum{}Tuple} (\AF{map\textasciicircum{}Rose} \AB{f})).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{inlinedmaprose}
 
-This is, of course, not at all satisfactory.
-With sized types no need to inline higher order function\todo{fix}
+This is, of course, still unsatisfactory: we need to duplicate code every
+time we want to write a traversal! By using sized types, we can have a more
+compositional notion of termination checking: the size of a term is reflected
+in its type. No matter how many levels of indirection there are between the
+location where we are peeling off a constructor and the place where the function
+is actually called recursively, as long as the intermediate operations are
+size-preserving we know that the recursive call will be legitimate.
+
+Writing down the sizes explicitly, we get the following implementation. Note
+that in (\AF{map\textasciicircum{}Tuple} (\AF{map\textasciicircum{}Rose} \AB{j} \AB{f})),
+\AB{j} (bound in \AIC{node}) is smaller than \AB{i} and therefore the recursive
+call is justified.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{erose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{maperose}
 
-In practice we make the size argument explicit in the type but implicit in the
-constructors
+In practice we make the size arguments explicit in the types but implicit in the
+terms. This leads to programs that look just like our ideal implementation, with
+the added bonus that we have now \emph{proven} the function to be total.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{irose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapirose}
