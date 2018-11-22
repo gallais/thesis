@@ -86,6 +86,45 @@ map^Tuple f as = λ where
 \begin{code}
 open import Size
 
+module Unsized where
+
+\end{code}
+%<*rose>
+\begin{code}
+  data Rose (A : Set) : Set where
+    leaf : A → Rose A
+    node : Tuple (Rose A) → Rose A
+\end{code}
+%</rose>
+%<*maprose>
+\begin{code}
+  {-# NON_TERMINATING #-}
+  map^Rose : (A → B) → Rose A → Rose B
+  map^Rose f (leaf a)   = leaf (f a)
+  map^Rose f (node rs)  = node (map^Tuple (map^Rose f) rs)
+\end{code}
+%</maprose>
+\begin{code}
+
+module Inlined where
+
+  open Unsized using (Rose); open Rose
+
+\end{code}
+%<*inlinedmaprose>
+\begin{code}
+  mutual
+
+    map^Rose : (A → B) → Rose A → Rose B
+    map^Rose f (leaf a)   = leaf (f a)
+    map^Rose f (node rs)  = node (_ <| map^Roses (rs .length) f (rs .content))
+
+    map^Roses : ∀ n → (A → B) → n -Tuple (Rose A) → n -Tuple (Rose B)
+    map^Roses zero     f rs        = tt
+    map^Roses (suc n)  f (r , rs)  = map^Rose f r , map^Roses n f rs
+\end{code}
+%</inlinedmaprose>
+\begin{code}
 module Implicit where
 
 \end{code}

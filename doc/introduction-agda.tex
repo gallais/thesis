@@ -1,5 +1,11 @@
 \chapter{Introduction to Martin L\"of Type Theory via Agda}
 
+The techniques and abstractions defined in this thesis are language-independent: all the
+results can be replicated in any Martin L\"of Type Theory equipped with inductive
+families~(\cite{dybjer1994inductive}). In practice, all of the content of this thesis
+has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
+introduction to dependently-typed programming in Agda.
+
 \section{(Co)Data and (co)pattern matching}
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
@@ -13,6 +19,7 @@ Definitions by pattern matching: large elimination
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
 
+
 Definition by pattern matching; types are refined in each branch
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
@@ -22,13 +29,35 @@ Dependent records
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
 
-Pattern matching lambda with copatterns
+In Agda, as in all functional programming languages, we can define anonymous functions
+by using a \AS{λ}-abstraction. Additionally, we can define anonymous (co)pattern-matching
+functions by using (\AS{λ} \AK{where}) followed by an indented block of clauses.
+
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
 
 \section{Sized Types and Termination Checking}
 
-With sized types no need to inline higher order function
+If we naïvely define rose trees containing \AB{A} values as either a \AIC{leaf} storing
+a value of type \AB{A} or a \AIC{node} of a \AR{Tuple} of rose trees then we quickly
+realise that we cannot re-use higher order functions on \AR{Tuple} to define recursive
+functions on \AD{Rose}. As an example, let us consider \AF{map\textasciicircum{}Rose}.
+In the \AIC{node} case, the termination checker does not realise that the partially
+applied recursive call (\AF{map\textasciicircum{}Rose} \AB{f}) passed to
+\AF{map\textasciicircum{}Tuple} will only ever be used on subterms.
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{rose}
+\ExecuteMetaData[introduction.agda/introduction.tex]{maprose}
+
+The usual solution to this issue is to remove the level of indirection introduced by
+the calll to \AF{map\textasciicircum{}Tuple} by mutually defining with
+\AF{map\textasciicircum{}Rose} an inlined version of
+(\AF{map\textasciicircum{}Tuple} (\AF{map\textasciicircum{}Rose} \AB{f})).
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{inlinedmaprose}
+
+This is, of course, not at all satisfactory.
+With sized types no need to inline higher order function\todo{fix}
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{erose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{maperose}
