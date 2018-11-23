@@ -6,6 +6,11 @@ families~(\cite{dybjer1994inductive}). In practice, all of the content of this t
 has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
 introduction to dependently-typed programming in Agda.
 
+\paragraph{Syntax Highlighting} We rely on Agda's \LaTeX{} backend to produce
+syntax highlighting for all the code fragments in this thesis. The convention
+is as follows: keywords are highlighted in \AK{orange}, data constructors in
+\AIC{green}, types and functions in \AD{blue} while bound variables are \AB{black}.
+
 \section{(Co)Data and (co)pattern matching}
 
 As is customary, we start our introduction to dependently-typed programming by
@@ -14,11 +19,12 @@ conctructors: \AIC{zero} and \AIC{suc}cessor.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
 
-Agda also supports record types; they are defined by their set of fields.
+\paragraph{Record Types}
+
+Agda also supports record types; they are defined by their list of fields.
 Unlike inductive types they enjoy η-rules. That is to say that any two
 values of the same record type are judgmentally equal whenever all of their
-fields are. Defining a record type also results in the definition of a
-parameterised module containing a projection function for each field.
+fields' values are.
 
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{unit}
@@ -26,6 +32,13 @@ parameterised module containing a projection function for each field.
 \begin{minipage}{0.5\textwidth}
 \ExecuteMetaData[introduction.agda/introduction.tex]{pair}
 \end{minipage}
+
+Defining a record type \AR{R} also results in the definition of a module \AB{R}
+parameterised by a value of type \AR{R} and containing a projection function
+for each field. We can \AK{open} it to make these projections available to the
+outside world, or use \AB{R}-qualified names.
+
+\paragraph{Recursive Functions}
 
 Definitions taking values of an inductive type as argument are defined by
 pattern matching in a style familiar to Haskell programmers: one lists
@@ -36,13 +49,14 @@ recursive, the function is total.
 The main difference with Haskell is that in Agda, we can perform so-called
 ``large elimination'': we can define a \AF{Set} by pattern-matching on a
 piece of data. Here we use our unit and pair records to define a tuple of
-size \AB{n} by recursion over \AB{n}.
+size \AB{n} by recursion over \AB{n}: a (\AIC{zero} \AF{-Tuple}) is empty
+whilst a (\AIC{suc n} \AF{-Tuple}) is a value paired with an (\AB{n} \AF{-Tuple}).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
 
 Because types can now depend on the shape of values, in a definition by pattern
 matching each clause has a type \emph{refined} based on the patterns which appear
-on the left hand side. This will be a familiar for Haskell programmers used to
+on the left hand side. This will be familiar to Haskell programmers used to
 manipulating Generalized Algebraic Data Types (GADTs). Let us see two examples of
 a type being refined based on the pattern appearing in a clause.
 
@@ -59,6 +73,8 @@ the pair constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
+\paragraph{Dependent Record Types}
+
 Record types can be dependent, i.e. the type of later fields can depend on that of
 former ones. We define a \AR{Tuple} as a natural number (its \ARF{length}) together
 with a (\ARF{length} \AF{-Tuple}) of values (its \ARF{content}).
@@ -70,7 +86,7 @@ by using a \AS{λ}-abstraction. Additionally, we can define anonymous (co)patter
 functions by using (\AS{λ} \AK{where}) followed by an indented block of clauses.
 We use here copattern-matching, that is to say that we define a \AR{Tuple} in terms
 of the observations that one can make about it: we specify its length first, and
-then its content. We use postfix projections.
+then its content. We use postfix projections (hence the dot preceding the field's name).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
 
@@ -78,18 +94,27 @@ When record values are going to appear in types, it is often a good idea to defi
 them by copattern-matching: this prevents the definition from being unfolded eagerly
 thus making the goal more readable during interactive development.
 
-\section{Sized Types and Termination Checking}
-
-If we naïvely define rose trees containing \AB{A} values as either a \AIC{leaf} storing
-a value of type \AB{A} or a \AIC{node} of a \AR{Tuple} of rose trees then we quickly
-realise that we cannot re-use higher order functions on \AR{Tuple} to define recursive
-functions on \AD{Rose}. As an example, let us consider \AF{map\textasciicircum{}Rose}.
-In the \AIC{node} case, the termination checker does not realise that the partially
-applied recursive call (\AF{map\textasciicircum{}Rose} \AB{f}) passed to
-\AF{map\textasciicircum{}Tuple} will only ever be used on subterms. We need to use
-an unsafe \AK{TERMINATING} pragma to force Agda to accept the definition.
+\paragraph{Strict Positivity} In order to rule out definitions leading to
+inconsistencies, all datatype definitions need to be strictly positive.
+Although a syntactic criterion originally (its precise definition is beyond
+the scope of this discussion), Agda goes beyond by recording internally
+whether functions use their arguments in a strictly positive manner.
+This allows us to define types like rose trees where the subtrees of a
+\AIC{node} are stored in a \AR{Tuple}, a function using its \AF{Set}
+argument in a strictly positive manner.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{rose}
+
+\section{Sized Types and Termination Checking}
+
+If we naïvely define rose trees like above then we quickly realise that we cannot
+re-use higher order functions on \AR{Tuple} to define recursive functions on \AD{Rose}.
+As an example, let us consider \AF{map\textasciicircum{}Rose}. In the \AIC{node} case,
+the termination checker does not realise that the partially applied recursive call
+(\AF{map\textasciicircum{}Rose} \AB{f}) passed to \AF{map\textasciicircum{}Tuple}
+will only ever be used on subterms. We need to use an unsafe \AK{TERMINATING} pragma
+to force Agda to accept the definition.
+
 \ExecuteMetaData[introduction.agda/introduction.tex]{maprose}
 
 This is not at all satisfactory: we do not want to give up safety to write such a
