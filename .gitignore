@@ -1,6 +1,11 @@
+*#
 *~
+doc/*.agda/*/*.agda
+doc/*.agda/*.agda
+doc/*.agda/*/*/*.agda
 *.agdai
 *.aux
 *.log
+*.pdf
 latex-agda-output/
 latex/
