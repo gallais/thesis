@@ -1,0 +1,103 @@
+\chapter{A Primer on the Universe of Data Types}\label{section:data}
+
+Chapman, Dagand, McBride and Morris (CDMM)~\citeyear{Chapman:2010:GAL:1863543.1863547}
+defined a universe of data types inspired by Dybjer and Setzer's
+finite axiomatisation of Inductive-Recursive definitions~\citeyear{Dybjer1999}
+and Benke, Dybjer and Jansson's universes for generic programs and proofs~\citeyear{benke-ugpp}.
+This explicit definition of \emph{codes} for data types empowers the
+user to write generic programs tackling \emph{all} of the data types
+one can obtain this way. In this section we recall the main aspects
+of this construction we are interested in to build up our generic
+representation of syntaxes with binding.
+
+The first component of CDMM's universe's definition is an inductive type
+of \AD{Desc}riptions of strictly positive functors from $\Set{}^J$ to
+$\Set{}^I$. It has three constructors: \AIC{`σ} to store data (the rest of
+the description can depend upon this stored value), \AIC{`X} to attach a
+recursive substructure indexed by $J$ and \AIC{`$\blacksquare$} to stop with a particular
+index value.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc}
+\caption{Datatype Descriptions\label{fig:datades}}
+\end{figure}
+
+
+The recursive function \AF{⟦\_⟧} makes the interpretation of the
+descriptions formal. Interpretation of descriptions give rise right-nested tuples
+terminated by equality constraints.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp}
+\caption{Descriptions' meanings as Functors\label{fig:datadescmeaning}}
+\end{figure}
+
+These constructors give the programmer the ability to build up the data
+types they are used to. For instance, the functor corresponding
+to lists of elements in $A$ stores a \AD{Bool}ean which stands for whether
+the current node is the empty list or not. Depending on its value, the
+rest of the description is either the ``stop'' token or a pair of an element
+in $A$ and a recursive substructure i.e. the tail of the list. The \AD{List} type
+is unindexed, we represent the lack of an index with the unit type \AD{$\top$}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listD}
+\caption{The Description of the base functor for \AD{List} \AB{A}}\label{figure:listD}
+\end{figure}
+
+Indices can be used to enforce invariants. For example, the type {\AD{Vec} \AB{A} \AB{n}}
+of length-indexed lists. It has the same structure as the definition of \AF{listD}.
+We start with a \AF{Bool}ean distinguishing the two constructors: either
+the empty list (in which case the branch's index is enforced to be $0$) or a
+non-empty one in which case we store a natural number \AB{n}, the head of type
+\AB{A} and a tail of size \AB{n} (and the branch's index is enforced to be
+\AIC{suc} \AB{n}).
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{vecD}
+\caption{The Description of the base functor for \AD{Vec} \AB{A} \AB{n}}\label{figure:vecD}
+\end{figure}
+
+The payoff for encoding our datatypes as descriptions is that we can define
+generic programs for whole classes of data types. The decoding function \AF{⟦\_⟧}
+acted on the objects of $\Set{}^J$, and we will now define the function \AF{fmap} by
+recursion over a code \AB{d}. It describes the action of the functor corresponding
+to \AB{d} over morphisms in $\Set{}^J$. This is the first example of generic
+programming over all the functors one can obtain as the meaning of a description.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{fmap}
+\caption{Action on Morphisms of the Functor corresponding to a \AF{Desc}ription}
+\end{figure}
+
+All the functors obtained as meanings of \AD{Desc}riptions are strictly positive.
+So we can build the least fixpoint of the ones that are endofunctors i.e. the ones
+for which \AB{I} equals \AB{J}. This fixpoint is called \AD{μ} and its iterator is
+given by the definition of \AF{fold} \AB{d}. In \cref{figure:datamu} the
+\AD{Size}~\cite{DBLP:journals/corr/abs-1012-4896} index added to the inductive
+definition of \AD{μ} plays a crucial role in getting the termination checker to
+see that \AF{fold} is a total function, just like sizes played a crucial role in
+proving that \AF{map\textasciicircum{}Rose} was total in~\cref{sec:sizetermination}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{mu}
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{fold}
+\caption{Least Fixpoint of an Endofunctor and Corresponding Generic Fold}\label{figure:datamu}
+\end{figure}
+
+The CDMM approach therefore allows us to generically define iteration principles
+for all data types that can be described. These are exactly the features we desire
+for a universe of syntaxes with binding, so in the next section we will see how
+to extend CDMM's approach to include binding.
+
+The functor underlying any well scoped and sorted syntax can be coded as some
+{\AD{Desc} (I \AR{$\times$} \AD{List} I) (I \AR{$\times$} \AD{List} I)}, with the
+free monad construction from CDMM uniformly adding the variable case. Whilst a
+good start, \AD{Desc} treats its index types as unstructured, so this construction
+is blind to what makes the {\AD{List} I} index a \emph{scope}. The resulting
+`bind' operator demands a function which maps variables in \emph{any} sort and
+scope to terms in the \emph{same} sort and scope. However, the behaviour we need
+is to preserve sort while mapping between specific source and target scopes which
+may differ. We need to account for the fact that scopes change only by extension,
+and hence that our specifically scoped operations can be pushed under binders by
+weakening.

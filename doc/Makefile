@@ -32,7 +32,10 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Properties/Simulation/Instances.lagda \
   type-scope-semantics.agda/Properties/Fusion/Specification.lagda \
   type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.lagda \
+  generic-syntax.agda/Generic/Data.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
+  generic-syntax.agda/Generic/Examples/STLC.lagda \
+  generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -54,6 +57,7 @@ THESIS_DEPENDENCIES:=\
   latex/type-scope-semantics.tex/fusion.tex \
   latex/type-scope-semantics.tex/proof-conclusion.tex \
   latex/generic-syntax.tex/data.tex \
+  latex/generic-syntax.tex/syntax.tex \
   latex/generic-syntax.tex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
 

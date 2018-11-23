@@ -8,36 +8,62 @@ open import Data.Product as Prod
 open import Function hiding (case_of_)
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
-open import Data.Var
+open import Data.Var hiding (z; s)
 open import Relation.Unary
 open import Data.Environment as E hiding (traverse)
 
 -- Descriptions and their Interpretation
 
+\end{code}
+%<*desc>
+\begin{code}
 data Desc (I : Set) : Set₁ where
   `σ : (A : Set) → (A → Desc I)  → Desc I
   `X : List I → I → Desc I       → Desc I
   `∎ : I                         → Desc I
-
+\end{code}
+%</desc>
+\begin{code}
 reindex : {I J : Set} → (I → J) → Desc I → Desc J
 reindex f (`σ A d)   = `σ A λ a → reindex f (d a)
 reindex f (`X Δ j d) = `X (L.map f Δ) (f j) (reindex f d)
 reindex f (`∎ i)     = `∎ (f i)
 
-⟦_⟧ : {I : Set} → Desc I → (List I → I ─Scoped) → I ─Scoped
+private
+  variable
+    I : Set
+    i : I
+    s : Size
+\end{code}
+%<*interp>
+\begin{code}
+⟦_⟧ : Desc I → (List I → I ─Scoped) → I ─Scoped
 ⟦ `σ A d    ⟧ X i Γ = Σ[ a ∈ A ] (⟦ d a ⟧ X i Γ)
 ⟦ `X Δ j d  ⟧ X i Γ = X Δ j Γ × ⟦ d ⟧ X i Γ
 ⟦ `∎ i′     ⟧ X i Γ = i ≡ i′
-
+\end{code}
+%</interp>
+\begin{code}
 -- Syntaxes: Free Relative Monad of a Description's Interpretation
 
-Scope : {I : Set} → I ─Scoped → List I → I ─Scoped
+\end{code}
+%<*scope>
+\begin{code}
+Scope : I ─Scoped → List I → I ─Scoped
 Scope T Δ i = (Δ ++_) ⊢ T i
-
-data Tm {I : Set} (d : Desc I) : Size → I ─Scoped where
-  `var : {s : Size} {i : I} →  ∀[ Var i                     ⇒ Tm d (↑ s) i ]
-  `con : {s : Size} {i : I} →  ∀[ ⟦ d ⟧ (Scope (Tm d s)) i  ⇒ Tm d (↑ s) i ]
-
+\end{code}
+%</scope>
+\begin{code}
+module _ {I : Set} where
+\end{code}
+%<*mu>
+\begin{code}
+ data Tm (d : Desc I) (s : Size) : I ─Scoped where
+   `var :                   ∀[ Var i                      ⇒ Tm d s i ]
+   `con : {s' : Size< s} →  ∀[ ⟦ d ⟧ (Scope (Tm d s')) i  ⇒ Tm d s i ]
+\end{code}
+%</mu>
+\begin{code}
 
 module _ {I i Γ} {d : Desc I} where
 
@@ -48,9 +74,14 @@ module _ {I i Γ} {d : Desc I} where
   `con-inj refl = refl
 
 -- Closed terms
-
+\end{code}
+%<*closed>
+\begin{code}
 TM : {I : Set} → Desc I → I → Set
 TM d i = Tm d ∞ i []
+\end{code}
+%</closed>
+\begin{code}
 
 -- Descriptions are closed under sums
 

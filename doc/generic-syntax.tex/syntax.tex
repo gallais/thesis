@@ -1,0 +1,120 @@
+
+\chapter{A Universe of Scope Safe and Well Kinded Syntaxes}\label{chapter:universe}
+
+Our universe of scope safe and well kinded syntaxes follows the same principle
+as CDMM's universe of datatypes, except that we are not building endofunctors on
+\AS{Set} any more but rather on {\AB{I} \AF{─Scoped}}. We now think of the index
+type \AB{I} as the sorts used to distinguish terms in our embedded language.
+The \AIC{`$\sigma$} and \AIC{`∎} constructors are as in the CDMM \AD{Desc} type,
+and are used to represent data and index constraints respectively.
+
+What distinguishes this new universe \AD{Desc} from that of Section~\ref{section:data}
+is that the \AIC{`X} constructor is now augmented with an additional {\AD{List} \AB{I}}
+argument that describes the new binders that are brought into scope at this recursive
+position. This list of the kinds of the newly-bound variables will play a crucial role when
+defining the description's semantics as a binding structure in
+\cref{figure:syntaxmeaning, figure:debruijnscope, figure:freemonad}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc}
+\caption{Syntax Descriptions}
+\end{figure}
+
+The meaning function \AF{⟦\_⟧} we associate to a description follows closely
+its CDMM equivalent. It only departs from it in the \AIC{`X} case and the fact
+it is not an endofunctor on \AB{I} \AF{─Scoped}; it is more general than that.
+The function takes an \AB{X} of type {\AD{List} \AB{I} $\rightarrow$ \AB{I} \AD{─Scoped}}
+to interpret {\AIC{`X} \AB{Δ} \AB{j}} (i.e. substructures of sort \AB{j} with
+newly-bound variables in \AB{Δ}) in an ambient scope \AB{Γ} as {\AB{X} \AB{Δ} \AB{j} \AB{Γ}}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp}
+\caption{Descriptions' Meanings}\label{figure:syntaxmeaning}
+\end{figure}
+
+The astute reader may have noticed that \AF{⟦\_⟧} is uniform in $X$ and $\Gamma$; however
+refactoring \AF{⟦\_⟧} to use the partially applied $X\,\_\,\_\,\Gamma$ following
+this observation would lead to a definition harder to use with the
+combinators for indexed sets described in \cref{indexed-combinators}
+which make our types much more readable.
+
+If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of `de Bruijn scopes'
+(denoted \AF{Scope} here) which turns any \AB{I} \AF{─Scoped} family into a function
+of type \AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped} by appending the two
+\AD{List} indices, we recover a meaning function producing an endofunctor on
+\AB{I} \AF{─Scoped}. So far we have only shown the action of the functor on objects;
+its action on morphisms is given by a function \AF{fmap} defined by induction over
+the description just like in Section~\ref{section:data}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{scope}
+\caption{De Bruijn Scopes}\label{figure:debruijnscope}
+\end{figure}
+
+The endofunctors thus defined are strictly positive and we can take their fixpoints.
+As we want to define the terms of a language with variables, instead of
+considering the initial algebra, this time we opt for the free relative
+monad~\cite{JFR4389} (with respect to the functor \AF{Var}): the \AIC{`var}
+constructor corresponds to return, and we will define bind (also known as
+the parallel substitution \AF{sub}) in the next section.
+
+We have once more a \AD{Size} index to get all the benefits of type based
+termination checking.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{mu}
+\caption{Term Trees: The Free \AF{Var}-Relative Monads on Descriptions}\label{figure:freemonad}
+\end{figure}
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{closed}\todo{closed}
+
+
+Coming back to our original examples, we now have the ability to give
+codes for the well scoped untyped $\lambda$-calculus and, just as well,
+the intrinsically typed simply typed $\lambda$-calculus.
+The variable case will be added by the free monad construction so we
+only have to describe two constructors: application where we have two
+substructures which do not bind any extra argument and $\lambda$-abstraction
+which has exactly one substructure with precisely one extra bound variable.
+In the untyped case a single \AD{Bool}ean is enough to distinguish the two constructors
+whilst in the typed case, we need our tags to carry extra information about the
+%%% JHM version
+types involved so we use the ad-hoc \AD{`STLC} type,
+and its decoding \AD{STLC} defined by a pattern-matching \(\lambda\)-expression in Agda.
+%%% GALLAIS version
+% types involved so we use the ad-hoc \AD{`STLC} type. In the definition of
+% \AF{STLC}, ``{\AS{$\lambda$} \AK{where}}'' introduces a pattern-matching lambda
+% which allows us to immediately inspect the tag bound in the \AIC{`$\sigma$} node.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{stlc}
+\caption{Examples: The Untyped and Simply Typed Lambda Calculi}
+\end{figure}
+
+For convenience we use Agda's pattern synonyms corresponding to the
+original constructors in Section \ref{section:mech-reus}:
+\AIC{`app} for application and \AIC{`lam} for $\lambda$-abstraction. These
+synonyms can be used when pattern-matching on a term and Agda resugars
+them when displaying a goal. This means that the end user can
+seamlessly work with encoded terms without dealing with the gnarly
+details of the encoding.  These pattern definitions can omit some
+arguments by using ``\AS{\_}'', in which case they will be filled in
+by unification just like any other implicit argument: there is no
+extra cost to using an encoding!  The only downside is that the
+language currently does not allow the user to specify type annotations
+for pattern synonyms.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{patterns}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{patterns}
+\caption{Respective Pattern Synonyms for the Untyped and Simply Typed Lambda Calculus}
+\end{figure}
+
+It is the third time (the first and second times being the definition of
+\AF{listD} and \AF{vecD} in Figure~\ref{figure:listD} and \ref{figure:vecD})
+that we use a \AF{Bool} to distinguish between two constructors. In order
+to avoid re-encoding the same logic,
+the next section introduces combinators demonstrating that
+descriptions are closed under finite sums and finite products
+of recursive positions.
