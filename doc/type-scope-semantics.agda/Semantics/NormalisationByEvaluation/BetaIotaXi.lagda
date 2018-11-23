@@ -17,7 +17,7 @@ R^βιξ _ = ⊤
 
 open import Syntax.Normal R^βιξ
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification
+open import Semantics.Specification hiding (eval)
 
 private
 

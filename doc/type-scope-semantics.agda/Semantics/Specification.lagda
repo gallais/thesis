@@ -98,7 +98,5 @@ module Fundamental (𝓢 : Semantics 𝓥 𝓒) where
 \end{code}
 %</fundamental>
 \begin{code}
-
---  lemma' : Evaluation' 𝓒
---  lemma' t = lemma (pack embed) t
+eval = Fundamental.lemma
 \end{code}

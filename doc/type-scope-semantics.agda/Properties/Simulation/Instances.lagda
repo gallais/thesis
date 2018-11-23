@@ -8,8 +8,7 @@ open import Data.Relation
 open import Syntax.Type
 open import Syntax.Calculus
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification hiding (module Fundamental)
-open Semantics.Specification.Fundamental renaming (lemma to eval)
+open import Semantics.Specification
 open import Semantics.Syntactic.Specification
 open import Semantics.Syntactic.Instances
 
@@ -31,7 +30,7 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
 \end{code}
 %<*synsem>
 \begin{code}[inline]
-  𝓢 = Fundamental.syntactic Syn
+  𝓢 = syntactic Syn
 \end{code}
 %</synsem>
 %<*syn-ext>
@@ -50,7 +49,7 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
 %<*synext>
 \begin{code}
   syn-ext : All Eqᴿ Γ ρˡ ρʳ → (t : Term σ Γ) → eval 𝓢 ρˡ t ≡ eval 𝓢 ρʳ t
-  syn-ext = Fundamental.lemma Syn-ext
+  syn-ext = simulation Syn-ext
 \end{code}
 %</synext>
 
@@ -84,7 +83,7 @@ RenSub^Sim .ffᴿ    = λ ρᴿ → refl
 %<*renassub>
 \begin{code}
 ren-as-sub : (t : Term σ Γ) (ρ : Thinning Γ Δ) → th^Term t ρ ≡ sub (`var <$> ρ) t
-ren-as-sub t ρ = Fundamental.lemma RenSub^Sim (packᴿ (λ v → refl)) t
+ren-as-sub t ρ = simulation RenSub^Sim (packᴿ (λ v → refl)) t
 \end{code}
 %</renassub>
 

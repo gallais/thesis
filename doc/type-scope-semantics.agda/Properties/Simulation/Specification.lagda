@@ -115,3 +115,6 @@ module Fundamental (𝓢ᴿ : Simulation 𝓢ᴬ 𝓢ᴮ 𝓥ᴿ 𝓒ᴿ) where
   lemma ρᴿ (`ifte b l r)  = ifteᴿ ρᴿ b l r (lemma ρᴿ b) (lemma ρᴿ l) (lemma ρᴿ r)
 \end{code}
 %</fundamental>
+\begin{code}
+simulation = Fundamental.lemma
+\end{code}

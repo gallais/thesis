@@ -6,7 +6,7 @@ open import Data.Var
 open import Data.Environment
 open import Syntax.Type
 open import Syntax.Calculus
-open import Semantics.Specification
+open import Semantics.Specification hiding (module Fundamental)
 open import Semantics.Syntactic.Specification
 open import Function
 
@@ -33,13 +33,13 @@ Syn^Ren .var   = `var
 %<*semren>
 \begin{code}
 Renaming : Semantics Var Term
-Renaming = Fundamental.syntactic Syn^Ren
+Renaming = Fundamental.lemma Syn^Ren
 \end{code}
 %</semren>
 %<*ren>
 \begin{code}
 th^Term : Thinnable (Term σ)
-th^Term t ρ = Fundamental.lemma Renaming ρ t
+th^Term t ρ = eval Renaming ρ t
 \end{code}
 %</ren>
 %<*synsub>
@@ -53,12 +53,12 @@ Syn^Sub .var    = id
 %<*semsub>
 \begin{code}
 Substitution : Semantics Term Term
-Substitution = Fundamental.syntactic Syn^Sub
+Substitution = Fundamental.lemma Syn^Sub
 \end{code}
 %</semsub>
 %<*sub>
 \begin{code}
 sub : (Γ ─Env) Term Δ → Term σ Γ → Term σ Δ
-sub ρ t = Fundamental.lemma Substitution ρ t
+sub ρ t = eval Substitution ρ t
 \end{code}
 %</sub>

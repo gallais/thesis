@@ -46,3 +46,6 @@ module Fundamental (𝓢 : Syntactic 𝓣) where
   Semantics.ifte  lemma = `ifte
 \end{code}
 %</syntacticsem>
+\begin{code}
+syntactic = Fundamental.lemma
+\end{code}

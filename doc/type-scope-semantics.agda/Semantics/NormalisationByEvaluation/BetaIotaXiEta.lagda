@@ -16,7 +16,7 @@ data R^βιξη : Type → Set where
 
 open import Syntax.Normal R^βιξη public
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification
+open import Semantics.Specification hiding (eval)
 
 private
   variable

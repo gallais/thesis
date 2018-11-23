@@ -16,7 +16,7 @@ open import Relation.Unary
 open import Function
 
 open import Syntax.WeakHead
-open import Semantics.Specification
+open import Semantics.Specification hiding (eval)
 
 private
 
