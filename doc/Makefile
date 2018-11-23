@@ -53,7 +53,8 @@ THESIS_DEPENDENCIES:=\
   latex/type-scope-semantics.tex/simulation.tex \
   latex/type-scope-semantics.tex/fusion.tex \
   latex/type-scope-semantics.tex/proof-conclusion.tex \
-  latex/a-universe.tex \
+  latex/generic-syntax.tex/data.tex \
+  latex/generic-syntax.tex/a-universe.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
 latex/main.bib: main.bib
@@ -87,7 +88,7 @@ latex/type-scope-semantics.tex/%.tex: type-scope-semantics.tex/%.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
-latex/a-universe.tex: a-universe.tex
+latex/generic-syntax.tex/%.tex: generic-syntax.tex/%.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
