@@ -36,6 +36,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Syntax.lagda \
   generic-syntax.agda/Generic/Examples/STLC.lagda \
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
+  generic-syntax.agda/Generic/Semantics.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -59,6 +60,7 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/data.tex \
   latex/generic-syntax.tex/syntax.tex \
   latex/generic-syntax.tex/a-universe.tex \
+  latex/generic-syntax.tex/safe-programs.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
 latex/main.bib: main.bib

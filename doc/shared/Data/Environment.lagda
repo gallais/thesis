@@ -154,9 +154,15 @@ th^□ = duplicate
 th^const : Thinnable (const A)
 th^const a _ = a
 
+\end{code}
+%<*kripke>
+\begin{code}
 Kripke : (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
 Kripke 𝓥 𝓒 []  i = 𝓒 i
 Kripke 𝓥 𝓒 Γ   i = □ ((Γ ─Env) 𝓥 ⇒ 𝓒 i)
+\end{code}
+%</kripke>
+\begin{code}
 
 module _ {𝓥 𝓒 : I ─Scoped} where
 
