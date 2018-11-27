@@ -486,63 +486,6 @@ datatypes.
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% DATATYPES
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% UNIVERSE OF SYNTAXES
-
-
-\paragraph{Common Combinators and Their Properties.}\label{desccomb}
-
-As seen previously, we can use a dependent pair whose first component
-is a \AF{Bool}ean to take the coproduct of two descriptions: depending
-on the value of the first component, we will return one or the other.
-We can abstract this common pattern as a combinator \AF{\_`+\_} together
-with an appropriate eliminator \AF{case} which, given two continuations,
-picks the one corresponding to the chosen branch.
-
-\begin{figure}[h]
-\begin{minipage}{0.45\textwidth}
-  \ExecuteMetaData[Generic/Syntax.tex]{sumcomb}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-  \ExecuteMetaData[Generic/Syntax.tex]{case}
-\end{minipage}
-\caption{Descriptions are closed under Sum}\label{figure:descsum}
-\end{figure}
-
-Closure under product does not hold in general. Indeed, the
-equality constraints introduced by the two end tokens of two
-descriptions may be incompatible. So far, a limited form of
-closure (closure under finite product of recursive positions)
-has been sufficient for all of our use cases. As with coproducts,
-the appropriate eliminator \AF{unXs} takes a value in the encoding
-and extracts its constituents ({\AF{All} \AB{P} \AB{xs}} is defined
-in Agda's standard library and makes sure that the predicate \AB{P}
-holds true of all the elements in the list \AB{xs}).
-
-\begin{figure}[h]
-\begin{minipage}{0.4\textwidth}
-  \ExecuteMetaData[Generic/Syntax.tex]{paircomb}
-\end{minipage}\hfill
-\begin{minipage}{0.5\textwidth}
-  \ExecuteMetaData[Generic/Syntax.tex]{pairunpair}
-\end{minipage}
-\caption{Descriptions are closed under Finite Products of Recursive Positions}
-\end{figure}
-
-A concrete use case for both of these combinators will be given in section~\ref{section:letbinding}
-where we explain how to seamlessly enrich an existing syntax with let-bindings
-and how to use the \AR{Sem} framework to elaborate them away.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% GENERIC SEMANTICS
-
-
 \section{Generic Scope Safe and Well Kinded Programs for Syntaxes}\label{section:semantics}
 
 Based on the \AR{Sem} type we defined for the specific example of the

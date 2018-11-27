@@ -1,4 +1,3 @@
-
 \chapter{A Universe of Scope Safe and Well Kinded Syntaxes}\label{chapter:universe}
 
 Our universe of scope safe and well kinded syntaxes follows the same principle
@@ -7,6 +6,8 @@ as CDMM's universe of datatypes, except that we are not building endofunctors on
 type \AB{I} as the sorts used to distinguish terms in our embedded language.
 The \AIC{`$\sigma$} and \AIC{`∎} constructors are as in the CDMM \AD{Desc} type,
 and are used to represent data and index constraints respectively.
+
+\section{Descriptions and Their Meaning as Functors}
 
 What distinguishes this new universe \AD{Desc} from that of Section~\ref{section:data}
 is that the \AIC{`X} constructor is now augmented with an additional {\AD{List} \AB{I}}
@@ -42,59 +43,97 @@ If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of `de Bruijn
 (denoted \AF{Scope} here) which turns any \AB{I} \AF{─Scoped} family into a function
 of type \AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped} by appending the two
 \AD{List} indices, we recover a meaning function producing an endofunctor on
-\AB{I} \AF{─Scoped}. So far we have only shown the action of the functor on objects;
-its action on morphisms is given by a function \AF{fmap} defined by induction over
-the description just like in Section~\ref{section:data}.
+\AB{I} \AF{─Scoped}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{scope}
 \caption{De Bruijn Scopes}\label{figure:debruijnscope}
 \end{figure}
 
+So far we have only shown the action of the functor on objects; its action on
+morphisms is given by a function \AF{fmap} defined by induction over the
+description just like in Section~\ref{section:data}. We give \AF{fmap} the most
+general type we can, the action of functors is then a specialized version of it.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{fmap}
+\caption{Action of Syntax Functors on Morphism\label{figure:descfmap}}
+\end{figure}
+
+\section{Terms as Free Relative Monads}
+
 The endofunctors thus defined are strictly positive and we can take their fixpoints.
 As we want to define the terms of a language with variables, instead of
 considering the initial algebra, this time we opt for the free relative
-monad~\cite{JFR4389} (with respect to the functor \AF{Var}): the \AIC{`var}
-constructor corresponds to return, and we will define bind (also known as
-the parallel substitution \AF{sub}) in the next section.
+monad (\cite{Altenkirch2010, JFR4389}) with respect to the functor \AF{Var}.
+The \AIC{`var} constructor corresponds to return, and we will define bind (also
+known as the parallel substitution \AF{sub}) in the next section.
 
 We have once more a \AD{Size} index to get all the benefits of type based
-termination checking.
+termination checking when defining traversals over terms.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{mu}
-\caption{Term Trees: The Free \AF{Var}-Relative Monads on Descriptions}\label{figure:freemonad}
+\caption{Term Trees: The Free \AF{Var}-Relative Monads on Descriptions\label{figure:freemonad}}
 \end{figure}
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{closed}\todo{closed}
+Because we often use closed terms of size \AF{∞} (that is to say fully-defined)
+in concrete examples, we define this notion.
 
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{closed}
+\caption{Type of Closed Terms\label{fig:closedtm}}
+\end{figure}
 
-Coming back to our original examples, we now have the ability to give
-codes for the well scoped untyped $\lambda$-calculus and, just as well,
-the intrinsically typed simply typed $\lambda$-calculus.
-The variable case will be added by the free monad construction so we
-only have to describe two constructors: application where we have two
-substructures which do not bind any extra argument and $\lambda$-abstraction
-which has exactly one substructure with precisely one extra bound variable.
-In the untyped case a single \AD{Bool}ean is enough to distinguish the two constructors
-whilst in the typed case, we need our tags to carry extra information about the
-%%% JHM version
-types involved so we use the ad-hoc \AD{`STLC} type,
-and its decoding \AD{STLC} defined by a pattern-matching \(\lambda\)-expression in Agda.
-%%% GALLAIS version
-% types involved so we use the ad-hoc \AD{`STLC} type. In the definition of
-% \AF{STLC}, ``{\AS{$\lambda$} \AK{where}}'' introduces a pattern-matching lambda
-% which allows us to immediately inspect the tag bound in the \AIC{`$\sigma$} node.
+\subsection{Examples of Syntaxes With Binding}
+
+Coming back to our original example, we now have the ability to give a code for
+the intrinsically typed STλC. But we start with a simpler example to lay
+down the foundations: the well scoped untyped λ-calculus. In both cases, the
+variable case will be added by the free monad construction so we only have to
+describe two constructors: application and λ-abstraction.
+
+\paragraph{Untyped} languages are, as Harper would say, uni-typed syntaxes and
+can thus be modelled using descriptions whose kind parameter is the unit type.
+We take the disjoint sum of the respective descriptions for the application and
+λ-abstraction constructors by using the classic construction in type theory: a
+dependent pair of a \AF{Bool} picking one of the two branches and a second
+component whose type is either that of application or λ-abstraction depending
+on that boolean.
+
+Application has two substructures (\AIC{`X}) which do not bind any extra argument
+and λ-abstraction has exactly one substructure with precisely one extra bound variable.
+Both constructors' descriptions end with (\AIC{`∎} \AIC{tt}), the only inhabitant
+of the trivial kind.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
+\caption{\AF{Desc}ription of The Untyped Lambda Calculus\label{fig:desculc}}
+\end{figure}
+
+
+\paragraph{Typed} syntax comes with extra constraints: our tags need to carry
+extra information about the types involved so we use the ad-hoc \AD{`STLC} type.
+The description is then the dependent pairing of an \AD{`STLC} tag together with
+its decoding defined by a pattern-matching λ-expression in Agda.
+
+Application has two substructures none of which bind extra variables. The first
+has a function type and the second the type of its domain. The overall type of
+the branch is enforced to be that of the function's codomain by the \AIC{`∎}
+constructor.
+
+λ-abstraction has exactly one substructure of type \AB{τ} with a newly-bound
+variable of type \AB{σ}. The overall type of the branch is once more enforced
+by \AIC{`∎}: it is (\AB{σ} \AIC{`→} \AB{τ}).
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{stlc}
-\caption{Examples: The Untyped and Simply Typed Lambda Calculi}
+\caption{\AF{Desc}ription of the Simply Typed Lambda Calculus\label{fig:descstlc}}
 \end{figure}
 
 For convenience we use Agda's pattern synonyms corresponding to the
-original constructors in Section \ref{section:mech-reus}:
-\AIC{`app} for application and \AIC{`lam} for $\lambda$-abstraction. These
+original constructors in~\cref{sec:stlccalculus}:
+\AIC{`app} for application and \AIC{`lam} for λ-abstraction. These
 synonyms can be used when pattern-matching on a term and Agda resugars
 them when displaying a goal. This means that the end user can
 seamlessly work with encoded terms without dealing with the gnarly
@@ -106,15 +145,61 @@ language currently does not allow the user to specify type annotations
 for pattern synonyms.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{patterns}
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{patterns}
-\caption{Respective Pattern Synonyms for the Untyped and Simply Typed Lambda Calculus}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{identity}
+\caption{Recovering Readable Syntax via Pattern Synonyms}
 \end{figure}
 
-It is the third time (the first and second times being the definition of
-\AF{listD} and \AF{vecD} in Figure~\ref{figure:listD} and \ref{figure:vecD})
-that we use a \AF{Bool} to distinguish between two constructors. In order
-to avoid re-encoding the same logic,
-the next section introduces combinators demonstrating that
-descriptions are closed under finite sums and finite products
-of recursive positions.
+\section{Common Combinators and Their Properties}\label{desccomb}
+
+In order to avoid repeatedly re-encoding the same logic, we introduce
+combinators demonstrating that descriptions are closed under finite
+sums and finite products of recursive positions.
+
+\subsection{Closure under Disjoint Union}
+
+As we wrote, the construction used in \cref{fig:desculc} to define the
+syntax for the untyped λ-calculus is classic. It is actually the third
+time (the first and second times being the definition of \AF{listD} and
+\AF{vecD} in \cref{figure:listD,figure:vecD}) that we use a \AF{Bool}
+to distinguish between two constructors.
+
+We define once and for all the disjoint union of two descriptions thanks
+to the \AF{\_`+\_} combinator. It comes togeter with an appropriate
+eliminator \AF{case} which, given two continuations, picks the one
+corresponding to the chosen branch.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{descsum}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{case}
+\caption{Descriptions are Closed Under Disjoint Sums\label{figure:descsum}}
+\end{figure}
+
+A concrete use case for the disjoint union combinator and its eliminator
+will be given in \todo{section:letbinding} where we explain how to seamlessly
+enrich any existing syntax with let-bindings and how to use the \AR{Semantics}
+framework to elaborate them away.
+
+\subsection{Closure Under Finite Product of Recursive Positions}
+
+Closure under product does not hold in general. Indeed, the equality constraints
+introduced by the two end tokens of two descriptions may be incompatible. So far,
+a limited form of closure (closure under finite product of recursive positions)
+has been sufficient for all of our use cases. Provided a list of pairs of context
+extensions and kinds, we can add to an existing description that many recursive
+substructures.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{xs}
+\caption{Descriptions are Closed Under Finite Product of Recursive Positions\label{figure:descprod}}
+\end{figure}
+
+As with coproducts, we can define an appropriate eliminator. The function \AF{unXs}
+takes a value in the encoding and extracts its constituents ({\AD{All} \AB{P} \AB{xs}}
+is defined in Agda's standard library and makes sure that the predicate \AB{P} holds
+true of all the elements in the list \AB{xs}).
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{unxs}
+\caption{Breaking Down a Finite Product of Recursive Positions\label{figure:descprodelim}}
+\end{figure}

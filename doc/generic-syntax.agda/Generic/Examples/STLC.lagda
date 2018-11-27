@@ -13,7 +13,7 @@ open import Function
 
 private
   variable
-    α : Type
+    σ : Type
 
 \end{code}
 %<*stlc>
@@ -41,7 +41,7 @@ pattern `lam b    = `con (Lam _ _ , b , refl)
 \end{code}
 %<*identity>
 \begin{code}
-_ : TM STLC ((α `→ α) `→ (α `→ α))
-_ = `lam (`lam (`app (`var (s z)) (`var z)))
+_ : TM STLC (σ `→ σ)
+_ = `lam (`var z)
 \end{code}
 %</identity>

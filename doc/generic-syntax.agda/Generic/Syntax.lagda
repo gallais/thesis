@@ -4,6 +4,7 @@ module Generic.Syntax where
 open import Size
 open import Data.Bool
 open import Data.List.Base as L hiding ([_])
+open import Data.List.All
 open import Data.Product as Prod
 open import Function hiding (case_of_)
 open import Relation.Binary.PropositionalEquality hiding ([_])
@@ -74,11 +75,12 @@ module _ {I i Γ} {d : Desc I} where
   `con-inj refl = refl
 
 -- Closed terms
+module _ {I : Set} where
 \end{code}
 %<*closed>
 \begin{code}
-TM : {I : Set} → Desc I → I → Set
-TM d i = Tm d ∞ i []
+  TM : Desc I → I → Set
+  TM d i = Tm d ∞ i []
 \end{code}
 %</closed>
 \begin{code}
@@ -89,45 +91,87 @@ module _ {I : Set} where
 
  infixr 5 _`+_
 
+\end{code}
+%<*descsum>
+\begin{code}
  _`+_ : Desc I → Desc I → Desc I
- d `+ e =  `σ Bool $ λ isLeft →
-           if isLeft then d else e
-
+ d `+ e = `σ Bool $ λ isLeft → if isLeft then d else e
+\end{code}
+%</descsum>
+\begin{code}
 module _ {I : Set} {d e : Desc I} {X : List I → I ─Scoped}
          {A : Set} {i : I} {Γ : List I} where
-
- case :  (⟦ d       ⟧ X i Γ → A) →
-         (⟦ e       ⟧ X i Γ → A) →
-         (⟦ d `+ e  ⟧ X i Γ → A)
-
+\end{code}
+%<*case>
+\begin{code}
+ case :  (⟦ d ⟧ X i Γ → A) → (⟦ e ⟧ X i Γ → A) → (⟦ d `+ e  ⟧ X i Γ → A)
  case l r (true   , t) = l t
  case l r (false  , t) = r t
+\end{code}
+%</case>
+\begin{code}
+
+module PAPERXS {I : Set} where
+-- Descriptions are closed under products of recursive positions
+
+\end{code}
+%<*xs>
+\begin{code}
+ `Xs : List (List I × I) → Desc I → Desc I
+ `Xs Δjs d = foldr (uncurry `X) d Δjs
+\end{code}
+%</xs>
+\begin{code}
+
+module PAPER {I : Set} {d : Desc I} {X : List I → I ─Scoped} {i : I} {Γ : List I} where
+ open PAPERXS
+\end{code}
+%<*unxs>
+\begin{code}
+ unXs :  ∀ Δjs → ⟦ `Xs Δjs d ⟧ X i Γ →
+         All (uncurry $ λ Δ j → X Δ j Γ) Δjs × ⟦ d ⟧ X i Γ
+
+ unXs []       v       = [] , v
+ unXs (σ ∷ Δ)  (r , v) = Prod.map₁ (r ∷_) (unXs Δ v)
+\end{code}
+%</unxs>
+\begin{code}
 
 module _ {I : Set} where
 -- Descriptions are closed under products of recursive positions
 
+\end{code}
+%<*xs>
+\begin{code}
  `Xs : List I → Desc I → Desc I
  `Xs js d = foldr (`X []) d js
+\end{code}
+%</xs>
+\begin{code}
 
 module _ {I : Set} {d : Desc I} {X : List I → I ─Scoped} {i : I} {Γ : List I} where
 
- unXs :  (Δ : List I) → ⟦ `Xs Δ d ⟧ X i Γ →
-         (Δ ─Env) (X []) Γ × ⟦ d ⟧ X i Γ
-
+ unXs : ∀ Δ → ⟦ `Xs Δ d ⟧ X i Γ → (Δ ─Env) (X []) Γ × ⟦ d ⟧ X i Γ
  unXs []       v       = ε , v
  unXs (σ ∷ Δ)  (r , v) = Prod.map₁ (_∙ r) (unXs Δ v)
 
 -- Descriptions give rise to traversable functors
 
-module _ {I : Set} {X Y : List I → I ─Scoped} where
+module _ {I : Set} {X Y : List I → I ─Scoped} {Γ Δ} {i} where
 
- fmap : (d : Desc I) {Γ Δ : List I} {i : I} →
-        (∀ Θ i → X Θ i Γ → Y Θ i Δ) → ⟦ d ⟧ X i Γ → ⟦ d ⟧ Y i Δ
- fmap (`σ A d)   f = Prod.map₂ (fmap (d _) f)
- fmap (`X Δ j d) f = Prod.map (f Δ j) (fmap d f)
- fmap (`∎ i)     f = id
+\end{code}
+%<*fmap>
+\begin{code}
+ fmap :  (d : Desc I) (f : ∀ Θ i → X Θ i Γ → Y Θ i Δ) →
+         ⟦ d ⟧ X i Γ → ⟦ d ⟧ Y i Δ
+ fmap (`σ A d)    f = Prod.map₂ (fmap (d _) f)
+ fmap (`X Δ j d)  f = Prod.map (f Δ j) (fmap d f)
+ fmap (`∎ i)      f = id
+\end{code}
+%</fmap>
+\begin{code}
 
- fmap-ext : (d : Desc I) {Γ Δ : List I} {i : I} {f g : ∀ Θ i → X Θ i Γ → Y Θ i Δ} →
+ fmap-ext : (d : Desc I) {f g : ∀ Θ i → X Θ i Γ → Y Θ i Δ} →
             (f≈g : ∀ Θ i x → f Θ i x ≡ g Θ i x) (v : ⟦ d ⟧ X i Γ) →
             fmap d f v ≡ fmap d g v
  fmap-ext (`σ A d)   f≈g (a , v) = cong (a ,_) (fmap-ext (d a) f≈g v)
