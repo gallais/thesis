@@ -490,33 +490,6 @@ datatypes.
 %% OTHER GENERIC FUNCTIONS
 
 
-
-\begin{figure}[h]
-\begin{minipage}{0.45\textwidth}
-  \ExecuteMetaData[Generic/Examples/ElaborationLet.tex]{unletcode}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-  \ExecuteMetaData[Generic/Examples/ElaborationLet.tex]{unlet}
-\end{minipage}
-\caption{Inlining Let Binding}
-\end{figure}
-
-In less than 10 lines of code we have defined a generic extension of
-syntaxes with binding together with a semantics which corresponds
-to an elaborator translating away this new construct. In their
-own setting working on STLC, ACMM~\citeyear{allais2017type} have
-shown that it is similarly possible to implement a Continuation
-Passing Style transformation as a semantics.
-
-We have demonstrated how easily one can define extensions and combine
-them on top of a base language without having to reimplement common
-traversals for each one of the intermediate representations. Moreover,
-it is possible to define \emph{generic} transformations elaborating
-these added features in terms of lower-level ones. This suggests that
-this setup could be a good candidate to implement generic compilation
-passes and could deal with a framework using a wealth of slightly
-different intermediate languages à la Nanopass~\cite{Keep:2013:NFC:2544174.2500618}.
-
 \subsection{(Unsafe) Normalisation by Evaluation}\label{section:nbyeval}
 
 A key type of traversal we have not studied yet is a language's

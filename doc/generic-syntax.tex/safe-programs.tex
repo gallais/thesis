@@ -213,8 +213,34 @@ by inlining them before typechecking can be implemented generically as
 a semantics over (\AB{d} \AF{`+} \AF{Let}). For this semantics values
 in the environment and computations are both let-free terms. The algebra
 of the semantics can be defined by parts thanks to \AF{case} defined in
-Section~\ref{desccomb}: the old constructors are kept the same by interpreting
+\cref{desccomb}: the old constructors are kept the same by interpreting
 them using the generic \AF{Substitution} algebra;
 whilst the let-binder precisely provides the extra value to be added to the
-environment. The process of removing let binders is kickstarted with a
-placeholder environment associating each variable to itself.
+environment.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/ElaborationLet.tex]{letelab}
+\caption{\AF{Let}-Elaboration as a \AR{Semantics}}
+\end{figure}
+
+The process of removing let binders is kickstarted with a placeholder
+environment associating each variable to itself.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/ElaborationLet.tex]{unlet}
+\caption{Corollary: \AF{Let}-Elaboration via Evaluation with Placeholders}
+\end{figure}
+
+In half a dozen lines of code we have defined a generic extension of syntaxes with
+binding together with a semantics which corresponds to an elaborator translating
+away this new construct. We have seen in \cref{cps-transformation} that it is
+similarly possible to implement a Continuation Passing Style transformation as
+a semantics for STLC.
+
+We have demonstrated how easily one can define extensions and combine them on top
+of a base language without having to reimplement common traversals for each one
+of the intermediate representations. Moreover, it is possible to define
+\emph{generic} transformations elaborating these added features in terms of
+lower-level ones. This suggests that this setup could be a good candidate to
+implement generic compilation passes and could deal with a framework using a
+wealth of slightly different intermediate languages à la Nanopass (\cite{Keep:2013:NFC:2544174.2500618}).

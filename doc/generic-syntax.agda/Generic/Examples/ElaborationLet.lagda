@@ -26,30 +26,39 @@ open import Generic.Zip
 open Semantics
 
 module _ {I : Set} where
+
 \end{code}
 %<*letcode>
 \begin{code}
  Let : Desc I
- Let =  `σ (I × I) $ uncurry λ σ τ →
-        `X [] σ (`X (σ ∷ []) τ (`∎ τ))
+ Let =  `σ (I × I) $ uncurry $ λ σ τ → `X [] σ (`X (σ ∷ []) τ (`∎ τ))
 \end{code}
 %</letcode>
 \begin{code}
 
 module _ {I : Set} {d : Desc I} where
-
+ private variable σ : I
+\end{code}
+%<*letelab>
+\begin{code}
  UnLet : Semantics (d `+ Let) (Tm d ∞) (Tm d ∞)
  UnLet .th^𝓥  = th^Tm
  UnLet .var    = id
- UnLet .alg    =
-   case (Substitution .alg) λ where
+ UnLet .alg    = case (Substitution .alg) λ where
    (_ , e , t , refl) → extract t (ε ∙ e)
-
+\end{code}
+%</letelab>
+\begin{code}
  unLet : ∀{Γ Δ σ s} → (Γ ─Env) (Tm d ∞) Δ → Tm (d `+ Let) s σ Γ → Tm d ∞ σ Δ
  unLet ρ t = semantics UnLet ρ t
-
- unlet : {i : I} → ∀[ Tm (d `+ Let) ∞ i ⇒ Tm d ∞ i ]
+\end{code}
+%<*unlet>
+\begin{code}
+ unlet : ∀[ Tm (d `+ Let) ∞ σ ⇒ Tm d ∞ σ ]
  unlet = Semantics.semantics UnLet (pack `var)
+\end{code}
+%</unlet>
+\begin{code}
 
  open ≡-Reasoning
 
