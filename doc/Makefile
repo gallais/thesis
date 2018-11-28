@@ -48,6 +48,9 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Fusion/Specialised/Propositional.lagda \
   generic-syntax.agda/Generic/Fusion/Syntactic.lagda \
   generic-syntax.agda/Generic/Examples/ElaborationLet.lagda \
+  generic-syntax.agda/Generic/Semantics/NbyE.lagda \
+  generic-syntax.agda/Generic/Examples/NbyE.lagda \
+
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
