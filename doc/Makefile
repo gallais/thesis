@@ -6,6 +6,7 @@ all: latex/$(THESIS).pdf
 AGDA_FILES:=\
   shared/Stdlib.lagda \
   shared/Data/Var.lagda \
+  shared/Data/Var/Varlike.lagda \
   shared/Data/Environment.lagda \
   shared/Data/Relation.lagda \
   shared/Relation/Binary/PropositionalEquality/Extra.lagda \
@@ -37,6 +38,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Examples/STLC.lagda \
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
   generic-syntax.agda/Generic/Semantics.lagda \
+  generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))

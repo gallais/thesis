@@ -61,7 +61,7 @@ instead of associating values to variables, it associates computations to terms.
 \caption{\AF{\_─Comp}: Associating Computations to Terms}
 \end{figure}
 
-We can now define the type of the fundamental lemma (called \AF{sem}) which
+We can now define the type of the fundamental lemma (called \AF{semantics}) which
 takes a semantics and returns a function from environments to computations. It is
 defined mutually with a function \AF{body} turning syntactic binders into
 semantics binders: to each de Bruijn \AF{Scope} (i.e. a substructure in a potentially
@@ -73,7 +73,7 @@ value for each newly bound variable).
 \caption{Statement of the Fundamental Lemma of \AR{Semantics}}
 \end{figure}
 
-The proof of \AF{sem} is straightforward now that we have clearly identified the
+The proof of \AF{semantics} is straightforward now that we have clearly identified the
 problem structure and the constraints we need to enforce. If the term considered
 is a variable, we lookup the associated value in the evaluation environment and
 turn it into a computation using \ARF{var}. If it is a non variable constructor
@@ -82,11 +82,11 @@ call the \ARF{alg}ebra to combine these results.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semproof}
-\caption{Proof of the Fundamental Lemma of \AR{Semantics} -- \AF{sem}}
+\caption{Proof of the Fundamental Lemma of \AR{Semantics} -- \AF{semantics}}
 \end{figure}
 
 The auxiliary lemma \AF{body} distinguishes two cases. If no new variable has
-been bound in the recursive substructure, it is a matter of calling \AF{sem}
+been bound in the recursive substructure, it is a matter of calling \AF{semantics}
 recursively. Otherwise we are provided with a \AF{Thinning}, some additional
 values and evaluate the substructure in the thinned and extended evaluation
 environment thanks to a auxiliary function \AF{\_>>\_} which given two
@@ -102,3 +102,55 @@ Given that \AF{fmap} introduces one level of indirection between the recursive
 calls and the subterms they are acting upon, the fact that our terms are indexed
 by a \AF{Size} is once more crucial in getting the termination checker to see
 that our proof is indeed well founded.
+
+\section{Our First Generic Programs: Renaming and Substitution}\label{section:renandsub}
+
+Similarly to \cref{sec:syntactic} renaming can be defined generically for all syntax
+descriptions as a semantics with \AF{Var} as values and \AD{Tm} as computations. The
+first two constraints on \AF{Var} described earlier are trivially satisfied. Observing
+that renaming strictly respects the structure of the term it goes through, it makes
+sense for the algebra to be implemented using \AF{fmap}. When dealing with the body
+of a binder, we `reify' the \AF{Kripke} function by evaluating it in an extended
+context and feeding it placeholder values corresponding to the extra variables
+introduced by that context. This is reminiscent both of what we did in
+\cref{sec:syntactic} and the definition of reification in the setting of normalisation
+by evaluation (see e.g. Coquand's work~\citeyear{coquand2002formalised}).
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{renaming}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{thTm}
+\caption{Generic Thinning for All Syntaxes with Binding\label{fig:genren}}
+\end{figure}
+
+Substitution is defined in a similar manner with \AD{Tm} as both values and computations.
+Of the two constraints applying to terms as values, the first one corresponds to renaming
+and the second one is trivial. The algebra is once more defined by using \AF{fmap} and
+reifying the bodies of binders.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{substitution}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{sub}
+\caption{Generic Parallel Substitution for All Syntaxes with Binding}
+\end{figure}
+
+The reification process mentioned in the definition of renaming and substitution
+can be implemented generically for \AR{Semantics} families which have \AR{VarLike}
+values (\AF{vl\textsuperscript{Var}} and \AF{vl\textsuperscript{Tm}} are proofs of
+\AR{VarLike} for \AD{Var} and \AD{Tm} respectively) i.e. values which are thinnable
+and such that we can craft placeholder values in non-empty contexts.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Var/Varlike.tex]{varlike}
+\caption{\AR{VarLike}: \AF{Thinnable} and with placeholder values}
+\end{figure}
+
+For any \AR{VarLike} \AB{𝓥}, we can define \AF{fresh\textsuperscript{r}} of
+type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ})} and \AF{fresh\textsuperscript{l}} of
+type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ})} by combining the use
+of placeholder values and thinnings, and it is almost immediate that variables
+are \AR{VarLike}. Hence, we can then write \AF{reify} like so:
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Var/Varlike.tex]{reify}
+\caption{Generic Reification thanks to \AR{VarLike} Values}
+\end{figure}

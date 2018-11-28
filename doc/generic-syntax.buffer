@@ -486,25 +486,6 @@ datatypes.
 
 
 
-\subsection{Our First Generic Programs: Renaming and Substitution}\label{section:renandsub}
-
-Similarly to ACMM~\citeyear{allais2017type} renaming can be defined generically
-for all syntax descriptions as a semantics with \AF{Var} as values and \AD{Tm} as
-computations. The first two constraints on \AF{Var} described earlier are trivially
-satisfied. Observing that renaming strictly respects the structure of the term it
-goes through, it makes sense for the algebra to be implemented using \AF{fmap}.
-When dealing with the body of a binder, we `reify' the \AF{Kripke} function by
-evaluating it in an extended context and feeding it placeholder values corresponding to
-the extra variables introduced by that context. This is reminiscent both of what we
-did in Section~\ref{section:primer-program} and the definition of reification in
-the setting of normalisation by evaluation (see e.g. Coquand's work~\citeyear{coquand2002formalised}).
-
-Substitution is defined in a similar manner with \AD{Tm} as both
-values and computations. Of the two constraints applying to terms as
-values, the first one corresponds to renaming and the second
-one is trivial. The algebra is once more defined by using \AF{fmap}
-and reifying the bodies of binders.
-
 \begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[Generic/Semantics.tex]{renaming}

@@ -51,23 +51,23 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 %</alg>
 %<*semtype>
 \begin{code}
- sem   : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
- body  : (Γ ─Env) 𝓥 Δ → ∀ Θ σ → Scope (Tm d s) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
+ semantics  : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
+ body       : (Γ ─Env) 𝓥 Δ → ∀ Θ σ → Scope (Tm d s) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
 \end{code}
 %</semtype>
 %<*semproof>
 \begin{code}
- sem ρ (`var k) = var (lookup ρ k)
- sem ρ (`con t) = alg (fmap d (body ρ) t)
+ semantics ρ (`var k) = var (lookup ρ k)
+ semantics ρ (`con t) = alg (fmap d (body ρ) t)
 \end{code}
 %</semproof>
 %<*bodyproof>
 \begin{code}
- body ρ []       i t = sem ρ t
- body ρ (_ ∷ _)  i t = λ σ vs → sem (vs >> th^Env th^𝓥 ρ σ) t
+ body ρ []       i t = semantics ρ t
+ body ρ (_ ∷ _)  i t = λ σ vs → semantics (vs >> th^Env th^𝓥 ρ σ) t
 \end{code}
 %</bodyproof>
 \begin{code}
  closed : ([] ─Comp) 𝓒 []
- closed = sem ε
+ closed = semantics ε
 \end{code}
