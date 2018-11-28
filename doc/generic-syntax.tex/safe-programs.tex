@@ -244,3 +244,22 @@ of the intermediate representations. Moreover, it is possible to define
 lower-level ones. This suggests that this setup could be a good candidate to
 implement generic compilation passes and could deal with a framework using a
 wealth of slightly different intermediate languages à la Nanopass (\cite{Keep:2013:NFC:2544174.2500618}).
+
+
+\subsection{(Unsafe) Normalisation by Evaluation}\label{section:unsafenbyeval}
+
+A key type of traversal we have not studied yet is a language's evaluator. Our
+universe of syntaxes with binding does not impose any typing discipline on the
+user-defined languages and as such cannot guarantee their totality. This is
+embodied by one of our running examples: the untyped $\lambda$-calculus. As a
+consequence there is no hope for a safe generic framework to define normalisation
+functions.
+
+The clear connection between the \AF{Kripke} functional space characteristic of
+our semantics and the one that shows up in normalisation by evaluation suggests
+we ought to manage to give an unsafe generic framework for normalisation by evaluation.
+By temporarily \textbf{disabling Agda's positivity checker}, we can define a
+generic reflexive domain \AD{Dm} in which to interpret our syntaxes. It has three
+constructors corresponding respectively to a free variable, a constructor's
+counterpart where scopes have become \AF{Kripke} functional spaces on \AD{Dm}
+and an error token because the evaluation of untyped programs may go wrong.
