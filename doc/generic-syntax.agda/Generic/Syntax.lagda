@@ -59,9 +59,9 @@ module _ {I : Set} where
 \end{code}
 %<*mu>
 \begin{code}
- data Tm (d : Desc I) (s : Size) : I ─Scoped where
-   `var :                   ∀[ Var i                      ⇒ Tm d s i ]
-   `con : {s' : Size< s} →  ∀[ ⟦ d ⟧ (Scope (Tm d s')) i  ⇒ Tm d s i ]
+ data Tm (d : Desc I) : Size → I ─Scoped where
+   `var : ∀[ Var i                     ⇒ Tm d (↑ s) i ]
+   `con : ∀[ ⟦ d ⟧ (Scope (Tm d s)) i  ⇒ Tm d (↑ s) i ]
 \end{code}
 %</mu>
 \begin{code}

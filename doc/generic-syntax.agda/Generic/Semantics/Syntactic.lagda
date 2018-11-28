@@ -49,18 +49,23 @@ module _ {I : Set} {d : Desc I} where
 %<*substitution>
 \begin{code}
  Substitution : Semantics d (Tm d ∞) (Tm d ∞)
- Substitution .th^𝓥  = λ t ρ → ren ρ t
+ Substitution .th^𝓥  = th^Tm
  Substitution .var   = id
  Substitution .alg   = `con ∘ fmap d (reify vl^Tm)
 \end{code}
 %</substitution>
+\begin{code}
+ module PAPERONLY where
+\end{code}
 %<*sub>
 \begin{code}
- sub :  (Γ ─Env) (Tm d ∞) Δ → Tm d ∞ σ Γ → Tm d ∞ σ Δ
- sub ρ t = Semantics.semantics Substitution ρ t
+  sub :  (Γ ─Env) (Tm d ∞) Δ → Tm d ∞ σ Γ → Tm d ∞ σ Δ
+  sub ρ t = Semantics.semantics Substitution ρ t
 \end{code}
 %</sub>
 \begin{code}
+ sub : ∀ {s} → (Γ ─Env) (Tm d ∞) Δ → Tm d s σ Γ → Tm d ∞ σ Δ
+ sub ρ t = Semantics.semantics Substitution ρ t
 
  vl^VarTm : VarLikeᴿ VarTmᴿ vl^Var vl^Tm
  VarLikeᴿ.newᴿ  vl^VarTm = refl

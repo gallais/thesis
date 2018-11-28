@@ -39,6 +39,15 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
   generic-syntax.agda/Generic/Semantics.lagda \
   generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
+  generic-syntax.agda/Generic/Zip.lagda \
+  generic-syntax.agda/Generic/Identity.lagda \
+  generic-syntax.agda/Generic/Simulation.lagda \
+  generic-syntax.agda/Generic/Simulation/Syntactic.lagda \
+  generic-syntax.agda/Generic/Fusion.lagda \
+  generic-syntax.agda/Generic/Fusion/Syntactic.lagda \
+  generic-syntax.agda/Generic/Fusion/Specialised/Propositional.lagda \
+  generic-syntax.agda/Generic/Fusion/Syntactic.lagda \
+  generic-syntax.agda/Generic/Examples/ElaborationLet.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
