@@ -49,6 +49,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Fusion/Syntactic.lagda \
   generic-syntax.agda/Generic/Examples/ElaborationLet.lagda \
   generic-syntax.agda/Generic/Semantics/NbyE.lagda \
+  generic-syntax.agda/Generic/Semantics/Printing.lagda \
   generic-syntax.agda/Generic/Examples/NbyE.lagda \
 
 
