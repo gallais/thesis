@@ -51,6 +51,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Semantics/NbyE.lagda \
   generic-syntax.agda/Generic/Semantics/Printing.lagda \
   generic-syntax.agda/Generic/Examples/NbyE.lagda \
+  generic-syntax.agda/Generic/Examples/TypeChecking.lagda \
 
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
@@ -76,6 +77,7 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/syntax.tex \
   latex/generic-syntax.tex/a-universe.tex \
   latex/generic-syntax.tex/safe-programs.tex \
+  latex/generic-syntax.tex/typechecking.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
 latex/main.bib: main.bib

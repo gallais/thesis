@@ -1,0 +1,51 @@
+\chapter{Typechecking as a Semantics}
+
+
+\section{An Algebraic Approach to Typechecking}\label{section:typechecking}
+
+Following Atkey~\citeyear{atkey2015algebraic}, we can consider type checking
+and type inference as a possible semantics for a bi-directional~\cite{pierce2000local}
+language. We represent the raw syntax of a simply typed bi-directional calculus
+as a bi-sorted language using a notion of \AD{Mode} to distinguish between terms
+for which we will be able to \AIC{Infer} the type and the ones for which we will
+have to \AIC{Check} a type candidate.
+
+Following traditional presentations, eliminators give rise to \AIC{Infer}rable
+terms under the condition that the term they are eliminating is also \AIC{Infer}rable
+and the other arguments are \AIC{Check}able whilst constructors are always \AIC{Check}able.
+Two extra constructors allow changes of direction: \AIC{Cut} annotates a \AIC{Check}able
+term with its type thus making it \AIC{Infer}rable whilst \AIC{Emb} embeds \AIC{Infer}rables
+into \AIC{Check}ables.
+
+
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{type}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{constructors}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{mode}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{bidirectional}
+\caption{A Bidirectional Simply Typed Language}
+\end{figure}
+
+The values stored in the environment will be \AD{Type} information for bound
+variables. Instead of considering that we get a type no matter what the \AD{Mode}
+of the variable is, we enforce the fact that all variables need to be \AIC{Infer}rable.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{varmode}
+
+In contrast, the generated computations will, depending on the mode, either take a
+type candidate and \AIC{Check} it is valid or \AIC{Infer} a type for their argument.
+These computations are always potentially failing so we use the \AD{Maybe} monad.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typemode}
+
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{arrow}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{app}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{lam}
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{equal}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typecheck}
+
+
+\section{An Algebraic Approach to Elaboration}
