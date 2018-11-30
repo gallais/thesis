@@ -14,10 +14,8 @@ Following traditional presentations, eliminators give rise to \AIC{Infer}rable
 terms under the condition that the term they are eliminating is also \AIC{Infer}rable
 and the other arguments are \AIC{Check}able whilst constructors are always \AIC{Check}able.
 Two extra constructors allow changes of direction: \AIC{Cut} annotates a \AIC{Check}able
-term with its type thus making it \AIC{Infer}rable whilst \AIC{Emb} embeds \AIC{Infer}rables
-into \AIC{Check}ables.
-
-
+term with its type thus making it \AIC{Infer}rable whilst \AIC{Emb} embeds
+\AIC{Infer}rables into \AIC{Check}ables.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{type}
@@ -27,9 +25,10 @@ into \AIC{Check}ables.
 \caption{A Bidirectional Simply Typed Language}
 \end{figure}
 
-The values stored in the environment will be \AD{Type} information for bound
-variables. Instead of considering that we get a type no matter what the \AD{Mode}
-of the variable is, we enforce the fact that all variables need to be \AIC{Infer}rable.
+Both the values and computations will be constant in the scope. The values stored
+in the environment will be \AD{Type} information for bound variables. Instead of
+considering that we get a type no matter what the \AD{Mode} of the variable is,
+we enforce the fact that all variables need to be \AIC{Infer}rable.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{varmode}
 
@@ -39,13 +38,76 @@ These computations are always potentially failing so we use the \AD{Maybe} monad
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typemode}
 
+Before defining typechecking as a \AR{Semantics}.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{arrow}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{equal}
+
+Equipped with these combinators, we can define the two most interesting cases
+as top-level combinators: application and $\lambda$-abstraction.
+
+When facing an application: infer the type of the function, make sure it is an
+arrow type, check the argument at the domain's type and return the codomain.
+
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{app}
+
+For a $\lambda$-abstraction: check the input type is an arrow type and check
+the body at the codomain type in the extended environment where the newly-bound
+variable has the domain's type.
+
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{lam}
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{equal}
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typecheck}
+We can now define typechecking itself. Because values are constant in the scope,
+the \ARF{th\textasciicircum{}𝓥} constraint is trivial. The \ARF{var} constraint
+is also easy: values correspond to \AIC{Infer}rable terms so we can simply return
+the type looked up in the environment. The algebra describes the algorithm by pieces.
+We have already handled application and $\lambda$-abstraction, a cut always comes with
+a type candidate against which to check the term  and to be returned in case of
+success (\AF{\_<\$\_} takes an \AB{A} and a {\AD{Maybe} \AB{B}} and returns
+a {\AD{Maybe} \AB{A}} which has the same structure as its second argument).
+Finally, the change of direction from \AIC{Infer}rable to \AIC{Check}able is successful
+when the inferred type is equal to the expected one.
 
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typecheck}
+\caption{Typechecking as a \AR{Semantics}}
+\end{figure}
+
+From this we can derive our \AF{type-}(\AIC{Infer}/\AIC{Check}) function which takes
+a closed term and computers either an inferred type or a validation function for a
+type candidate. We make use of the special case of \AF{semantics} for closed term
+introduced in \cref{fig:closedsem}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{typefun}
+\caption{Type Inference and Type Checking as Mode-indexed Semantics\label{fig:typeinfersem}}
+\end{figure}
+
+We can run this typechecking function on an example
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/TypeChecking.tex]{example}
+\caption{Running the Type Inference}
+\end{figure}
+
+We have demonstrated how to define a bidirectional typechecker for this simple language
+by leveraging the \AF{Semantics} framework. However the output of this function is not
+very informative. We can do better: instead of simply generating a type or checking that
+a candidate will do, we can use our \AD{Desc}riptions to describe a language of evidence
+and generate not only an expression's type but also a well scoped and well typed term of
+that type.
 
 \section{An Algebraic Approach to Elaboration}
+
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{typing}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{fromtyping}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{elab}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{varmode}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{typemode}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{equal}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{arrow}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{app}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{lam}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{emb}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{elaborate}

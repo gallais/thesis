@@ -67,7 +67,9 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
  body ρ (_ ∷ _)  i t = λ σ vs → semantics (vs >> th^Env th^𝓥 ρ σ) t
 \end{code}
 %</bodyproof>
+%<*closed>
 \begin{code}
- closed : ([] ─Comp) 𝓒 []
+ closed : TM d σ → 𝓒 σ []
  closed = semantics ε
 \end{code}
+%</closed>

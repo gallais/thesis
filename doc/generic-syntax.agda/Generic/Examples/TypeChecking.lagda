@@ -128,8 +128,8 @@ lam b σ`→τ = do
 \begin{code}
 Typecheck : Semantics Lang (const ∘ Var-) (const ∘ Type-)
 Typecheck .th^𝓥  = th^const
-Typecheck .var    = λ where (`var t) → just t
-Typecheck .alg    = λ where
+Typecheck .var   = λ where (`var t) → just t
+Typecheck .alg   = λ where
    (App , f , t , refl)  → app f t
    (Lam , b , refl)      → lam b
    (Cut σ , t , refl)    →  σ <$ t σ
@@ -137,12 +137,21 @@ Typecheck .alg    = λ where
 \end{code}
 %</typecheck>
 \begin{code}
+private variable m : Mode
 
-type- : (p : Mode) → Tm Lang ∞ p [] → Type- p
-type- p t = Semantics.semantics Typecheck {Δ = []} ε t
-
-_ : let  id  : Tm Lang ∞ Check []
+\end{code}
+%<*typefun>
+\begin{code}
+type- : ∀ m → TM Lang m → Type- m
+type- m t = Semantics.closed Typecheck t
+\end{code}
+%</typefun>
+%<*example>
+\begin{code}
+_ : let  id  : TM Lang Check
          id  = `lam (`emb (`var z))
-    in type- Infer (`app (`cut ((α `→ α) `→ (α `→ α)) id) id)
-     ≡ just (α `→ α)
+    in type- Infer (`app (`cut ((α `→ α) `→ (α `→ α)) id) id) ≡ just (α `→ α)
 _ = refl
+\end{code}
+%</example>
+\begin{code}

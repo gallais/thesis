@@ -52,6 +52,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Semantics/Printing.lagda \
   generic-syntax.agda/Generic/Examples/NbyE.lagda \
   generic-syntax.agda/Generic/Examples/TypeChecking.lagda \
+  generic-syntax.agda/Generic/Examples/Elaboration.lagda \
 
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))

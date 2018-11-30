@@ -8,7 +8,7 @@ open import Agda.Builtin.Equality
 open import Agda.Builtin.List
 open import Generic.Syntax
 open import Data.Var
-open import Syntax.Type
+open import Generic.Examples.TypeChecking using (Type); open Type
 open import Function
 
 private
