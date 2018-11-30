@@ -17,12 +17,20 @@ open import Generic.Semantics
 
 module _ {I : Set} {X Y : List I → I → List I → Set} where
 
- Zip :  (d : Desc I) (R : (δ : List I) (i : I) → ∀[ X δ i ⇒ Y δ i ⇒ const Set ]) →
-        {i : I} → ∀[ ⟦ d ⟧ X i ⇒ ⟦ d ⟧ Y i ⇒ const Set ]
- Zip (`∎ i′)     R x        y         = ⊤
- Zip (`X δ j d)  R (r , x)  (r' , y)  = R δ j r r' × Zip d R x y
+ private variable i : I
+
+\end{code}
+%<*ziptype>
+\begin{code}
+ Zip :  (d : Desc I)  → (∀ Δ i → ∀[ X Δ i ⇒ Y Δ i ⇒ const Set ])
+                      → ∀[ ⟦ d ⟧ X i ⇒ ⟦ d ⟧ Y i ⇒ const Set ]
+ Zip (`∎ j)      R x        y         = ⊤
+ Zip (`X Δ j d)  R (r , x)  (r' , y)  = R Δ j r r' × Zip d R x y
  Zip (`σ A d)    R (a , x)  (a' , y)  = Σ[ eq ∈ a' ≡ a ] Zip (d a) R x (rew eq y)
    where rew = subst (λ a → ⟦ d a ⟧ _ _ _)
+\end{code}
+%</ziptype>
+\begin{code}
 
 module _ {I : Set} {X Y T : List I → I → List I → Set}
          {P : ∀ δ i → ∀[ X δ i ⇒ Y δ i ⇒ const Set ]} where

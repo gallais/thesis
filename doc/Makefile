@@ -78,6 +78,7 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/a-universe.tex \
   latex/generic-syntax.tex/safe-programs.tex \
   latex/generic-syntax.tex/typechecking.tex \
+  latex/generic-syntax.tex/proofs.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
 latex/main.bib: main.bib
