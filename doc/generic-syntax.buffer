@@ -494,49 +494,6 @@ datatypes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FUSION
 
-\subsection{Fusion Lemma}\label{section:fusion}
-
-Results which can be reformulated as the ability to fuse two traversals
-obtained as \AR{Sem}antics into one abound. When claiming that \AF{Tm} is
-a Functor, we have to prove that two successive renamings can be fused into
-a single renaming where the \AF{Thinning}s have been composed. Similarly,
-demonstrating that \AF{Tm} is a relative Monad~\cite{JFR4389} implies proving
-that two consecutive substitutions can be merged into a single one whose
-environment is the first one, where the second one has been applied in a
-pointwise manner. The \emph{Substitution Lemma} central
-to most model constructions (see for instance~\cite{mitchell1991kripke}) states
-that a syntactic substitution followed by the evaluation of the resulting term
-into the model is equivalent to the evaluation of the original term with an
-environment corresponding to the evaluated substitution.
-
-A direct application of these results is our (to be published) entry to the
-POPLMark Reloaded challenge~\citeyear{poplmarkreloaded}. By using a \AD{Desc}-based
-representation of intrinsically well typed and well scoped terms we directly inherit
-not only renaming and substitution but also all four fusion lemmas as corollaries
-of our generic results. This allows us to remove the usual boilerplate
-and go straight to the point.
-As all of these statements have precisely the same structure, we can
-once more devise a framework which will, provided that its constraints are
-satisfied, prove a generic fusion lemma.
-
-Fusion is more involved than simulation so we will step through
-each one of the constraints individually, trying to give the reader an intuition
-for why they are shaped the way they are.
-
-\subsubsection{The Fusion Constraints}
-
-The notion of fusion is defined for a triple of \AR{Sem}antics; each \AB{$\mathcal{S}_i$}
-being defined for values in \AB{$\mathcal{V}_i$} and computations in \AB{$\mathcal{C}_i$}. The
-fundamental lemma associated to such a set of constraints will state that
-running \AB{$\mathcal{S}_2$} after \AB{$\mathcal{S}_1$} is equivalent to running \AB{$\mathcal{S}_3$} only.
-
-The definition of fusion is parametrised by three relations: \AB{𝓡\textsuperscript{E}} relates
-triples of environments of values in {(\AB{$\Gamma$} \AR{─Env}) \AB{𝓥$_1$} \AB{$\Delta$}},
-{(\AB{$\Delta$} \AR{─Env}) \AB{𝓥$_2$} \AB{$\Theta$}} and {(\AB{$\Gamma$} \AR{─Env}) \AB{𝓥$_3$} \AB{$\Theta$}}
-respectively; \AB{$\mathcal{R}^{\mathcal{V}}$} relates pairs of values \AB{𝓥$_2$} and \AB{𝓥$_3$};
-and \AB{$\mathcal{R}^{\mathcal{C}}$}, our notion of equivalence for evaluation results, relates pairs
-of computation in \AB{𝓒$_2$} and \AB{𝓒$_3$}.
-
 % \ExecuteMetaData[Generic/Fusion.tex]{fusiontype}
 
 The first obstacle we face is the formal definition of ``running \AB{$\mathcal{S}_2$}
