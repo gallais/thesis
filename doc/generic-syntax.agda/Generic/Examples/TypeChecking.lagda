@@ -40,16 +40,17 @@ infix 3 _==_
 %<*equal>
 \begin{code}
 _==_ : (σ τ : Type) → Maybe ⊤
-α      == α       = just tt
-σ `→ τ == σ' `→ τ' = (σ == σ') >> (τ == τ')
-_      == _       = nothing
+α == α = just tt
+(σ `→ τ) == (σ' `→ τ') =
+  σ == σ' >>  τ == τ'
+_ == _ = nothing
 \end{code}
 %</equal>
 %<*arrow>
 \begin{code}
-isArrow : (σ⇒τ : Type) → Maybe (Type × Type)
-isArrow (σ `→ τ) = just (σ , τ)
-isArrow _       = nothing
+isArrow : Type → Maybe (Type × Type)
+isArrow (σ `→ τ)  = just (σ , τ)
+isArrow α         = nothing
 \end{code}
 %</arrow>
 \begin{code}
