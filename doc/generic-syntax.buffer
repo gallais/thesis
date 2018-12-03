@@ -592,57 +592,6 @@ when an axiom-free alternative is provable.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% BISIMILARITY
-
-\subsection{Definition of Bisimilarity for Co-finite Objects}
-
-Although we were able to use propositional equality when studying
-syntactic traversals working on terms, it is not the appropriate
-notion of equality for co-finite trees. What we want is a generic
-coinductive notion of bisimilarity for all co-finite tree types
-obtained as the unfolding of a description. Two trees are bisimilar
-if their top layers have the same shape and their substructures are
-themselves bisimilar. This is precisely the type of relation \AF{Zip}
-was defined to express. Hence the following coinductive relation.
-
-\begin{figure}[h]
- \ExecuteMetaData[Generic/Bisimilar.tex]{bisim}
-\caption{Generic Notion of Bisimilarity for Co-finite Trees}
-\end{figure}
-
-We can then prove by coinduction that this generic definition always gives
-rise to an equivalence relation by using \AF{Zip}'s stability properties
-(if \AB{R} is reflexive / symmetric / transitive then so is {\AF{Zip} \AB{d} \AB{R}})
-mentioned in Section~\ref{lem:zipstable}.
-
-\begin{center}
-%\begin{figure}[h]
- \ExecuteMetaData[Generic/Bisimilar.tex]{eqrel}
-% \caption{Bisimilarity is an Equivalence Relation}
-% \end{figure}
-\end{center}
-
-This definition can be readily deployed to prove e.g. that the unfolding
-of \AF{01↺} defined in Section~\ref{def:colist} is indeed bisimilar to \AF{01⋯}
-which was defined in direct style. The proof is straightforward due to the simplicity
-of this example: the first \AIC{refl} witnesses the fact that both definitions
-pick the same constructor (a cons cell), the second that they carry the
-same natural number, and we can conclude by an appeal to the coinduction
-hypothesis.
-
-\begin{center}
-%\begin{figure}[h]
-\ExecuteMetaData[Generic/Examples/Colist.tex]{bisim01}
-%\caption{The unfolding of \AF{01↺} is bisimilar to the direct-style \AF{01⋯}}
-%\end{figure}
-\end{center}
-
-
-%\section{Fully Worked-out Example}
-%\todo{system F, etc.}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% RELATED WORK
 
 \section{Related Work}\label{section:related-work}
