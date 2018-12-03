@@ -1,4 +1,5 @@
 \chapter{The Simulation Relation}
+\label{sec:simulationrel}
 
 Thanks to \AF{Semantics}, we have already saved work by not reiterating the
 same traversals. Moreover, this disciplined approach to building models and
@@ -111,7 +112,10 @@ states that in any thinning of the evaluation context and provided two related i
 the evaluation of the body in each thinned environment extended with the appropriate
 value should yield related computations.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{rkripke}
+\caption{Relational Kripke Function Spaces: From Related Inputs to Related Outputs\label{fig:relationalkripke}}
+\end{figure}
 
 This allows us to describe the constraint for \AIC{`lam}: provided related environments
 of values, if we have a relational Kripke function space for the body of the \AIC{`lam}

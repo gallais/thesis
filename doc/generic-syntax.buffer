@@ -1,4 +1,4 @@
-
+s
 \section{Introduction}
 
 In modern typed programming languages, programmers writing embedded
@@ -489,82 +489,6 @@ datatypes.
 %% GENERIC PROOFS
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% SIMULATION
-
-
-\subsection{Simulation Lemma}\label{section:simulation}
-
-A \AF{Zip} constraint appears naturally when we want to say that a
-semantics can simulate another one. Given a relation \AB{$\mathcal{R}^{\mathcal{V}}$} connecting values
-in \AB{$\mathcal{V}_1$} and \AB{$\mathcal{V}_2$}, and a relation \AB{$\mathcal{R}^{\mathcal{C}}$} connecting computations in
-\AB{$\mathcal{C}_1$} and \AB{$\mathcal{C}_2$}, we can define \AF{Kripke\textsuperscript{R}} relating values
-\AF{Kripke} \AB{$\mathcal{V}_1$} \AB{$\mathcal{C}_1$} and \AF{Kripke} \AB{$\mathcal{V}_2$} \AB{$\mathcal{C}_2$}
-by stating that they send related inputs to related outputs. We use
-the relation transformer \AF{∀[\_]} which lifts a relation on values
-to one on environments in a pointwise manner.
-
-\begin{figure}[h]
- \ExecuteMetaData[varlike.tex]{kripkeR}
-\caption{Relational Kripke Function Spaces: From Related Inputs to Related Outputs}
-\end{figure}
-
-We can then combine \AF{Zip} and \AF{Kripke\textsuperscript{R}} to express the idea
-that two semantic objects of respective types
-\AF{⟦} \AB{d} \AF{⟧} (\AF{Kripke} \AB{$\mathcal{V}_1$} \AB{$\mathcal{C}_1$}) and
-\AF{⟦} \AB{d} \AF{⟧} (\AF{Kripke} \AB{$\mathcal{V}_2$} \AB{$\mathcal{C}_2$}) are
-synchronised. The simulation constraint on the algebras for two \AF{Sem}antics 
-then becomes: given synchronized objects, the algebras should yield
-related computations. Together with self-explanatory constraints on
-\ARF{var} and \ARF{th\textsuperscript{$\mathcal{V}$}}, this constitutes the whole \AF{Sim}ulation
-constraint:
-
-\begin{figure}[h]
- \ExecuteMetaData[Generic/Simulation.tex]{recsim}
-\caption{A Generic Notion of Simulation}
-\end{figure}
-
-The fundamental lemma of simulations is a generic theorem showing that for
-each pair of \AR{Sem}antics respecting the \AR{Sim}ulation constraint, we
-get related computations given environments of related input values. This
-theorem is once more mutually proven with a statement about \AF{Scope}s,
-and \AD{Size}s play a crucial role in ensuring that the function is indeed total.
-
-\begin{figure}[h]
-\begin{minipage}{\textwidth}
-  \ExecuteMetaData[Generic/Simulation.tex]{simbody}
-\end{minipage}\hfill
-\caption{Fundamental Lemma of \AF{Sim}ulations}
-\end{figure}
-
-Instantiating this generic simulation lemma, we can for instance get
-that renaming and substitution are extensional (given extensionally
-equal environments they produce syntactically equal terms), or that
-renaming is a special case of substitution. Of course these results
-are not new but having them generically over all syntaxes with binding
-is convenient; which we have experienced first hand when tackling the
-POPLMark Reloaded challenge where \AF{rensub} was actually needed.
-
-\begin{figure}[h]
-\ExecuteMetaData[Generic/Simulation.tex]{rensub}
-\caption{Renaming as a Substitution via Simulation}
-\end{figure}
-
-When studying specific languages, new opportunities to deploy the
-fundamental lemma of simulations arise. Our solution to the POPLMark
-Reloaded challenge for instance describes the fact that {\AF{sub} \AB{$\rho$} \AB{t}}
-reduces to {\AF{sub} \AB{$\rho$'} \AB{t}} whenever for all \AB{v},
-\AB{$\rho$}(\AB{v}) reduces to \AB{$\rho$'}(\AB{v}) as a \AR{Sim}ulation.
-The main theorem (strong normalisation of STLC via a logical relation)
-is itself an instance of (the unary version of) the simulation lemma.
-
-The Simulation proof framework is the simplest examples of the abstract
-proof frameworks ACMM~\citeyear{allais2017type} introduce. They also
-explain how a similar framework can be defined
-for fusion lemmas and deploy it for the renaming-substitution interactions
-but also their respective interactions with normalisation by evaluation.
-Now that we are familiarised with the techniques at hand, we can tackle
-this more complex example for all syntaxes definable in our framework.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

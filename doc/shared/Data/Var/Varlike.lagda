@@ -106,9 +106,9 @@ module _ {I : Set} {𝓥₁ 𝓥₂ : I ─Scoped} (𝓡^𝓥  : Rel 𝓥₁ �
 
 module _ {I : Set} {𝓥 : I ─Scoped} (vl^𝓥  : VarLike 𝓥) where
 
- vlᴿefl : VarLikeᴿ Eqᴿ vl^𝓥 vl^𝓥
- VarLikeᴿ.newᴿ  vlᴿefl = refl
- VarLikeᴿ.thᴿ   vlᴿefl = λ σ → cong (λ v → th^𝓥 vl^𝓥 v σ)
+ vl^Refl : VarLikeᴿ Eqᴿ vl^𝓥 vl^𝓥
+ VarLikeᴿ.newᴿ  vl^Refl = refl
+ VarLikeᴿ.thᴿ   vl^Refl = λ σ → cong (λ v → th^𝓥 vl^𝓥 v σ)
 
 
 {-
@@ -119,9 +119,13 @@ module _ {I : Set} {𝓥 𝓒 : I ─Scoped} (𝓥^P  : Pred 𝓥) (𝓒^P : Pre
  Kripke^P (τ ∷ Δ)  σ k = {Θ : List I} → ∀ th {ρ} → pred.∀[ 𝓥^P ] ρ → pred 𝓒^P {σ} {Θ} (k th ρ)
 -}
 
-module _ {I : Set} {𝓥₁ 𝓥₂ 𝓒₁ 𝓒₂ : I ─Scoped} (𝓡^𝓥  : Rel 𝓥₁ 𝓥₂) (𝓡^𝓒  : Rel 𝓒₁ 𝓒₂) where
-
- Kripkeᴿ : (Δ : List I) (τ : I) → ∀[ Kripke 𝓥₁ 𝓒₁ Δ τ ⇒ Kripke 𝓥₂ 𝓒₂ Δ τ ⇒ const Set ]
- Kripkeᴿ []         σ k₁ k₂ = rel 𝓡^𝓒 σ k₁ k₂
- Kripkeᴿ Δ@(_ ∷ _)  σ k₁ k₂ = {Θ : List I} {ρ₁ : (Δ ─Env) 𝓥₁ Θ} {ρ₂ : (Δ ─Env) 𝓥₂ Θ} → ∀ th → All 𝓡^𝓥 Δ ρ₁ ρ₂ → rel 𝓡^𝓒 σ (k₁ th ρ₁) (k₂ th ρ₂)
+module _ {I : Set} {𝓥ᴬ 𝓥ᴮ 𝓒ᴬ 𝓒ᴮ : I ─Scoped} (𝓥ᴿ  : Rel 𝓥ᴬ 𝓥ᴮ) (𝓒ᴿ  : Rel 𝓒ᴬ 𝓒ᴮ) where
 \end{code}
+%<*kripkeR>
+\begin{code}
+ Kripkeᴿ : ∀ Δ i → ∀[ Kripke 𝓥ᴬ 𝓒ᴬ Δ i ⇒ Kripke 𝓥ᴮ 𝓒ᴮ Δ i ⇒ const Set ]
+ Kripkeᴿ []         σ kᴬ kᴮ = rel 𝓒ᴿ σ kᴬ kᴮ
+ Kripkeᴿ Δ@(_ ∷ _)  σ kᴬ kᴮ = ∀ {Θ} (ρ : Thinning _ Θ) {vsᴬ vsᴮ} →
+                              All 𝓥ᴿ Δ vsᴬ vsᴮ → rel 𝓒ᴿ σ (kᴬ ρ vsᴬ) (kᴮ ρ vsᴮ)
+\end{code}
+%</kripkeR>
