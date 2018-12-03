@@ -27,7 +27,7 @@ private
   variable
     Γ : List Type
     α β σ : Type
-
+    I : Set
 
 \end{code}
 %<*monad>
@@ -41,13 +41,13 @@ M = State (Stream String ∞)
 \end{code}
 %<*name>
 \begin{code}
-Name : Type ─Scoped
+Name : I ─Scoped
 Name σ Γ = String
 \end{code}
 %</name>
 %<*printer>
 \begin{code}
-Printer : Type ─Scoped
+Printer : I ─Scoped
 Printer σ Γ = M String
 \end{code}
 %</printer>
@@ -118,11 +118,14 @@ names = Stream.concat
       $′ Stream.map alphabetWithSuffix
       $′ "" ∷ λ where .force → Stream.map NatShow.show allNats
 
+instance _ = rawIApplicative
+
 \end{code}
 %<*print>
 \begin{code}
 init : M ((Γ ─Env) Name Γ)
-init = traverse rawIApplicative (pack (const fresh))
+init = sequenceA (pack (const fresh))
+
 
 printer : Term σ Γ → M String
 printer t = do

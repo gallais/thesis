@@ -4,14 +4,14 @@ module Generic.Syntax where
 open import Size
 open import Data.Bool
 open import Data.List.Base as L hiding ([_])
-open import Data.List.All
+open import Data.List.All hiding (sequenceA)
 open import Data.Product as Prod
 open import Function hiding (case_of_)
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 open import Data.Var hiding (z; s)
 open import Relation.Unary
-open import Data.Environment as E hiding (traverse)
+open import Data.Environment as E hiding (sequenceA)
 
 -- Descriptions and their Interpretation
 
@@ -198,15 +198,15 @@ module _ {I : Set} {X Y Z : List I → I ─Scoped} where
 
 open import Category.Applicative
 
-module _ {I : Set} {X : List I → I ─Scoped} {A : Set → Set} (app : RawApplicative A) where
+module _ {I : Set} {X : List I → I ─Scoped} {A : Set → Set} {{app : RawApplicative A}} where
 
  module A = RawApplicative app
  open A
 
- traverse : {i : I} (d : Desc I) → ∀[ ⟦ d ⟧ (λ Δ j Γ → A (X Δ j Γ)) i ⇒ A ∘ ⟦ d ⟧ X i ]
- traverse (`σ A d)    (a , t)  = (λ b → a , b) A.<$> traverse (d a) t
- traverse (`X Δ j d)  (r , t)  = _,_ A.<$> r ⊛ traverse d t
- traverse (`∎ i)      t        = pure t
+ sequenceA : {i : I} (d : Desc I) → ∀[ ⟦ d ⟧ (λ Δ j Γ → A (X Δ j Γ)) i ⇒ A ∘ ⟦ d ⟧ X i ]
+ sequenceA (`σ A d)    (a , t)  = (λ b → a , b) A.<$> sequenceA (d a) t
+ sequenceA (`X Δ j d)  (r , t)  = _,_ A.<$> r ⊛ sequenceA d t
+ sequenceA (`∎ i)      t        = pure t
 
 -- Desc Morphisms
 

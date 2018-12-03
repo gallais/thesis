@@ -9,14 +9,14 @@ open import Data.Bool
 open import Data.Product
 open import Data.List.Base hiding ([_])
 open import Data.Maybe.Base
-open import Data.Maybe.Categorical as MC
+import Data.Maybe.Categorical as MC
 open import Function
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 open import Relation.Unary
 open import Data.Var hiding (_<$>_)
 open import Data.Var.Varlike
-open import Data.Environment hiding (traverse; _<$>_)
+open import Data.Environment hiding (sequenceA; _<$>_)
 open import Generic.Syntax
 open import Generic.Semantics
 
@@ -53,14 +53,13 @@ module _ {d : Desc I} where
 
  module M = CM.RawMonad (MC.monad {Level.zero})
  open M renaming (rawIApplicative to ApplicativeMaybe)
-
+ instance _ = ApplicativeMaybe
 \end{code}
 %<*reify>
 \begin{code}
  reify^Dm  : ∀[ Dm d i σ ⇒ Maybe ∘ Tm d ∞ σ ]
  reify^Dm (V k)  = just (`var k)
- reify^Dm (C v)  = `con <$>  traverse ApplicativeMaybe d
-                             (fmap d (λ Θ i → reify^Dm ∘ reify vl^Dm Θ i) v)
+ reify^Dm (C v)  = `con <$> sequenceA d (fmap d (λ Θ i → reify^Dm ∘ reify vl^Dm Θ i) v)
  reify^Dm ⊥      = nothing
 \end{code}
 %</reify>

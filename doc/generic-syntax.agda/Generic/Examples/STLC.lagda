@@ -41,7 +41,7 @@ pattern `lam b    = `con (Lam _ _ , b , refl)
 \end{code}
 %<*identity>
 \begin{code}
-_ : TM STLC (σ `→ σ)
-_ = `lam (`var z)
+`id : TM STLC (σ `→ σ)
+`id = `lam (`var z)
 \end{code}
 %</identity>

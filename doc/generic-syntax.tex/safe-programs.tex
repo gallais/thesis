@@ -174,7 +174,10 @@ into \AF{Scope}s of \AB{𝓒} computations.
 \caption{Generic Reification thanks to \AR{VarLike} Values\label{fig:kripkereify}}
 \end{figure}
 
-\section{A Catalogue of Generic Programs for Syntax with Binding}
+We can now showcase other usages by providing a catalogue of generic programs
+for syntaxes with binding.
+
+\section{Sugar and Desugaring as a Semantics}\label{section:letbinding}
 
 One of the advantages of having a universe of programming language
 descriptions is the ability to concisely define an \emph{extension}
@@ -184,8 +187,6 @@ This is made extremely simple by the
 disjoint sum combinator \AF{\_`+\_} we defined in Section~\ref{desccomb}.
 An example of such an extension is the addition of let-bindings to
 an existing language.
-
-\subsection{Sugar and Desugaring as a Semantics}\label{section:letbinding}
 
 Let bindings allow the user to avoid repeating themselves by naming
 sub-expressions and then using these names to refer to the associated
@@ -254,7 +255,7 @@ implement generic compilation passes and could deal with a framework using a
 wealth of slightly different intermediate languages à la Nanopass (\cite{Keep:2013:NFC:2544174.2500618}).
 
 
-\subsection{(Unsafe) Normalisation by Evaluation}\label{section:unsafenbyeval}
+\section{(Unsafe) Normalisation by Evaluation}\label{section:unsafenbyeval}
 
 A key type of traversal we have not studied yet is a language's evaluator. Our
 universe of syntaxes with binding does not impose any typing discipline on the
@@ -312,6 +313,8 @@ and then reify it to a (maybe) term.
 \caption{Normalisation by Evaluation}
 \end{figure}
 
+\subsection{Example: Evaluator for the Untyped Lambda-Calculus}
+
 Using this setup, we can write a normaliser for the untyped $\lambda$-calculus:
 we use a pattern matching lambda to distinguish between the counterpart of the
 $\lambda$-abstraction constructor on one hand and the application one on the other.
@@ -333,18 +336,98 @@ we know we will get a term in normal form.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{example}
-\caption{Example}
+\caption{Normalization Example}
 \end{figure}
 
-\subsection{Printing with Names, Generically}
 
-\todo{explain}
+\section{Printing with Names, Generically}
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{name}
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{printer}
+Coming back to our work on (rudimentary) printing with names in \cref{prettyprint},
+we can now give a generic account of it. This is a particularly interesting example
+because it demonstrates that we may sometimes want to give \AD{Desc} a different
+semantics to accomodate a specific use-case: we do not want our users to deal explicitly
+with name generation, explicit variable binding, etc. We are going to reuse some of the
+components defined in \cref{prettyprint}: we can rely on the same state monad for
+name generation, the same \AF{fresh} function and the same notions of \AF{Name}
+and \AF{Printer} for the semantics' values and computations.
+
+The first piece of the puzzle is \AF{Pieces}. The structure of \AR{Semantics} would
+suggest giving our users an interface where sub-structures are interpreted as \AF{Kripke}
+function spaces expecting fresh names for the fresh variables and returning a monadic
+computation delivering a printer. However we can do better: we can preemptively generate
+a set of fresh names for the newly-bound variables and hand them to the user together
+with the result of printing the body. As usual we have a special case for the substructures
+without any newly-bound variable.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{pieces}
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{vlMName}
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{pieces}
+\caption{Interpretation of Recursive Substructures: Printing Pieces\label{fig:printingpieces}}
+\end{figure}
+
+The key component making this work is the reification function \AF{reify\textasciicircum{}M}
+turning the \AF{Kripke} spaces we get from the semantics framework into \AF{Pieces}. This
+function has to be monadic so that we may generate fresh names. It uses the fact that
+environments are traversable and that names are easily proven to be \AF{VarLike} to
+generate an environment of names for the newly-bound variables.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{reifypieces}
+\caption{Reification: from Kripke Functions to Pieces\label{fig:printingreify}}
+\end{figure}
+
+We also expect the user to provide us with a syntax-specific ({\AF{Display} \AB{d}})
+explaining how to print one ``layer'' of term where the subterms are \AF{Pieces} i.e.
+both the names of the variables bound in the subterm and the string representation of
+the subterm are available. See \cref{sec:printingexample} for a concrete example of
+such a \AF{Display}.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{display}
+\caption{Syntax-Specific \AF{Display} Instructions\label{fig:printingdisplay}}
+\end{figure}
+
+Once we have these key components, we can write our printer as a \AR{Semantics}. The two
+first constraints are trivial: \AR{Name} is constant in its scope argument and therefore
+trivially thinnable and names (strings) are trivially printers (strings in the \AF{M}
+monad). The algebra is trickier to define. But because we know how to convert \AF{Kripke}
+function spaces from \AF{Name}s to \AF{Printer} into \AF{M}-wrapped \AF{Pieces} and
+because the functor induced by a description is traversable, we can get a layer of
+term where the subterms are \AF{Pieces}. It is then just a matter of applying the
+user-supplied \AF{Display} directive to obtain a string representation of the term.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{printing}
+\caption{Printing as a Generic Semantics\label{fig:genprinting}}
+\end{figure}
+
+Using the \AF{closed} version of the fundamental lemma of semantics and
+reusing the name supply defined in \cref{prettyprint} we obtain a printer
+for closed terms.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{print}
+\caption{Printer for closed terms\label{fig:genprinter}}
+\end{figure}
+
+\subsection{Example: Printing Terms of STLC}
+\label{sec:printingexample}
+
+Our only purpose here is to show how one typically defines a \AF{Display} to
+define a printer. Remember that we get one ``layer'' of term as an input, in this
+specific case it means either an application or a $\lambda$-abstraction. We use
+a pattern-matching lambda to distinguish the two cases. If we have an application
+then we have already been given a string \AB{f} for the function and \AB{t} for the
+argument; we use Krivine's convention of writing $(f)t$ for the application. If we
+have a $\lambda$-abstraction, it means we are handed a pair of a (singleton) environment
+containing a fresh name \AB{x} for the variable bound by the lambda together with a
+representation \AB{b} of the body using that name; we return $\lambda{}x.b$.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Printing]{display}
+\caption{Display Directive for STLC\label{fig:exampledisplay}}
+\end{figure}
+
+We can of course run the printer and check that it does produce the string we would
+expect.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Printing]{example}
