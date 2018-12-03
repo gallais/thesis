@@ -1,6 +1,4 @@
 \begin{code}
-{-# OPTIONS --postfix-projections #-}
-
 module Generic.Examples.Elaboration where
 
 import Level
@@ -104,8 +102,8 @@ open Semantics
 %<*equal>
 \begin{code}
 _==_ : (σ τ : Type) → Maybe (σ ≡ τ)
-α          == α          = just refl
-(σ₁ `→ τ₁) == (σ₂ `→ τ₂) = do
+α ==  α  = just refl
+(σ₁ `→ τ₁) == (σ₂ `→ τ₂)  = do
   refl ← σ₁ == σ₂
   refl ← τ₁ == τ₂
   return refl
