@@ -19,21 +19,21 @@ open Simulation
 
 module _ {I : Set} {d : Desc I} where
 
- RenExt : Simulation Eqᴿ Eqᴿ d Renaming Renaming
+ RenExt : Simulation d Renaming Renaming Eqᴿ Eqᴿ
  RenExt .thᴿ   = λ ρ → cong (lookup ρ)
  RenExt .varᴿ  = cong `var
  RenExt .algᴿ  = λ _ _ →
-   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vlᴿefl vl^Var)) d
+   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d
 
- SubExt : Simulation Eqᴿ Eqᴿ d Substitution Substitution
+ SubExt : Simulation d Substitution Substitution Eqᴿ Eqᴿ
  SubExt .thᴿ   = λ ρ → cong (ren ρ)
  SubExt .varᴿ  = id
  SubExt .algᴿ  = λ _ _ →
-   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vlᴿefl vl^Tm)) d
+   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d
 
 module _ {I : Set} {d : Desc I} where
 
- RenSub : Simulation VarTmᴿ Eqᴿ d Renaming Substitution
+ RenSub : Simulation d Renaming Substitution VarTmᴿ Eqᴿ
  RenSub .varᴿ  = id
  RenSub .thᴿ   = λ { _ refl → refl }
  RenSub .algᴿ  = λ _ _ →

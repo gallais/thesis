@@ -25,7 +25,7 @@ module _ {I : Set} (d : Desc I) where
 
  Ren² : Fus (λ ρ₁ → All Eqᴿ _ ∘ (select ρ₁)) Eqᴿ Eqᴿ d Renaming Renaming Renaming
  Ren² = FusProp.ren-sem d Renaming $ λ b ρᴿ zp →
-   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vlᴿefl vl^Var)) d zp
+   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d zp
 
  ren² : {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
         ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
@@ -33,7 +33,7 @@ module _ {I : Set} (d : Desc I) where
 
  RenSub : Fus (λ ρ₁ → All Eqᴿ _ ∘ (select ρ₁)) Eqᴿ Eqᴿ d Renaming Substitution Substitution
  RenSub = FusProp.ren-sem d Substitution $ λ b ρᴿ zp →
-   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vlᴿefl vl^Tm)) d zp
+   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zp
 
  rensub :  {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
            sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
@@ -84,7 +84,7 @@ module _ {I : Set} (d : Desc I) where
      fmap d (reify vl^Tm) (fmap d (Semantics.body Substitution ρ₂) (fmap d (reify vl^Tm) v₁))
          ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body Substitution ρ₂) v₁) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Φ i → (Semantics.body Substitution ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
-         ≡⟨ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vlᴿefl vl^Tm)) d zipped ⟩
+         ≡⟨ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zipped ⟩
       fmap d (reify vl^Tm) v₃
    ∎
 
