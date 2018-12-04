@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 %\usepackage{savetrees}
+%\usepackage{showframe}
 
 %\renewcommand{\baselinestretch}{1.5}
 \bibliographystyle{abbrvnat}
@@ -19,15 +20,29 @@
 \input{unicode}
 \input{commands}
 
-\title{Kind-and-Scope Safe Syntaxes with Binding, \\ Their Programs, and Proofs}
+\title{\huge Kind-and-Scope Safe Syntaxes with Binding, \\ Their Programs, and Proofs}
 \author{Guillaume ALLAIS}
 
 \begin{document}
 
+\frontmatter
+\pagestyle{empty}
+
+\begin{vplace}[0.3]
+\fontsize{50}{60}\selectfont
+\begin{mathpar}
+\inferrule{\Box~(\mathcal{V}~\sigma \Rightarrow \mathcal{C}~\tau)}
+          {\mathcal{C}~(\sigma \rightarrow \tau)}
+\end{mathpar}
+\end{vplace}
+
 \maketitle{}
 
-\newpage{}
-\tableofcontents{}
+\mainmatter
+\pagestyle{ruled}
+\begin{KeepFromToc}
+\tableofcontents
+\end{KeepFromToc}
 
 \label{introduction-agda}
 \input{introduction-agda}
