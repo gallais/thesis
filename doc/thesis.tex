@@ -1,4 +1,4 @@
-\documentclass{memoir}
+\documentclass[paper=a4]{memoir}
 
 \usepackage{agda}
 \usepackage{catchfilebetweentags}
@@ -9,6 +9,8 @@
 
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{afterpage}
+\usepackage{tcolorbox}
 %\usepackage{savetrees}
 %\usepackage{showframe}
 
@@ -26,15 +28,7 @@
 \begin{document}
 
 \frontmatter
-\pagestyle{empty}
-
-\begin{vplace}[0.3]
-\fontsize{50}{60}\selectfont
-\begin{mathpar}
-\inferrule{\Box~(\mathcal{V}~\sigma \Rightarrow \mathcal{C}~\tau)}
-          {\mathcal{C}~(\sigma \rightarrow \tau)}
-\end{mathpar}
-\end{vplace}
+\input{cover}
 
 \maketitle{}
 

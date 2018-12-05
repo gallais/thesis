@@ -1,0 +1,20 @@
+\pagestyle{empty}
+
+\definecolor{myyellow}{HTML}{fef1c4}
+\definecolor{myred}{HTML}{ed2a30}
+\definecolor{myblack}{HTML}{131313}
+
+\pagecolor{myyellow}\afterpage{\nopagecolor}
+\begin{vplace}[0.2]
+\fontsize{50}{60}\selectfont
+
+\setlength{\fboxrule}{8pt}
+\noindent\fcolorbox{myblack}{myred}{\fcolorbox{myyellow}{myred}{\begin{minipage}{\paperwidth}%
+\boldmath
+\begin{mathpar}
+\color{myyellow}{\inferrule{\Box~(\mathcal{V}~\sigma \Rightarrow \mathcal{C}~\tau)}
+          {\mathcal{C}~(\sigma \rightarrow \tau)}}
+\end{mathpar}
+\unboldmath
+\end{minipage}}}
+\end{vplace}

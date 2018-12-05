@@ -67,6 +67,7 @@ THESIS_DEPENDENCIES:=\
   latex/unicode.tex \
   latex/commands.tex \
   latex/main.bib \
+  latex/cover.tex \
   latex/introduction-agda.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
@@ -103,6 +104,10 @@ latex/$(THESIS).pdf: $(THESIS_DEPENDENCIES)
 	cd latex; latexmk -pdf -bibtex $(THESIS).tex
 
 latex/$(THESIS).tex: $(THESIS).tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/cover.tex: cover.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
