@@ -20,6 +20,7 @@ open import Generic.Identity
 open import Generic.Simulation as S
 open import Generic.Simulation.Syntactic
 open import Generic.Fusion as F
+open import Generic.Fusion.Utils
 open import Generic.Fusion.Syntactic as FS
 open import Generic.Zip
 
@@ -66,16 +67,16 @@ module _ {I : Set} {d : Desc I} where
             (Σ A B ∋ x , b₁) ≡ (x , b₂) → b₁ ≡ b₂
  proj₂-eq refl = refl
 
- RenUnLet : Fus (λ ρ₁ ρ₂ → All Eqᴿ _ (select ρ₁ ρ₂)) Eqᴿ Eqᴿ
-            (d `+ Let) Renaming UnLet UnLet
- Fus.quote₁ RenUnLet = λ σ t → t
- Fus.vl^𝓥₁ RenUnLet = vl^Var
- Fus.thᴿ   RenUnLet = λ σ ρᴿ → packᴿ (cong (ren σ) ∘ lookupᴿ ρᴿ)
- Fus.>>ᴿ   RenUnLet = thBodyEnv
- Fus.varᴿ  RenUnLet = λ ρᴿ → lookupᴿ ρᴿ
- Fus.algᴿ RenUnLet (false , (_ , e , t , refl)) ρᴿ (refl , refl , eq^e , eq^t , _)
+ RenUnLet : Fusion (d `+ Let) Renaming UnLet UnLet
+                   (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (select ρ₁ ρ₂)) Eqᴿ Eqᴿ
+ Fusion.reifyᴬ RenUnLet = λ σ t → t
+ Fusion.vl^𝓥ᴬ RenUnLet = vl^Var
+ Fusion.th^𝓔ᴿ   RenUnLet = λ ρᴿ σ → packᴿ (cong (ren σ) ∘ lookupᴿ ρᴿ)
+ Fusion._>>ᴿ_   RenUnLet = thBodyEnv
+ Fusion.varᴿ  RenUnLet = λ ρᴿ → lookupᴿ ρᴿ
+ Fusion.algᴿ RenUnLet ρᴿ (false , (_ , e , t , refl)) (refl , refl , eq^e , eq^t , _)
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
- Fus.algᴿ RenUnLet {ρ₁ = ρ₁} {ρ₂} {ρ₃} (true , t) ρᴿ eq^t
+ Fusion.algᴿ RenUnLet {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ (true , t) eq^t
    = cong `con $ begin
      let t′ = fmap d (Semantics.body Renaming ρ₁) t in
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Var) t′))
@@ -159,9 +160,9 @@ module _ {I : Set} {d : Desc I} where
     ren ρ₁₃ (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ cong (ren ρ₁₃) (Simulation.sim RenExt eq₂ᴿ  (lookup ρ₁ kʳ)) ⟩
     ren ρ₁₃ (ren (pack (injectʳ Ξ)) (lookup ρ₁ kʳ))
-      ≡⟨ Fus.fus (Ren² d) eqᴿ (lookup ρ₁ kʳ) ⟩
+      ≡⟨ Fusion.fusion (Ren² d) eqᴿ (lookup ρ₁ kʳ) ⟩
     ren (select ρ₂ (pack (injectʳ Ξ))) (lookup ρ₁ kʳ)
-      ≡⟨ sym (Fus.fus (Ren² d) eq₃ᴿ (lookup ρ₁ kʳ)) ⟩
+      ≡⟨ sym (Fusion.fusion (Ren² d) eq₃ᴿ (lookup ρ₁ kʳ)) ⟩
     ren ρ₃₁ (ren ρ₂ (lookup ρ₁ kʳ))
       ≡⟨ cong (ren ρ₃₁) (lookupᴿ ρᴿ kʳ) ⟩
     ren ρ₃₁ (lookup ρ₃ kʳ)
@@ -181,22 +182,22 @@ module _ {I : Set} {d : Desc I} where
     lookupᴿ eqᴿ k with split Ξ (injectʳ Ξ k) | split-injectʳ Ξ k
     lookupᴿ eqᴿ k | .(inj₂ k) | refl = refl
 
- SubUnLet : Fus (λ ρ₁ ρ₂ → All Eqᴿ _ (unLet ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
-            (d `+ Let) Substitution UnLet UnLet
- Fus.quote₁ SubUnLet = λ σ t → t
- Fus.vl^𝓥₁ SubUnLet = vl^Tm
- Fus.thᴿ   SubUnLet {ρ₁ = ρ₁} {ρ₂} {ρ₃} = λ σ ρᴿ → packᴿ λ v → begin
+ SubUnLet : Fusion (d `+ Let) Substitution UnLet UnLet
+                   (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (unLet ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
+ Fusion.reifyᴬ SubUnLet = λ σ t → t
+ Fusion.vl^𝓥ᴬ SubUnLet = vl^Tm
+ Fusion.th^𝓔ᴿ   SubUnLet {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} = λ ρᴿ σ → packᴿ λ v → begin
    Semantics.semantics UnLet (th^Env th^Tm ρ₂ σ) (lookup ρ₁ v)
      ≡⟨ sym (unLetRen (lookup ρ₁ v) (packᴿ λ v → refl)) ⟩
    ren σ (unLet ρ₂ (lookup ρ₁ v))
      ≡⟨ cong (ren σ) (lookupᴿ ρᴿ v) ⟩
    ren σ (lookup ρ₃ v)
     ∎
- Fus.>>ᴿ   SubUnLet {ρ₁ = ρ₁} = subBodyEnv UnLet RenUnLet (λ σ t → refl) ρ₁
- Fus.varᴿ  SubUnLet = λ ρᴿ → lookupᴿ ρᴿ
- Fus.algᴿ  SubUnLet (false , (_ , e , t , refl)) ρᴿ (refl , refl , eq^e , eq^t , _)
+ Fusion._>>ᴿ_   SubUnLet {ρᴬ = ρ₁} = subBodyEnv UnLet RenUnLet (λ σ t → refl) ρ₁
+ Fusion.varᴿ  SubUnLet = λ ρᴿ → lookupᴿ ρᴿ
+ Fusion.algᴿ  SubUnLet ρᴿ (false , (_ , e , t , refl)) (refl , refl , eq^e , eq^t , _)
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
- Fus.algᴿ  SubUnLet {ρ₁ = ρ₁} {ρ₂} {ρ₃} (true , t) ρᴿ eq^t
+ Fusion.algᴿ  SubUnLet {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ (true , t) eq^t
    = cong `con $ begin
      let t′ = fmap d (Semantics.body Substitution ρ₁) t in
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Tm) t′))
@@ -281,9 +282,9 @@ module _ {I : Set} {d : Desc I} where
     sub ρ₁₃ (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ cong (sub ρ₁₃) (Simulation.sim RenExt eq₂ᴿ  (lookup ρ₁ kʳ)) ⟩
     sub ρ₁₃ (ren (pack (injectʳ Ξ)) (lookup ρ₁ kʳ))
-      ≡⟨ Fus.fus (FS.RenSub d) eqᴿ (lookup ρ₁ kʳ) ⟩
+      ≡⟨ Fusion.fusion (FS.RenSub d) eqᴿ (lookup ρ₁ kʳ) ⟩
     sub (th^Env th^Tm ρ₂ (pack (injectʳ Ξ))) (lookup ρ₁ kʳ)
-      ≡⟨ sym (Fus.fus (SubRen d) eq₃ᴿ (lookup ρ₁ kʳ)) ⟩
+      ≡⟨ sym (Fusion.fusion (SubRen d) eq₃ᴿ (lookup ρ₁ kʳ)) ⟩
     ren ρ₃₁ (sub ρ₂ (lookup ρ₁ kʳ))
       ≡⟨ cong (ren ρ₃₁) (lookupᴿ ρᴿ kʳ) ⟩
     ren ρ₃₁ (lookup ρ₃ kʳ)

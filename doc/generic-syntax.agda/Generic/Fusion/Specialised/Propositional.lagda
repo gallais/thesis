@@ -41,14 +41,14 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
             Semantics.alg S (fmap d f b) ≡ Semantics.alg S (fmap d g b))
         where
 
-  ren-sem : Fus (λ σ → All Eqᴿ _ ∘ (select σ)) Eqᴿ Eqᴿ d Renaming S S
-  Fus.quote₁ ren-sem = λ _ t → t
-  Fus.vl^𝓥₁ ren-sem = vl^Var
-  Fus.thᴿ   ren-sem = λ σ ρᴿ → packᴿ (λ v → cong (λ ρ → Semantics.th^𝓥 S ρ σ) (lookupᴿ ρᴿ v))
-  lookupᴿ (Fus.>>ᴿ ren-sem {Γ} {Δ} {Θ} {Ξ} {σ} {ρ₁} {ρ₂} {vs} {ws} ρᴿ vsᴿ) v with split Ξ v
+  ren-sem : Fusion d Renaming S S (λ Γ Δ σ → All Eqᴿ Γ ∘ (select σ)) Eqᴿ Eqᴿ
+  Fusion.reifyᴬ ren-sem = λ _ t → t
+  Fusion.vl^𝓥ᴬ ren-sem = vl^Var
+  Fusion.th^𝓔ᴿ   ren-sem = λ ρᴿ σ → packᴿ (λ v → cong (λ ρ → Semantics.th^𝓥 S ρ σ) (lookupᴿ ρᴿ v))
+  lookupᴿ (Fusion._>>ᴿ_ ren-sem {Γ} {Δ} {Θ} {ρ₁} {Ω} {ρ₂} {ρ₃} {ws} {vs} ρᴿ vsᴿ) v with split Θ v
   ... | inj₁ vˡ = begin
-    lookup (vs >> ρ₁) (injectˡ Δ (lookup (base vl^Var) vˡ))
-      ≡⟨ injectˡ->> vs ρ₁ (lookup (base vl^Var) vˡ) ⟩
+    lookup (vs >> ρ₂) (injectˡ Δ (lookup (base vl^Var) vˡ))
+      ≡⟨ injectˡ->> vs ρ₂ (lookup (base vl^Var) vˡ) ⟩
     lookup vs (lookup (base vl^Var) vˡ)
       ≡⟨ cong (lookup vs) (lookup-base^Var vˡ) ⟩
     lookup vs vˡ
@@ -56,16 +56,16 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
     lookup ws vˡ
       ∎
   ... | inj₂ vʳ = begin
-    lookup (vs >> ρ₁) (injectʳ Ξ (lookup (base vl^Var) (lookup σ vʳ)))
-      ≡⟨ injectʳ->> vs ρ₁ (lookup (base vl^Var) (lookup σ vʳ)) ⟩
-    lookup ρ₁ (lookup (base vl^Var) (lookup σ vʳ))
-      ≡⟨ cong (lookup ρ₁) (lookup-base^Var (lookup σ vʳ)) ⟩
-    lookup ρ₁ (lookup σ vʳ)
+    lookup (vs >> ρ₂) (injectʳ Θ (lookup (base vl^Var) (lookup ρ₁ vʳ)))
+      ≡⟨ injectʳ->> vs ρ₂ (lookup (base vl^Var) (lookup ρ₁ vʳ)) ⟩
+    lookup ρ₂ (lookup (base vl^Var) (lookup ρ₁ vʳ))
+      ≡⟨ cong (lookup ρ₂) (lookup-base^Var (lookup ρ₁ vʳ)) ⟩
+    lookup ρ₂ (lookup ρ₁ vʳ)
       ≡⟨ lookupᴿ ρᴿ vʳ ⟩
-    lookup ρ₂ vʳ
+    lookup ρ₃ vʳ
       ∎
-  Fus.varᴿ  ren-sem = λ ρᴿ v → cong (Semantics.var S) (lookupᴿ ρᴿ v)
-  Fus.algᴿ  ren-sem {Γ} {Δ} {σ} {si} {ρ₁ = ρ₁} {ρ₂} {ρ₃} b ρᴿ zp = begin
+  Fusion.varᴿ  ren-sem = λ ρᴿ v → cong (Semantics.var S) (lookupᴿ ρᴿ v)
+  Fusion.algᴿ  ren-sem {si} {Γ} {Δ} {ρᴬ = ρ₁} {Θ} {ρ₂} {ρ₃} ρᴿ b zp = begin
     let
       v₁  = fmap d (Semantics.body Renaming ρ₁) b
       v₃  = fmap d (Semantics.body S ρ₃) b

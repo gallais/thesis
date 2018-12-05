@@ -19,38 +19,39 @@ import Generic.Simulation.Syntactic as S
 open import Generic.Zip
 open import Generic.Identity
 open import Generic.Fusion
+open import Generic.Fusion.Utils
 import Generic.Fusion.Specialised.Propositional as FusProp
 
 module _ {I : Set} (d : Desc I) where
 
- Ren² : Fus (λ ρ₁ → All Eqᴿ _ ∘ (select ρ₁)) Eqᴿ Eqᴿ d Renaming Renaming Renaming
+ Ren² : Fusion d Renaming Renaming Renaming (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  Ren² = FusProp.ren-sem d Renaming $ λ b ρᴿ zp →
    cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d zp
 
  ren² : {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
         ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
- ren² t ρ₁ ρ₂ = Fus.fus Ren² (packᴿ (λ _ → refl)) t
+ ren² t ρ₁ ρ₂ = Fusion.fusion Ren² (packᴿ (λ _ → refl)) t
 
- RenSub : Fus (λ ρ₁ → All Eqᴿ _ ∘ (select ρ₁)) Eqᴿ Eqᴿ d Renaming Substitution Substitution
+ RenSub : Fusion d Renaming Substitution Substitution (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  RenSub = FusProp.ren-sem d Substitution $ λ b ρᴿ zp →
    cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zp
 
  rensub :  {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
            sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
- rensub t ρ₁ ρ₂ = Fus.fus RenSub (packᴿ (λ _ → refl)) t
+ rensub t ρ₁ ρ₂ = Fusion.fusion RenSub (packᴿ (λ _ → refl)) t
 
- SubRen : Fus (λ ρ₁ ρ₂ → All Eqᴿ _ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ d Substitution Renaming Substitution
- Fus.quote₁  SubRen = λ _ → id
- Fus.vl^𝓥₁  SubRen = vl^Tm
- Fus.thᴿ    SubRen {ρ₁ = ρ₁} {ρ₂} {ρ₃} = λ σ ρᴿ → packᴿ $ λ k →
+ SubRen : Fusion d Substitution Renaming Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
+ Fusion.reifyᴬ  SubRen = λ _ → id
+ Fusion.vl^𝓥ᴬ  SubRen = vl^Tm
+ Fusion.th^𝓔ᴿ    SubRen {ρᴬ = ρ₁} {ρ₂} {ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
    begin
      ren (select ρ₂ σ) (lookup ρ₁ k) ≡⟨ sym $ ren² (lookup ρ₁ k) ρ₂ σ ⟩
      ren σ (ren ρ₂ (lookup ρ₁ k))    ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k) ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fus.>>ᴿ   SubRen {ρ₁ = ρ₁} = subBodyEnv Renaming Ren² (λ σ t → refl) ρ₁
- Fus.varᴿ   SubRen = λ ρᴿ v → lookupᴿ ρᴿ v
- Fus.algᴿ   SubRen {ρ₁ = ρ₁} {ρ₂} {ρ₃} b ρᴿ = λ zipped → cong `con $
+ Fusion._>>ᴿ_  SubRen {ρᴬ = ρ₁} = subBodyEnv Renaming Ren² (λ σ t → refl) ρ₁
+ Fusion.varᴿ   SubRen = λ ρᴿ v → lookupᴿ ρᴿ v
+ Fusion.algᴿ   SubRen {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
    let v₁ = fmap d (Semantics.body Substitution ρ₁) b
        v₃ = fmap d (Semantics.body Substitution ρ₃) b in
    begin
@@ -63,21 +64,21 @@ module _ {I : Set} (d : Desc I) where
 
  subren :  {Γ Δ Θ : List I} {i : I} {s : Size} → ∀ (t : Tm d s i Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : Thinning Δ Θ) →
            ren ρ₂ (sub ρ₁ t) ≡ sub (ren ρ₂ <$> ρ₁) t
- subren t ρ₁ ρ₂ = Fus.fus SubRen (packᴿ (λ k → refl)) t
+ subren t ρ₁ ρ₂ = Fusion.fusion SubRen (packᴿ (λ k → refl)) t
 
 
- Sub² : Fus (λ ρ₁ ρ₂ → All Eqᴿ _ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ d Substitution Substitution Substitution
- Fus.quote₁ Sub² = λ _ t → t
- Fus.vl^𝓥₁ Sub² = vl^Tm
- Fus.thᴿ Sub² {ρ₁ = ρ₁} {ρ₂} {ρ₃} = λ σ ρᴿ → packᴿ $ λ k →
+ Sub² : Fusion d Substitution Substitution Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
+ Fusion.reifyᴬ Sub² = λ _ t → t
+ Fusion.vl^𝓥ᴬ Sub² = vl^Tm
+ Fusion.th^𝓔ᴿ Sub² {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
    begin
      sub (ren σ <$> ρ₂) (lookup ρ₁ k) ≡⟨ sym $ subren (lookup ρ₁ k) ρ₂ σ ⟩
      ren σ (sub ρ₂ (lookup ρ₁ k))     ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k)   ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fus.>>ᴿ Sub² {ρ₁ = ρ₁} = subBodyEnv Substitution RenSub (λ σ t → refl) ρ₁
- Fus.varᴿ Sub² = λ ρᴿ v → lookupᴿ ρᴿ v
- Fus.algᴿ Sub² {ρ₁ = ρ₁} {ρ₂} {ρ₃} b ρᴿ = λ zipped → cong `con $
+ Fusion._>>ᴿ_ Sub² {ρᴬ = ρ₁} = subBodyEnv Substitution RenSub (λ σ t → refl) ρ₁
+ Fusion.varᴿ Sub² = λ ρᴿ v → lookupᴿ ρᴿ v
+ Fusion.algᴿ Sub² {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
    let v₁ = fmap d (Semantics.body Substitution ρ₁) b
        v₃ = fmap d (Semantics.body Substitution ρ₃) b in
    begin
@@ -90,7 +91,7 @@ module _ {I : Set} (d : Desc I) where
 
  sub² :  {Γ Δ Θ : List I} {i : I} {s : Size} → ∀ (t : Tm d s i Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
          sub ρ₂ (sub ρ₁ t) ≡ sub (sub ρ₂ <$> ρ₁) t
- sub² t ρ₁ ρ₂ = Fus.fus Sub² (packᴿ (λ k → refl)) t
+ sub² t ρ₁ ρ₂ = Fusion.fusion Sub² (packᴿ (λ k → refl)) t
 
 
 
@@ -129,7 +130,7 @@ module _ {I : Set} (d : Desc I) where
         ≡ ren ρ (sub (base vl^Tm <+> σ) b)
  renβ {Δ} b σ ρ = begin
    sub (base vl^Tm <+> (ren ρ <$> σ)) (ren (lift vl^Var Δ ρ) b)
-     ≡⟨ Fus.fus RenSub (ren-sub-fusionᴿ σ ρ) b ⟩
+     ≡⟨ Fusion.fusion RenSub (ren-sub-fusionᴿ σ ρ) b ⟩
    sub (ren ρ <$> (base vl^Tm <+> σ)) b
      ≡⟨ sym (subren b (base vl^Tm <+> σ) ρ) ⟩
    ren ρ (sub (base vl^Tm <+> σ) b)
@@ -150,7 +151,7 @@ module _ {I : Set} (d : Desc I) where
      ∎
  ... | inj₂ k₂ = begin
    sub (base vl^Tm <+> (sub ρ <$> σ)) (ren (th^Env th^Var (base vl^Var) (pack (injectʳ Δ))) (lookup ρ k₂))
-     ≡⟨ Fus.fus RenSub (packᴿ (λ v → injectʳ-<+> Δ (base vl^Tm) (sub ρ <$> σ) (lookup (base vl^Var) v))) (lookup ρ k₂) ⟩
+     ≡⟨ Fusion.fusion RenSub (packᴿ (λ v → injectʳ-<+> Δ (base vl^Tm) (sub ρ <$> σ) (lookup (base vl^Var) v))) (lookup ρ k₂) ⟩
    sub (select (base vl^Var) (base vl^Tm)) (lookup ρ k₂)
      ≡⟨ Simulation.sim S.SubExt (packᴿ (λ v → cong (lookup (base vl^Tm)) (lookup-base^Var v))) (lookup ρ k₂) ⟩
    sub (base vl^Tm) (lookup ρ k₂)
@@ -167,7 +168,7 @@ module _ {I : Set} (d : Desc I) where
         ≡ sub ρ (sub (base vl^Tm <+> σ) b)
  subβ {Δ} b σ ρ = begin
    sub (base vl^Tm <+> (sub ρ <$> σ)) (sub (lift vl^Tm Δ ρ) b)
-     ≡⟨ Fus.fus Sub² (sub-sub-fusionᴿ σ ρ) b ⟩
+     ≡⟨ Fusion.fusion Sub² (sub-sub-fusionᴿ σ ρ) b ⟩
    sub (sub ρ <$> (base vl^Tm <+> σ)) b
      ≡⟨ sym (sub² b (base vl^Tm <+> σ) ρ) ⟩
    sub ρ (sub (base vl^Tm <+> σ) b)

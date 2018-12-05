@@ -244,9 +244,9 @@ the \ARF{th\textasciicircum{}𝓥} constraint is a bit laborious and the proof d
 yield any additional insight so we leave it out here. The semantical counterpart of
 variables (\ARF{var}) is fairly straightforward: provided a \AF{Typing}, we run the
 inference and touch it up to return a term rather than a mere variable. Finally we
-define the algebra by pattern-matching on the constructor and using our previous
-definition; the only case left is \AIC{Cut} whose \AD{Type} annotation provides
-precisely the piece of information we need.
+define the algebra (\ARF{alg}) by pattern-matching on the constructor and using our
+previous combinators; the only case left is \AIC{Cut} whose \AD{Type} annotation
+provides precisely the piece of information we need.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/Elaboration.tex]{elaborate}
