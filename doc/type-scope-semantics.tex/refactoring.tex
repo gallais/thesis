@@ -39,8 +39,8 @@ differences between the implemenations of renaming and substitution:
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
 \caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
 \end{figure}
 
@@ -62,7 +62,7 @@ types of environment values, he considers \AB{⧫}, an arbitrary
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{kitdef}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitdef}
 \caption{\AR{Kit} as a set of constraints on \AB{⧫}}
 \end{figure}
 
@@ -80,10 +80,10 @@ the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
 and \AF{ren} defined this time as a corrolary of \AF{kit}
 
 \begin{figure}[h]
-\begin{minipage}{0.35\textwidth}
+\begin{minipage}{0.4\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{renkit}
 \end{minipage}
-\begin{minipage}{0.65\textwidth}
+\begin{minipage}{0.6\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
 \end{minipage}
 \caption{\AR{Kit} for Renaming, Renaming as a Corrolary of \AF{kit}\label{fig:renkit}}
@@ -93,10 +93,10 @@ Just like we needed \AF{ren} to define \AF{sub}, once we have recovered \AF{ren}
 we can define the \AR{Kit} for substitution.
 
 \begin{figure}[h]
-\begin{minipage}{0.35\textwidth}
+\begin{minipage}{0.4\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{subkit}
 \end{minipage}
-\begin{minipage}{0.65\textwidth}
+\begin{minipage}{0.6\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
 \end{minipage}
 \caption{\AR{Kit} for Substitution, Substitution as a Corrolary of \AF{kit}\label{fig:subkit}}
