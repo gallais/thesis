@@ -6,10 +6,16 @@ families~(\cite{dybjer1994inductive}). In practice, all of the content of this t
 has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
 introduction to dependently-typed programming in Agda.
 
+\paragraph{Mixfix Identifiers} We use Agda's mixfix operator notation
+(\cite{danielsson2011parsing}) where underscores denote argument positions.
+See e.g. the notation \AR{\_×\_} for the type of pairs defined in \cref{par:recordtypes}.
+
+
 \paragraph{Syntax Highlighting} We rely on Agda's \LaTeX{} backend to produce
 syntax highlighting for all the code fragments in this thesis. The convention
 is as follows: keywords are highlighted in \AK{orange}, data constructors in
 \AIC{green}, types and functions in \AD{blue} while bound variables are \AB{black}.
+
 
 \section{(Co)Data and (co)pattern matching}
 
@@ -19,7 +25,7 @@ conctructors: \AIC{zero} and \AIC{suc}cessor.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
 
-\paragraph{Record Types}
+\paragraph{Record Types}\label{par:recordtypes}
 
 Agda also supports record types; they are defined by their list of fields.
 Unlike inductive types they enjoy η-rules. That is to say that any two
@@ -158,10 +164,39 @@ concisely.
 \subsection{Working with Indexed Families}
 \label{indexed-combinators}
 
-We are going to manipulate a lot of indexed families so we give ourselves a few
-combinators corresponding to the typical operations we want to perform on them.
-\todo{extract from generic-syntax}
+We are going to manipulate a lot of indexed families representing scoped languages
+so we give ourselves a few combinators corresponding to the typical operations we
+want to perform on them.
+
+First, noticing that most of the time we silently thread the current scope, we lift
+the function space pointwise with \AF{\_⇒\_}.
 
 \ExecuteMetaData[shared/Stdlib.tex]{implication}
-\ExecuteMetaData[shared/Stdlib.tex]{forall}
+
+Second, the \AF{\_⊢\_} combinator makes explicit the \emph{adjustment} made to the
+index by a function, conforming to the convention (see e.g. \cite{martin1982constructive})
+of mentioning only context \emph{extensions} when presenting judgements and write
+({\AB{f} \AF{⊢} \AB{T}}) where \AB{f} is the modification and \AB{T} the indexed
+Set it operates on.
+
 \ExecuteMetaData[shared/Stdlib.tex]{update}
+
+Although it may seem surprising at first to define binary infix operators as having
+arity three, they are meant to be used partially applied, surrounded by \AF{∀[\_]}
+which turns an indexed Set into a Set by implicitly quantifying over the index.
+
+\ExecuteMetaData[shared/Stdlib.tex]{forall}
+
+We make \AF{\_⇒\_} associate to the right as one would expect and give it the
+highest precedence level as it is the most used combinator. These combinators
+lead to more readable type declarations.  For instance, the compact expression
+\AF{∀[} \AF{suc} \AF{⊢} (\AB{P} \AF{⇒} \AB{Q}) \AF{⇒} \AB{R} \AF{]}
+desugars to the more verbose type
+\AS{∀} \{\AB{i}\} \AS{→} (\AB{P} (\AF{suc} \AB{i}) \AS{→} \AB{Q} (\AF{suc} \AB{i})) \AS{→} \AB{R} \AB{i}.
+
+
+
+As the combinators act on the \emph{last} argument of any indexed family, this inform our
+design: our notions of variables, languages, etc. will be indexed by their kind first and
+scope second. This will be made explicit in the definition of \AF{\_─Scoped} in
+\cref{fig:scoped}.

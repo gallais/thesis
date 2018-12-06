@@ -133,58 +133,7 @@ summed up by the large type \AB{I}
 %\caption{Type of Well \AB{I}-Kinded and Well Scoped Families}
 \end{center}
 
-We use Agda's mixfix operator notation where underscores denote
-argument positions.
 
-To lighten the presentation, we exploit the observation that the
-current scope is either passed unchanged to subterms (e.g. in the application case)
-or extended (e.g. in the $\lambda$-abstraction case) by introducing combinators
-to build indexed types.
-% All the definitions are polymorphic in the index type
-% (called \AB{A} in Figure~\ref{figure:indexed}).
-
-\begin{center}
-\begin{minipage}{0.4\textwidth}
-\ExecuteMetaData[indexed.tex]{arrow}
-\end{minipage}\hfill
-\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[indexed.tex]{adjust}
-\end{minipage}
-
-\begin{minipage}{0.40\textwidth}
-\ExecuteMetaData[indexed.tex]{product}
-\end{minipage}\hfill
-\begin{minipage}{0.25\textwidth}
-\ExecuteMetaData[indexed.tex]{constant}
-\end{minipage}\hfill
-\begin{minipage}{0.25\textwidth}
-\ExecuteMetaData[indexed.tex]{forall}
-\end{minipage}
-%\caption{Combinators to build indexed Sets}\label{figure:indexed}
-\end{center}
-
-We lift the function space and the product type pointwise with
-\AF{\_⟶\_} and \AF{\_∙×\_} respectively, silently threading the
-underlying scope. The \AF{\_⊢\_} makes explicit the \emph{adjustment} made to the index
-by a function, conforming to the convention (see e.g.~\cite{martin1982constructive}) of mentioning only
-context \emph{extensions} when presenting judgements 
-and write \AB{f} \AF{⊢} \AB{T} where \AB{f} is the modification and \AB{T} the indexed
-Set it operates on. Although it may seem surprising at first to define binary
-infix operators as having arity three, they are meant to be used partially applied,
-surrounded by \AF{[\_]} which turns an indexed Set into a Set by implicitly
-quantifying over the index.
-Lastly, \AF{κ} is the constant combinator, ignoring the index.
-
-We make \AF{⟶} associate to the right as one would expect and give it the
-highest precedence level as it is the most used combinator. These combinators
-lead to more readable type declarations.  For instance, the compact expression
-\AF{[} \AF{suc} \AF{⊢} (\AB{P} \AF{∙×} \AB{Q}) \AF{⟶} \AB{R} \AF{]}
-desugars to the more verbose type
-\AS{∀} \{\AB{i}\} \AS{→} (\AB{P} (\AF{suc} \AB{i}) \AF{×} \AB{Q} (\AF{suc} \AB{i})) \AS{→} \AB{R} \AB{i}.
-
-As the context comes second in the definition of \AF{\_─Scoped}, we
-can readily use these combinators to thread, modify, or quantify over the
-scope when defining such families:
 
 %\begin{center}
 \begin{minipage}[t]{0.35\textwidth}
