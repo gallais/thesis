@@ -204,7 +204,7 @@ choose to represent them as lists of types; \AIC{[]} denotes the empty list and
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var.tex]{scoped}
-\caption{\label{fig:scoped}}
+\caption{Scoped Definitions\label{fig:scoped}}
 \end{figure}
 
 
@@ -293,48 +293,76 @@ by their use cases.
 \label{sec:categoryrenamings}
 
 A key instance of environments playing a predominant role in this paper is the
-notion of thinning. The reader may be accustomed to the more restrictive
-notion of renamings as described variously as Order Preserving
-Embeddings~\cite{chapman2009type}, thinnings (which we use), context
-inclusions, or just weakenings~\cite{altenkirch1995categorical}.
-Writing non-injective or non-order
-preserving renamings would take perverse effort given that we only
-implement generic interpretations. In practice, although the type of
-thinnings is more generous, we only introduce weakenings (skipping
-variables at the beginning of the context) that become thinnings
-(skipping variables at arbitrary points in the context) when we push
-them under binders.
-
+notion of thinning. The reader may be accustomed to the more restrictive notion
+of renamings as described variously as Order Preserving
+Embeddings~\cite{chapman2009type}, thinnings (which we use), context inclusions,
+or just weakenings~\cite{altenkirch1995categorical}.
 A thinning (\AF{Thinning} \AB{Γ} \AB{Δ}) is an environment pairing each variable
 of type \AB{σ} in \AB{Γ} to one of the same type in \AB{Δ}.
 
+
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{thinning}
-\caption{Thinning as Environments\label{fig:thinnings}}
+\caption{Thinnings: A Special Case of Environments\label{fig:thinnings}}
 \end{figure}
 
-\todo{use Thinnable from generic-syntax}
+Writing non-injective or non-order preserving renamings would take perverse effort
+given that we only implement generic interpretations. In practice, although the type
+of thinnings is more generous, we only introduce weakenings (skipping variables at
+the beginning of the context) that become thinnings (skipping variables at arbitrary
+points in the context) when we push them under binders. The extra flexibility will not
+get in our way, and permits a representation as a function space which grants us monoid
+laws ``for free'' as per Jeffrey's observation (\citeyear{jeffrey2011assoc}).
 
-We formulate a thinning principle called \AF{Thinnable}. By a ``thinning
-principle'', we mean that if \AB{P} holds of \AB{Γ} and we have a proof
-(\AF{Thinning} \AB{Γ} \AB{Δ}) then \AB{P} holds for \AB{Δ} too. In the
-case of variables, thinning merely corresponds to applying the renaming
-function in order to obtain a new variable. The environments' case is also
-quite simple: being a pointwise lifting of a relation \AB{𝓥} between
-contexts and types, they enjoy thinning if \AB{𝓥} does.
+These simple observations allow us to prove that thinnings form a category which,
+in turn, lets us provide the user with the constructors Altenkirch, Hofmann and
+Streicher's ``Category of Weakening"~(\citeyear{altenkirch1995categorical}) is based on.
+
+The \AF{□} combinator turns any (\AD{List} \AB{I})-indexed Set into one that can
+absorb thinnings. This is accomplished by abstracting over all possible thinnings
+from the current scope, akin to an S4-style necessity modality. The axioms of S4
+modal logic incite us to observe that the functor \AF{□} is a comonad: \AF{extract}
+applies the identity \AF{Thinning} to its argument, and \AF{duplicate} is obtained
+by composing the two \AF{Thinning}s we are given. The expected laws hold trivially
+thanks to Jeffrey's trick mentioned above.
 
 \begin{figure}[h]
-\ExecuteMetaData[shared/Data/Environment.tex]{thinnable}
-\caption{Thinning Principle and Instances for \AF{Var} and \AR{─Env}\label{fig:thinnable}}
+\ExecuteMetaData[shared/Data/Environment.tex]{box}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{extract}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[shared/Data/Environment.tex]{duplicate}
+\end{minipage}
+\caption{The \AF{□} Functor is a Comonad}
 \end{figure}
 
-These simple observations allow us to prove that thinnings
-form a category which, in turn, lets us provide the user with the
-constructors Altenkirch, Hofmann and Streicher's ``Category of
-Weakening"~(\citeyear{altenkirch1995categorical}) is based on.
+The notion of \AF{Thinnable} is the property of being stable under thinnings;
+in other words \AF{Thinnable}s are the coalgebras of \AF{□}.
+It is a crucial property for values to have if one wants to be able to push
+them under binders. From the comonadic structure we get that
+the \AF{□} combinator freely turns any (\AD{List} I)-indexed Set into a
+\AF{Thinnable} one.
 
-The modal operator \AF{□} states that a given predicate holds for
-all thinnings of a context. It is a closure operator for \AF{Thinnable}.
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{thinnable}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{thBox}
+\end{minipage}
+\caption{Thinning Principle and the Cofree Thinnable \AF{□}\label{fig:thinnable}}
+\end{figure}
+
+Constant families are trivially \AF{Thinnable}. In the case of variables,
+thinning merely corresponds to applying the renaming function in order to
+obtain a new variable. The environments' case is also quite simple: being
+a pointwise lifting of a relation \AB{𝓥} between contexts and types, they
+enjoy thinning if \AB{𝓥} does.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{thVar}
+\ExecuteMetaData[shared/Data/Environment.tex]{thEnv}
+\caption{Thinnable Instances for Variables and Environments\label{fig:thinVarEnv}}
+\end{figure}
 
 Now that we are equipped with the notion of inclusion, we have all
 the pieces necessary to describe the Kripke structure of our models
@@ -342,35 +370,78 @@ of the simply typed λ-calculus.
 
 \section{Semantics and Their Generic Evaluators}
 \label{section:generic-semantics}
-The upcoming sections demonstrate that renaming, substitution, printing with names,
-and normalisation by evaluation all share the same structure. We start by abstracting
-away a notion of \AR{Semantics} encompassing all these constructions. This approach
-will make it possible for us to implement a generic traversal parametrised by such
-a \AR{Semantics} once and for all and to focus on the interesting model constructions
+
+The upcoming sections demonstrate that renaming, substitution, and printing with
+names all share the same structure. We start by abstracting away a notion of
+\AR{Semantics} encompassing all these constructions. This approach will make it
+possible for us to implement a generic traversal parametrised by such a
+\AR{Semantics} once and for all and to focus on the interesting model constructions
 instead of repeating the same pattern over and over again.
 
-A \AR{Semantics} is indexed by two (\AD{Type} \AR{−Scoped}) type families
-\AB{𝓥} and \AB{𝓒} describing respectively the values in the environment
-and the computations the evaluator will deliver. In cases such as substitution
-or normalisation by evaluation, \AB{𝓥} and \AB{𝓒} will happen to coincide but
-keeping these two relations distinct is precisely what makes it possible to go
-beyond these and also model renaming or printing with names.
+Broadly speaking, a semantics turns our deeply embedded abstract syntax trees
+into the shallow embedding of the corresponding parametrised higher order abstract
+syntax term. We get a choice of useful scope-and-sort safe traversals by using
+different `host languages' for this shallow embedding. A semantics is parametrised
+by two (\AD{Type} \AR{−Scoped}) type families \AB{𝓥} and \AB{𝓒}. Realisation of a
+semantics will produce a computation in \AB{𝓒} for every term whose variables are
+assigned values in \AB{𝓥}. In cases such as substitution or normalisation by evaluation,
+\AB{𝓥} and \AB{𝓒} will happen to coincide but keeping these two relations distinct
+is precisely what makes it possible to go beyond these and also model renaming or
+printing with names.
 
-Concretely, we define \AR{Semantics} as a record packing the properties these
-families need to satisfy for the evaluation function to exist.
+A semantics must satisfy constraints on the notions of values \AB{𝓥} and computations
+\AB{𝓒} at hand. Concretely, we define \AR{Semantics} as a record packing the properties
+these families need to satisfy for the evaluation function to exist.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}
 
-The type we chose for \ARF{lam} makes the \AF{Semantics} notion
-powerful enough that even logical predicates are instances of it. And we
-indeed exploit this power when defining normalisation by evaluation
-as a semantics: the model construction is, after all, nothing but a logical
-predicate. As a consequence it seems rather natural to call \AF{sem}, the
-fundamental lemma of semantics. We prove it in a module parameterised by a
-\AF{Semantics}, which would correspond to using a Section in Coq. It is
-defined by structural recursion on the term. Each constructor is replaced
-by its semantic counterpart which combines the induction hypotheses
-for its subterms.
+The first method of a \AR{Semantics} deals with environment values. They
+need to be thinnable (\ARF{th\textasciicircum{}𝓥}) so that the traversal
+may introduce fresh variables when going under a binder whilst keeping
+the environment well-scoped.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
+
+The structure of the model is quite constrained: each constructor
+in the language needs a semantic counterpart. We start with the
+two most interesting cases: \ARF{var} and \ARF{lam}. The variable
+case bridges the gap between the fact that the environment translates
+variables into values \AB{𝓥} but the evaluation function returns
+computations \AB{𝓒}.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
+
+The semantic λ-abstraction is notable for two reasons: first, following
+Mitchell and Moggi~(\citeyear{mitchell1991kripke}), its \AF{□}-structure is
+typical of models à la Kripke allowing arbitrary extensions of the context;
+and second, instead of being a function in the host language taking
+computations to computations,  it takes \emph{values} to computations.
+This is concisely expressed by the type ({\AF{□} (\AB{𝓥}~\AB{σ} \AF{⇒} \AB{𝓒}~\AB{τ})}).
+
+It matches precisely the fact that the body of a λ-abstraction exposes
+one extra free variable, prompting us to extend the environment with a
+value for it. In the special case where \AB{𝓥} = \AB{𝓒} (normalisation
+by evaluation for instance), we recover the usual Kripke structure.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
+
+The remaining fields' types are a direct translation of the types of the
+constructor they correspond to: substructures have simply been replaced with
+computations thus making these operators ideal to combine induction hypotheses.
+For instance, the semantical counterpart of application is an operation that
+takes a representation of a function and a representation of an argument and
+produces a representation of the result.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{cons}
+
+The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful enough that
+even logical predicates are instances of it. And we indeed exploit this power when
+defining normalisation by evaluation as a semantics: the model construction is, after
+all, nothing but a logical predicate. As a consequence it seems rather natural to call
+\AF{semantics} ``the fundamental lemma of semantics''. We prove it in a module parameterised
+by a \AF{Semantics}, which would correspond to using a Section in Coq. It is defined by
+structural recursion on the term. Each constructor is replaced by its semantic counterpart
+which combines the induction hypotheses for its subterms.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{fundamental}

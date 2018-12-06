@@ -120,14 +120,27 @@ injectʳ-<+> []      ρ₁ ρ₂ v = refl
 injectʳ-<+> (x ∷ Γ) ρ₁ ρ₂ v = injectʳ-<+> Γ ρ₁ (select extend ρ₂) v
 
 
+\end{code}
+%<*box>
+\begin{code}
 □ : (List I → Set) → (List I → Set)
 (□ T) Γ = ∀[ Thinning Γ ⇒ T ]
-
-extract    : ∀[ □ T ⇒ T        ]
-duplicate  : ∀[ □ T ⇒ □ (□ T)  ]
-
+\end{code}
+%</box>
+%<*extract>
+\begin{code}
+extract : ∀[ □ T ⇒ T ]
 extract t = t (pack id)
+\end{code}
+%</extract>
+%<*duplicate>
+\begin{code}
+duplicate  : ∀[ □ T ⇒ □ (□ T)  ]
 duplicate t ρ σ = t (select ρ σ)
+\end{code}
+%</duplicate>
+\begin{code}
+
 
 join : ∀[ □ (□ T) ⇒ □ T ]
 join = extract
@@ -139,22 +152,30 @@ Thinnable : (List I → Set) → Set
 Thinnable T = ∀[ T ⇒ □ T ]
 \end{code}
 %</thinnable>
+%<*thVar>
 \begin{code}
-
-
-th^Var : {i : I} → Thinnable (Var i)
+th^Var : Thinnable (Var i)
 th^Var v ρ = lookup ρ v
-
+\end{code}
+%</thVar>
+%<*thEnv>
+\begin{code}
 th^Env : (∀ {i} → Thinnable (𝓥 i)) → Thinnable ((Γ ─Env) 𝓥)
 lookup (th^Env th^𝓥 ρ ren) k = th^𝓥 (lookup ρ k) ren
-
+\end{code}
+%</thEnv>
+%<*thBox>
+\begin{code}
 th^□ : Thinnable (□ T)
 th^□ = duplicate
-
+\end{code}
+%</thBox>
+%<*thConst>
+\begin{code}
 th^const : Thinnable (const A)
 th^const a _ = a
-
 \end{code}
+%</thConst>
 %<*kripke>
 \begin{code}
 Kripke : (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
