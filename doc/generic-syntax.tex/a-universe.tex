@@ -1,7 +1,54 @@
-\chapter{A Universe of Syntaxes with Binding}
+\chapter{Plea For a Universe of Syntaxes with Binding}
 
-After having implemented numerous semantics in \cref{type-scope-semantics},
-we have gained an important insight: the structure of the constraints telling
-us how to define a \AR{Sem} is tightly coupled to the definition of the
-language. So much so that we should in fact be able to \emph{derive} them
-from the definition of the language.
+Now that we have a way to structure our traversals and proofs about them,
+we can tackle a practical example. Let us look at the formalisation of an
+apparently straightforward program transformation: the inlining of let-bound
+variables by substitution. You have two languages: the source (\AD{S}), which
+has let-bindings, and the target (\AD{T}), which only differs in that it does
+not:
+
+\begin{figure}[h]
+\begin{displaymath}
+  \AD{S} ::= x \mid \AD{S}~\AD{S} \mid \lambda x. \AD{S} \mid \textrm{let }x=\AD{S}\textrm{ in }\AD{S}
+  \qquad
+  \AD{T} ::= x \mid \AD{T}~\AD{T} \mid \lambda x. \AD{T}
+\end{displaymath}
+\end{figure}
+
+Breaking the task down, you need to define the program transformation itself,
+define an operational semantics for each language, and prove a correctness lemma
+that states each step in the source language is simulated by zero or more steps
+of the transformed terms in the target language. In the course of doing this,
+you discover that you actually have a large amount of work to do:
+
+\begin{enumerate}
+\item To define the operational semantics you need to define
+  substitution, and hence renaming, for both the source and target
+  languages, even though they are very similar;
+\item In the course of proving the correctness lemma, you discover
+  that you need to prove eight lemmas about the interactions of
+  renaming, substitution, and transformation that are all remarkably
+  similar, but must be stated and proved separately (e.g, as in
+  \cite{benton2012strongly}).
+\end{enumerate}
+
+Even after doing all of this work, you have only a result for a single pair of
+source and target languages. If you were to change your languages \AD{S} or
+\AD{T}, you would have to repeat the same work all over again or at least do a
+lot of cutting, pasting, and editing.
+
+You can also observe that the cases for lambdas and applications in the
+transformation are purely structural but need to be spelt out nonetheless.
+And if you add more constructs to both languages, you will have to write
+more and more code that essentially does nothing of interest.
+
+This state of things is not inevitable. After having implemented numerous
+semantics in \cref{type-scope-semantics}, we have gained an important insight:
+the structure of the constraints telling us how to define a \AR{Semantics} is
+tightly coupled to the definition of the language. So much so that we should
+in fact be able to \emph{derive} them directly from the definition of the
+language.
+
+This is what we set out to do in this part and in particular in \cref{section:letbinding}
+where we define a \emph{generic} notion of let-binding to extend any language
+with together with the corresponding generic let-inlining transformation.
