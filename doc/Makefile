@@ -68,7 +68,8 @@ THESIS_DEPENDENCIES:=\
   latex/commands.tex \
   latex/main.bib \
   latex/cover.tex \
-  latex/introduction-agda.tex \
+  latex/introduction.tex/intro.tex \
+  latex/introduction.tex/agda.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
   latex/type-scope-semantics.tex/cps-translation.tex \
@@ -111,7 +112,7 @@ latex/cover.tex: cover.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
-latex/introduction-agda.tex: introduction-agda.tex
+latex/introduction.tex/%.tex: introduction.tex/%.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 

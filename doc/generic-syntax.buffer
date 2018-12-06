@@ -1,73 +1,3 @@
-s
-\section{Introduction}
-
-In modern typed programming languages, programmers writing embedded
-DSLs~\cite{hudak1996building} and researchers formalising them can now
-use the host language's type system to help them. Using Generalised
-Algebraic Data Types (GADTs) or the more general indexed families of
-Type Theory~\cite{dybjer1994inductive} for representing their syntax,
-programmers can \emph{statically} enforce some of the invariants in
-their languages. Managing variable scope is a popular use
-case~\cite{altenkirch1999monadic} as directly manipulating raw de
-Bruijn indices is error-prone.  Solutions range from enforcing well
-scopedness to ensuring full type and scope correctness. In short, we
-use types to ensure that ``illegal states are unrepresentable'', where
-illegal states are ill scoped or ill typed terms.
-
-Despite the large body of knowledge in how to use types to define well
-formed syntax (see the Related Work in Section
-\ref{section:related-work}), it is still necessary for the working DSL
-designer or formaliser to redefine essential functions like renaming
-and substitution for each new syntax, and then to reprove essential
-lemmas about those functions. To reduce the burden of such repeated
-work and boilerplate, we apply the methodology of datatype-genericity to
-programming and proving with syntaxes with binding.
-
-%%%%%% MOTIVATION
-
-
-Using the universe of syntaxes with binding we present in this paper,
-we are able to solve this repetition problem \emph{once and for all}.
-
-%  For
-% \emph{every} syntax in our universe, we are able to generically define
-% renaming and substitution \ref{section:renandsub}, generically define
-% the let-binding removal transformation \ref{section:letbinding}, and
-% generically prove the required renaming, substitution and
-% transformation fusion lemmas (\ref{section:fusion}.
-
-\paragraph{Content and Contributions.}
-We start with primers on scoped and sorted terms
-(Section~\ref{section:primer-term}), scope and sort safe programs
-acting on them (Section~\ref{section:primer-program}), and
-programmable descriptions of data types (Section~\ref{section:data}).
-These introductory sections help us build an understanding of the
-problem at hand as well as a toolkit that leads us to the novel
-content of this paper: a universe of scope safe syntaxes with binding
-(Section~\ref{section:universe}) together with a notion of scope safe
-semantics for these syntaxes (Section~\ref{section:semantics}).  This
-gives us the opportunity to write generic implementations of renaming
-and substitution (Section~\ref{section:renandsub}), a generic
-let-binding removal transformation (generalising the problem stated
-above) (Section~\ref{section:letbinding}), and normalisation by
-evaluation (Section~\ref{section:nbyeval}). Further, we show how to
-construct generic proofs by formally describing what it means for a
-semantics to be able to simulate another one
-(Section~\ref{section:simulation}), or for two semantics to be fusable
-(Section~\ref{section:fusion}). This allows us to prove the lemmas
-required above for renaming and substitution generically, for
-\emph{every} syntax in our universe.
-
-\medskip
-
-Our implementation language is
-Agda~\cite{norell2009dependently}. However, our techniques are
-language independent: any dependently typed language at least as
-powerful as Martin-L\"of Type Theory~\cite{martin1982constructive}
-equipped with inductive families~\cite{dybjer1994inductive} such as
-Coq~\cite{Coq:manual}, Lean~\cite{DBLP:conf/cade/MouraKADR15} or
-Idris~\cite{brady2013idris} ought to do.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% SCOPE SAFE TERMS
 
@@ -160,26 +90,6 @@ They respectively normalise to:
 
 The \AD{Type} \AF{─Scoped} family \AD{Lam} is Altenkirch
 and Reus' simply typed $\lambda$-calculus representation. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% SCOPE SAFE PROGRAMS
-
-
-\section{A Primer on Type and Scope Safe Programs}\label{section:primer-program}
-
-The scope-and-type safe representation described in the previous section is
-naturally only a start: once the programmer has access to a good
-representation of the language they are interested in, they will naturally
-want to (re)implement standard traversals manipulating terms.
-Renaming and substitution are the two most typical examples
-of such traversals. Now that well-typedness and well-scopedness are enforced
-statically, all of these traversals have to be implemented
-in a type and scope safe manner.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% GENERIC PROOFS
 
 
 

@@ -1,0 +1,75 @@
+\chapter{Introduction}
+
+In modern typed programming languages, programmers writing embedded Domain Specific
+Languages (DSLs) (\cite{hudak1996building}) and researchers formalising them can
+now use the host language's type system to help them. Using Generalised Algebraic
+Data Types (GADTs) or the more general indexed families of type theory
+(\cite{dybjer1994inductive}) for representing their syntax, programmers can
+\emph{statically} enforce some of the invariants in their languages. Managing
+variable scope is a popular use case~\cite{altenkirch1999monadic} as directly
+manipulating raw de Bruijn indices is error-prone. Solutions range from enforcing
+well scopedness to ensuring full type and scope correctness. In short, we use
+types to ensure that ``illegal states are unrepresentable'', where illegal states
+are ill scoped or ill typed terms.
+
+The definition of scope-and-type safe representations is naturally only a start:
+once the programmer has access to a good representation of the language they are
+interested in, they will naturally want to (re)implement standard traversals
+manipulating terms. Renaming and substitution are the two most typical examples
+of such traversals. Other common examples include an evaluator, a printer for
+debugging purposes and eventually various compilation passes such as a continuation
+passing style transformation or some form of inlining. Now that well-typedness
+and well-scopedness are enforced statically, all of these traversals have to be
+implemented in a type and scope safe manner.
+
+The third hurdle is only faced by those that want really high assurance or whose
+work is to study a language's meta-theory: they need to prove theorems about these
+traversals. The most common statements are simulation lemmas stating that two
+semantics transport related inputs to related outputs, or fusion lemmas demonstrating
+that the sequential execution of two semantics is equivalent to a single traversal
+by a third one. These proofs often involve a wealth of auxiliary lemmas which are
+known to be true for all syntaxes but have to be re-proven for every new language
+e.g. identity and extensionality lemmas for renaming and substitution.
+
+Despite the large body of knowledge in how to use types to define well formed
+syntax (see the Related Work in \cref{chapter:program-conclusion}), it is still
+necessary for the working DSL designer or formaliser to redefine essential
+functions like renaming and substitution for each new syntax, and then to
+reprove essential lemmas about those functions.
+
+\section{Our Contributions}
+
+In this thesis we address all three challenges by applying the methodology of
+datatype-genericity to programming and proving with syntaxes with binding.
+We ultimately give a binding-aware syntax for well typed and scoped DSLs; we
+spell out a set of sufficient constraints entailing the existence of a fold-like
+type-and-scope preserving traversal; and we provide proof frameworks
+to either demonstrate that two traversals are in simulation or that they can be
+fused together into a third one.
+
+The first part of this work focuses on the simply-typed lambda calculus. We
+identify a large catalogue of traversals which can be refactored into a common
+scope aware fold-like function. Once this shared structure has been made
+visible, we can design proof frameworks allowing us to show that some traversals
+are related.
+
+The second part builds on the observation that the shape of the constraints we
+see both in the definition of the generic traversal and the proof frameworks
+are in direct correspondence with the language's constructors. This pushes us
+to define a description language for syntaxes with binding and to \emph{compute}
+the constraints from such a description. We can then write generic programs for
+\emph{all} syntaxes with binding and state and prove generic theorems characterising
+these programs.
+
+\section{Source Material}
+
+This thesis is based on the content of two published papers which correspond roughly
+to part one and two: ``Type-and-scope Safe Programs and Their Proofs'' (\cite{allais2017type})
+and ``A Type and Scope Safe Universe of Syntaxes with Binding: Their Semantics and Proofs''
+(\cite{generic-syntax}).
+
+The study of variations on normalisation by evaluation in \cref{sec:variationsnormalisation}
+originated from the work on a third paper ``New equations for neutral terms''
+(\cite{new-equations}) which, combined with McBride's Kit for renaming and substitution
+(\citeyear{mcbride2005type}), led to the identification of a shared structure between renaming,
+substitution and the model construction in normalisation by evaluation.
