@@ -10,6 +10,8 @@ one can obtain this way. In this section we recall the main aspects
 of this construction we are interested in to build up our generic
 representation of syntaxes with binding.
 
+\section{Descriptions and Their Meaning as Functors}
+
 The first component of CDMM's universe's definition is an inductive type
 of \AD{Desc}riptions of strictly positive functors from $\Set{}^J$ to
 $\Set{}^I$. It has three constructors: \AIC{`σ} to store data (the rest of
@@ -69,6 +71,8 @@ programming over all the functors one can obtain as the meaning of a description
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{fmap}
 \caption{Action on Morphisms of the Functor corresponding to a \AF{Desc}ription}
 \end{figure}
+
+\section{Datatypes as Least Fixpoints}
 
 All the functors obtained as meanings of \AD{Desc}riptions are strictly positive.
 So we can build the least fixpoint of the ones that are endofunctors i.e. the ones
