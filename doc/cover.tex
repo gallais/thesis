@@ -1,29 +1,48 @@
 \pagestyle{empty}
 
+\savegeometry{maingeometry}
+\newgeometry{margin=0pt, bottom=5em}
+
 \definecolor{myyellow}{HTML}{fef1c4}
 \definecolor{myred}{HTML}{ed2a30}
 \definecolor{myblack}{HTML}{131313}
 
 \pagecolor{myyellow}\afterpage{\nopagecolor}
-\begin{vplace}[0.2]
-\renewcommand{\baselinestretch}{1}
-\fontsize{50}{60}\selectfont
 
-\setlength{\fboxrule}{8pt}
-\noindent\fcolorbox{myblack}{myred}{\fcolorbox{myyellow}{myred}{\begin{minipage}{\paperwidth}%
+\noindent\begin{minipage}{\paperwidth}
+\fontsize{40}{48}\selectfont
+\vspace*{2em}
+\begin{center}
+\textsc{\textbf{Syntaxes with Binding:\\
+Their Programs, and Proofs}}
+\end{center}
+\end{minipage}
+
+\begin{vplace}[1]
+\renewcommand{\baselinestretch}{1}
+
+\noindent\colorbox{myblack}{\begin{minipage}{\paperwidth}~\end{minipage}}
+\noindent\colorbox{myyellow}{\begin{minipage}{\paperwidth}~\end{minipage}}
+\noindent\colorbox{myred}{\begin{minipage}{\paperwidth}%
+\fontsize{50}{60}\selectfont
 \boldmath
 \begin{mathpar}
-\hspace{-1em}\color{myyellow}{\inferrule{\Box~(\mathcal{V}~\sigma \Rightarrow \mathcal{C}~\tau)}
+\color{myyellow}{\inferrule{\Box~(\mathcal{V}~\sigma \Rightarrow \mathcal{C}~\tau)}
           {\mathcal{C}~(\sigma \rightarrow \tau)}}
 \end{mathpar}
 \unboldmath
-\end{minipage}}}
+\end{minipage}}
+\noindent\colorbox{myyellow}{\begin{minipage}{\paperwidth}~\end{minipage}}
+\noindent\colorbox{myblack}{\begin{minipage}{\paperwidth}~\end{minipage}}
 \end{vplace}
+
 
 \noindent\fcolorbox{myred}{myred}{
 \begin{minipage}{\paperwidth}
 \vspace{8pt}
-\fontsize{20}{24}\selectfont
-\hspace{8pt}\color{myyellow}{\textbf{ALLAIS Guillaume}}
+\fontsize{25}{30}\selectfont
+\hspace{8pt}\color{myyellow}{\textsc{\textbf{Allais Guillaume}}}
 \vspace{8pt}
 \end{minipage}}
+
+\loadgeometry{maingeometry}
