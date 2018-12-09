@@ -1,7 +1,8 @@
 \begin{code}
 module Properties.Fusion.Syntactic.Instances where
 
-open import Syntax hiding (_<$>_; _∙_)
+open import Syntax.Calculus
+open import Syntax.Type
 open import Data.Var hiding (_<$>_)
 open import Data.List.Base using (List; []; _∷_)
 open import Data.Environment
