@@ -142,13 +142,18 @@ corresponding relational counterpart of term constructors into scope by \AK{open
 the record. The traversal then uses them to combine the induction hypotheses arising
 structurally.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{fundamental}
+\caption{Fundamental Lemma of \AR{Simulation}s\label{fig:fundsim}}
+\end{figure}
 
+We can now consider the second criterion for usefulness: the existence of interesting
+instances of a \AR{Simulation}.
 
 \section{Syntactic Traversals are Extensional}
 
 A first corollary of the fundamental lemma of simulations is the fact that semantics
-arising from a \AR{Syntactic} (cf.~\cref{syntactic}) definition are extensional. We
+arising from a \AR{Syntactic} (cf.~\cref{fig:syntactic}) definition are extensional. We
 can demonstrate this by proving that every syntactic semantics is in simulation with
 itself. That is to say that the evaluation function yields propositionally equal
 values provided extensionally equal environments of values.
@@ -160,18 +165,25 @@ Using \AF{Eqᴿ} the \AR{Rel} defined as the pontwise lifting of propositional e
 we can make our earlier claim formal and prove it. All the constraints are discharged
 either by reflexivity or by using congruence to combine various hypotheses.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{syn-ext}
+\caption{\AR{Syntactic}~ Traversals are in \AR{Simulation}~ with Themselves\label{fig:synselfsim}}
+\end{figure}
 
 Because the \AR{Simulation} statement is not necessarily extremely illuminating, we spell
 out the type of the corollary to clarify what we just proved: whenever two environments
 agree on each variable, evaluating a term with either of them produces equal results.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{synext}
+\caption{\AR{Syntactic}~ Traversals are Extensional\label{fig:synextensional}}
+\end{figure}
 
-This may look like a trivial result however we have found multiple use cases for it:
+This may look like a trivial result however we have found multiple use cases for it
+during the development of our solution to the POPLMark Reloaded challenge (\citeyear{poplmark2}):
 when reasoning by equational reasoning, it is often the case that we can make progress
-on each side of the equation only to meet in the middle with two slightly different
-environment. This lemma allows us to bridge that last gap.
+on each side of the equation only to meet in the middle with the same traversals using
+two slightly different environments. This lemma allows us to bridge that last gap.
 
 \section{Renaming is a Substitution}
 
@@ -188,25 +200,40 @@ and \AF{Substitution} where values (i.e. variables in the cases of renaming and 
 in terms of substitution) are related by \AF{VarTermᴿ} and computations (i.e. terms)
 are related by \AF{Eqᴿ}. Once again we proceed by reflexivity and congruence.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{renissub}
+\caption{\AF{Renaming}~ is in \AR{Simulation}~ with \AF{Substitution}\label{fig:renissub}}
+\end{figure}
 
 Rather than showing one more time the type of the corollary, we show a specialized
 version where we pick the substitution to be precisely the thinning used on which we
 have mapped the \AIC{`var} constructor.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{renassub}
-
-
+\caption{Renaming as a Substitution\label{fig:renassub}}
+\end{figure}
 
 \section{The PER for βιξη-Values is Closed under Evaluation}
 
 Now that we are a bit more used to the simulation framework and simulation lemmas,
 we can look at a more complex example: the simulation lemma relating normalisation
-by evaluation's eval function to itself. This may seem bureaucratic but it is crucial:
-the model definition uses the host language's function space which contains more functions
-than simply the ones obtained by evaluating a simply-typed $λ$-term. These exotic functions
-have undesirable behaviours and need to be ruled out to ensure that normalisation has good
-properties. This is done by defining a Partial Equivalence Relation (PER) (\cite{mitchell1996foundations})
+by evaluation's \AF{eval} function to itself. This may seem bureaucratic but it is
+crucial: the model definition uses the host language's function space which contains
+more functions than just the ones obtained by evaluating a simply-typed $λ$-term.
+A value at type {(\AIC{`Bool} \AIC{`→} \AIC{`Bool})} may for instance behave like
+boolean negation on canonical terms but be the constant \AIC{`tt} function on neutral
+value. It does not correspond to any term in the source language: any candidate term
+would allow us to write expressions not stable under substitution!
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{exotic}
+\caption{Exotic Value, Not Quite Equal to Negation\label{fig:nbeexotic}}
+\end{figure}
+
+Clearly, these exotic functions have undesirable behaviours and need to be ruled out
+if we want to be able to prove that normalisation has good properties. This is done
+by defining a Partial Equivalence Relation (PER) (\cite{mitchell1996foundations})
 on the model which is to say a relation which is symmetric and transitive but may
 not be reflexive for all elements in its domain. The elements equal to themselves will be
 guaranteed to be well behaved. We show that given an environment of values PER-related to
@@ -220,12 +247,18 @@ forms for values of type \AIC{`Bool}. They are considered equal when they are ef
 syntactically the same, i.e. propositionally equal. Functions on the other hand are
 declared equal whenever equal inputs map to equal outputs.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{per}
+\caption{Partial Equivalence Relation for Model Values\label{fig:nbeper}}
+\end{figure}
 
 On top of being a PER (i.e. symmetric and transitive), we can prove by a simple case analysis
 on the type that this relation is also stable under thinning for \AF{Model} values.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{thPER}
+\caption{Stability of the \AF{PER}~ under \AF{Thinning}\label{fig:nbeperth}}
+\end{figure}
 
 The interplay of reflect and reify with this notion of equality has to be described
 in one go because of their mutual definition. It confirms that \AF{PER} is an appropriate
@@ -233,13 +266,16 @@ notion of semantic equality: \AF{PER}-related values are reified to propositiona
 equal normal forms whilst propositionally equal neutral terms are reflected
 to \AF{PER}-related values.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{reifyreflect}
+\caption{Relational Versions of Reify and Reflect\label{fig:nbeperreifyreflect}}
+\end{figure}
 
 Just like in the definition of the evaluation function, conditional branching is the
 interesting case. Provided a pair of boolean values (i.e. normal forms of type
 \AIC{`Bool}) which are PER-equal (i.e. syntactically equal) and two pairs of PER-equal
 \AB{σ}-values corresponding respectively to the left and right branches of the two
-if-then-else, we can prove that the two semantical if-then-else produce PER-equal values.
+if-then-elses, we can prove that the two semantical if-then-else produce PER-equal values.
 Because of the equality constraint on the booleans, Agda allows us to only write the
 three cases we are interested in: all the other ones are trivially impossible.
 
@@ -249,7 +285,10 @@ produces a value by reflecting the neutral term obtained after reifying both bra
 We can play the same game but at the relational level this time and we obtain precisely
 the proof we wanted.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{ifte}
+\caption{Relational If-Then-Else\label{fig:nbeiftenelser}}
+\end{figure}
 
 This provides us with all the pieces necessary to prove our simulation lemma. The relational
 counterpart of \AIC{`lam} is trivial as the induction hypothesis corresponds precisely to
@@ -257,14 +296,19 @@ the PER-notion of equality on functions. Similarly the case for \AIC{`app} is ea
 the PER-notion of equality for functions is precisely the strong induction hypothesis we need
 to be able to make use of the assumption that the respective function's arguments are PER-equal.
 
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{nbe}
+\caption{Normalisation by \AF{Eval}uation is in \AF{PER}-\AR{Simulation}~ with Itself\label{fig:nbeiftenelser}}
+\end{figure}
 
 As a corollary, we can deduce that evaluating a term in two environments related pointwise
 by \AF{PER} yields two semantic objects themselves related by \AF{PER}. Which, once reified,
 give us two equal terms.
 
-\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{eval}\todo{add eval}
-
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{normR}
+\caption{Normalisation in \AF{PER}-related Environments Yields Equal Normal Forms}
+\end{figure}
 
 We can now move on to the more complex example of a proof framework built generically
-over our notion of \AF{Semantics}
+over our notion of \AF{Semantics}.

@@ -91,15 +91,22 @@ lookup (ρ ∙ v) z    = v
 lookup (ρ ∙ v) (s k) = lookup ρ k
 \end{code}
 %</extension>
+
+%<*select>
 \begin{code}
-
-
 select : Thinning Γ Δ → (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ
 lookup (select ren ρ) k = lookup ρ (lookup ren k)
+\end{code}
+%</select>
 
+%<*extend>
+\begin{code}
 extend : Thinning Γ (σ ∷ Γ)
 lookup extend v = s v
+\end{code}
+%</extend>
 
+\begin{code}
 bind : ∀ σ → Thinning Γ (σ ∷ Γ)
 bind _ = extend
 

@@ -75,19 +75,6 @@ summed up by the large type \AB{I}
 %\caption{Scope Aware Variables and Simply Typed $\lambda$-Terms\label{scoped-untyped}}
 %\end{center}
 
-The inductive family \AD{Var} represents well scoped and well kinded
-de Bruijn~\citeyear{de1972lambda}
-indices. Its \AIC{z} (for zero) constructor refers to
-the nearest binder in a non-empty scope. The \AIC{s} (for successor) constructor lifts a
-a variable in a given scope to the extended scope where
-an extra variable has been bound. Both of the constructors' types have been written using the combinators defined above.
-They respectively normalise to:
-\begin{center}
-  \AIC{z} : {\AS{∀} \AB{i} \AB{xs} \AS{→} \AD{Var} \AB{i} (\AB{i} \AIC{:\!:} \AB{xs})}
-  \qquad
-  \AIC{s} : {\AS{∀} \AB{i} \AB{j} \AB{xs} → \AD{Var} \AB{i} \AB{xs} \AS{→} \AD{Var} \AB{i} (\AB{j} \AIC{:\!:} \AB{xs})}
-\end{center}
-
 The \AD{Type} \AF{─Scoped} family \AD{Lam} is Altenkirch
 and Reus' simply typed $\lambda$-calculus representation. 
 

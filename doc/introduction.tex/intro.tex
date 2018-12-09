@@ -63,13 +63,20 @@ these programs.
 
 \section{Source Material}
 
-This thesis is based on the content of two published papers which correspond roughly
-to part one and two: ``Type-and-scope Safe Programs and Their Proofs'' (\cite{allais2017type})
-and ``A Type and Scope Safe Universe of Syntaxes with Binding: Their Semantics and Proofs''
-(\cite{generic-syntax}).
+This thesis is based on the content of two fully-formalised published papers which correspond
+roughly to part one and two: ``Type-and-scope Safe Programs and Their Proofs''
+(\cite{allais2017type, repo2017}) and
+``A Type and Scope Safe Universe of Syntaxes with Binding: Their Semantics and Proofs''
+(\cite{generic-syntax, repo2018}).
 
 The study of variations on normalisation by evaluation in \cref{sec:variationsnormalisation}
 originated from the work on a third paper ``New equations for neutral terms''
 (\cite{new-equations}) which, combined with McBride's Kit for renaming and substitution
 (\citeyear{mcbride2005type}), led to the identification of a shared structure between renaming,
 substitution and the model construction in normalisation by evaluation.
+
+The first consequent application of this work is our solution to the
+POPLMark Reloaded challenge currently under review for publication
+(\cite{poplmarkreloaded, poplmark2}) for which we formalised a proof of
+strong normalisation for the simply-typed lambda-calculus (and its extension
+with sum types).

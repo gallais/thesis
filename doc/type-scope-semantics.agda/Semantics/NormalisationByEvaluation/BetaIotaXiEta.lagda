@@ -101,3 +101,11 @@ norm : Term σ Γ → Nf σ Γ
 norm = reify _ ∘ eval
 \end{code}
 %</norm>
+%<*exotic>
+\begin{code}
+exotic : ∀[ Model (`Bool `→ `Bool) ]
+exotic ρ `tt         = `ff
+exotic ρ `ff         = `tt
+exotic ρ (`neu _ _)  = `tt
+\end{code}
+%</exotic>

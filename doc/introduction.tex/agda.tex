@@ -10,14 +10,13 @@ introduction to dependently-typed programming in Agda.
 (\cite{danielsson2011parsing}) where underscores denote argument positions.
 See e.g. the notation \AR{\_×\_} for the type of pairs defined in \cref{par:recordtypes}.
 
-
 \paragraph{Syntax Highlighting} We rely on Agda's \LaTeX{} backend to produce
 syntax highlighting for all the code fragments in this thesis. The convention
 is as follows: keywords are highlighted in \AK{orange}, data constructors in
-\AIC{green}, types and functions in \AD{blue} while bound variables are \AB{black}.
+\AIC{green}, record fields in \ARF{pink}, types and functions in \AD{blue}
+while bound variables are \AB{black}.
 
-
-\section{(Co)Data and (co)pattern matching}
+\section{Data and (co)pattern matching}
 
 As is customary, we start our introduction to dependently-typed programming by
 defining the natural numbers. They are defined as an inductive type with two
@@ -155,18 +154,13 @@ the added bonus that we have now \emph{proven} the function to be total.
 \ExecuteMetaData[introduction.agda/introduction.tex]{irose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapirose}
 
-\section{Combinators}
+\section{Working with Indexed Families}
 
 On top of the constructs provided by the language itself, we can define various
 domain specific languages (DSL) which give us the means to express ourselves
-concisely.
-
-\subsection{Working with Indexed Families}
-\label{indexed-combinators}
-
-We are going to manipulate a lot of indexed families representing scoped languages
-so we give ourselves a few combinators corresponding to the typical operations we
-want to perform on them.
+concisely. We are going to manipulate a lot of indexed families representing
+scoped languages so we give ourselves a few combinators corresponding to the
+typical operations we want to perform on them.
 
 First, noticing that most of the time we silently thread the current scope, we lift
 the function space pointwise with \AF{\_⇒\_}.

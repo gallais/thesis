@@ -8,8 +8,8 @@ open import Data.Relation
 open import Syntax.Type
 open import Syntax.Calculus
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification
-open import Semantics.Syntactic.Specification
+open import Semantics.Specification as Spec hiding (eval; module Fundamental)
+open import Semantics.Syntactic.Specification hiding (module Fundamental)
 open import Semantics.Syntactic.Instances
 
 open import Properties.Simulation.Specification
@@ -46,13 +46,15 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
   Syn-ext .ffᴿ    = λ ρᴿ → refl
 \end{code}
 %</syn-ext>
+\begin{code}
+  open Spec
+\end{code}
 %<*synext>
 \begin{code}
   syn-ext : All Eqᴿ Γ ρˡ ρʳ → (t : Term σ Γ) → eval 𝓢 ρˡ t ≡ eval 𝓢 ρʳ t
   syn-ext = simulation Syn-ext
 \end{code}
 %</synext>
-
 %<*varterm>
 \begin{code}
 VarTermᴿ : Rel Var Term
@@ -88,7 +90,7 @@ ren-as-sub t ρ = simulation RenSub^Sim (packᴿ (λ v → refl)) t
 %</renassub>
 
 \begin{code}
-open import Semantics.NormalisationByEvaluation.BetaIotaXiEta
+open import Semantics.NormalisationByEvaluation.BetaIotaXiEta hiding (eval)
 
 
 \end{code}
@@ -137,10 +139,18 @@ module _ {σ Γ} {L R S T : Model σ Γ} where
           rel PER σ L S → rel PER σ R T → rel PER σ (IFTE B L R) (IFTE C S T)
   IFTEᴿ `tt         `tt         _     lᴿ rᴿ = lᴿ
   IFTEᴿ `ff         `ff         _     lᴿ rᴿ = rᴿ
-  IFTEᴿ (`neu _ t)  (`neu _ t)  refl  lᴿ rᴿ =
+  IFTEᴿ (`neu a t)  (`neu b u)  refl  lᴿ rᴿ =
     reflectᴿ σ (cong₂ (`ifte t) (reifyᴿ σ lᴿ) (reifyᴿ σ rᴿ))
 \end{code}
 %</ifte>
+\begin{code}
+  IFTEᴿ `tt `ff ()
+  IFTEᴿ `ff `tt ()
+  IFTEᴿ `tt (`neu _ _) ()
+  IFTEᴿ `ff (`neu _ _) ()
+  IFTEᴿ (`neu _ _) `ff ()
+  IFTEᴿ (`neu _ _) `tt ()
+\end{code}
 %<*nbe>
 \begin{code}
 Eval^Sim : Simulation Eval Eval PER PER
@@ -154,4 +164,16 @@ Eval^Sim .ttᴿ    = λ ρᴿ → refl
 Eval^Sim .ffᴿ    = λ ρᴿ → refl
 \end{code}
 %</nbe>
+\begin{code}
+private
+ variable
+   ρˡ ρʳ : (Γ ─Env) Model Δ
 
+eval = Spec.eval Eval
+\end{code}
+%<*normR>
+\begin{code}
+normᴿ : All PER Γ ρˡ ρʳ → ∀ t → reify σ (eval ρˡ t) ≡ reify σ (eval ρʳ t)
+normᴿ ρᴿ t = reifyᴿ _ (Fundamental.lemma Eval^Sim ρᴿ t)
+\end{code}
+%</normR>

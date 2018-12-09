@@ -22,9 +22,9 @@ define η-expansion and β-reduction. The η-rules say that for some types,
 terms have a canonical form: functions will all be λ-headed whilst records will
 collect their fields -- here this makes all elements of \AIC{\unit{}} equal to \AIC{`one}.
 
-\todo{insert definition of eta}
-
 \begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{eta}
+
 \begin{mathpar}
 \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
   }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
