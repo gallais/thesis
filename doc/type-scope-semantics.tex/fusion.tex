@@ -100,22 +100,35 @@ them and prove the result generically to avoid repetition. A \AR{SynFusion}
 record packs the evidence for \AR{Syntactic} semantics \AB{Synᴬ}, \AB{Synᴮ} and
 \AB{Synᴬᴮ}. It is indexed by these three \AR{Syntactic}s as well as two relations
 corresponding to the \AB{𝓥ᴿ} and \AB{𝓔ᴿ} ones of the \AR{Fusion} framework;
-\AB{𝓒ᴿ} will always be \AF{Eqᴿ} as we are talking about terms. It contains the
-same \ARF{∙ᴿ}, \ARF{th\textasciicircum{}𝓥ᴿ} and \ARF{varᴿ} fields as a \AR{Fusion}
-as well as a fourth one (\ARF{var0ᴿ}) saying that \AB{Synᴮ} and \AB{Synᴬᴮ}'s
-respective \ARF{var0}s are producing related values.
+\AB{𝓒ᴿ} will always be \AF{Eqᴿ} as we are talking about terms.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{synfusion}
-\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{crel}
+
+The first two constraints \ARF{\_∙ᴿ\_} and \ARF{th\textasciicircum{}𝓥ᴿ} are the same
+fields as in the \AR{Fusion} specification.
+
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{thV}
+
+We define \todo{MCR}
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{crel}
+
+Once we have \todo{MCR}, we can state \ARF{varᴿ} which is also a constraint
+already present in the definition of \AR{Fusion}.
+
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{var}
+
+Finally, we have a fourth constraint (\ARF{zroᴿ}) saying that \AB{Synᴮ} and \AB{Synᴬᴮ}'s
+respective \ARF{zro}s are producing related values.
+
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{zro}
 
-
-Given a \AR{SynFusion} relating three \AR{Syntactic} semantics, we get a
-\AR{Fusion} relating the corresponding \AR{Semantics} where \AB{𝓒ᴿ} is the
-propositional equality. The proof relies on the way the translation from
-\AR{Syntactic} to \AR{Semantics} is formulated in \cref{syntactic}.
+Everything else is a direct consequence of the fact we are only considering
+syntactic semantics. Given a \AR{SynFusion} relating three \AR{Syntactic}
+semantics, we get a \AR{Fusion} relating the corresponding \AR{Semantics} where
+\AB{𝓒ᴿ} is the propositional equality. The proof relies on the way the
+translation from \AR{Syntactic} to \AR{Semantics} is formulated in
+\cref{sec:syntactic}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{fundamental}
 
