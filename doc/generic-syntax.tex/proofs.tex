@@ -173,7 +173,7 @@ respectively; \AB{𝓥ᴿ} relates pairs of values \AB{𝓥ᴮ} and \AB{𝓥ᴬ�
 and \AB{𝓒ᴿ}, our notion of equivalence for evaluation results, relates pairs
 of computation in \AB{𝓒ᴮ} and \AB{𝓒ᴬᴮ}.
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusiontype}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusionrec}
 
 The first obstacle we face is the formal definition of ``running \AB{𝓢ᴮ}
 after \AB{𝓢ᴬ}'': for this statement to make sense, the result of running
@@ -244,7 +244,6 @@ space relates the semantical objects one can find in place of the subterms.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{algR}
 
-
 \subsection{Fundamental Lemma of Fusion}
 
 This set of constraint is enough to prove a fundamental lemma of \AR{Fusion} stating
@@ -252,6 +251,11 @@ that from a triple of related environments, one gets a pair of related computati
 the composition of \AB{𝓢ᴬ} and \AB{𝓢ᴮ} on one hand and \AB{𝓢ᴬᴮ} on the other. This
 lemma is once again proven mutually with its counterpart for \AR{Semantics}' \AF{body}'s
 action on \AR{Scope}s.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusiontype}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodytype}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusioncode}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodycode}
 
 \todo{proof}
 

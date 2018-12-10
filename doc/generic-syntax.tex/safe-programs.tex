@@ -104,7 +104,10 @@ by a \AF{Size} is once more crucial in getting the termination checker to see
 that our proof is indeed well founded.
 
 
-\todo{introduce}
+Because most of our examples involve closed terms (for which we have introduced a special
+notation in \cref{fig:closedtm}), we define a specialised of the fundamental lemma of semantics
+for closed terms and apply it to the empty environment.
+
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{closed}
 \caption{Special Case: Fundamental Lemma of \AR{Semantics} for Closed Terms\label{fig:closedsem}}
@@ -330,13 +333,13 @@ otherwise we grow the spine of stuck applications.
 
 We have not used the \AIC{⊥} constructor so \emph{if} the evaluation terminates
 (by disabling the strict positivity check we have lost all guarantees of the sort)
-we know we will get a term in normal form.
-
-\todo{Discuss normalising terms}
+we know we will get a term in normal form. For instance: identity applied twice
+to itself yield a strongly normalising term and if we run the evaluator we indeed
+get the identity as an output as demonstrated in \cref{fig:normid3}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{example}
-\caption{Normalization Example}
+\caption{Normalization Example\label{fig:normid3}}
 \end{figure}
 
 
@@ -400,9 +403,9 @@ user-supplied \AF{Display} directive to obtain a string representation of the te
 \caption{Printing as a Generic Semantics\label{fig:genprinting}}
 \end{figure}
 
-Using the \AF{closed} version of the fundamental lemma of semantics and
-reusing the name supply defined in \cref{prettyprint} we obtain a printer
-for closed terms.
+Using the \AF{closed} version of the fundamental lemma of semantics defined in
+\cref{fig:closedsem} and reusing the name supply defined in \cref{prettyprint}
+we obtain a printer for closed terms.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{print}

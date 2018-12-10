@@ -30,14 +30,14 @@ private
     vsᴮ : (Δ ─Env) 𝓥ᴮ Γ
 
 \end{code}
-%<*fusiontype>
+%<*fusionrec>
 \begin{code}
 record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Semantics d 𝓥ᴮ 𝓒ᴮ)
   (𝓢ᴬᴮ : Semantics d 𝓥ᴬᴮ 𝓒ᴬᴮ)
   (𝓔ᴿ : ∀ Γ Δ {Θ} → (Γ ─Env) 𝓥ᴬ Δ → (Δ ─Env) 𝓥ᴮ Θ → (Γ ─Env) 𝓥ᴬᴮ Θ → Set)
   (𝓥ᴿ : Rel 𝓥ᴮ 𝓥ᴬᴮ) (𝓒ᴿ : Rel 𝓒ᴮ 𝓒ᴬᴮ) : Set where
 \end{code}
-%</fusiontype>
+%</fusionrec>
 \begin{code}
   module 𝓢ᴬ = Semantics 𝓢ᴬ
   module 𝓢ᴮ = Semantics 𝓢ᴮ
@@ -104,21 +104,31 @@ record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Se
            in Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) bᴮ bᴬᴮ → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ (`con b)
 \end{code}
 %</algR>
+%<*fusiontype>
 \begin{code}
-
-
   fusion : 𝓔ᴿ Γ Δ ρᴬ ρᴮ ρᴬᴮ → (t : Tm d s σ Γ) → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t
+\end{code}
+%</fusiontype>
+%<*bodytype>
+\begin{code}
   body   : 𝓔ᴿ Γ Δ ρᴬ ρᴮ ρᴬᴮ → ∀ Δ σ → (b : Scope (Tm d s) Δ σ Γ) →
            let vᴮ   = 𝓢ᴮ.body ρᴮ Δ σ (quoteᴬ Δ σ (𝓢ᴬ.body ρᴬ Δ σ b))
                vᴬᴮ  = 𝓢ᴬᴮ.body ρᴬᴮ Δ σ b
            in Kripkeᴿ 𝓥ᴿ 𝓒ᴿ Δ σ vᴮ vᴬᴮ
-
+\end{code}
+%</bodytype>
+%<*fusioncode>
+\begin{code}
   fusion ρᴿ (`var v) = varᴿ ρᴿ v
   fusion ρᴿ (`con t) = algᴿ ρᴿ t (rew (zip d (body ρᴿ) t)) where
 
      eq  = fmap² d (𝓢ᴬ.body _) (λ Δ i t → 𝓢ᴮ.body _ Δ i (quoteᴬ Δ i t)) t
      rew = subst (λ v → Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) v _) (sym eq)
-
+\end{code}
+%</fusioncode>
+%<*bodycode>
+\begin{code}
   body ρᴿ []       i b = fusion ρᴿ b
   body ρᴿ (σ ∷ Δ)  i b = λ ρ vsᴿ → fusion (th^𝓔ᴿ ρᴿ ρ >>ᴿ vsᴿ) b
 \end{code}
+%</bodycode>

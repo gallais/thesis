@@ -24,7 +24,9 @@ open SynFusion
 \begin{code}
 RenRen : SynFusion  Syn^Ren Syn^Ren Syn^Ren
                     (λ ρᴬ ρᴮ → All Eqᴿ _ (select ρᴬ ρᴮ)) Eqᴿ
-RenRen ._∙ᴿ_   = λ ρᴿ tᴿ → packᴿ λ { z → tᴿ ; (s v) → lookupᴿ ρᴿ v }
+RenRen ._∙ᴿ_   = λ ρᴿ tᴿ → packᴿ λ where
+  z      → tᴿ
+  (s v)  → lookupᴿ ρᴿ v
 RenRen .th^𝓔ᴿ  = λ ρᴿ ρ → cong (λ v → th^Var v ρ) <$>ᴿ ρᴿ
 RenRen .varᴿ   = λ ρᴿ v → cong `var (lookupᴿ ρᴿ v)
 RenRen .zroᴿ   = refl

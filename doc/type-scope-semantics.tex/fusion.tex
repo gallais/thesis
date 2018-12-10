@@ -104,22 +104,25 @@ corresponding to the \AB{𝓥ᴿ} and \AB{𝓔ᴿ} ones of the \AR{Fusion} frame
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{synfusion}
 
-The first two constraints \ARF{\_∙ᴿ\_} and \ARF{th\textasciicircum{}𝓥ᴿ} are the same
-fields as in the \AR{Fusion} specification.
+The first two constraints \ARF{\_∙ᴿ\_} and \ARF{th\textasciicircum{}𝓔ᴿ} are directly taken
+from the \AR{Fusion} specification: we still need to be able to extend existing related
+environment with related values, and to thin environments in a relatedness-preserving manner.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{thV}
 
-We define \todo{MCR}
+We once again define \AF{𝓡}, a specialised version of its \AR{Fusion} counterpart stating that
+the results of the two evaluations are propositionally equal.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{crel}
 
-Once we have \todo{MCR}, we can state \ARF{varᴿ} which is also a constraint
-already present in the definition of \AR{Fusion}.
+Once we have \AF{𝓡}, we can concisely write down the constraint \ARF{varᴿ} which is also already
+present in the definition of \AR{Fusion}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{var}
 
 Finally, we have a fourth constraint (\ARF{zroᴿ}) saying that \AB{Synᴮ} and \AB{Synᴬᴮ}'s
-respective \ARF{zro}s are producing related values.
+respective \ARF{zro}s are producing related values. This will provide us with just the right
+pair of related values to use in \AR{Fusion}'s \ARF{lamᴿ}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{zro}
 
@@ -130,34 +133,83 @@ semantics, we get a \AR{Fusion} relating the corresponding \AR{Semantics} where
 translation from \AR{Syntactic} to \AR{Semantics} is formulated in
 \cref{sec:syntactic}.
 
+\begin{figure}
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{fundamental}
+\caption{Fundamental Lemma of Syntactic Fusions\label{fig:fundamentalsynfus}}
+\end{figure}
+
+We are now ready to give our first examples of Fusions. They are the first results one
+typically needs to prove when studying the meta-theory of a language.
 
 \section{Interactions of Renaming and Substitution}
 
+Renaming and Substitution can interact in four ways: all but one of these
+combinations is equivalent to a single substitution (the sequential execution
+of two renamings is equivalent to a single renaming). These four lemmas are
+usually proven in painful separation. Here we discharge them by rapid successive
+instantiation of our framework, using the earlier results to satisfy the later
+constraints. We only present the first instance in full details and then only
+spell out the \AR{SynFusion} type signature which makes explicit the relations
+used to constraint the input environments.
 
+First, we have the fusion of two sequential renaming traversals into a single
+renaming. Environments are related as follows: the composition of the two
+environments used in the sequential traversals should be pointwise equal to
+the third one. The composition operator \AF{select} is defined in \cref{fig:extendth}.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{renrenfus}
-\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{renren}
+\caption{Syntactic Fusion of Two Renamings\label{fig:renrenfus}}
+\end{figure}
 
+Using the fundamental lemma of syntactic fusions, we get a proper \AR{Fusion} record
+on which we can then use the fundamental lemma of fusions to get the renaming fusion
+law we expect.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{renren}
+\caption{Corollary: Renaming Fusion Law\label{fig:renren}}
+\end{figure}
+
+A similar proof gives us the fact that a renaming followed by a substitution is equivalent
+to a substitution. Environments are once more related by composition.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{rensubfus}
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{rensub}
+\caption{Renaming - Substitution Fusion Law\label{fig:rensub}}
+\end{figure}
 
+For the proof that a substitution followed by a renaming is equivalent to a substitution, we
+need to relate the environments in a different manner: composition now amounts to applying
+the renaming to every single term in the substitution. We also depart from the use of \AF{Eqᴿ}
+as the relation for values: indeed we now compare variables and terms. The relation \AF{VarTermᴿ}
+relates variables and terms by wrapping the variable in a \AIC{`var} constructor and demanding
+it is equal to the term.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subrenfus}
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subren}
+\caption{Substitution - Renaming Fusion Law\label{fig:subren}}
+\end{figure}
 
+Finally, the fusion of two sequential substitutions into a single one uses a similar notion
+of composition. Here the second substitution is applied to each term of the first and we
+expect the result to be pointwise equal to the third. Values are once more considered related
+whenever they are propositionally equal.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subsubfus}
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subsub}
+\caption{Substitution Fusion Law\label{fig:subsub}}
+\end{figure}
 
-\todo{4 fusion lemmas}
+As we are going to see in the following section, we are not limited
+to \AR{Syntactic} statements.
 
+\section{Other Examples of Fusions}
 
-These four lemmas are usually proven in painful separation. Here we discharged
-them by rapid successive instantiation of our framework, using the earlier
-results to satisfy the later constraints. As we are going to see in the following
-section, we are not limited to \AR{Syntactic} statements.
-
-\section{Examples of Fusable Semantics}
-
-The most simple example of fusable \AR{Semantics} involving a non \AR{Syntactic}
+The most simple example of fusion of two \AR{Semantics} involving a non \AR{Syntactic}
 one is probably the proof that \AR{Renaming} followed by normalization by evaluation's
 \AR{Eval} is equivalent to \AR{Eval} with an adjusted environment.
 
