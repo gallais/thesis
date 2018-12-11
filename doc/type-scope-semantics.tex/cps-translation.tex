@@ -172,4 +172,11 @@ fact \AD{Term}s are thinnable.
 
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{elabbind}
 
-\todo{Conclusion}
+By highlighting the shared structure, of the call by name and call by value
+translations we were able to focus on the interesting part: the ways in which
+they differ. The formal treatment of the type translations underlines the
+fact that in both translation the translation of a function's domain is uniform.
+This remark opens the door to alternative definitions; we could for instance
+consider a mixed strategy which is strict in machine-representable types thus
+allowing an unboxed representation (\cite{10.1007/3540543961_30}) but lazy in
+every other type.
