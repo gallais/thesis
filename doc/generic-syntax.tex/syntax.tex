@@ -204,4 +204,10 @@ true of all the elements in the list \AB{xs}).
 \caption{Breaking Down a Finite Product of Recursive Positions\label{figure:descprodelim}}
 \end{figure}
 
-\todo{Explain multilet}
+We will see in \cref{section:letbinding} how to define let-bindings as a generic
+language extension and their inlining as a generic semantics over the extended
+syntax and into the base one. Closure under a finite product of recursive positions
+demonstrates that we could extend this construction to parallel (or even mutually-recursive)
+let-bindings where the number and the types of the bound expressions can be arbitrary.
+We will not go into the details of this construction as it is essentially a combination
+of \AF{Xs}, \AF{unXs} and the techniques used when defining single let-bindings.
