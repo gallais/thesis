@@ -65,6 +65,9 @@ module _ {T U : I ─Scoped} {𝓡 : Rel T U} where
   ... | inj₁ k₁ = lookupᴿ ρᴿ k₁
   ... | inj₂ k₂ = lookupᴿ σᴿ k₂
 
+  selectᴿ : ∀ ρ → All 𝓡 Δ ρᵀ ρᵁ → All 𝓡 Γ (select ρ ρᵀ) (select ρ ρᵁ)
+  lookupᴿ (selectᴿ ρ ρᴿ) k = lookupᴿ ρᴿ (lookup ρ k)
+
   _<$>ᴿ_ : (∀ {i t u} → rel 𝓡 i t u → rel 𝓡 i (fᵀ t) (fᵁ u)) →
            All 𝓡 Γ ρᵀ ρᵁ → All 𝓡 Γ (fᵀ <$> ρᵀ) (fᵁ <$> ρᵁ)
   lookupᴿ (F <$>ᴿ ρ) k = F (lookupᴿ ρ k)

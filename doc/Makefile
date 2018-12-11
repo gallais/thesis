@@ -34,6 +34,7 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Properties/Fusion/Specification.lagda \
   type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.lagda \
   type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.lagda \
+  type-scope-semantics.agda/Properties/Fusion/Instances.lagda \
   generic-syntax.agda/Generic/Data.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
   generic-syntax.agda/Generic/Examples/STLC.lagda \
