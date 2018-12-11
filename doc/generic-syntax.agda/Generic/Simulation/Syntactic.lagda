@@ -19,26 +19,44 @@ open Simulation
 
 module _ {I : Set} {d : Desc I} where
 
+\end{code}
+%<*renext>
+\begin{code}
  RenExt : Simulation d Renaming Renaming Eqᴿ Eqᴿ
  RenExt .thᴿ   = λ ρ → cong (lookup ρ)
  RenExt .varᴿ  = cong `var
  RenExt .algᴿ  = λ _ _ →
    cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d
-
+\end{code}
+%</renext>
+%<*subext>
+\begin{code}
  SubExt : Simulation d Substitution Substitution Eqᴿ Eqᴿ
  SubExt .thᴿ   = λ ρ → cong (ren ρ)
  SubExt .varᴿ  = id
  SubExt .algᴿ  = λ _ _ →
    cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d
-
-module _ {I : Set} {d : Desc I} where
-
+\end{code}
+%</subext>
+%<*rensub>
+\begin{code}
  RenSub : Simulation d Renaming Substitution VarTmᴿ Eqᴿ
  RenSub .varᴿ  = id
- RenSub .thᴿ   = λ { _ refl → refl }
+ RenSub .thᴿ   = λ ρ → cong (λ t → th^Tm t ρ)
  RenSub .algᴿ  = λ _ _ →
    cong `con ∘ zip^reify VarTmᴿ (reifyᴿ VarTmᴿ Eqᴿ vl^VarTm) d
+\end{code}
+%</rensub>
+\begin{code}
+ private
+   variable
+     Γ Δ : List I
+     σ : I
 
- rensub : {Γ Δ : List I} (ρ : Thinning Γ Δ) {i : I} (t : Tm d ∞ i Γ) → ren ρ t ≡ sub (`var <$> ρ) t
+\end{code}
+%<*rensubfun>
+\begin{code}
+ rensub :  (ρ : Thinning Γ Δ) (t : Tm d ∞ σ Γ) → ren ρ t ≡ sub (`var <$> ρ) t
  rensub ρ = Simulation.sim RenSub (packᴿ (λ _ → refl))
 \end{code}
+%</rensubfun>

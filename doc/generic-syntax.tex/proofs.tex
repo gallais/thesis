@@ -99,17 +99,24 @@ and \AD{Size}s play a crucial role in ensuring that the function is indeed total
 \subsection{Applications}
 
 Instantiating this generic simulation lemma, we can for instance get
-that renaming and substitution are extensional (given extensionally
-equal environments they produce syntactically equal terms), or that
-renaming is a special case of substitution. Of course these results
-are not new but having them generically over all syntaxes with binding
-is convenient; which we have experienced first hand when tackling the
-POPLMark Reloaded challenge where \AF{rensub} was actually needed
+that renaming and substitution are extensional (cf. \cref{fig:genrensubext},
+given extensionally equal environments they produce syntactically equal terms),
+or that renaming is a special case of substitution (cf. \cref{fig:genrensub}).
+Of course these results are not new but having them generically over all syntaxes
+with binding is convenient; which we have experienced first hand when tackling the
+POPLMark Reloaded challenge (\citeyear{poplmark2}) where \AF{rensub} was actually
+needed.
 
-\todo{fix}
 \begin{figure}[h]
-% \ExecuteMetaData[Generic/Simulation.tex]{rensub}
-\caption{Renaming as a Substitution via Simulation}
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{renext}
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{subext}
+\caption{Self-Simulation: Renaming and Substitution are Extensional\label{fig:genrensubext}}
+\end{figure}
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{rensub}
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{rensubfun}
+\caption{Renaming as a Substitution via Simulation\label{fig:genrensub}}
 \end{figure}
 
 When studying specific languages, new opportunities to deploy the
@@ -248,16 +255,36 @@ space relates the semantical objects one can find in place of the subterms.
 
 This set of constraint is enough to prove a fundamental lemma of \AR{Fusion} stating
 that from a triple of related environments, one gets a pair of related computations:
-the composition of \AB{𝓢ᴬ} and \AB{𝓢ᴮ} on one hand and \AB{𝓢ᴬᴮ} on the other. This
-lemma is once again proven mutually with its counterpart for \AR{Semantics}' \AF{body}'s
-action on \AR{Scope}s.
+the composition of \AB{𝓢ᴬ} and \AB{𝓢ᴮ} on one hand and \AB{𝓢ᴬᴮ} on the other.
 
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusiontype}
+\caption{Statement of the Fundamental Lemma of Fusion\label{fig:fusiontype}}
+\end{figure}
+
+This lemma is once again proven mutually with its counterpart for \AR{Semantics}'
+\AF{body}'s action on \AR{Scope}s: given related environments and a scope, the
+evaluation of the recursive positions using \AB{𝓢ᴬ} followed by their reification
+and their evaluation in \AB{𝓢ᴮ} should yield a piece of data \emph{structurally}
+equal to the one obtained by using \AB{𝓢ᴬᴮ} instead where the values replacing
+the recursive substructures are \AF{Kripkeᴿ}-reladed.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodytype}
+\caption{Statement of the Fundamental Lemma of Fusion for Bodies\label{fig:fusiontype}}
+\end{figure}
+
+The proofs involve two functions we have not mentiond before: \AF{zip} maps a proof that
+a property holds for any recursive substructure over a the arguments of constructor to
+obtain a \AF{Zip} object. The proof we obtain does not exactly match the premise in
+\ARF{algᴿ}; we need to adjust it by rewriting an \AF{fmap}-fusion equality called
+\AF{fmap²}.
+
+\begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusioncode}
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodycode}
-
-\todo{proof}
+\caption{Proof of the Fundamental Lemma of Fusion}
+\end{figure}
 
 \subsection{Applications}
 
