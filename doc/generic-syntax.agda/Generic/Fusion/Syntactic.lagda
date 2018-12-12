@@ -24,21 +24,27 @@ import Generic.Fusion.Specialised.Propositional as FusProp
 
 module _ {I : Set} (d : Desc I) where
 
+ private
+   variable
+     Γ Δ Θ : List I
+     σ : I
+     i : Size
+
  Ren² : Fusion d Renaming Renaming Renaming (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  Ren² = FusProp.ren-sem d Renaming $ λ b ρᴿ zp →
    cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d zp
 
- ren² : {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
+ ren² : (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
         ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
- ren² t ρ₁ ρ₂ = Fusion.fusion Ren² (packᴿ (λ _ → refl)) t
+ ren² t ρ₁ ρ₂ = Fusion.fusion Ren² reflᴿ t
 
  RenSub : Fusion d Renaming Substitution Substitution (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  RenSub = FusProp.ren-sem d Substitution $ λ b ρᴿ zp →
    cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zp
 
- rensub :  {Γ Δ Θ : List I} {i : I} {s : Size} → (t : Tm d s i Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
+ rensub :  (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
            sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
- rensub t ρ₁ ρ₂ = Fusion.fusion RenSub (packᴿ (λ _ → refl)) t
+ rensub t ρ₁ ρ₂ = Fusion.fusion RenSub reflᴿ t
 
  SubRen : Fusion d Substitution Renaming Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
  Fusion.reifyᴬ  SubRen = λ _ → id
@@ -62,10 +68,15 @@ module _ {I : Set} (d : Desc I) where
       fmap d (reify vl^Tm) v₃
    ∎
 
- subren :  {Γ Δ Θ : List I} {i : I} {s : Size} → ∀ (t : Tm d s i Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : Thinning Δ Θ) →
+\end{code}
+%<*subren>
+\begin{code}
+ subren :  (t : Tm d i σ Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : Thinning Δ Θ) →
            ren ρ₂ (sub ρ₁ t) ≡ sub (ren ρ₂ <$> ρ₁) t
- subren t ρ₁ ρ₂ = Fusion.fusion SubRen (packᴿ (λ k → refl)) t
-
+\end{code}
+%</subren>
+\begin{code}
+ subren t ρ₁ ρ₂ = Fusion.fusion SubRen reflᴿ t
 
  Sub² : Fusion d Substitution Substitution Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
  Fusion.reifyᴬ Sub² = λ _ t → t
@@ -89,12 +100,15 @@ module _ {I : Set} (d : Desc I) where
       fmap d (reify vl^Tm) v₃
    ∎
 
- sub² :  {Γ Δ Θ : List I} {i : I} {s : Size} → ∀ (t : Tm d s i Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
+\end{code}
+%<*subsub>
+\begin{code}
+ sub² :  (t : Tm d i σ Γ) (ρ₁ : (Γ ─Env) (Tm d ∞) Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
          sub ρ₂ (sub ρ₁ t) ≡ sub (sub ρ₂ <$> ρ₁) t
- sub² t ρ₁ ρ₂ = Fusion.fusion Sub² (packᴿ (λ k → refl)) t
-
-
-
+\end{code}
+%</subsub>
+\begin{code}
+ sub² t ρ₁ ρ₂ = Fusion.fusion Sub² reflᴿ t
 
  ren-sub-fusionᴿ : ∀ {Δ Γ Θ} (σ : (Δ ─Env) (Tm d ∞) Γ) (ρ : Thinning Γ Θ) →
    All Eqᴿ _ (select (lift vl^Var Δ ρ) (base vl^Tm <+> (ren ρ <$> σ)))
