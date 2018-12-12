@@ -26,8 +26,8 @@ module RenFusion where
 \end{code}
 %<*crel>
 \begin{code}
- 𝓡 : ∀ {Γ Δ Θ} σ (ρᴬ : Thinning Γ Δ) (ρᴮ : (Δ ─Env) Model Θ) (ρᴬᴮ : (Γ ─Env) Model Θ) →
-      Term σ Γ → Set
+ 𝓡 :  ∀ {Γ Δ Θ} σ (ρᴬ : Thinning Γ Δ) (ρᴮ : (Δ ─Env) Model Θ)
+      (ρᴬᴮ : (Γ ─Env) Model Θ) → Term σ Γ → Set
  𝓡 σ ρᴬ ρᴮ ρᴬᴮ t = rel PER σ (eval ρᴮ (th^Term t ρᴬ)) (eval ρᴬᴮ t)
 \end{code}
 %</crel>
@@ -37,7 +37,8 @@ module RenFusion where
 \end{code}
 %<*appR>
 \begin{code}
-  APPᴿ : ∀ f t → 𝓡 (σ `→ τ) ρᴬ ρᴮ ρᴬᴮ f → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t → 𝓡 τ ρᴬ ρᴮ ρᴬᴮ (`app f t)
+  APPᴿ :  ∀ f t → 𝓡 (σ `→ τ) ρᴬ ρᴮ ρᴬᴮ f → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t →
+          𝓡 τ ρᴬ ρᴮ ρᴬᴮ (`app f t)
   APPᴿ f t fᴿ tᴿ = fᴿ (pack id) tᴿ
 \end{code}
 %</appR>
@@ -74,11 +75,11 @@ module RenFusion where
 \end{code}
 %<*reneval>
 \begin{code}
- RenEval : Fusion Renaming Eval Eval (λ ρᴬ ρᴮ → All PER _ (select ρᴬ ρᴮ)) PER PER
+ RenEval : Fusion  Renaming Eval Eval
+                   (λ ρᴬ ρᴮ → All PER _ (select ρᴬ ρᴮ)) PER PER
  RenEval .reifyᴬ   = id
  RenEval .var0ᴬ    = z
- RenEval ._∙ᴿ_ ρᴿ vᴿ .lookupᴿ z      = vᴿ
- RenEval ._∙ᴿ_ ρᴿ vᴿ .lookupᴿ (s k)  = lookupᴿ ρᴿ k
+ RenEval ._∙ᴿ_     = λ ρᴿ vᴿ → vᴿ ∷ᴿ lookupᴿ ρᴿ
  RenEval .th^𝓔ᴿ    = λ ρᴿ ρ → (λ v → th^PER _ v ρ) <$>ᴿ ρᴿ
  RenEval .varᴿ     = λ ρᴿ → lookupᴿ ρᴿ
  RenEval .oneᴿ     = λ ρᴿ → refl
@@ -103,8 +104,8 @@ module SubFusion where
 \end{code}
 %<*crel>
 \begin{code}
- 𝓡 : ∀ {Γ Δ Θ} σ (ρᴬ : (Γ ─Env) Term Δ) (ρᴮ : (Δ ─Env) Model Θ) (ρᴬᴮ : (Γ ─Env) Model Θ) →
-      Term σ Γ → Set
+ 𝓡 :  ∀ {Γ Δ Θ} σ (ρᴬ : (Γ ─Env) Term Δ) (ρᴮ : (Δ ─Env) Model Θ)
+      (ρᴬᴮ : (Γ ─Env) Model Θ) → Term σ Γ → Set
  𝓡 σ ρᴬ ρᴮ ρᴬᴮ t = rel PER σ (eval ρᴮ (sub ρᴬ t)) (eval ρᴬᴮ t)
 \end{code}
 %</crel>
@@ -154,11 +155,10 @@ module SubFusion where
 %<*subr>
 \begin{code}
   Subᴿ : (Γ ─Env) Term Δ → (Δ ─Env) Model Θ → (Γ ─Env) Model Θ → Set
-  Subᴿ ρᴬ ρᴮ ρᴬᴮ  =
-     All PER Δ ρᴮ ρᴮ
-   × All PER Γ ρᴬᴮ ρᴬᴮ
-   × (∀ {Ω} (ρ : Thinning Θ Ω) →
-      All PER Γ (eval (th^Env (th^Model _) ρᴮ ρ) <$> ρᴬ) (th^Env (th^Model _) ρᴬᴮ ρ))
+  Subᴿ ρᴬ ρᴮ ρᴬᴮ  = All PER Δ ρᴮ ρᴮ × All PER Γ ρᴬᴮ ρᴬᴮ ×
+    (∀ {Ω} (ρ : Thinning Θ Ω) →
+    All PER Γ (eval (th^Env (th^Model _) ρᴮ ρ) <$> ρᴬ)
+              (th^Env (th^Model _) ρᴬᴮ ρ))
 \end{code}
 %</subr>
 \begin{code}

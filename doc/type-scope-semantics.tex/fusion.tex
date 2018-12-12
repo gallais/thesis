@@ -110,19 +110,19 @@ environment with related values, and to thin environments in a relatedness-prese
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{thV}
 
-We once again define \AF{𝓡}, a specialised version of its \AR{Fusion} counterpart stating that
-the results of the two evaluations are propositionally equal.
+We once again define \AF{𝓡}, a specialised version of its \AR{Fusion} counterpart
+stating that the results of the two evaluations are propositionally equal.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{crel}
 
-Once we have \AF{𝓡}, we can concisely write down the constraint \ARF{varᴿ} which is also already
-present in the definition of \AR{Fusion}.
+Once we have \AF{𝓡}, we can concisely write down the constraint \ARF{varᴿ} which
+is also already present in the definition of \AR{Fusion}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{var}
 
-Finally, we have a fourth constraint (\ARF{zroᴿ}) saying that \AB{Synᴮ} and \AB{Synᴬᴮ}'s
-respective \ARF{zro}s are producing related values. This will provide us with just the right
-pair of related values to use in \AR{Fusion}'s \ARF{lamᴿ}.
+Finally, we have a fourth constraint (\ARF{zroᴿ}) saying that \AB{Synᴮ} and
+\AB{Synᴬᴮ}'s respective \ARF{zro}s are producing related values. This will provide
+us with just the right pair of related values to use in \AR{Fusion}'s \ARF{lamᴿ}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{zro}
 
@@ -193,10 +193,10 @@ it is equal to the term.
 \caption{Substitution - Renaming Fusion Law\label{fig:subren}}
 \end{figure}
 
-Finally, the fusion of two sequential substitutions into a single one uses a similar notion
-of composition. Here the second substitution is applied to each term of the first and we
-expect the result to be pointwise equal to the third. Values are once more considered related
-whenever they are propositionally equal.
+Finally, the fusion of two sequential substitutions into a single one uses a
+similar notion of composition. Here the second substitution is applied to each
+term of the first and we expect the result to be pointwise equal to the third.
+Values are once more considered related whenever they are propositionally equal.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subsubfus}
@@ -213,21 +213,106 @@ The most simple example of fusion of two \AR{Semantics} involving a non \AR{Synt
 one is probably the proof that \AR{Renaming} followed by normalization by evaluation's
 \AR{Eval} is equivalent to \AR{Eval} with an adjusted environment.
 
+\subsection{Fusion of Renaming Followed by Evaluation}
+\label{sec:fusionrennbe}
 
+As is now customary, we start with an auxiliary definition which will make our
+type signatures a lot lighter. It is a specialised version of the relation \AF{𝓡}
+introduced when spelling out the \AR{Fusion} constraints. Here the relation is \AF{PER}
+and the three environments carry respectively \AD{Var} (i.e. it is a \AF{Thinning}) for
+the first one, and \AF{Model} values for the two other ones.
+
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{crel}
+
+We start with the most straigtforward of the non-trivial cases: the relational
+counterpart of \AIC{`app}. The \AF{Kripkeᴿ} structure of the induction hypothesis
+for the function has precisely the strength we need to make use of the hypothesis
+for its argument.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{appR}
+\caption{Relational Application}
+\end{figure}
+
+The relational counterpart of \AIC{`ifte} is reminiscent of the one we used when
+proving that normalisation by evaluation is in simulation with itself in
+\cref{fig:nbeiftenelser}: we have two arbitrary boolean values resulting from the
+evaluation of \AB{b} in two distinct manners but we know them to be the same thanks
+to the their being \AF{PER}-related. The canonical cases are trivially solved by
+using one of the assumptions whilst the neutral case can be proven to hold thanks
+to the relational versions of \AF{reify} and \AF{reflect}.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{ifteR}
+\caption{Relational If-Then-Else}
+\end{figure}
 
+The rest of the constraints can be discharged fairly easily; either by using a
+constructor, combining some of the provided hypothesis or using general results
+such as the stability of \AF{PER}-relatedness under thinning of the \AF{Model}
+values.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{reneval}
+\caption{Renaming Followed by Evaluation is an Evaluation}
+\end{figure}
+
+
+By the fundamental lemma of \AR{Fusion}, we get the result we are looking for:
+a renaming followed by an evaluation is equivalent to an evaluation in a touched
+up environment.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{renevalfun}
+\caption{Corollary: Fusion Principle for Evaluation followed by Renaming}
+\end{figure}
 
-\todo{insert}
+This gives us the tools to prove the substitution lemma for evaluation.
 
+\subsection{Substitution Lemma for Evaluation}
+
+Given any semantics, the substitution lemma (see for instance \cite{mitchell1991kripke})
+states that evaluating a term after performing a substitution is equivalent to evaluating
+the term with an environment obtained by evaluating each term in the substitution.
+Formally (\AB{t} is a term, γ a substitution and ρ an evaluation environment):
+
+\[
+⟦~t~[γ]~⟧~ρ~≡ ⟦~t~⟧~(⟦~γ~⟧~ρ)
+\]
+
+This is a key lemma in the study of a language's meta-theory and it fits our \AR{Fusion}
+framework perfectly. We start by describing the constraints imposed on the environments.
+They may seem quite restrictive but they are actually similar to the Uniformity condition
+described by C. Coquand~(\citeyear{coquand2002formalised}) in her detailed account of NBE
+for a ST$λ$C with explicit substitution and help root out exotic term
+(cf. \cref{fig:nbeexotic}).
+
+First we expect the two evaluation environments to only contain \AF{Model} values
+which are \AF{PER}-related to themselves. Second, we demand that the evaluation of
+the substitution in a \emph{thinned} version of the first evaluation environment
+is \AF{PER}-related in a pointwise manner to the \emph{similarly thinned}
+second evaluation environment. This constraint amounts to a weak commutation lemma
+between evaluation and thinning; a stronger version would be to demand that thinning
+of the result is equivalent to evaluation in a thinned environment.
+
+\begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{subr}
-\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{subeval}
+\caption{Constraints on Triples of Environments for the Substitution Lemma}
+\end{figure}
 
-Then, we use the framework to prove that \AR{Eval} after a \AR{Substitution}
-amounts to normalising the original term where the substitution has been
-evaluated first. The constraints imposed on the environments might seem
-quite restrictive but they are actually similar to the Uniformity condition
-described by C. Coquand~(\citeyear{coquand2002formalised}) in her detailed
-account of NBE for a ST$λ$C with explicit substitution.
+We can then state and prove the substitution lemma using \AF{Subᴿ} as the constraint
+on environments and \AF{PER} as the relation for both values and computations.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{subeval}
+\caption{Substitution Followed by Evaluation is an Evaluation}
+\end{figure}
+
+The proof is similar to that of fusion of renaming with evaluation in
+\cref{sec:fusionrennbe}. We start by defining a notation \AF{𝓡} to lighten
+the types, then combinators \AF{APPᴿ} and \AF{IFTEᴿ}. The cases for
+\ARF{th\textasciicircum{}𝓔ᴿ}, \ARF{\_∙ᴿ\_}, and \ARF{varᴿ} are a bit more tedious:
+they rely crucially on the fact that we can prove a fusion principle and an identity
+lemma for \AF{th\textasciicircum{}Model} as well as an appeal to \AF{reneval}
+(\cref{renevalfun}) and multiple uses of \AF{Eval\textasciicircum{}Sim}
+(\cref{fig:nbeselfsim}).
