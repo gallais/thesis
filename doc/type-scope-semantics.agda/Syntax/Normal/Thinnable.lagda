@@ -17,21 +17,6 @@ private
     R : Type → Set
     σ : Type
 
-mutual
-
-  th^Ne : Thinnable (Ne R σ)
-  th^Ne (`var v)       ρ = `var (th^Var v ρ)
-  th^Ne (`app f t)     ρ = `app (th^Ne f ρ) (th^Nf t ρ)
-  th^Ne (`ifte b l r)  ρ = `ifte (th^Ne b ρ) (th^Nf l ρ) (th^Nf r ρ)
-
-  th^Nf : Thinnable (Nf R σ)
-  th^Nf (`neu r t)  ρ = `neu r (th^Ne t ρ)
-  th^Nf `one        ρ = `one
-  th^Nf `tt         ρ = `tt
-  th^Nf `ff         ρ = `ff
-  th^Nf (`lam b)    ρ = `lam (th^Nf b (th^Env th^Var ρ extend ∙ z))
-
-
 {-
 mutual
 

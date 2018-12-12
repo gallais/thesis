@@ -104,7 +104,20 @@ rel PER (σ `→ τ)  f g  = ∀ {Δ} (ρ : Thinning _ Δ) {t u} →
 \end{code}
 %</per>
 \begin{code}
+sym^PER : ∀ σ {v w : Model σ Γ} → rel PER σ v w → rel PER σ w v
+sym^PER `Unit     = sym
+sym^PER `Bool     = sym
+sym^PER (σ `→ τ)  = λ vwᴿ ρ tuᴿ → sym^PER τ (vwᴿ ρ (sym^PER σ tuᴿ))
 
+refl^PER : ∀ σ {v w : Model σ Γ} → rel PER σ v w → rel PER σ v v
+trans^PER : ∀ σ {v w x : Model σ Γ} → rel PER σ v w → rel PER σ w x → rel PER σ v x
+
+refl^PER σ vwᴿ = trans^PER σ vwᴿ (sym^PER σ vwᴿ)
+
+trans^PER `Unit     = trans
+trans^PER `Bool     = trans
+trans^PER (σ `→ τ)  = λ vwᴿ wxᴿ ρ tuᴿ →
+  trans^PER τ (vwᴿ ρ (refl^PER σ tuᴿ)) (wxᴿ ρ tuᴿ)
 \end{code}
 %<*reifyreflect>
 \begin{code}
@@ -168,6 +181,8 @@ Eval^Sim .ffᴿ    = λ ρᴿ → refl
 private
  variable
    ρˡ ρʳ : (Γ ─Env) Model Δ
+
+eval^Sim = Fundamental.lemma Eval^Sim
 
 eval = Spec.eval Eval
 \end{code}
