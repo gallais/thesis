@@ -1,0 +1,113 @@
+\chapter{Conclusion}
+
+\section{Summary}
+
+In the first half of this thesis, we have expanded on the work published in
+\cite{allais2017type}. Starting from McBride's Kit (\citeyear{mcbride2005type})
+making explicit the common structure of renaming and substitution, we observed
+that normalisation by evaluation had a similar structure. This led us to
+defining a notion of type-and-scope preserving \AR{Semantics} where, crucially,
+$\lambda$-abstraction is interpreted as a \AF{Kripke} function space. This
+pattern was general enough to encompass not only renaming, substitution and
+normalisation by evaluation but also printing with names, continuation passing
+style transformation and as we have seen later on even let-inlining, typechecking
+and elaboration to a core language.
+
+Once this shared structure was highlighted, we took advantage of it and designed
+proof frameworks to prove simulation lemmas and fusion principles for the traversals
+defined as instances of \AR{Semantics}. These allowed us to prove, among other
+things, that syntactic traversals are extensional, that multiple renamings and
+substitutions can be fused in a single pass and that the substitution lemma holds
+for NBE's evaluation. Almost systematically previous results where used to discharge
+the goals arising in the later proofs.
+
+In the second half, we have built on the work published in \cite{generic-syntax}.
+By extending Chapman, Dagand, McBride, and Morris' universe of datatype descriptions
+(\citeyear{Chapman:2010:GAL:1863543.1863547}) to support a notion of binding,
+we have given a generic presentation of syntaxes with binding. We then defined a
+generic notion of type-and-scope preserving \AR{Semantics} for these syntaxes with
+binding. It captures a large class of scope-and-type safe generic programs: from
+renaming and substitution, to normalisation by evaluation, the desugaring of new
+constructors added by a language transformer, printing with names or typechecking.
+
+We have seen how to construct generic proofs about these generic programs. We
+first introduced a simulation relation showing what it means for two semantics
+to yield related outputs whenever they are fed related inputs. We then built on
+our experience to tackle a more involved case: identifying a set of constraints
+guaranteeing that two semantics run consecutively can be subsumed by a single pass
+of a third one.
+
+We have put all of these results into practice by using them to solve the (to be
+published) POPLMark Reloaded challenge which consists in formalising strong
+normalisation for the simply typed $\lambda$-calculus via a logical-relation
+argument. This also gave us the opportunity to try our framework on larger
+languages by tackling the challenge's extensions to sum types and G\"{o}del's
+System T.
+
+\section{Further Work}
+
+The diverse influences leading to this work suggest many opportunities
+for future research.
+
+\subsection{Total Compilers with Typed Intermediate Representations}
+
+Some of our core examples of generic semantics correspond to compiler passes:
+desugaring, elaboration to a typed core, type-directed partial evaluation,
+or CPS transformation. This raises the question of how many such common
+compilation passes can be implemented generically.
+
+Other semantics such as printing with names or a generic notion of raw terms
+together with a generic scope checker (not shown here but available in \cite{repo2018})
+are infrastructure a compiler would have to rely on. Together with our library of
+\emph{total} parser combinators (\cite{allais2018agdarsec}) and our declarative
+syntax for defining hierarchical command line interfaces (\cite{allaisagdargs}),
+this suggests we are close to being able to define an entire (toy) compiler with
+strong invariants enforced in the successive intermediate representations.
+
+To tackle modern languages with support for implicit arguments, a total account of
+(higher-order) unification. It would ideally be defined generically over our notion
+of syntax thus allowing us to progressively extend our language as we see fit.
+
+\subsection{Generic Meta-Theory}
+
+If we cannot use our descriptions to define an intrinsically-typed syntax for
+a dependently-typed theory, we can however give a well-scoped version and then
+define typing judgments. When doing so we have a lot of freedom in how we
+structure them and a natural question to ask is whether we can identify a process
+which will always give us judgments with good properties e.g. stability under
+substitution or decidable typechecking.
+
+We can in fact guarantee such results by carefully managing the flow of information
+in the judgments and imposing that no information ever comes out of nowhere. This
+calls for the definition of a universe of typing judgments and the careful analysis
+of its properties.
+
+\subsection{A Theory of Ornaments for Syntaxes}
+
+The reseach programme introduced by McBride's unpublished paper introducing
+ornaments for inductive families (\citeyear{mcbride2010ornamental}) allows users
+to make explicit the fact that some inductive families are refinements of others.
+Once their shared structure is known, the machine can assist the user in
+transporting an existing codebase from the weakly-typed version of the datatype
+to its strongly typed variant (\cite{dagand_mcbride_2014}). These ideas can be
+useful even in ML-style settings (\cite{Williams:2014:OP:2633628.2633631}).
+
+Working out a similar notion of ornaments for syntaxes would yield similar
+benefits but for manipulating binding-aware families. This is particularly
+evident when considering the elaboration semantics which given a scoped term
+produces a scoped-and-typed term by type-checking or type-inference.
+
+If the proofs we developped in this thesis would still be out of reach for
+ML-style languages, the programming part can be replicated using the usual
+Gernalised Algebraic Data Types (GADTs) based encodings
+(\cite{danvytagless,lindley2014hasochism}) and could thus still benefit from
+such ornaments being made first order.
+
+\subsection{Derivatives of Syntaxes}
+
+Our work on the POPLMark Reloaded challenge highlights a need for a generic
+definition of ``evaluation contexts'' i.e. terms with holes. This would build
+on the work of Huet (\citeyear{huet_1997}) and Abbott, Altenkirch, McBride and
+Ghani (\citeyear{abbott2005data}) and would allow us to revisit previous work
+based on concrete instances of our \AF{Semantics}-based approach to formalising
+syntaxes with binding such as McLaughlin, McKinna and Stark (\citeyear{craig2018triangle}).

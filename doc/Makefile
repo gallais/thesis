@@ -85,9 +85,14 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/safe-programs.tex \
   latex/generic-syntax.tex/typechecking.tex \
   latex/generic-syntax.tex/proofs.tex \
+  latex/conclusion.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
 latex/main.bib: main.bib
+	@mkdir -p $(dir $@)
+	cp $< $@
+
+latex/conclusion.tex: conclusion.tex
 	@mkdir -p $(dir $@)
 	cp $< $@
 
