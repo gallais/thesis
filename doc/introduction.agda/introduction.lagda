@@ -59,13 +59,10 @@ map^-Tuple zero     f tt        = tt
 map^-Tuple (suc n)  f (a , as)  = f a , map^-Tuple n f as
 \end{code}
 %</mapntuple>
-\begin{code}
-infixl 19 _<|_
-\end{code}
 %<*tuple>
 \begin{code}
 record Tuple (A : Set) : Set where
-  constructor _<|_
+  constructor mkTuple
   field length   : ℕ
         content  : length -Tuple A
 \end{code}
@@ -114,8 +111,8 @@ module Inlined where
   mutual
 
     map^Rose : (A → B) → Rose A → Rose B
-    map^Rose f (leaf a)   = leaf (f a)
-    map^Rose f (node rs)  = node (_ <| map^Roses (rs .length) f (rs .content))
+    map^Rose f (leaf a)               = leaf (f a)
+    map^Rose f (node (mkTuple n rs))  = node (mkTuple n (map^Roses n f rs))
 
     map^Roses : ∀ n → (A → B) → n -Tuple (Rose A) → n -Tuple (Rose B)
     map^Roses zero     f rs        = tt

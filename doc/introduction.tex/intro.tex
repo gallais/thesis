@@ -6,7 +6,7 @@ now use the host language's type system to help them. Using Generalised Algebrai
 Data Types (GADTs) or the more general indexed families of type theory
 (\cite{dybjer1994inductive}) for representing their syntax, programmers can
 \emph{statically} enforce some of the invariants in their languages. Managing
-variable scope is a popular use case~\cite{altenkirch1999monadic} as directly
+variable scope is a popular use case (\cite{altenkirch1999monadic}) as directly
 manipulating raw de Bruijn indices is error-prone. Solutions range from enforcing
 well scopedness to ensuring full type and scope correctness. In short, we use
 types to ensure that ``illegal states are unrepresentable'', where illegal states
@@ -14,7 +14,7 @@ are ill scoped or ill typed terms.
 
 The definition of scope-and-type safe representations is naturally only a start:
 once the programmer has access to a good representation of the language they are
-interested in, they will naturally want to (re)implement standard traversals
+interested in, they will then want to (re)implement standard traversals
 manipulating terms. Renaming and substitution are the two most typical examples
 of such traversals. Other common examples include an evaluator, a printer for
 debugging purposes and eventually various compilation passes such as a continuation

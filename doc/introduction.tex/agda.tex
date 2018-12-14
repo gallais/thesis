@@ -1,10 +1,15 @@
 \chapter{Introduction to Agda}
 
-The techniques and abstractions defined in this thesis are language-independent: all the
-results can be replicated in any Martin L\"of Type Theory equipped with inductive
-families~(\cite{dybjer1994inductive}). In practice, all of the content of this thesis
-has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
-introduction to dependently-typed programming in Agda.
+The techniques and abstractions defined in this thesis are language-independent:
+all the results can be replicated in any Martin L\"of Type Theory
+(\citeyear{martin1982constructive}) equipped with inductive
+families~(\cite{dybjer1994inductive}). In practice, all of the content of this
+thesis has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
+introduction to dependently-typed programming in Agda. It is a dependently-typed
+programming language based on Martin-L\"{o}f Type Theory with inductive families,
+induction-recursion (\cite{Dybjer1999}), copattern-matching
+(\cite{abelPientkaThibodeauSetzer:popl13}) and sized types
+(\cite{DBLP:journals/corr/abs-1012-4896}).
 
 \paragraph{Mixfix Identifiers} We use Agda's mixfix operator notation
 (\cite{danielsson2011parsing}) where underscores denote argument positions.
@@ -16,10 +21,14 @@ is as follows: keywords are highlighted in \AK{orange}, data constructors in
 \AIC{green}, record fields in \ARF{pink}, types and functions in \AD{blue}
 while bound variables are \AB{black}.
 
+\paragraph{Implicit Generalisation} The latest version of Agda supports ML-style
+implicit prenex polymorphism and we make heavy use of it: every unbound variable
+should be considered implicitly bound at the beginning of the telescope.
+
 \section{Data and (co)pattern matching}
 
-As is customary, we start our introduction to dependently-typed programming by
-defining the natural numbers. They are defined as an inductive type with two
+As is customary, we start our introduction to dependently-typed programming with
+the natural numbers. They are defined as an inductive type with two
 conctructors: \AIC{zero} and \AIC{suc}cessor.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
@@ -30,6 +39,11 @@ Agda also supports record types; they are defined by their list of fields.
 Unlike inductive types they enjoy η-rules. That is to say that any two
 values of the same record type are judgmentally equal whenever all of their
 fields' values are.
+
+We define the unit type (\AR{⊤}) which has one constructor (\AIC{tt}) but no
+field together with the pair type \AR{\_×\_} which has an infix constructor
+\AIC{\_,\_} and two fields: its first (\ARF{fst}) and second (\ARF{snd})
+projections.
 
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{unit}
@@ -49,7 +63,7 @@ Definitions taking values of an inductive type as argument are defined by
 pattern matching in a style familiar to Haskell programmers: one lists
 clauses assuming a first-match semantics. If the patterns on the left hand
 side are covering all possible cases and the recursive calls are structurally
-recursive, the function is total.
+recursive, the function is total. All definitions have to be total in Agda.
 
 The main difference with Haskell is that in Agda, we can perform so-called
 ``large elimination'': we can define a \AF{Set} by pattern-matching on a
@@ -65,16 +79,19 @@ on the left hand side. This will be familiar to Haskell programmers used to
 manipulating Generalized Algebraic Data Types (GADTs). Let us see two examples of
 a type being refined based on the pattern appearing in a clause.
 
-First, the return type of \AF{replicate} reduces to \AR{⊤} when the natural
-number is \AIC{zero} and (\AB{A} \AR{×} (\AF{replicate} \AB{n} \AB{A})) when it is
+First, we introduce \AF{replicate} which takes a natural number \AB{n} and a value
+\AB{a} of type \AB{A} and returns an (\AB{n} \AF{-Tuple}) by duplicating \AB{a}.
+The return type of \AF{replicate} reduces to \AR{⊤} when the natural number is
+\AIC{zero} and (\AB{A} \AR{×} (\AF{replicate} \AB{n} \AB{A})) when it is
 (\AIC{suc} \AB{n}).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
 
-Second, both the type of the \AF{-Tuple} argument and the \AF{-Tuple} return type
-are refined based on the patterns the natural number matches. In the second clause,
-this tells us the \AF{-Tuple} argument is a pair, allowing us to match on it with
-the pair constructor \AIC{\_,\_}.
+Second, we define \AF{map\textasciicircum{}-Tuple} which takes a function and applies
+to each one of the elements in a \AF{-Tuple}. Both the type of the \AF{-Tuple} argument
+and the \AF{-Tuple} return type are refined based on the pattern the natural number
+matches. In the second clause, this tells us the \AF{-Tuple} argument is a pair,
+allowing us to match on it with the pair constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
@@ -170,7 +187,7 @@ the function space pointwise with \AF{\_⇒\_}.
 Second, the \AF{\_⊢\_} combinator makes explicit the \emph{adjustment} made to the
 index by a function, conforming to the convention (see e.g. \cite{martin1982constructive})
 of mentioning only context \emph{extensions} when presenting judgements and write
-({\AB{f} \AF{⊢} \AB{T}}) where \AB{f} is the modification and \AB{T} the indexed
+({\AB{f} \AF{⊢} \AB{P}}) where \AB{f} is the modification and \AB{P} the indexed
 Set it operates on.
 
 \ExecuteMetaData[shared/Stdlib.tex]{update}
@@ -189,8 +206,7 @@ desugars to the more verbose type
 \AS{∀} \{\AB{i}\} \AS{→} (\AB{P} (\AF{suc} \AB{i}) \AS{→} \AB{Q} (\AF{suc} \AB{i})) \AS{→} \AB{R} \AB{i}.
 
 
-
 As the combinators act on the \emph{last} argument of any indexed family, this inform our
 design: our notions of variables, languages, etc. will be indexed by their kind first and
-scope second. This will be made explicit in the definition of \AF{\_─Scoped} in
+scope second. This will be made explicit in the definition of \AF{─Scoped} in
 \cref{fig:scoped}.

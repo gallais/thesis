@@ -346,6 +346,32 @@ isbn="978-3-540-47599-6"
  OPTaddress = {Finland},
  keywords = {algebraic specifications, dependent types, generic programming, inductive definitions, martin-L\"{o}f type theory, polytypic programming},
 }
+@inbook{Dybjer1999,
+  author =	 {Dybjer, Peter and Setzer, Anton},
+  title =	 {A Finite Axiomatization of Inductive-Recursive
+                  Definitions},
+  booktitle =	 {Typed Lambda Calculi and Applications: 4th
+                  International Conference, TLCA'99 L'Aquila, Italy,
+                  April 7--9, 1999 Proceedings},
+  year =	 1999,
+  publisher =	 {Springer Berlin Heidelberg},
+  address =	 {Berlin, Heidelberg},
+  pages =	 {129--146},
+  isbn =	 {978-3-540-48959-7},
+  doi =		 {10.1007/3-540-48959-2_11}
+}
+@inproceedings{abelPientkaThibodeauSetzer:popl13,
+  author =	 {Andreas Abel and Brigitte Pientka and David
+                  Thibodeau and Anton Setzer},
+  title =	 {Copatterns: Programming Infinite Structures by
+                  Observations},
+  booktitle =	 popl13,
+  year =	 2013,
+  pages =	 {27-38},
+  ee =		 {http://doi.acm.org/10.1145/2429069.2429075},
+  crossref =	 {DBLP:conf/popl/2013},
+  bibsource =	 {DBLP, http://dblp.uni-trier.de}
+}
 @InProceedings{polonowski:db,
 author="Polonowski, Emmanuel",
 editor="Blazy, Sandrine
@@ -357,8 +383,34 @@ year="2013",
 publisher=springer,
 OPTaddress="Berlin, Heidelberg",
 pages="402--417",
-abstract="Dealing with variable binding during the formalization of programming languages metatheory is notorious for being a very complex issue. This paper introduces a new framework, DBEB, and a tool based on it, DBGen, whose purpose is to generate Coq code providing a rather complete infrastructure for de Bruijn encodings of a large variety of languages. DBEB is an abstract syntax with explicit binding informations that captures the great regularity of de Bruijn syntaxes. From this abstract syntax it is then possible to derive all the definitions and property statements and proofs required for the formalization of the syntactic infrastructure of the language.",
 isbn="978-3-642-39634-2"
+}
+@inproceedings{DBLP:journals/corr/abs-1012-4896,
+  author =	 {Andreas Abel},
+  title =	 {MiniAgda: Integrating Sized and Dependent Types},
+  booktitle =	 {Proceedings Workshop on Partiality and Recursion in
+                  Interactive Theorem Provers, {PAR} 2010, Edinburgh,
+                  UK, 15th July 2010.},
+  pages =	 {14--28},
+  year =	 2010,
+  crossref =	 {DBLP:journals/corr/abs-1012-4555},
+  doi =		 {10.4204/EPTCS.43.2},
+  timestamp =	 {Mon, 28 Oct 2013 16:56:55 +0100},
+  biburl =
+                  {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1012-4896},
+  bibsource =	 {dblp computer science bibliography, http://dblp.org}
+}
+@proceedings{DBLP:conf/popl/2013,
+  editor =	 {Roberto Giacobazzi and Radhia Cousot},
+  title =	 popl13,
+  booktitle =	 popl13,
+  publisher =	 acm,
+  year =	 2013,
+  url =		 {http://dl.acm.org/citation.cfm?id=2429069},
+  ee =		 {http://dl.acm.org/citation.cfm?id=2429069},
+  timestamp =	 {Fri, 18 Jan 2013 17:48:28 +0100},
+  biburl =	 {http://dblp.uni-trier.de/rec/bib/conf/popl/2013},
+  bibsource =	 {DBLP, http://dblp.uni-trier.de}
 }
 @inproceedings{Pickering:patsyn,
  author = {Pickering, Matthew and \'{E}rdi, Gerg\H{o} and Peyton Jones, Simon and Eisenberg, Richard A.},
@@ -536,19 +588,6 @@ doi="10.1007/978-3-642-02273-9_11",
   volume={2006},
   year={2006}
 }
-@inproceedings{DBLP:journals/corr/abs-1012-4896,
-  author    = {Andreas Abel},
-  title     = {MiniAgda: Integrating Sized and Dependent Types},
-  booktitle = {Proceedings Workshop on Partiality and Recursion in Interactive Theorem
-               Provers, {PAR} 2010, Edinburgh, UK, 15th July 2010.},
-  pages     = {14--28},
-  year      = {2010},
-  crossref  = {DBLP:journals/corr/abs-1012-4555},
-  doi       = {10.4204/EPTCS.43.2},
-  timestamp = {Mon, 28 Oct 2013 16:56:55 +0100},
-  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1012-4896},
-  bibsource = {dblp computer science bibliography, http://dblp.org}
-}
 @proceedings{DBLP:journals/corr/abs-1012-4555,
   editor    = {Ana Bove and
                Ekaterina Komendantskaya and
@@ -562,19 +601,6 @@ doi="10.1007/978-3-642-02273-9_11",
   timestamp = {Mon, 28 Oct 2013 16:56:55 +0100},
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1012-4555},
   bibsource = {dblp computer science bibliography, http://dblp.org}
-}
-@Inbook{Dybjer1999,
-author="Dybjer, Peter
-and Setzer, Anton",
-editor="Girard, Jean-Yves",
-title="A Finite Axiomatization of Inductive-Recursive Definitions",
-bookTitle="Typed Lambda Calculi and Applications: 4th International Conference, TLCA'99 L'Aquila, Italy, April 7--9, 1999 Proceedings",
-year="1999",
-publisher=springer,
-OPTaddress="Berlin, Heidelberg",
-pages="129--146",
-isbn="978-3-540-48959-7",
-doi="10.1007/3-540-48959-2_11",
 }
 @Manual{Coq:manual,
   title =        {The Coq proof assistant reference manual},
