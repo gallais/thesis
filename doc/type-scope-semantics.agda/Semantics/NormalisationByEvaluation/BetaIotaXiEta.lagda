@@ -40,9 +40,6 @@ th^Model `Bool     = th^Nf
 th^Model (σ `→ τ)  = th^□
 \end{code}
 %</thmodel>
-\begin{code}
-
-\end{code}
 %<*reifyreflect>
 \begin{code}
 mutual
@@ -67,12 +64,15 @@ APP : ∀[ Model (σ `→ τ) ⇒ Model σ ⇒ Model τ ]
 APP t u = extract t u
 \end{code}
 %</app>
+\begin{code}
+module _ {σ} where
+\end{code}
 %<*ifte>
 \begin{code}
-IFTE : Model `Bool Γ → Model σ Γ → Model σ Γ → Model σ Γ
-IFTE `tt         l r = l
-IFTE `ff         l r = r
-IFTE (`neu _ T)  l r = reflect _ (`ifte T (reify _ l) (reify _ r))
+ IFTE : Model `Bool Γ → Model σ Γ → Model σ Γ → Model σ Γ
+ IFTE `tt         l r = l
+ IFTE `ff         l r = r
+ IFTE (`neu _ T)  l r = reflect σ (`ifte T (reify σ l) (reify σ r))
 \end{code}
 %</ifte>
 \begin{code}
@@ -83,13 +83,13 @@ open Semantics
 \begin{code}
 Eval : Semantics Model Model
 Eval .th^𝓥  = th^Model _
-Eval .var     = id
-Eval .lam     = id
-Eval .app     = APP
-Eval .one     = _
-Eval .tt      = `tt
-Eval .ff      = `ff
-Eval .ifte    = IFTE
+Eval .var   = id
+Eval .lam   = id
+Eval .app   = APP
+Eval .one   = _
+Eval .tt    = `tt
+Eval .ff    = `ff
+Eval .ifte  = IFTE
 \end{code}
 %</eval>
 %<*norm>

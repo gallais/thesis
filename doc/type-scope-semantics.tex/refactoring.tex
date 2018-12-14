@@ -7,7 +7,7 @@ them, she will have to work with a deep embedding. Which means that she
 will have to (re)implement a great number of traversals doing such
 mundane things as renaming, substitution, or partial evaluation.
 Should she want to get help from the typechecker in order to fend
-off common bugs, she can opt for inductive families~\cite{dybjer1991inductive}
+off common bugs, she can opt for inductive families (\cite{dybjer1991inductive})
 to enforce precise invariants. But the traversals now have to be
 invariant preserving too!
 
@@ -68,11 +68,11 @@ types of environment values, he considers \AB{⧫}, an arbitrary
 
 Whenever these constraints are met we can define a type and scope preserving
 traversal which is based on an environment of \AB{⧫}-values. This is the
-fundamental lemma of \AR{Kit}s:
+fundamental lemma of \AR{Kit}s stated and proved in \cref{fig:kitlemma}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
-\caption{Fundamental lemma of \AR{Kit}}
+\caption{Fundamental lemma of \AR{Kit}\label{fig:kitlemma}}
 \end{figure}
 
 Thankfully, we can indeed recover renaming and substitution as two instances of
@@ -177,9 +177,9 @@ corresponding inductive type in Agda in~\cref{fig:type}.
 \end{figure}
 
 The language's constructs are those one expects from a λ-calculus: variables,
-application and λ-abstraction. We then have a constructor for unit types but
-no eliminator (a term of unit type carries no information). Finally, we have
-two constructors for boolean values and the expected if-then-else eliminator.
+application and λ-abstraction. We then have a constructor for values of the unit
+type but no eliminator (a term of unit type carries no information). Finally,
+we have two constructors for boolean values and the expected if-then-else eliminator.
 
 \begin{figure}[h]
 \[
@@ -211,10 +211,10 @@ we defined (\AB{I} \AR{−Scoped}) as the set of type and scope indexed families
 \end{figure}
 
 Our first example of a type and scope indexed family is \AD{Var}, the type of Variables.
-A variable is a position in a typing context, represented as typed de Bruijn~(\citeyear{de1972lambda})
-index. This amounts to an inductive definition of context membership. We use the
-combinators defined in \cref{sec:indexed-combinators} to show only local changes to the
-context.
+A variable is a position in a typing context, represented as a typed
+de Bruijn~(\citeyear{de1972lambda}) index. This amounts to an inductive definition of
+context membership. We use the combinators defined in \cref{sec:indexed-combinators}
+to show only local changes to the context.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var.tex]{var}
@@ -261,7 +261,8 @@ The content of environments may vary wildly between different semantics:
 when defining renaming, the environments will carry variables whilst the
 ones used for normalisation by evaluation contain elements of the model.
 But their structure stays the same which prompts us to define the notion
-of evaluation environment generically for any (\AB{I} \AR{−Scoped}).
+of evaluation environment generically for any (\AB{I} \AR{−Scoped}) family
+of values.
 
 Formally, this translates to \AB{𝓥}-environments being the
 pointwise lifting of the relation \AB{𝓥} between contexts and types to a
@@ -269,7 +270,7 @@ relation between two contexts. Rather than using a datatype to represent
 such a lifting, we choose to use a function space. This decision is based
 on Jeffrey's observation~(\citeyear{jeffrey2011assoc}) that one can obtain
 associativity of append for free by using difference lists. In our case the
-interplay between various combinators (e.g. \AF{refl} and \AF{select})
+interplay between various combinators (e.g. \AF{identity} and \AF{select})
 defined later on is vastly simplified by this rather simple decision.
 
 \begin{figure}[h]
@@ -277,32 +278,33 @@ defined later on is vastly simplified by this rather simple decision.
 \caption{Generic Notion of Environment\label{fig:env}}
 \end{figure}
 
-Just as an environment interprets variables in model, a computation gives a meaning
-to terms into a model. We can define \AF{─Comp} to make this parallel explicit.
-
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{comp}
-\caption{Generic Notion of Computation\label{fig:comp}}
-\end{figure}
-
-An appropriate notion of semantics for the calculus is one that
-will map environments to computations. In other words, a set of
-constraints on $𝓥$ and $𝓒$ guaranteeing the existence of a function
-of type ((\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Δ} \AS{→} (\AB{Γ} \AF{─Comp}) \AB{𝓒} \AB{Δ}).
-
 These environments naturally behave like the contexts they are indexed by:
 there is a trivial environment for the empty context and one can easily
 extend an existing one by providing an appropriate value. The packaging of
 the function representing to the environment in a record allows for two
 things: it helps the typechecker by stating explicitly which type family
 the values correspond to and it empowers us to define environments by
-copattern-matching~\cite{abel2013copatterns} thus defining environments
+copattern-matching (\cite{abel2013copatterns}) thus defining environments
 by their use cases.
+
+\label{fig:envcombinators}
+
+The definition of the empty environment uses an absurd match (\AS{()}): given
+the definition of \AD{Var} in \cref{fig:variable}, it should be pretty clear
+that there can never be a value of type ({\AD{Var} \AB{σ} \AIC{[]}}).
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{empty}
+\caption{Empty Environment\label{fig:emptyenv}}
+\end{figure}
+
+The environment extension definition proceeds by pattern-matching on the
+variable: if it \AIC{z} then we return the newly-added value, otherwise we are
+referring to a value in the original environment and can simply look it up.
+
+\begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{extension}
-\caption{Constructing Environments with Combinators\label{fig:envcombinators}}
+\caption{Environment Extension\label{fig:envextend}}
 \end{figure}
 
 \subsection{The Category of Thinnings}
@@ -310,10 +312,10 @@ by their use cases.
 
 A key instance of environments playing a predominant role in this paper is the
 notion of thinning. The reader may be accustomed to the more restrictive notion
-of renamings as described variously as Order Preserving
-Embeddings~\cite{chapman2009type}, thinnings (which we use), context inclusions,
-or just weakenings~\cite{altenkirch1995categorical}.
-A thinning (\AF{Thinning} \AB{Γ} \AB{Δ}) is an environment pairing each variable
+of renamings as described variously as Order Preserving Embeddings
+(\cite{chapman2009type}), thinnings (which we use), context inclusions,
+or just weakenings (\cite{altenkirch1995categorical}). A thinning
+(\AF{Thinning} \AB{Γ} \AB{Δ}) is an environment pairing each variable
 of type \AB{σ} in \AB{Γ} to one of the same type in \AB{Δ}.
 
 \begin{figure}[h]
@@ -334,9 +336,14 @@ in turn, lets us provide the user with the constructors Altenkirch, Hofmann and
 Streicher's ``Category of Weakening"~(\citeyear{altenkirch1995categorical}) is based on.
 
 \begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{identity}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{extend}
+\end{minipage}
+
 \ExecuteMetaData[shared/Data/Environment.tex]{select}
-\ExecuteMetaData[shared/Data/Environment.tex]{extend}
-\caption{Example of Thinning Combinators\label{fig:extendth}}
+\caption{Examples of Thinning Combinators\label{fig:extendth}}
 \end{figure}
 
 The \AF{□} combinator turns any (\AD{List} \AB{I})-indexed Set into one that can
@@ -344,8 +351,9 @@ absorb thinnings. This is accomplished by abstracting over all possible thinning
 from the current scope, akin to an S4-style necessity modality. The axioms of S4
 modal logic incite us to observe that the functor \AF{□} is a comonad: \AF{extract}
 applies the identity \AF{Thinning} to its argument, and \AF{duplicate} is obtained
-by composing the two \AF{Thinning}s we are given. The expected laws hold trivially
-thanks to Jeffrey's trick mentioned above.
+by composing the two \AF{Thinning}s we are given (\AF{select} defined in
+\cref{fig:extendth} corresponds to transitivity in the special case where \AB{𝓥}
+is \AD{Var}). The expected laws hold trivially thanks to Jeffrey's trick mentioned above.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{box}
@@ -380,7 +388,12 @@ a pointwise lifting of a relation \AB{𝓥} between contexts and types, they
 enjoy thinning if \AB{𝓥} does.
 
 \begin{figure}[h]
-\ExecuteMetaData[shared/Data/Environment.tex]{thVar}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{thConst}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{thVar}
+\end{minipage}
+
 \ExecuteMetaData[shared/Data/Environment.tex]{thEnv}
 \caption{Thinnable Instances for Variables and Environments\label{fig:thinVarEnv}}
 \end{figure}
@@ -401,18 +414,30 @@ instead of repeating the same pattern over and over again.
 
 Broadly speaking, a semantics turns our deeply embedded abstract syntax trees
 into the shallow embedding of the corresponding parametrised higher order abstract
-syntax term. We get a choice of useful scope-and-sort safe traversals by using
-different `host languages' for this shallow embedding. A semantics is parametrised
-by two (\AD{Type} \AR{−Scoped}) type families \AB{𝓥} and \AB{𝓒}. Realisation of a
-semantics will produce a computation in \AB{𝓒} for every term whose variables are
-assigned values in \AB{𝓥}. In cases such as substitution or normalisation by evaluation,
-\AB{𝓥} and \AB{𝓒} will happen to coincide but keeping these two relations distinct
-is precisely what makes it possible to go beyond these and also model renaming or
-printing with names.
+syntax term (\cite{chlipala2008parametric}). We get a choice of useful type-and-scope
+safe traversals by using different `host languages' for this shallow embedding.
 
-A semantics must satisfy constraints on the notions of values \AB{𝓥} and computations
-\AB{𝓒} at hand. Concretely, we define \AR{Semantics} as a record packing the properties
-these families need to satisfy for the evaluation function to exist.
+A semantics is parametrised by two (\AD{Type} \AR{−Scoped}) type families \AB{𝓥}
+and \AB{𝓒}. Realisation of a semantics will produce a computation in \AB{𝓒} for every
+term whose variables are assigned values in \AB{𝓥}. Just as an environment interprets
+variables in a model, a computation gives a meaning to terms into a model. We can
+define \AF{─Comp} to make this parallel explicit.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{comp}
+\caption{Generic Notion of Computation\label{fig:comp}}
+\end{figure}
+
+An appropriate notion of semantics for the calculus is one that will map environments
+to computations. In other words, a set of constraints on $𝓥$ and $𝓒$ guaranteeing
+the existence of a function of type
+((\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Δ} \AS{→} (\AB{Γ} \AF{─Comp}) \AB{𝓒} \AB{Δ}).
+In cases such as substitution or normalisation by evaluation, \AB{𝓥} and \AB{𝓒} will
+happen to coincide but keeping these two relations distinct is precisely what makes
+it possible to go beyond these and also model renaming or printing with names.
+
+Concretely, we define \AR{Semantics} as a record packing the properties these families
+need to satisfy for the evaluation function to exist.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}
 
@@ -481,8 +506,8 @@ constructors are kept as their own semantic counterpart. As observed by
 McBride, it is enough to provide three operations describing the properties
 of the values in the environment to get a full-blown \AR{Semantics}. This
 fact is witnessed by our simple \AR{Syntactic} record type together with
-the \AF{syntactic} function turning its inhabitants into associated
-\AR{Semantics}.
+the fundamental \AF{lemma} of \AR{Syntactic}, a function turning its
+inhabitants into associated \AR{Semantics}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Specification.tex]{syntactic}
@@ -503,13 +528,16 @@ to our framework.
 
 Our first example of a \AR{Syntactic} operation works with variables as
 environment values. We have already defined thinning earlier (see
-Section \ref{category}) and we can turn a variable into a term by using
+\cref{sec:categoryrenamings}) and we can turn a variable into a term by using
 the \AIC{`var} constructor. The type of \AF{sem} specialised to this
 semantics is then precisely the proof that terms are thinnable.
 
 \begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synren}
+\end{minipage}\begin{minipage}{0.5\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{ren}
+\end{minipage}
 \caption{Thinning as a \AR{Syntactic} Instance\label{fig:synren}}
 \end{figure}
 
@@ -521,8 +549,11 @@ previous example. Again, specialising the type of \AF{sem}
 reveals that it delivers precisely the simultaneous substitution.
 
 \begin{figure}[h]
+\begin{minipage}{0.4\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synsub}
+\end{minipage}\begin{minipage}{0.6\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{sub}
+\end{minipage}
 \caption{Parallel Substitution as a \AR{Syntactic} Instance\label{fig:synsub}}
 \end{figure}
 
@@ -534,7 +565,8 @@ normalisation functions deciding different equational theories, let us
 make a detour to a perhaps slightly more surprising example of a
 \AF{Semantics}: printing with names. A user-facing project would naturally
 avoid directly building a \AD{String} and rather construct an inhabitant of
-a more sophisticated datatype in order to generate a prettier output~\cite{hughes1995design,wadler2003prettier}.
+a more sophisticated datatype in order to generate a prettier output
+(\cite{hughes1995design,wadler2003prettier,Bernardy:2017:PBG:3136534.3110250}).
 But we stick to the simpler setup as \emph{pretty} printing is not our focus here.
 
 This example is interesting for two reasons. Firstly, the distinction between
@@ -559,7 +591,7 @@ variable is mentioned.
 
 Secondly, the fact that the model's computation type is a monad and that this
 poses no problem whatsoever in this framework means it is appropriate for
-handling languages with effects~\cite{moggi1991notions}, or effectful
+handling languages with effects (\cite{moggi1991notions}), or effectful
 semantics e.g. logging the various function calls. Here is the full definition
 of the printer.
 
@@ -604,10 +636,17 @@ e.g. use naming hints for user-introduced binders and type-based schemes otherwi
 In order to kickstart the evaluation, we still need to provide \AR{Name}s
 for each one of the free variables in scope. We deliver that environment
 by a simple stateful computation \AF{init} chopping off an initial segment
-of the name supply of the appropriate length. The definition of \AF{print}
-follows.
+of the name supply of the appropriate length. We can define it using \AF{sequenceA}
+because environments are traversable (\cite{mcbride_paterson_2008}).
+The definition of \AF{print} follows.
 
 \begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{init}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printerfun}
+\end{minipage}
+
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{print}
 \caption{Printer\label{fig:printer}}
 \end{figure}

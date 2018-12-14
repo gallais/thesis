@@ -75,7 +75,7 @@ Printing : Semantics Name Printer
 %</printingdef>
 %<*printingvar>
 \begin{code}
-Printing .th^𝓥 = λ n _ → n
+Printing .th^𝓥  = th^const
 Printing .var   = return
 \end{code}
 %</printingvar>
@@ -97,7 +97,7 @@ Printing .ff   = return "false"
 \begin{code}
 Printing .app mf mt = do
   f ← mf; t ← mt
-  return $ f ++ " " ++ parens t
+  return $ parens f ++ " " ++ t
 Printing .ifte mb ml mr = do
   b ← mb; l ← ml; r ← mr
   return $  "if " ++ parens b ++
@@ -121,17 +121,22 @@ names = Stream.concat
 instance _ = rawIApplicative
 
 \end{code}
-%<*print>
+%<*init>
 \begin{code}
 init : M ((Γ ─Env) Name Γ)
 init = sequenceA (pack (const fresh))
-
-
+\end{code}
+%</init>
+%<*printerfun>
+\begin{code}
 printer : Term σ Γ → M String
 printer t = do
   ρ ← init
   Fundamental.lemma Printing ρ t
-
+\end{code}
+%</printerfun>
+%<*print>
+\begin{code}
 print : Term σ Γ → String
 print t = proj₁ $ printer t names
 \end{code}

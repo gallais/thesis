@@ -2,7 +2,7 @@
 module Semantics.Syntactic.Instances where
 
 open import Data.List.Base using (List; []; _∷_)
-open import Data.Var
+open import Data.Var hiding (_<$>_)
 open import Data.Environment
 open import Syntax.Type
 open import Syntax.Calculus
@@ -71,3 +71,9 @@ eta : ∀[ Term (σ `→ τ) ⇒ Term (σ `→ τ) ]
 eta t = `lam (`app (th^Term t extend) (`var z))
 \end{code}
 %</eta>
+%<*betared>
+\begin{code}
+_⟨_/0⟩ : ∀[ (σ ∷_) ⊢ Term τ ⇒ Term σ ⇒ Term τ ]
+t ⟨ u /0⟩ = sub ((`var <$> identity) ∙ u) t
+\end{code}
+%</betared>

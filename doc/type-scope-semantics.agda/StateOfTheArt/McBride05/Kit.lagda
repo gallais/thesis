@@ -43,9 +43,9 @@ kit K ρ (`lam b)    = `lam (kit K ρ′ b)
 %<*renkit>
 \begin{code}
 ren^Kit : Kit Var
-ren^Kit .var = `var
-ren^Kit .zro = z
-ren^Kit .wkn = s
+ren^Kit .var  = `var
+ren^Kit .zro  = z
+ren^Kit .wkn  = s
 \end{code}
 %</renkit>
 
@@ -59,9 +59,9 @@ ren = kit ren^Kit
 %<*subkit>
 \begin{code}
 sub^Kit : Kit Tm
-sub^Kit .var = id
-sub^Kit .zro = `var z
-sub^Kit .wkn = ren (pack s)
+sub^Kit .var  = id
+sub^Kit .zro  = `var z
+sub^Kit .wkn  = ren (pack s)
 \end{code}
 %</subkit>
 %<*sub>

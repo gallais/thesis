@@ -14,19 +14,19 @@ can then be instantiated six times to derive the corresponding corollaries.
 The evidence that \AB{𝓢ᴬ}, \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} are such that \AB{𝓢ᴬ} followed
 by \AB{𝓢ᴮ} is equivalent to \AB{𝓢ᴬᴮ} (e.g. \AF{Substitution} followed by \AF{Renaming}
 can be reduced to \AF{Substitution}) is packed in a record \AR{Fusion} indexed by the
-three semantics but also three relations. The first one (\AB{𝓥ᴿ}) states what it means
-for two environment values of \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} respectively to be related. The
-second one (\AB{𝓔ᴿ}) characterises the triples of environments (one for each one of
-the semantics) which are compatible. The last one (\AB{𝓒ᴿ}) relates computations
+three semantics but also three relations. The first one (\AB{𝓔ᴿ}) characterises the
+triples of environments (one for each one of the semantics) which are compatible.
+The second one (\AB{𝓥ᴿ}) states what it means for two environment values of \AB{𝓢ᴮ}
+and \AB{𝓢ᴬᴮ} respectively to be related. The last one (\AB{𝓒ᴿ}) relates computations
 obtained as results of running \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} respectively.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{fusion}
 
 As before, most of the fields of this record describe what structure these relations
-ceed to have. However, we start with something slightly different: given that we are
+need to have. However, we start with something slightly different: given that we are
 planing to run the \AR{Semantics} \AB{𝓢ᴮ} \emph{after} having run \AB{𝓢ᴬ}, we need
 two components: a way to extract a term from an \AB{𝓢ᴬ} and a way to manufacture a
-dummy \AB{𝓢ᴬ} value when going under a binder. Our first two fields are therefore:
+placeholder \AB{𝓢ᴬ} value when going under a binder. Our first two fields are therefore:
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{reifyvar0}
 
@@ -41,7 +41,7 @@ for \AB{𝓢ᴮ} and \AB{𝓢ᴬᴮ} in a \AB{𝓔ᴿ} preserving manner.
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{thV}
 
 Then we have the relational counterpart of the various term constructors. We can once
-more introduce an extra definition \AF{𝓡} which will make the type of the combinators
+again introduce an extra definition \AF{𝓡} which will make the type of the combinators
 defined later on clearer. \AF{𝓡} relates at a given type a term and three environments
 by stating that the computation one gets by sequentially evaluating the term in the first
 and then the second environment is related to the one obtained by directly evaluating
@@ -70,9 +70,9 @@ also yield related results.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Specification.tex]{struct}
 
-Lastly, the \AIC{`lam}-case puts some rather strong restrictions on the way the
+Finally, the \AIC{`lam}-case puts some strong restrictions on the way the
 $λ$-abstraction's body may be used by \AB{𝓢ᴬ}: we assume it is evaluated in an
-environment thinned by one variable) and extended using \ARF{var0ᴬ}. But it is
+environment thinned by one variable and extended using \ARF{var0ᴬ}. But it is
 quite natural to have these restrictions: given that \ARF{reifyᴬ} quotes the
 result back, we are expecting this type of evaluation in an extended context
 (i.e. under one lambda). And it turns out that this is indeed enough for all of
@@ -84,7 +84,7 @@ related values to be substituted for the variable bound by the \AIC{`lam}.
 
 \section{Fundamental Lemma of Fusions}
 
-As with simulation, we measure the utility of this framework by the way we can
+As with simulation, we measure the usefulness of this framework by the way we can
 prove its fundamental lemma and then obtain useful corollaries. Once again,
 having carefully identified what the constraints should be, proving the fundamental
 lemma is not a problem.
@@ -99,8 +99,8 @@ as their own semantic counterpart, it is hence possible to generate evidence of
 them and prove the result generically to avoid repetition. A \AR{SynFusion}
 record packs the evidence for \AR{Syntactic} semantics \AB{Synᴬ}, \AB{Synᴮ} and
 \AB{Synᴬᴮ}. It is indexed by these three \AR{Syntactic}s as well as two relations
-corresponding to the \AB{𝓥ᴿ} and \AB{𝓔ᴿ} ones of the \AR{Fusion} framework;
-\AB{𝓒ᴿ} will always be \AF{Eqᴿ} as we are talking about terms.
+(\AB{𝓣ᴿ} and \AB{𝓔ᴿ}) corresponding to the \AB{𝓥ᴿ} and \AB{𝓔ᴿ} ones of the
+\AR{Fusion} framework; \AB{𝓒ᴿ} will always be \AF{Eqᴿ} as we are talking about terms.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{synfusion}
 
@@ -129,9 +129,9 @@ us with just the right pair of related values to use in \AR{Fusion}'s \ARF{lam�
 Everything else is a direct consequence of the fact we are only considering
 syntactic semantics. Given a \AR{SynFusion} relating three \AR{Syntactic}
 semantics, we get a \AR{Fusion} relating the corresponding \AR{Semantics} where
-\AB{𝓒ᴿ} is the propositional equality. The proof relies on the way the
-translation from \AR{Syntactic} to \AR{Semantics} is formulated in
-\cref{sec:syntactic}.
+\AB{𝓒ᴿ} is \AF{Eqᴿ}, the pointwise lifting of propositional equality. The proof
+relies on the way the translation from \AR{Syntactic} to \AR{Semantics} is formulated
+in \cref{sec:syntactic}.
 
 \begin{figure}
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Specification.tex]{fundamental}
@@ -180,12 +180,13 @@ to a substitution. Environments are once more related by composition.
 \caption{Renaming - Substitution Fusion Law\label{fig:rensub}}
 \end{figure}
 
-For the proof that a substitution followed by a renaming is equivalent to a substitution, we
-need to relate the environments in a different manner: composition now amounts to applying
-the renaming to every single term in the substitution. We also depart from the use of \AF{Eqᴿ}
-as the relation for values: indeed we now compare variables and terms. The relation \AF{VarTermᴿ}
-relates variables and terms by wrapping the variable in a \AIC{`var} constructor and demanding
-it is equal to the term.
+For the proof that a substitution followed by a renaming is equivalent to a
+substitution, we need to relate the environments in a different manner:
+composition now amounts to applying the renaming to every single term in the
+substitution. We also depart from the use of \AF{Eqᴿ} as the relation for values:
+indeed we now compare variables and terms. The relation \AF{VarTermᴿ} defined in
+\cref{fig:vartermR} relates variables and terms by wrapping the variable in a
+\AIC{`var} constructor and demanding it is equal to the term.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Syntactic/Instances.tex]{subrenfus}
@@ -238,7 +239,7 @@ The relational counterpart of \AIC{`ifte} is reminiscent of the one we used when
 proving that normalisation by evaluation is in simulation with itself in
 \cref{fig:nbeiftenelser}: we have two arbitrary boolean values resulting from the
 evaluation of \AB{b} in two distinct manners but we know them to be the same thanks
-to the their being \AF{PER}-related. The canonical cases are trivially solved by
+to them being \AF{PER}-related. The canonical cases are trivially solved by
 using one of the assumptions whilst the neutral case can be proven to hold thanks
 to the relational versions of \AF{reify} and \AF{reflect}.
 
@@ -248,7 +249,7 @@ to the relational versions of \AF{reify} and \AF{reflect}.
 \end{figure}
 
 The rest of the constraints can be discharged fairly easily; either by using a
-constructor, combining some of the provided hypothesis or using general results
+constructor, combining some of the provided hypotheses or using general results
 such as the stability of \AF{PER}-relatedness under thinning of the \AF{Model}
 values.
 
@@ -264,7 +265,7 @@ up environment.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Fusion/Instances.tex]{renevalfun}
-\caption{Corollary: Fusion Principle for Evaluation followed by Renaming}
+\caption{Corollary: Fusion Principle for Renaming followed by Evaluation\label{fig:renevalfun}}
 \end{figure}
 
 This gives us the tools to prove the substitution lemma for evaluation.
@@ -274,10 +275,11 @@ This gives us the tools to prove the substitution lemma for evaluation.
 Given any semantics, the substitution lemma (see for instance \cite{mitchell1991kripke})
 states that evaluating a term after performing a substitution is equivalent to evaluating
 the term with an environment obtained by evaluating each term in the substitution.
-Formally (\AB{t} is a term, γ a substitution and ρ an evaluation environment):
+Formally (\AB{t} is a term, \AB{γ} a substitution, \AB{ρ} an evaluation environment,
+\AF{\_[\_]} denotes substitution, and \AF{⟦\_⟧\_} evaluation):
 
 \[
-⟦~t~[γ]~⟧~ρ~≡ ⟦~t~⟧~(⟦~γ~⟧~ρ)
+\AF{⟦}~\AB{t}~\AF{[}\AB{γ}\AF{]}~\AF{⟧}~\AB{ρ}~≡~\AF{⟦}~\AB{t}~\AF{⟧}~(\AF{⟦}~\AB{γ}~\AF{⟧}~\AB{ρ})
 \]
 
 This is a key lemma in the study of a language's meta-theory and it fits our \AR{Fusion}
@@ -309,10 +311,11 @@ on environments and \AF{PER} as the relation for both values and computations.
 \end{figure}
 
 The proof is similar to that of fusion of renaming with evaluation in
-\cref{sec:fusionrennbe}. We start by defining a notation \AF{𝓡} to lighten
-the types, then combinators \AF{APPᴿ} and \AF{IFTEᴿ}. The cases for
+\cref{sec:fusionrennbe}: we start by defining a notation \AF{𝓡} to lighten the
+types, then combinators \AF{APPᴿ} and \AF{IFTEᴿ}. The cases for
 \ARF{th\textasciicircum{}𝓔ᴿ}, \ARF{\_∙ᴿ\_}, and \ARF{varᴿ} are a bit more tedious:
 they rely crucially on the fact that we can prove a fusion principle and an identity
 lemma for \AF{th\textasciicircum{}Model} as well as an appeal to \AF{reneval}
-(\cref{renevalfun}) and multiple uses of \AF{Eval\textasciicircum{}Sim}
-(\cref{fig:nbeselfsim}).
+(\cref{fig:renevalfun}) and multiple uses of \AF{Eval\textasciicircum{}Sim}
+(\cref{fig:nbeselfsim}). Because the technical details do not give any additional
+hindsight, we do not include the proof here.

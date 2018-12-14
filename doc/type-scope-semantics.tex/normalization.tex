@@ -19,13 +19,19 @@ rules a theory may satisfy.
 \subsection{Reduction Rules}
 
 Thanks to \AF{Renaming} and \AF{Substitution} respectively, we can formally
-define η-expansion and β-reduction. The η-rules say that for some types,
-terms have a canonical form: functions will all be λ-headed whilst records will
-collect their fields -- here this makes all elements of \AIC{\unit{}} equal to \AIC{`one}.
+define η-expansion for functions and β-reduction.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{eta}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{betared}
+\caption{η-expansion and β-reduction in terms or \AF{th\textasciicircum{}Term} and \AF{sub}}
+\end{figure}
 
+The η-rules say that for some types, terms have a canonical form: functions will all
+be λ-headed whilst records will collect their fields -- here this makes all elements
+of \AIC{\unit{}} equal to \AIC{`one}.
+
+\begin{figure}[h]
 \begin{mathpar}
 \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
   }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
@@ -74,7 +80,7 @@ which goes under λs and produces η-long βι-short normal forms.
 \subsection{Normal and Neutral Forms}
 
 We parametrise the mutually defined inductive families \AD{Ne} and \AD{Nf}
-by a predicate \AB{R} constraining the types at which one may embed a neutral
+by a predicate \AB{Eta?} constraining the types at which one may embed a neutral
 as a normal form. This constraint shows up in the type of \AIC{`neu}; it makes
 it possible to control whether the NBE should η-expands all terms at certain
 types by prohibiting the existence of neutral terms at said type.
@@ -203,7 +209,7 @@ a sensible reification procedure but, in hindsight, it provides us with a
 powerful technique to build models internalizing alternative equational
 theories.
 
-This leads us to using a predicate \AF{R} which holds for all types thus allowing
+This leads us to using a predicate \AB{Eta?} which holds for all types thus allowing
 us to embed all neutrals into normal forms, and to  mutually defining the model
 (\AF{Model}) together with the \emph{acting} model (\AF{Value}).
 
@@ -220,6 +226,10 @@ model are storing these behaviours be it either actual proofs of \AF{⊤}, actua
 important to note that the functions in the acting model have the model as both
 domain and codomain: there is no reason to exclude the fact that either the argument
 or the body may or may not be stuck.
+
+We have once again only used families constant in their scope index, neutral forms or
+\AF{□}-closed families. All of these are \AF{Thinnable} hence \AF{Value} and \AF{Model}
+also are.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{thmodel}
@@ -243,9 +253,7 @@ Most combinators acting on this model follow a pattern similar to their
 counterpart's in the previous section. Semantic application is
 more interesting: in case the function is a stuck term, we grow its
 spine by reifying its argument; otherwise we have an Agda function ready
-to be applied. We proceed similarly for the definition of the semantical
-\AIC{`ifte} (omitted here). Altogether, we get another
-normaliser which is, this time, \emph{not} producing η-long normal forms.
+to be applied.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{app}
@@ -340,7 +348,7 @@ the other subterms untouched.
 \end{figure}
 
 The semantical counterpart of \AIC{`lam} is also slightly trickier than before. Indeed, we
-need to recover the source term the value corresponds. Luckily we know it has to be
+need to recover the source term the value corresponds to. Luckily we know it has to be
 λ-headed and once we have introduced a fresh variable with \AIC{`lam}, we can project
 out the source term of the body evaluated using this fresh variable as a placeholder
 value.

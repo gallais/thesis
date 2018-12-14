@@ -48,8 +48,8 @@ th^Value `Bool     = th^const
 th^Value (σ `→ τ)  = th^□
 
 th^Model : ∀ σ → Thinnable (Model σ)
-th^Model σ (inj₁ neu) ρ = inj₁ (th^Ne neu ρ)
-th^Model σ (inj₂ val) ρ = inj₂ (th^Value σ val ρ)
+th^Model σ (inj₁ neu)  ρ = inj₁ (th^Ne neu ρ)
+th^Model σ (inj₂ val)  ρ = inj₂ (th^Value σ val ρ)
 \end{code}
 %</thmodel>
 \begin{code}
@@ -66,8 +66,8 @@ var0 = reflect (`var z)
 mutual
 
   reify : ∀ σ → ∀[ Model σ ⇒ Nf σ ]
-  reify σ (inj₁ neu) = `neu _ neu
-  reify σ (inj₂ val) = reify^Value σ val
+  reify σ (inj₁ neu)  = `neu _ neu
+  reify σ (inj₂ val)  = reify^Value σ val
 
   reify^Value : ∀ σ → ∀[ Value σ ⇒ Nf σ ]
   reify^Value `Unit     _ = `one

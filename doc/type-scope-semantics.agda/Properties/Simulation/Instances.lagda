@@ -128,19 +128,19 @@ mutual
   reflectᴿ `Bool     t = cong (`neu `Bool) t
   reflectᴿ (σ `→ τ)  f = λ ρ t → reflectᴿ τ (cong₂ `app (cong _ f) (reifyᴿ σ t))
 
-  reifyᴿ : ∀ σ {V W : Model σ Γ} → rel PER σ V W → reify σ V ≡ reify σ W
-  reifyᴿ `Unit     EQ = refl
-  reifyᴿ `Bool     EQ = EQ
-  reifyᴿ (σ `→ τ)  EQ = cong `lam (reifyᴿ τ (EQ extend (reflectᴿ σ refl)))
+  reifyᴿ : ∀ σ {v w : Model σ Γ} → rel PER σ v w → reify σ v ≡ reify σ w
+  reifyᴿ `Unit     _   = refl
+  reifyᴿ `Bool     bᴿ  = bᴿ
+  reifyᴿ (σ `→ τ)  fᴿ  = cong `lam (reifyᴿ τ (fᴿ extend (reflectᴿ σ refl)))
 \end{code}
 %</reifyreflect>
 %<*thPER>
 \begin{code}
-th^PER : ∀ σ {T U} → rel PER σ T U →
-         ∀ (ρ : Thinning Γ Δ) → rel PER σ (th^Model σ T ρ) (th^Model σ U ρ)
-th^PER `Unit     EQ ρ = refl
-th^PER `Bool     EQ ρ = cong (λ t → th^Nf t ρ) EQ
-th^PER (σ `→ τ)  EQ ρ = λ σ → EQ (select ρ σ)
+th^PER : ∀ σ {T U} → rel PER σ T U → (ρ : Thinning Γ Δ) →
+         rel PER σ (th^Model σ T ρ) (th^Model σ U ρ)
+th^PER `Unit     _   ρ = refl
+th^PER `Bool     bᴿ  ρ = cong (λ t → th^Nf t ρ) bᴿ
+th^PER (σ `→ τ)  fᴿ  ρ = λ σ → fᴿ (select ρ σ)
 \end{code}
 %</thPER>
 \begin{code}
@@ -150,27 +150,19 @@ module _ {σ Γ} {L R S T : Model σ Γ} where
 \begin{code}
   IFTEᴿ : (B C : Model `Bool Γ) → rel PER `Bool B C →
           rel PER σ L S → rel PER σ R T → rel PER σ (IFTE B L R) (IFTE C S T)
-  IFTEᴿ `tt         `tt         _     lᴿ rᴿ = lᴿ
-  IFTEᴿ `ff         `ff         _     lᴿ rᴿ = rᴿ
-  IFTEᴿ (`neu a t)  (`neu b u)  refl  lᴿ rᴿ =
-    reflectᴿ σ (cong₂ (`ifte t) (reifyᴿ σ lᴿ) (reifyᴿ σ rᴿ))
+  IFTEᴿ `tt         `tt         _   lᴿ rᴿ = lᴿ
+  IFTEᴿ `ff         `ff         _   lᴿ rᴿ = rᴿ
+  IFTEᴿ (`neu a t)  (`neu b u)  bᴿ  lᴿ rᴿ =
+    reflectᴿ σ (cong₃ `ifte (`neu-injective bᴿ) (reifyᴿ σ lᴿ) (reifyᴿ σ rᴿ))
 \end{code}
 %</ifte>
-\begin{code}
-  IFTEᴿ `tt `ff ()
-  IFTEᴿ `ff `tt ()
-  IFTEᴿ `tt (`neu _ _) ()
-  IFTEᴿ `ff (`neu _ _) ()
-  IFTEᴿ (`neu _ _) `ff ()
-  IFTEᴿ (`neu _ _) `tt ()
-\end{code}
 %<*nbe>
 \begin{code}
 Eval^Sim : Simulation Eval Eval PER PER
 Eval^Sim .th^𝓥ᴿ  = λ ρ EQ → th^PER _ EQ ρ
 Eval^Sim .varᴿ   = λ ρᴿ v → lookupᴿ ρᴿ v
 Eval^Sim .lamᴿ   = λ ρᴿ b bᴿ → bᴿ
-Eval^Sim .appᴿ   = λ ρᴿ f t fᴿ tᴿ → fᴿ (pack id) tᴿ
+Eval^Sim .appᴿ   = λ ρᴿ f t fᴿ tᴿ → fᴿ identity tᴿ
 Eval^Sim .ifteᴿ  = λ ρᴿ b l r → IFTEᴿ _ _
 Eval^Sim .oneᴿ   = λ ρᴿ → refl
 Eval^Sim .ttᴿ    = λ ρᴿ → refl
@@ -185,10 +177,11 @@ private
 eval^Sim = Fundamental.lemma Eval^Sim
 
 eval = Spec.eval Eval
+module _ {σ} where
 \end{code}
 %<*normR>
 \begin{code}
-normᴿ : All PER Γ ρˡ ρʳ → ∀ t → reify σ (eval ρˡ t) ≡ reify σ (eval ρʳ t)
-normᴿ ρᴿ t = reifyᴿ _ (Fundamental.lemma Eval^Sim ρᴿ t)
+ normᴿ : All PER Γ ρˡ ρʳ → ∀ t → reify σ (eval ρˡ t) ≡ reify σ (eval ρʳ t)
+ normᴿ ρᴿ t = reifyᴿ σ (Fundamental.lemma Eval^Sim ρᴿ t)
 \end{code}
 %</normR>

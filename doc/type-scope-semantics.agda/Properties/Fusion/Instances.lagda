@@ -39,7 +39,7 @@ module RenFusion where
 \begin{code}
   APPᴿ :  ∀ f t → 𝓡 (σ `→ τ) ρᴬ ρᴮ ρᴬᴮ f → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t →
           𝓡 τ ρᴬ ρᴮ ρᴬᴮ (`app f t)
-  APPᴿ f t fᴿ tᴿ = fᴿ (pack id) tᴿ
+  APPᴿ f t fᴿ tᴿ = fᴿ identity tᴿ
 \end{code}
 %</appR>
 \begin{code}
@@ -116,7 +116,7 @@ module SubFusion where
 %<*appR>
 \begin{code}
   APPᴿ : ∀ f t → 𝓡 (σ `→ τ) ρᴬ ρᴮ ρᴬᴮ f → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t → 𝓡 τ ρᴬ ρᴮ ρᴬᴮ (`app f t)
-  APPᴿ f t fᴿ tᴿ = fᴿ (pack id) tᴿ
+  APPᴿ f t fᴿ tᴿ = fᴿ identity tᴿ
 \end{code}
 %</appR>
 \begin{code}

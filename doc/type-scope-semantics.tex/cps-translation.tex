@@ -1,10 +1,11 @@
 \chapter{CPS Transformations}
 \label{cps-transformation}
 
-In their generic account of continuation passing styles, Hatcliff and
-Danvy~(\citeyear{hatcliff1994generic}) decompose both call by name and
-call by value CPS transformations in two phases. The first one, an
-embedding of the source language into Moggi's Meta Language~(\citeyear{moggi1991notions}),
+In their generic account of continuation passing style (CPS) transformations,
+Hatcliff and Danvy (\citeyear{hatcliff1994generic}) decompose both call by name
+and call by value CPS transformations in two phases. The first one, an
+embedding of the source language into Moggi's Meta Language
+(\citeyear{moggi1991notions}),
 picks an evaluation strategy whilst the second one is a generic erasure
 from Moggi's ML back to the original language. Looking closely at the
 structure of the first pass, we can see that it is an instance of our
@@ -13,7 +14,7 @@ Semantics framework.
 Let us start with the definition of Moggi's Meta Language (ML). Its types
 are fairly straightforward, we simply have an extra constructor \AIC{\#\_}
 for computations and the arrow has been turned into a \emph{computational}
-arrow meaning that its codomain is considered to be a computational type.
+arrow meaning that its codomain is always considered to be a computational type.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/Type.tex]{ctype}
@@ -61,7 +62,7 @@ are also assigned a computational type.
 
 By definition of \AF{Semantics}, our notions of environment values and computations
 will \emph{have} to be of type (\AF{Type} \AF{─Scoped}). This analysis leads us to
-define the generic transformation \AF{\_\textasciicircum{}CBN}:
+define the generic transformation \AF{\_\textasciicircum{}CBN} in \cref{fig:cbntransformer}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/CPS/CBN.tex]{cbntransformer}
@@ -69,7 +70,7 @@ define the generic transformation \AF{\_\textasciicircum{}CBN}:
 \end{figure}
 
 Our notion of environment values are then (\AD{Var} \AF{\textasciicircum{}CBN})
-whilst computations will the (\AD{ML} \AF{\textasciicircum{}CBN}). Once these
+whilst computations will be (\AD{ML} \AF{\textasciicircum{}CBN}). Once these
 design decisions are made, we can start drafting the semantical counterpart of
 common combinators.
 
@@ -159,7 +160,7 @@ and \AIC{`bind} which correpond to the \AIC{\#} monad in Moggi's ML and are
 interpreted as return and bind for the continuation monad in STLC.
 
 First, (\AIC{`ret} \AB{t}) is interpreted as the function which takes the current
-continuation and applies to its translated argument (\AF{cps} \AB{t}).
+continuation and applies it to its translated argument (\AF{cps} \AB{t}).
 
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/CPS.tex]{elabret}
 
@@ -175,7 +176,7 @@ fact \AD{Term}s are thinnable.
 By highlighting the shared structure, of the call by name and call by value
 translations we were able to focus on the interesting part: the ways in which
 they differ. The formal treatment of the type translations underlines the
-fact that in both translation the translation of a function's domain is uniform.
+fact that in both cases the translation of a function's domain is uniform.
 This remark opens the door to alternative definitions; we could for instance
 consider a mixed strategy which is strict in machine-representable types thus
 allowing an unboxed representation (\cite{10.1007/3540543961_30}) but lazy in

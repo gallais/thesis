@@ -87,10 +87,17 @@ infixl 10 _∙_
 %<*extension>
 \begin{code}
 _∙_ : (Γ ─Env) 𝓥 Δ → 𝓥 σ Δ → ((σ ∷ Γ) ─Env) 𝓥 Δ
-lookup (ρ ∙ v) z    = v
-lookup (ρ ∙ v) (s k) = lookup ρ k
+lookup (ρ ∙ v) z      = v
+lookup (ρ ∙ v) (s k)  = lookup ρ k
 \end{code}
 %</extension>
+
+%<*identity>
+\begin{code}
+identity : Thinning Γ Γ
+lookup identity k = k
+\end{code}
+%</identity>
 
 %<*select>
 \begin{code}
@@ -137,7 +144,7 @@ injectʳ-<+> (x ∷ Γ) ρ₁ ρ₂ v = injectʳ-<+> Γ ρ₁ (select extend ρ�
 %<*extract>
 \begin{code}
 extract : ∀[ □ T ⇒ T ]
-extract t = t (pack id)
+extract t = t identity
 \end{code}
 %</extract>
 %<*duplicate>
