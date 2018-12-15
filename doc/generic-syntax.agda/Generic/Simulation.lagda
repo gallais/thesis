@@ -52,7 +52,8 @@ record Simulation (d : Desc I)
 \end{code}
 %<*thR>
 \begin{code}
-    thᴿ   : (ρ : Thinning Γ Δ) → rel 𝓥ᴿ σ vᴬ vᴮ → rel 𝓥ᴿ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
+    thᴿ   :  (ρ : Thinning Γ Δ) → rel 𝓥ᴿ σ vᴬ vᴮ →
+             rel 𝓥ᴿ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
 \end{code}
 %</thR>
 %<*varR>
@@ -63,22 +64,22 @@ record Simulation (d : Desc I)
 %<*algR>
 \begin{code}
     algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
-            let  vᴬ = fmap d (𝓢ᴬ.body {s = s} ρᴬ) b
-                 vᴮ = fmap d (𝓢ᴮ.body {s = s} ρᴮ) b
+            let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
+                 vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
             in Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
 \end{code}
 %</algR>
 %<*simbody>
 \begin{code}
-  sim   :  ∀ {s} → All 𝓥ᴿ Γ ρᴬ ρᴮ → (t : Tm d s σ Γ) →
+  sim   :  All 𝓥ᴿ Γ ρᴬ ρᴮ → (t : Tm d s σ Γ) →
            rel 𝓒ᴿ σ (𝓢ᴬ.semantics ρᴬ t) (𝓢ᴮ.semantics ρᴮ t)
-  body  :  ∀ {s} → All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ Δ j → (t : Scope (Tm d s) Δ j Γ) →
+  body  :  All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ Δ j → (t : Scope (Tm d s) Δ j Γ) →
            Kripkeᴿ 𝓥ᴿ 𝓒ᴿ Δ j (𝓢ᴬ.body ρᴬ Δ j t) (𝓢ᴮ.body ρᴮ Δ j t)
 
   sim ρᴿ (`var k) = varᴿ (lookupᴿ ρᴿ k)
   sim ρᴿ (`con t) = algᴿ t ρᴿ (zip d (body ρᴿ) t)
 
   body ρᴿ []       i t = sim ρᴿ t
-  body ρᴿ (σ ∷ Δ)  i t = λ σ vsᴿ → sim (vsᴿ >>ᴿ (thᴿ σ <$>ᴿ ρᴿ)) t
+  body ρᴿ (_ ∷ _)  i t = λ σ vsᴿ → sim (vsᴿ >>ᴿ (thᴿ σ <$>ᴿ ρᴿ)) t
 \end{code}
 %</simbody>

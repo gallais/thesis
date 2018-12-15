@@ -58,9 +58,10 @@ module _ {d : Desc I} where
 %<*reify>
 \begin{code}
  reify^Dm  : ∀[ Dm d i σ ⇒ Maybe ∘ Tm d ∞ σ ]
- reify^Dm (V k)  = just (`var k)
- reify^Dm (C v)  = `con <$> sequenceA d (fmap d (λ Θ i → reify^Dm ∘ reify vl^Dm Θ i) v)
  reify^Dm ⊥      = nothing
+ reify^Dm (V k)  = just (`var k)
+ reify^Dm (C v)  = `con <$> sequenceA d (fmap d reify^Kripke v)
+   where reify^Kripke = λ Θ i kr → reify^Dm (reify vl^Dm Θ i kr)
 \end{code}
 %</reify>
 \begin{code}

@@ -74,7 +74,7 @@ value for each newly bound variable).
 \end{figure}
 
 The proof of \AF{semantics} is straightforward now that we have clearly identified the
-problem structure and the constraints we need to enforce. If the term considered
+problem's structure and the constraints we need to enforce. If the term considered
 is a variable, we lookup the associated value in the evaluation environment and
 turn it into a computation using \ARF{var}. If it is a non variable constructor
 then we call \AF{fmap} to evaluate the substructures using \AF{body} and then
@@ -215,7 +215,7 @@ in the presence of let bindings may be a variable standing for an
 expression. The user naturally does not want it to make any difference
 whether they used a variable referring to a let-bound expression or
 the expression itself. Various typechecking strategies can accommodate
-this expectation: in Coq~\cite{Coq:manual} let bindings are primitive
+this expectation: in Coq (\cite{Coq:manual}) let bindings are primitive
 constructs of the language and have their own typing and reduction
 rules whereas in Agda they are elaborated away to the core language
 by inlining.
@@ -303,7 +303,7 @@ domain into terms. The Kripke function spaces can themselves be reified:
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{reify}
-\caption{Generic Reification via \AF{traverse}}
+\caption{Generic Reification via \AF{sequenceA}}
 \end{figure}
 
 By composing them, we obtain the normalisation function which gives its name
@@ -349,28 +349,34 @@ Coming back to our work on (rudimentary) printing with names in \cref{prettyprin
 we can now give a generic account of it. This is a particularly interesting example
 because it demonstrates that we may sometimes want to give \AD{Desc} a different
 semantics to accomodate a specific use-case: we do not want our users to deal explicitly
-with name generation, explicit variable binding, etc. We are going to reuse some of the
-components defined in \cref{prettyprint}: we can rely on the same state monad for
-name generation, the same \AF{fresh} function and the same notions of \AF{Name}
-and \AF{Printer} for the semantics' values and computations.
+with name generation, explicit variable binding, etc.
+
+We are going to reuse some of the components defined in \cref{prettyprint}: we can
+rely on the same state monad for name generation, the same \AF{fresh} function and
+the same notions of \AF{Name} and \AF{Printer} for the semantics' values and
+computations.
 
 The first piece of the puzzle is \AF{Pieces}. The structure of \AR{Semantics} would
 suggest giving our users an interface where sub-structures are interpreted as \AF{Kripke}
 function spaces expecting fresh names for the fresh variables and returning a monadic
 computation delivering a printer. However we can do better: we can preemptively generate
 a set of fresh names for the newly-bound variables and hand them to the user together
-with the result of printing the body. As usual we have a special case for the substructures
-without any newly-bound variable.
+with the result of printing the body with these names. As usual we have a special case
+for the substructures without any newly-bound variable. Note that the specific target
+context of the environment of \AF{Name}s is only picked for convenience as \AF{Name}
+ignores the scope: ({\AB{Δ} \AF{++} \AB{Γ}}) is what \AF{freshˡ} gives us.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing]{pieces}
 \caption{Interpretation of Recursive Substructures: Printing Pieces\label{fig:printingpieces}}
 \end{figure}
 
-The key component making this work is the reification function \AF{reify\textasciicircum{}M}
-turning the \AF{Kripke} spaces we get from the semantics framework into \AF{Pieces}. This
-function has to be monadic so that we may generate fresh names. It uses the fact that
-environments are traversable and that names are easily proven to be \AF{VarLike} to
+The key component making this work is the reification function
+\AF{reify\textasciicircum{}M} turning the \AF{Kripke} spaces we get from the semantics
+framework into \AF{Pieces}. This function has to be monadic so that we may generate
+fresh names. It uses the fact that environments are traversable and that
+({\AF{M} \AF{Name}}) is easily proven to be \AF{VarLike} (\AF{fresh} generates new
+names and they are trivially \AR{Thinnable} as they ignore their scope) to
 generate an environment of names for the newly-bound variables.
 
 \begin{figure}[h]
@@ -380,8 +386,8 @@ generate an environment of names for the newly-bound variables.
 
 We also expect the user to provide us with a syntax-specific ({\AF{Display} \AB{d}})
 explaining how to print one ``layer'' of term where the subterms are \AF{Pieces} i.e.
-both the names of the variables bound in the subterm and the string representation of
-the subterm are available. See \cref{sec:printingexample} for a concrete example of
+both the names of the variables bound in the subterms and the string representation of
+the subterms are available. See \cref{sec:printingexample} for a concrete example of
 such a \AF{Display}.
 
 \begin{figure}[h]

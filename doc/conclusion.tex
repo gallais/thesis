@@ -5,20 +5,20 @@
 In the first half of this thesis, we have expanded on the work published in
 \cite{allais2017type}. Starting from McBride's Kit (\citeyear{mcbride2005type})
 making explicit the common structure of renaming and substitution, we observed
-that normalisation by evaluation had a similar structure. This led us to
+that normalisation by evaluation had a similar shape. This led us to
 defining a notion of type-and-scope preserving \AR{Semantics} where, crucially,
 $\lambda$-abstraction is interpreted as a \AF{Kripke} function space. This
 pattern was general enough to encompass not only renaming, substitution and
 normalisation by evaluation but also printing with names, continuation passing
-style transformation and as we have seen later on even let-inlining, typechecking
-and elaboration to a core language.
+style transformations and as we have seen later on even let-inlining, typechecking
+and elaboration to a typed core language.
 
 Once this shared structure was highlighted, we took advantage of it and designed
 proof frameworks to prove simulation lemmas and fusion principles for the traversals
 defined as instances of \AR{Semantics}. These allowed us to prove, among other
 things, that syntactic traversals are extensional, that multiple renamings and
 substitutions can be fused in a single pass and that the substitution lemma holds
-for NBE's evaluation. Almost systematically previous results where used to discharge
+for NBE's evaluation. Almost systematically, previous results where used to discharge
 the goals arising in the later proofs.
 
 In the second half, we have built on the work published in \cite{generic-syntax}.
@@ -42,7 +42,12 @@ published) POPLMark Reloaded challenge which consists in formalising strong
 normalisation for the simply typed $\lambda$-calculus via a logical-relation
 argument. This also gave us the opportunity to try our framework on larger
 languages by tackling the challenge's extensions to sum types and G\"{o}del's
-System T.
+System T. Compared to the Coq solution contributed by our co-authors, we could
+not rely on tactics and had to write all proof terms by hand. However the
+expressiveness of dependently-typed pattern-matching, the power of size-based
+termination checking and the consequent library we could rely on thanks to the
+work presented in this thesis meant that our proofs were just as short as
+the tactics-based ones.
 
 \section{Further Work}
 
@@ -65,8 +70,9 @@ this suggests we are close to being able to define an entire (toy) compiler with
 strong invariants enforced in the successive intermediate representations.
 
 To tackle modern languages with support for implicit arguments, a total account of
-(higher-order) unification. It would ideally be defined generically over our notion
-of syntax thus allowing us to progressively extend our language as we see fit.
+(higher-order) unification is needed. It would ideally be defined generically over
+our notion of syntax thus allowing us to progressively extend our language as we
+see fit without having to revisit that part of the compiler.
 
 \subsection{Generic Meta-Theory}
 
@@ -99,15 +105,16 @@ produces a scoped-and-typed term by type-checking or type-inference.
 
 If the proofs we developped in this thesis would still be out of reach for
 ML-style languages, the programming part can be replicated using the usual
-Gernalised Algebraic Data Types (GADTs) based encodings
+Generalised Algebraic Data Types (GADTs) based encodings
 (\cite{danvytagless,lindley2014hasochism}) and could thus still benefit from
 such ornaments being made first order.
 
 \subsection{Derivatives of Syntaxes}
 
-Our work on the POPLMark Reloaded challenge highlights a need for a generic
-definition of ``evaluation contexts'' i.e. terms with holes. This would build
-on the work of Huet (\citeyear{huet_1997}) and Abbott, Altenkirch, McBride and
-Ghani (\citeyear{abbott2005data}) and would allow us to revisit previous work
+Our work on the POPLMark Reloaded challenge highlighted a need for a generic
+definition of evaluation contexts (i.e. terms with holes), congruence closures
+and the systematic study of their properties. This would build on the work of
+Huet (\citeyear{huet_1997}) and Abbott, Altenkirch, McBride and Ghani
+(\citeyear{abbott2005data}) and would allow us to revisit previous work
 based on concrete instances of our \AF{Semantics}-based approach to formalising
 syntaxes with binding such as McLaughlin, McKinna and Stark (\citeyear{craig2018triangle}).

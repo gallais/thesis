@@ -41,8 +41,8 @@ infix 3 _==_
 \begin{code}
 _==_ : (σ τ : Type) → Maybe ⊤
 α == α = just tt
-(σ `→ τ) == (σ' `→ τ') =
-  σ == σ' >>  τ == τ'
+(σ₁ `→ τ₁) == (σ₂ `→ τ₂) =
+  σ₁ == σ₂ >> τ₁ == τ₂
 _ == _ = nothing
 \end{code}
 %</equal>
@@ -110,8 +110,8 @@ open Semantics
 \end{code}
 %<*app>
 \begin{code}
-app : Type- Infer → Type- Check → Type- Infer
-app f t = do
+APP : Type- Infer → Type- Check → Type- Infer
+APP f t = do
   σ`→τ     ← f
   (σ , τ)  ← isArrow σ`→τ
   τ <$ t σ
@@ -119,8 +119,8 @@ app f t = do
 %</app>
 %<*lam>
 \begin{code}
-lam : Kripke (const ∘ Var-) (const ∘ Type-) (Infer ∷ []) Check Γ → Type- Check
-lam b σ`→τ = do
+LAM : Kripke (const ∘ Var-) (const ∘ Type-) (Infer ∷ []) Check Γ → Type- Check
+LAM b σ`→τ = do
   (σ , τ) ← isArrow σ`→τ
   b (bind Infer) (ε ∙ `var σ) τ
 \end{code}
@@ -131,8 +131,8 @@ Typecheck : Semantics Lang (const ∘ Var-) (const ∘ Type-)
 Typecheck .th^𝓥  = th^const
 Typecheck .var   = λ where (`var t) → just t
 Typecheck .alg   = λ where
-   (App , f , t , refl)  → app f t
-   (Lam , b , refl)      → lam b
+   (App , f , t , refl)  → APP f t
+   (Lam , b , refl)      → LAM b
    (Cut σ , t , refl)    →  σ <$ t σ
    (Emb , t , refl)      →  λ σ → t >>= σ ==_
 \end{code}
@@ -149,9 +149,9 @@ type- m t = Semantics.closed Typecheck t
 %</typefun>
 %<*example>
 \begin{code}
-_ : let  id  : TM Lang Check
-         id  = `lam (`emb (`var z))
-    in type- Infer (`app (`cut ((α `→ α) `→ (α `→ α)) id) id) ≡ just (α `→ α)
+_ : let  `id  : TM Lang Check
+         `id  = `lam (`emb (`var z))
+    in type- Infer (`app (`cut ((α `→ α) `→ (α `→ α)) `id) `id) ≡ just (α `→ α)
 _ = refl
 \end{code}
 %</example>

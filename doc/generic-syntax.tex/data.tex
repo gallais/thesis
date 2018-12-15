@@ -1,9 +1,10 @@
 \chapter{A Primer on the Universe of Data Types}\label{section:data}
 
-Chapman, Dagand, McBride and Morris (CDMM)~\citeyear{Chapman:2010:GAL:1863543.1863547}
+Chapman, Dagand, McBride and Morris (CDMM, \citeyear{Chapman:2010:GAL:1863543.1863547})
 defined a universe of data types inspired by Dybjer and Setzer's
-finite axiomatisation of Inductive-Recursive definitions~\citeyear{Dybjer1999}
-and Benke, Dybjer and Jansson's universes for generic programs and proofs~\citeyear{benke-ugpp}.
+finite axiomatisation of Inductive-Recursive definitions (\citeyear{Dybjer1999})
+and Benke, Dybjer and Jansson's universes for generic programs and proofs
+(\citeyear{benke-ugpp}).
 This explicit definition of \emph{codes} for data types empowers the
 user to write generic programs tackling \emph{all} of the data types
 one can obtain this way. In this section we recall the main aspects
@@ -25,8 +26,8 @@ index value.
 \end{figure}
 
 
-The recursive function \AF{⟦\_⟧} makes the interpretation of the
-descriptions formal. Interpretation of descriptions give rise right-nested tuples
+The recursive function \AF{⟦\_⟧} makes the interpretation of the descriptions
+formal. Interpretation of descriptions give rise to right-nested tuples
 terminated by equality constraints.
 
 \begin{figure}[h]
@@ -47,13 +48,13 @@ is unindexed, we represent the lack of an index with the unit type \AD{$\top$}.
 \caption{The Description of the base functor for \AD{List} \AB{A}}\label{figure:listD}
 \end{figure}
 
-Indices can be used to enforce invariants. For example, the type {\AD{Vec} \AB{A} \AB{n}}
+Indices can be used to enforce invariants. For example, the type ({\AD{Vec} \AB{A} \AB{n}})
 of length-indexed lists. It has the same structure as the definition of \AF{listD}.
 We start with a \AF{Bool}ean distinguishing the two constructors: either
 the empty list (in which case the branch's index is enforced to be $0$) or a
 non-empty one in which case we store a natural number \AB{n}, the head of type
 \AB{A} and a tail of size \AB{n} (and the branch's index is enforced to be
-\AIC{suc} \AB{n}).
+(\AIC{suc} \AB{n}).
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{vecD}
@@ -78,7 +79,7 @@ All the functors obtained as meanings of \AD{Desc}riptions are strictly positive
 So we can build the least fixpoint of the ones that are endofunctors i.e. the ones
 for which \AB{I} equals \AB{J}. This fixpoint is called \AD{μ} and its iterator is
 given by the definition of \AF{fold} \AB{d}. In \cref{figure:datamu} the
-\AD{Size}~\cite{DBLP:journals/corr/abs-1012-4896} index added to the inductive
+\AD{Size} (\cite{DBLP:journals/corr/abs-1012-4896}) index added to the inductive
 definition of \AD{μ} plays a crucial role in getting the termination checker to
 see that \AF{fold} is a total function, just like sizes played a crucial role in
 proving that \AF{map\textasciicircum{}Rose} was total in~\cref{sec:sizetermination}.

@@ -104,8 +104,7 @@ given extensionally equal environments they produce syntactically equal terms),
 or that renaming is a special case of substitution (cf. \cref{fig:genrensub}).
 Of course these results are not new but having them generically over all syntaxes
 with binding is convenient; which we have experienced first hand when tackling the
-POPLMark Reloaded challenge (\citeyear{poplmark2}) where \AF{rensub} was actually
-needed.
+POPLMark Reloaded challenge (\citeyear{poplmark2}).
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{renext}
@@ -128,7 +127,7 @@ The main theorem (strong normalisation of STLC via a logical relation)
 is itself an instance of (the unary version of) the simulation lemma,
 that is to say the fundamental lemma of logical predicates.
 
-The Simulation proof framework is the simplest examples of the abstract
+The simulation proof framework is the simplest examples of the abstract
 proof frameworks we introduced in part 1 for the specific case of STLC.
 We also explained how a similar framework can be defined
 for fusion lemmas and deploy it for the renaming-substitution interactions
@@ -142,7 +141,7 @@ Results which can be reformulated as the ability to fuse two traversals
 obtained as \AR{Semantics} into one abound. When claiming that \AF{Tm} is
 a Functor, we have to prove that two successive renamings can be fused into
 a single renaming where the \AF{Thinning}s have been composed. Similarly,
-demonstrating that \AF{Tm} is a relative Monad~\cite{JFR4389} implies proving
+demonstrating that \AF{Tm} is a relative Monad (\cite{JFR4389}) implies proving
 that two consecutive substitutions can be merged into a single one whose
 environment is the first one, where the second one has been applied in a
 pointwise manner. The \emph{Substitution Lemma} central
@@ -192,7 +191,7 @@ this function will be the identity. However nothing prevents to try to prove for
 instance that normalisation by evaluation is idempotent in which case a bona fide
 reification function extracting terms from model values will be used.
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{quote}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{reify}
 
 Then, we have to think about what happens when going under a binder: \AB{𝓢ᴬ}
 will produce a \AF{Kripke} function space where a syntactic value is required.
@@ -202,9 +201,9 @@ Provided that \AB{𝓥ᴬ} is \AR{VarLike}, we can make use of \AF{reify} to get
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{vlV}
 
 We can combine these two functions to define the reification procedure we will
-use in practice: \AF{quoteᴬ} which takes a Kripke function space and returns a
-term by first feeding feeding placeholder values to the Kripke function space
-and getting a \AB{𝓒ᴬ} and then reifying it thanks to \ARF{reifyᴬ}.
+use in practice when facing Kripke function spaces: \AF{quoteᴬ} which takes such
+a function and returns a term by first feeding placeholder values to the Kripke
+function space and getting a \AB{𝓒ᴬ} back and then reifying it thanks to \ARF{reifyᴬ}.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{quote}
 
@@ -275,7 +274,7 @@ the recursive substructures are \AF{Kripkeᴿ}-reladed.
 \end{figure}
 
 The proofs involve two functions we have not mentiond before: \AF{zip} maps a proof that
-a property holds for any recursive substructure over a the arguments of constructor to
+a property holds for any recursive substructure over the arguments of constructor to
 obtain a \AF{Zip} object. The proof we obtain does not exactly match the premise in
 \ARF{algᴿ}; we need to adjust it by rewriting an \AF{fmap}-fusion equality called
 \AF{fmap²}.

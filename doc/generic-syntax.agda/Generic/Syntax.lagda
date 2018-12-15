@@ -41,7 +41,7 @@ private
 ⟦_⟧ : Desc I → (List I → I ─Scoped) → I ─Scoped
 ⟦ `σ A d    ⟧ X i Γ = Σ[ a ∈ A ] (⟦ d a ⟧ X i Γ)
 ⟦ `X Δ j d  ⟧ X i Γ = X Δ j Γ × ⟦ d ⟧ X i Γ
-⟦ `∎ i′     ⟧ X i Γ = i ≡ i′
+⟦ `∎ j      ⟧ X i Γ = i ≡ j
 \end{code}
 %</interp>
 \begin{code}
@@ -60,8 +60,8 @@ module _ {I : Set} where
 %<*mu>
 \begin{code}
  data Tm (d : Desc I) : Size → I ─Scoped where
-   `var : ∀[ Var i                     ⇒ Tm d (↑ s) i ]
-   `con : ∀[ ⟦ d ⟧ (Scope (Tm d s)) i  ⇒ Tm d (↑ s) i ]
+   `var  : ∀[ Var i                     ⇒ Tm d (↑ s) i ]
+   `con  : ∀[ ⟦ d ⟧ (Scope (Tm d s)) i  ⇒ Tm d (↑ s) i ]
 \end{code}
 %</mu>
 \begin{code}
@@ -131,8 +131,8 @@ module PAPER {I : Set} {d : Desc I} {X : List I → I ─Scoped} {i : I} {Γ : L
  unXs :  ∀ Δjs → ⟦ `Xs Δjs d ⟧ X i Γ →
          All (uncurry $ λ Δ j → X Δ j Γ) Δjs × ⟦ d ⟧ X i Γ
 
- unXs []       v       = [] , v
- unXs (σ ∷ Δ)  (r , v) = Prod.map₁ (r ∷_) (unXs Δ v)
+ unXs []       v        = [] , v
+ unXs (σ ∷ Δ)  (r , v)  = Prod.map₁ (r ∷_) (unXs Δ v)
 \end{code}
 %</unxs>
 \begin{code}
@@ -162,8 +162,7 @@ module _ {I : Set} {X Y : List I → I ─Scoped} {Γ Δ} {i} where
 \end{code}
 %<*fmap>
 \begin{code}
- fmap :  (d : Desc I) (f : ∀ Θ i → X Θ i Γ → Y Θ i Δ) →
-         ⟦ d ⟧ X i Γ → ⟦ d ⟧ Y i Δ
+ fmap :  (d : Desc I) → (∀ Θ i → X Θ i Γ → Y Θ i Δ) → ⟦ d ⟧ X i Γ → ⟦ d ⟧ Y i Δ
  fmap (`σ A d)    f = Prod.map₂ (fmap (d _) f)
  fmap (`X Δ j d)  f = Prod.map (f Δ j) (fmap d f)
  fmap (`∎ i)      f = id

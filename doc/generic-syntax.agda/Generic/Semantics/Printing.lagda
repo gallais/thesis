@@ -32,7 +32,7 @@ open ST renaming (rawIApplicative to ApplicativeM)
         hiding (_<$>_)
 
 open import Data.Var hiding (get; _<$>_)
-open import Data.Environment hiding (_>>_; sequenceA)
+open import Data.Environment hiding (_>>_; sequenceA; _<$>_)
 open import Data.Var.Varlike
 open import Generic.Syntax hiding (sequenceA)
 open import Generic.Semantics
@@ -70,7 +70,7 @@ Pieces Δ   i Γ = (Δ ─Env) Name (Δ ++ Γ) × String
 %<*reifypieces>
 \begin{code}
 reify^M : ∀ Δ i → Kripke Name Printer Δ i Γ → M (Pieces Δ i Γ)
-reify^M []         i    = id
+reify^M []         i p  = p
 reify^M Δ@(_ ∷ _)  i f  = do
   ρ ← sequenceA (freshˡ vl^MName _)
   b ← f (freshʳ vl^Var Δ) ρ
@@ -106,11 +106,12 @@ module _ {d : Desc I} where
   printing : Display d → Semantics d Name Printer
   printing dis .th^𝓥  = th^const
   printing dis .var   = return
-  printing dis .alg   = λ v → dis ST.<$> sequenceA d (fmap d reify^M v)
+  printing dis .alg   = λ v → dis <$> sequenceA d (fmap d reify^M v)
 \end{code}
 %</printing>
 \begin{code}
     where open Generic.Syntax
+          open ST
           instance _ = ApplicativeM
 
 -- Corollary: a generic printer using a silly name supply

@@ -56,7 +56,7 @@ module _ {I : Set} {d : Desc I} where
 %<*unlet>
 \begin{code}
  unlet : ∀[ Tm (d `+ Let) ∞ σ ⇒ Tm d ∞ σ ]
- unlet = Semantics.semantics UnLet (pack `var)
+ unlet = Semantics.semantics UnLet (`var <$> identity)
 \end{code}
 %</unlet>
 \begin{code}

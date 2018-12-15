@@ -193,8 +193,8 @@ th^const a _ = a
 %<*kripke>
 \begin{code}
 Kripke : (𝓥 𝓒 : I ─Scoped) → (List I → I ─Scoped)
-Kripke 𝓥 𝓒 []  i = 𝓒 i
-Kripke 𝓥 𝓒 Γ   i = □ ((Γ ─Env) 𝓥 ⇒ 𝓒 i)
+Kripke 𝓥 𝓒 []  j = 𝓒 j
+Kripke 𝓥 𝓒 Δ   j = □ ((Δ ─Env) 𝓥 ⇒ 𝓒 j)
 \end{code}
 %</kripke>
 \begin{code}

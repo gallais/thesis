@@ -2,7 +2,7 @@
 
 Our universe of scope safe and well kinded syntaxes follows the same principle
 as CDMM's universe of datatypes, except that we are not building endofunctors on
-\AS{Set} any more but rather on {\AB{I} \AF{─Scoped}}. We now think of the index
+\AS{Setᴵ} any more but rather on {\AB{I} \AF{─Scoped}}. We now think of the index
 type \AB{I} as the sorts used to distinguish terms in our embedded language.
 The \AIC{`$\sigma$} and \AIC{`∎} constructors are as in the CDMM \AD{Desc} type,
 and are used to represent data and index constraints respectively.
@@ -14,7 +14,7 @@ is that the \AIC{`X} constructor is now augmented with an additional {\AD{List} 
 argument that describes the new binders that are brought into scope at this recursive
 position. This list of the kinds of the newly-bound variables will play a crucial role when
 defining the description's semantics as a binding structure in
-\cref{figure:syntaxmeaning, figure:debruijnscope, figure:freemonad}.
+\cref{figure:syntaxmeaning,figure:debruijnscope,figure:freemonad}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc}
@@ -36,7 +36,7 @@ newly-bound variables in \AB{Δ}) in an ambient scope \AB{Γ} as {\AB{X} \AB{Δ}
 The astute reader may have noticed that \AF{⟦\_⟧} is uniform in $X$ and $\Gamma$; however
 refactoring \AF{⟦\_⟧} to use the partially applied $X\,\_\,\_\,\Gamma$ following
 this observation would lead to a definition harder to use with the
-combinators for indexed sets described in \cref{indexed-combinators}
+combinators for indexed sets described in \cref{sec:indexed-combinators}
 which make our types much more readable.
 
 If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of `de Bruijn scopes'
@@ -68,7 +68,6 @@ considering the initial algebra, this time we opt for the free relative
 monad (\cite{Altenkirch2010, JFR4389}) with respect to the functor \AF{Var}.
 The \AIC{`var} constructor corresponds to return, and we will define bind (also
 known as the parallel substitution \AF{sub}) in the next section.
-
 We have once more a \AD{Size} index to get all the benefits of type based
 termination checking when defining traversals over terms.
 
@@ -78,7 +77,7 @@ termination checking when defining traversals over terms.
 \end{figure}
 
 Because we often use closed terms of size \AF{∞} (that is to say fully-defined)
-in concrete examples, we define this notion.
+in concrete examples, we name this notion.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{closed}

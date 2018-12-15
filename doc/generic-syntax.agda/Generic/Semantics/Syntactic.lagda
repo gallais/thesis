@@ -27,7 +27,7 @@ module _ {I : Set} {d : Desc I} where
 %<*renaming>
 \begin{code}
  Renaming : Semantics d Var (Tm d ∞)
- Renaming  .th^𝓥  = λ k ρ → lookup ρ k
+ Renaming  .th^𝓥  = th^Var
  Renaming  .var   = `var
  Renaming  .alg   = `con ∘ fmap d (reify vl^Var)
 \end{code}
