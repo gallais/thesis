@@ -72,6 +72,7 @@ THESIS_DEPENDENCIES:=\
   latex/cover.tex \
   latex/introduction.tex/intro.tex \
   latex/introduction.tex/agda.tex \
+  latex/type-scope-semantics.tex/syntax.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
   latex/type-scope-semantics.tex/cps-translation.tex \
