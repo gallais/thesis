@@ -63,7 +63,7 @@ Definitions taking values of an inductive type as argument are defined by
 pattern matching in a style familiar to Haskell programmers: one lists
 clauses assuming a first-match semantics. If the patterns on the left hand
 side are covering all possible cases and the recursive calls are structurally
-recursive, the function is total. All definitions have to be total in Agda.
+smaller, the function is total. All definitions have to be total in Agda.
 
 The main difference with Haskell is that in Agda, we can perform so-called
 ``large elimination'': we can define a \AF{Set} by pattern-matching on a
@@ -82,16 +82,17 @@ a type being refined based on the pattern appearing in a clause.
 First, we introduce \AF{replicate} which takes a natural number \AB{n} and a value
 \AB{a} of type \AB{A} and returns an (\AB{n} \AF{-Tuple}) by duplicating \AB{a}.
 The return type of \AF{replicate} reduces to \AR{⊤} when the natural number is
-\AIC{zero} and (\AB{A} \AR{×} (\AF{replicate} \AB{n} \AB{A})) when it is
+\AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
 (\AIC{suc} \AB{n}).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
 
-Second, we define \AF{map\textasciicircum{}-Tuple} which takes a function and applies
-to each one of the elements in a \AF{-Tuple}. Both the type of the \AF{-Tuple} argument
-and the \AF{-Tuple} return type are refined based on the pattern the natural number
-matches. In the second clause, this tells us the \AF{-Tuple} argument is a pair,
-allowing us to match on it with the pair constructor \AIC{\_,\_}.
+Second, we define \AF{map\textasciicircum{}-Tuple} which takes a function and
+applies it to each one of the elements in a \AF{-Tuple}. Both the type of the
+\AF{-Tuple} argument and the \AF{-Tuple} return type are refined based on the
+pattern the natural number matches. In the second clause, this tells us the
+\AF{-Tuple} argument is a pair, allowing us to match on it with the pair
+constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
