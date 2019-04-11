@@ -8,7 +8,7 @@ import Category.Monad as CM
 open import Data.Bool
 open import Data.Product as Prod
 open import Data.List hiding ([_] ; lookup)
-open import Data.List.All as All hiding (lookup)
+open import Data.List.Relation.Unary.All as All hiding (lookup)
 open import Data.Maybe as Maybe
 import Data.Maybe.Categorical as MC
 
@@ -68,7 +68,7 @@ data Var- : Mode ─Scoped where
 \end{code}
 %</varmode>
 \begin{code}
-open import Data.List.Any
+open import Data.List.Relation.Unary.Any hiding (lookup)
 open import Data.List.Membership.Propositional
 
 toVar : m ∈ ms → Var m ms
@@ -163,31 +163,4 @@ Elaborate .alg   = λ where
   (Cut σ , t , refl)    → λ Γ → (σ ,_) <$> t Γ σ
 \end{code}
 %</elaborate>
-
-{-
-open Semantics
-
-Typecheck : Semantics Lang Var- Type-
-th^𝓥  Typecheck = λ v ρ γ → let (σ , x) = v (rewind _ γ ρ) in σ , unwind _ γ ρ x where
-
-  rewind : (Γ : List Mode) {Δ : List Mode} →
-          All (const Type) Δ →
-          Thinning Γ Δ →
-          All (const Type) Γ
-  rewind []       σs th = []
-  rewind (σ ∷ Γ)  σs th = get (lookup th z) σs ∷ (rewind Γ σs (select extend th))
-
-  got : {Δ : List Mode} {p : Mode} (k : Var p Δ) (γ : All (const Type) Δ) → Var (get k γ) (erase^All γ)
-  got z     (σ ∷ _) = z
-  got (s k) (_ ∷ γ) = s (got k γ)
-
-  unwind : (Γ : List Mode) {Δ : List Mode} {σ : Type}
-          (γ : All (const Type) Δ) (ρ : Thinning Γ Δ) → 
-           Var σ (erase^All (rewind Γ γ ρ)) → Var σ (erase^All γ)
-  unwind [] γ ρ ()
-  unwind (σ ∷ Γ) γ ρ z     = got (lookup ρ z) γ
-  unwind (σ ∷ Γ) γ ρ (s v) = unwind Γ γ (select extend ρ) v
-
-var    Typecheck = {!!}
--}
 \end{code}

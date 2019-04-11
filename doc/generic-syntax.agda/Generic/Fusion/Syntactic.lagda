@@ -49,7 +49,7 @@ module _ {I : Set} (d : Desc I) where
  SubRen : Fusion d Substitution Renaming Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
  Fusion.reifyᴬ  SubRen = λ _ → id
  Fusion.vl^𝓥ᴬ  SubRen = vl^Tm
- Fusion.th^𝓔ᴿ    SubRen {ρᴬ = ρ₁} {ρ₂} {ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
+ Fusion.th^𝓔ᴿ    SubRen {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
    begin
      ren (select ρ₂ σ) (lookup ρ₁ k) ≡⟨ sym $ ren² (lookup ρ₁ k) ρ₂ σ ⟩
      ren σ (ren ρ₂ (lookup ρ₁ k))    ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k) ⟩

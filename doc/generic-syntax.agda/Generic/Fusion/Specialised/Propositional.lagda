@@ -45,7 +45,7 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
   Fusion.reifyᴬ ren-sem = λ _ t → t
   Fusion.vl^𝓥ᴬ ren-sem = vl^Var
   Fusion.th^𝓔ᴿ   ren-sem = λ ρᴿ σ → packᴿ (λ v → cong (λ ρ → Semantics.th^𝓥 S ρ σ) (lookupᴿ ρᴿ v))
-  lookupᴿ (Fusion._>>ᴿ_ ren-sem {Γ} {Δ} {Θ} {ρ₁} {Ω} {ρ₂} {ρ₃} {ws} {vs} ρᴿ vsᴿ) v with split Θ v
+  lookupᴿ (Fusion._>>ᴿ_ ren-sem {Γ} {Δ} {ρ₁} {Ω} {ρ₂} {ρ₃} {Θ} {vs} {ws} ρᴿ vsᴿ) v with split Θ v
   ... | inj₁ vˡ = begin
     lookup (vs >> ρ₂) (injectˡ Δ (lookup (base vl^Var) vˡ))
       ≡⟨ injectˡ->> vs ρ₂ (lookup (base vl^Var) vˡ) ⟩
@@ -65,7 +65,7 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
     lookup ρ₃ vʳ
       ∎
   Fusion.varᴿ  ren-sem = λ ρᴿ v → cong (Semantics.var S) (lookupᴿ ρᴿ v)
-  Fusion.algᴿ  ren-sem {si} {Γ} {Δ} {ρᴬ = ρ₁} {Θ} {ρ₂} {ρ₃} ρᴿ b zp = begin
+  Fusion.algᴿ  ren-sem {Γ} {Δ} {ρ₁} {Θ} {ρ₂} {ρ₃} ρᴿ b zp = begin
     let
       v₁  = fmap d (Semantics.body Renaming ρ₁) b
       v₃  = fmap d (Semantics.body S ρ₃) b
