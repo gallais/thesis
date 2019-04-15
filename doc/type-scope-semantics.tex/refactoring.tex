@@ -13,7 +13,7 @@ In an unpublished manuscript, McBride~(\citeyear{mcbride2005type}) observes the
 similarity between the types and implementations of renaming and substitution for
 the simply typed λ-calculus (STλC) in a dependently typed language as shown in
 \cref{ren} (we focus only on \AIC{`var}, \AIC{`app}, and \AIC{`lam} for the moment).
-There are three differences between the implemenations of renaming and substitution:
+There are three differences between the implementations of renaming and substitution:
 
 \begin{enumerate}
   \item
@@ -22,7 +22,7 @@ There are three differences between the implemenations of renaming and substitut
     produces a term;
   \item
     when weakening a renaming to push it under a $λ$ we need only
-    post-compose the remaning with the De Bruijn variable successor
+    post-compose the renaming with the De Bruijn variable successor
     constructor \AIC{s} (which is essentially weakening for variables)
     whereas for a substitution we need a weakening operation for terms.
     It can be given by renaming via the successor constructor
@@ -31,7 +31,7 @@ There are three differences between the implemenations of renaming and substitut
     also in the $λ$ case, when pushing a renaming or a substitution under
     a binder we must extend it to ensure that the variable bound by the
     $λ$ is mapped to itself. For renaming this involves its extension by
-    the zeroth variable \AIC{z} whereas for subsitutions we must extend by
+    the zeroth variable \AIC{z} whereas for substitutions we must extend by
     the zeroth variable seen as a term (\AIC{`var} \AIC{z}).
 \end{enumerate}
 
@@ -74,7 +74,7 @@ fundamental lemma of \AR{Kit}s stated and proved in \cref{fig:kitlemma}.
 
 Thankfully, we can indeed recover renaming and substitution as two instances of
 the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
-and \AF{ren} defined this time as a corrolary of \AF{kit}
+and \AF{ren} defined this time as a corollary of \AF{kit}
 
 \begin{figure}[h]
 \begin{minipage}{0.4\textwidth}
@@ -83,7 +83,7 @@ and \AF{ren} defined this time as a corrolary of \AF{kit}
 \begin{minipage}{0.6\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
 \end{minipage}
-\caption{\AR{Kit} for Renaming, Renaming as a Corrolary of \AF{kit}\label{fig:renkit}}
+\caption{\AR{Kit} for Renaming, Renaming as a Corollary of \AF{kit}\label{fig:renkit}}
 \end{figure}
 
 Just like we needed \AF{ren} to define \AF{sub}, once we have recovered \AF{ren}
@@ -96,7 +96,7 @@ we can define the \AR{Kit} for substitution.
 \begin{minipage}{0.6\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
 \end{minipage}
-\caption{\AR{Kit} for Substitution, Substitution as a Corrolary of \AF{kit}\label{fig:subkit}}
+\caption{\AR{Kit} for Substitution, Substitution as a Corollary of \AF{kit}\label{fig:subkit}}
 \end{figure}
 
 \section{Opportunities for Further Generalizations}
@@ -126,7 +126,7 @@ here are twofold:
   \item
     We generalise the ``Kit'' approach from syntax to semantics bringing
     operations like normalisation by evaluation (cf.~\cref{nbe}) but also
-    printing with a name supply, or continutation passing style translation
+    printing with a name supply, or continuation passing style translation
     into our framework.
 
   \item
@@ -384,7 +384,7 @@ The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful enough 
 even logical predicates are instances of it. And we indeed exploit this power when
 defining normalisation by evaluation as a semantics: the model construction is, after
 all, nothing but a logical predicate. As a consequence it seems rather natural to call
-\AF{semantics} ``the fundamental lemma of semantics''. We prove it in a module parameterised
+\AF{semantics} ``the fundamental lemma of semantics''. We prove it in a module parametrised
 by a \AF{Semantics}, which would correspond to using a Section in Coq. It is defined by
 structural recursion on the term. Each constructor is replaced by its semantic counterpart
 which combines the induction hypotheses for its subterms.
@@ -526,7 +526,7 @@ to guarantee that the result is unambiguous.
 
 The fundamental \AF{lemma} of \AR{Semantics} will deliver a printer which needs to be run
 on a \AD{Stream} of distinct \AD{String}s. Our definition of \AF{names} (not
-shown here) simply cycles through the letters of the alphabet and guarantess
+shown here) simply cycles through the letters of the alphabet and guarantees
 uniqueness by appending a natural number incremented each time we are back at
 the beginning of the cycle. This crude name generation strategy would naturally
 be replaced with a more sophisticated one in a user-facing language: we could

@@ -51,14 +51,14 @@ freeing them from having to deal with variable binding, contexts and use models 
 la Kripke at the cost of using a large encoding. However we find scope safety
 enforced at the type level to be a helpful guide when formalising complex
 type theories. It helps us root out bugs related to fresh name generation,
-name capture or conversion from de Bruijn levels to de Bruijns indices.
+name capture or conversion from de Bruijn levels to de Bruijn indices.
 
 This construction really shines in a simply typed setting but it is not
 limited to it: we have successfully used an analogue of our Semantics
 framework to enforce scope safety when implementing the expected traversals
 (renaming, substitution, untyped normalisation by evaluation and printing
 with names) for the untyped λ-calculus (for which the notion of type safety
-does not make sense) or Martin-Löf type theory. Apart from NbE (which relies
+does not make sense) or Martin-Löf type theory. Apart from NBE (which relies
 on a non strictly-positive datatype), all of these traversals are total.
 
 This work is at the intersection of two traditions: the formal treatment

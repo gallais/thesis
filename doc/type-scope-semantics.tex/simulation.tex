@@ -71,7 +71,7 @@ describes simulation for computations.
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{simulation}
 
-The set of simulation constraints is in one-to-one correspondance with that of
+The set of simulation constraints is in one-to-one correspondence with that of
 semantical constructs. We start with value thinnings: provided two values are
 related, their respective thinnings should still be related.
 
@@ -161,7 +161,7 @@ values provided extensionally equal environments of values.
 Under the assumption that \AB{Syn} is a \AR{Syntactic} instance, we can define the
 corresponding \AR{Semantics} \AB{𝓢} by setting
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{synsem}.
-Using \AF{Eqᴿ} the \AR{Rel} defined as the pontwise lifting of propositional equality,
+Using \AF{Eqᴿ} the \AR{Rel} defined as the pointwise lifting of propositional equality,
 we can make our earlier claim formal and prove it. All the constraints are discharged
 either by reflexivity or by using congruence to combine various hypotheses.
 
@@ -191,7 +191,7 @@ ultimately equal. This lemma allows us to bridge that last gap.
 Similarly, it is sometimes the case that after a bit of rewriting we end up with an
 equality between one renaming and one substitution. But it turns out that as long as
 the substitution is only made up variables, it is indeed equal to the corresponding
-renaming. We can make this idea formal by introducting the \AF{VarTermᴿ} relation
+renaming. We can make this idea formal by introducing the \AF{VarTermᴿ} relation
 stating that a variable and a term are morally equal like so:
 
 \begin{figure}[h]

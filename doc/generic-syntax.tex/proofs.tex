@@ -48,7 +48,7 @@ Given a relation \AB{𝓥ᴿ} connecting values in \AB{𝓥ᴬ} and \AB{𝓥ᴮ}
 \AB{𝓒ᴿ} connecting computations in \AB{𝓒ᴬ} and \AB{𝓒ᴮ}, we can define \AF{Kripkeᴿ}
 relating values \AF{Kripke} \AB{𝓥ᴬ} \AB{𝓒ᴬ} and \AF{Kripke} \AB{𝓥ᴮ} \AB{𝓒ᴮ} by
 stating that they send related inputs to related outputs. It is a generalisation of
-the \AF{Kripkeᴿ} defined in \cref{fig:relationalkripke} to accomodate non-binders
+the \AF{Kripkeᴿ} defined in \cref{fig:relationalkripke} to accommodate non-binders
 and binders introducing more than one variable.
 
 \begin{figure}[h]
@@ -266,14 +266,14 @@ This lemma is once again proven mutually with its counterpart for \AR{Semantics}
 evaluation of the recursive positions using \AB{𝓢ᴬ} followed by their reification
 and their evaluation in \AB{𝓢ᴮ} should yield a piece of data \emph{structurally}
 equal to the one obtained by using \AB{𝓢ᴬᴮ} instead where the values replacing
-the recursive substructures are \AF{Kripkeᴿ}-reladed.
+the recursive substructures are \AF{Kripkeᴿ}-related.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodytype}
 \caption{Statement of the Fundamental Lemma of Fusion for Bodies\label{fig:fusiontype}}
 \end{figure}
 
-The proofs involve two functions we have not mentiond before: \AF{zip} maps a proof that
+The proofs involve two functions we have not mentioned before: \AF{zip} maps a proof that
 a property holds for any recursive substructure over the arguments of constructor to
 obtain a \AF{Zip} object. The proof we obtain does not exactly match the premise in
 \ARF{algᴿ}; we need to adjust it by rewriting an \AF{fmap}-fusion equality called

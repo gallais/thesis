@@ -29,7 +29,7 @@ should be considered implicitly bound at the beginning of the telescope.
 
 As is customary, we start our introduction to dependently-typed programming with
 the natural numbers. They are defined as an inductive type with two
-conctructors: \AIC{zero} and \AIC{suc}cessor.
+constructors: \AIC{zero} and \AIC{suc}cessor.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
 
@@ -53,7 +53,7 @@ projections.
 \end{minipage}
 
 Defining a record type \AR{R} also results in the definition of a module \AB{R}
-parameterised by a value of type \AR{R} and containing a projection function
+parametrised by a value of type \AR{R} and containing a projection function
 for each field. We can \AK{open} it to make these projections available to the
 outside world, or use \AB{R}-qualified names.
 
@@ -143,7 +143,7 @@ to force Agda to accept the definition.
 
 This is not at all satisfactory: we do not want to give up safety to write such a
 simple traversal. The usual solution to this issue is to remove the level of
-indirection introduced by the calll to \AF{map\textasciicircum{}Tuple} by mutually
+indirection introduced by the call to \AF{map\textasciicircum{}Tuple} by mutually
 defining with \AF{map\textasciicircum{}Rose} an inlined version of
 (\AF{map\textasciicircum{}Tuple} (\AF{map\textasciicircum{}Rose} \AB{f})).
 

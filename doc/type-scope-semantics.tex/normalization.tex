@@ -103,7 +103,7 @@ We will tackle this problem in~\cref{a-universe}.
 
 In the case of NBE, the environment values and the computations in the model
 will both use the same type family \AF{Model}, defined by induction on the
-\AD{Type} argument. The η-rules allow us to represent functions (respetively
+\AD{Type} argument. The η-rules allow us to represent functions (respectively
 inhabitants of \AIC{`Unit}) in the source language as function spaces
 (respectively values of type \AR{⊤}). Evaluating a \AIC{`Bool} may however
 yield a stuck term so we can't expect the model to give us anything more than
@@ -123,7 +123,7 @@ of (\AF{Model} (\AB{σ} \AIC{`→} \AB{τ}) \AB{Γ}) are functions in Agda.
 
 This model is defined by induction on the type in terms either of
 syntactic objects (\AD{Nf}) or using the \AF{□}-operator which is
-a closure operator for Thinnings. As such, it is trivial to prove
+a closure operator for thinnings. As such, it is trivial to prove
 that for all type \AB{σ}, (\AF{Model} \AB{σ}) is \AF{Thinnable}.
 
 \begin{figure}[h]
@@ -203,8 +203,8 @@ To reproduce this behaviour, NBE must be amended.
 It is possible to alter the model definition described earlier so that it
 avoids unnecessary η-expansions. We proceed by enriching the traditional
 model with extra syntactical artefacts in a manner reminiscent of Coquand
-and Dybjer's~(\citeyear{CoqDybSK}) approach to defining an NBE procedure for the SK combinator calculus. Their resorting to glueing
-terms to elements of the model was dictated by the sheer impossibily to write
+and Dybjer's~(\citeyear{CoqDybSK}) approach to defining an NBE procedure for the SK combinator calculus. Their resorting to gluing
+terms to elements of the model was dictated by the sheer impossibility to write
 a sensible reification procedure but, in hindsight, it provides us with a
 powerful technique to build models internalizing alternative equational
 theories.
@@ -219,7 +219,7 @@ us to embed all neutrals into normal forms, and to  mutually defining the model
 \end{figure}
 
 These mutual definitions allow us to make a careful distinction between values
-arising from (non expanded) stuck terms and the ones wich are constructor headed
+arising from (non expanded) stuck terms and the ones which are constructor headed
 and have a computational behaviour associated to them. The values in the acting
 model are storing these behaviours be it either actual proofs of \AF{⊤}, actual
 \AIC{`Bool}eans or actual Agda functions depending on the type of the term. It is
@@ -327,7 +327,7 @@ be evaluated.
 \caption{Model Definition for Computing Weak-Head Normal Forms\label{fig:betaiotamodel}}
 \end{figure}
 
-\AF{Thinnable} can be defined rather straightforwadly based on the template provided
+\AF{Thinnable} can be defined rather straightforwardly based on the template provided
 in the previous section: once more all the notions used in the model definition
 are \AF{Thinnable} themselves. Reflection and reification also follow the same recipe
 as in the previous section.
