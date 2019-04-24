@@ -24,7 +24,7 @@ open import Generic.Simulation.Syntactic
 open import Generic.Fusion as F
 open import Generic.Fusion.Utils
 open import Generic.Fusion.Syntactic as FS
-open import Generic.Zip
+open import Generic.Relator as Relator
 
 open Semantics
 
@@ -84,7 +84,7 @@ module _ {I : Set} {d : Desc I} where
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Var) t′))
        ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Var) (Semantics.body UnLet ρ₂) t′) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Δ i → (Semantics.body UnLet ρ₂ Δ i) ∘ reify vl^Var Δ i) t′)
-       ≡⟨ proj₂-eq $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) (d `+ Let) eq^t ⟩
+       ≡⟨ proj₂-eq $ Relator.reifyᴿ Eqᴿ (d `+ Let) (S.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) eq^t ⟩
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₃) t)
        ∎
 
@@ -205,7 +205,7 @@ module _ {I : Set} {d : Desc I} where
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Tm) t′))
        ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body UnLet ρ₂) t′) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Δ i → Semantics.body UnLet ρ₂ Δ i ∘ reify vl^Tm Δ i) t′)
-       ≡⟨ proj₂-eq $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) (d `+ Let) eq^t ⟩
+       ≡⟨ proj₂-eq $ Relator.reifyᴿ Eqᴿ (d `+ Let) (S.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) eq^t ⟩
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₃) t)
        ∎
 

@@ -42,7 +42,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
   generic-syntax.agda/Generic/Semantics.lagda \
   generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
-  generic-syntax.agda/Generic/Zip.lagda \
+  generic-syntax.agda/Generic/Relator.lagda \
   generic-syntax.agda/Generic/Identity.lagda \
   generic-syntax.agda/Generic/Simulation.lagda \
   generic-syntax.agda/Generic/Simulation/Syntactic.lagda \
