@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Identity where
 
 open import Size
@@ -12,7 +14,7 @@ open import Data.Environment
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Zip
+open import Generic.Relator
 open import Generic.Simulation
 open import Generic.Simulation.Syntactic
 
@@ -42,7 +44,7 @@ module _ {I : Set} {d : Desc I} where
 
 -- Equality of constructor telescopes is given to use by `Zip` together with the
 -- mutually defined notion of equality
- ⟨ e ⟩ b ≅ c = Zip e (λ _ _  t u → t ≅ u) b c
+ ⟨ e ⟩ b ≅ c = ⟦ e ⟧ᴿ (λ _ _  t u → t ≅ u) b c
 
 
 -- Proof that size-heterogeneous pointwise equality coincides with propositional
@@ -67,7 +69,7 @@ module RenId {I : Set} {d : Desc I} where
 
  ren-id (`var k) ρᴿ = `var (trans (lookupᴿ ρᴿ k) (lookup-base^Var k))
  ren-id (`con t) ρᴿ = `con (subst₂ (⟨ d ⟩_≅_) (sym $ fmap² d (Semantics.body Renaming _) (reify vl^Var) _) (fmap-id d _)
-                            $ zip d (λ Δ i t → ren-body-id Δ i t ρᴿ) _)
+                            $ liftᴿ d (λ Δ i t → ren-body-id Δ i t ρᴿ) _)
 
  ren-body-id []        i t     = ren-id t
  ren-body-id Δ@(_ ∷ _) i {Γ} t {ρ} ρᴿ = ren-id t eqᴿ where

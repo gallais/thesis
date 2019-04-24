@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Examples.ElaborationLet where
 
 open import Size

@@ -1,5 +1,7 @@
 \begin{code}
-module Data.Environment {I : Set} where
+{-# OPTIONS --safe #-}
+
+module Data.Environment where
 
 open import Data.Nat.Base as ℕ
 open import Data.List.Base hiding (lookup ; [_])
@@ -13,10 +15,10 @@ open import Data.Var hiding (_<$>_)
 private
 
   variable
-    A : Set
+    I A : Set
     i σ : I
     T : List I → Set
-    𝓥 𝓦 : I ─Scoped
+    𝓥 𝓦 𝓒 : I ─Scoped
     Γ Δ Θ : List I
 
 infix 3 _─Env
@@ -54,31 +56,31 @@ data Split (i : I) Γ Δ : Var i (Γ ++ Δ) → Set where
   inj₁ : (k : Var i Γ) → Split i Γ Δ (injectˡ Δ k)
   inj₂ : (k : Var i Δ) → Split i Γ Δ (injectʳ Γ k)
 
-split : ∀ {Δ} {i : I} Γ (k : Var i (Γ ++ Δ)) → Split i Γ Δ k
+split : ∀ Γ (k : Var i (Γ ++ Δ)) → Split i Γ Δ k
 split []      k     = inj₂ k
 split (σ ∷ Γ) z     = inj₁ z
 split (σ ∷ Γ) (s k) with split Γ k
 ... | inj₁ k₁ = inj₁ (s k₁)
 ... | inj₂ k₂ = inj₂ k₂
 
-split-injectˡ :  (Γ : List I) {Δ : List I} {σ : I} (v : Var σ Δ) → split Δ (injectˡ Γ v) ≡ inj₁ v
+split-injectˡ : (Γ : List I) (v : Var σ Δ) → split Δ (injectˡ Γ v) ≡ inj₁ v
 split-injectˡ Γ z                               = refl
 split-injectˡ Γ (s v) rewrite split-injectˡ Γ v = refl
 
-split-injectʳ : {Γ : List I} (Δ : List I) {σ : I} (v : Var σ Γ) → split Δ (injectʳ Δ v) ≡ inj₂ v
+split-injectʳ : (Δ : List I) (v : Var σ Γ) → split Δ (injectʳ Δ v) ≡ inj₂ v
 split-injectʳ []      v                           = refl
 split-injectʳ (_ ∷ Δ) v rewrite split-injectʳ Δ v = refl
 
-_>>_ : ∀ {𝓥 Γ Δ Θ} → (Γ ─Env) 𝓥 Θ → (Δ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
+_>>_ : (Γ ─Env) 𝓥 Θ → (Δ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
 lookup (_>>_ {Γ = Γ} ρ₁ ρ₂) k with split Γ k
 ... | inj₁ k₁ = lookup ρ₁ k₁
 ... | inj₂ k₂ = lookup ρ₂ k₂
 
-injectˡ->> : ∀ {𝓥 Γ Δ Θ i} (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Γ) →
+injectˡ->> : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Γ) →
              lookup (ρ₁ >> ρ₂) (injectˡ Δ v) ≡ lookup ρ₁ v
 injectˡ->> {Δ = Δ} ρ₁ ρ₂ v rewrite split-injectˡ Δ v = refl
 
-injectʳ->> : ∀ {𝓥 Γ Δ Θ i} (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Δ) →
+injectʳ->> : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Δ) →
              lookup (ρ₁ >> ρ₂) (injectʳ Γ v) ≡ lookup ρ₂ v
 injectʳ->> {Γ = Γ} ρ₁ ρ₂ v rewrite split-injectʳ Γ v = refl
 
@@ -119,16 +121,16 @@ bind _ = extend
 
 -- Like the flipped version of _>>_ but it computes. Which is convenient when
 -- dealing with concrete Γs (cf. βred)
-_<+>_ : ∀ {Γ 𝓥 Δ Θ} → (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
-_<+>_ {[]}    ρ₁ ρ₂ = ρ₁
-_<+>_ {_ ∷ Γ} ρ₁ ρ₂ = (ρ₁ <+> select extend ρ₂) ∙ lookup ρ₂ z
+_<+>_ : (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
+_<+>_ {Γ = []}    ρ₁ ρ₂ = ρ₁
+_<+>_ {Γ = _ ∷ Γ} ρ₁ ρ₂ = (ρ₁ <+> select extend ρ₂) ∙ lookup ρ₂ z
 
-injectˡ-<+> : ∀ Δ {𝓥 Γ Θ i} (ρ₁ : (Δ ─Env) 𝓥 Θ) (ρ₂ : (Γ ─Env) 𝓥 Θ) (v : Var i Γ) →
+injectˡ-<+> : ∀ Δ (ρ₁ : (Δ ─Env) 𝓥 Θ) (ρ₂ : (Γ ─Env) 𝓥 Θ) (v : Var i Γ) →
               lookup (ρ₁ <+> ρ₂) (injectˡ Δ v) ≡ lookup ρ₂ v
 injectˡ-<+> Δ ρ₁ ρ₂ z     = refl
 injectˡ-<+> Δ ρ₁ ρ₂ (s v) = injectˡ-<+> Δ ρ₁ (select extend ρ₂) v
 
-injectʳ-<+> : ∀ Γ {𝓥 Δ Θ i} (ρ₁ : (Δ ─Env) 𝓥 Θ) (ρ₂ : (Γ ─Env) 𝓥 Θ) (v : Var i Δ) →
+injectʳ-<+> : ∀ Γ (ρ₁ : (Δ ─Env) 𝓥 Θ) (ρ₂ : (Γ ─Env) 𝓥 Θ) (v : Var i Δ) →
               lookup (ρ₁ <+> ρ₂) (injectʳ Γ v) ≡ lookup ρ₁ v
 injectʳ-<+> []      ρ₁ ρ₂ v = refl
 injectʳ-<+> (x ∷ Γ) ρ₁ ρ₂ v = injectʳ-<+> Γ ρ₁ (select extend ρ₂) v
@@ -186,7 +188,7 @@ th^□ = duplicate
 %</thBox>
 %<*thConst>
 \begin{code}
-th^const : Thinnable (const A)
+th^const : Thinnable {I} (const A)
 th^const a _ = a
 \end{code}
 %</thConst>
@@ -199,28 +201,26 @@ Kripke 𝓥 𝓒 Δ   j = □ ((Δ ─Env) 𝓥 ⇒ 𝓒 j)
 %</kripke>
 \begin{code}
 
-module _ {𝓥 𝓒 : I ─Scoped} where
+_$$_ : ∀[ Kripke 𝓥 𝓒 Γ i ⇒ (Γ ─Env) 𝓥 ⇒ 𝓒 i ]
+_$$_ {Γ = []}    f ts = f
+_$$_ {Γ = _ ∷ _} f ts = extract f ts
 
-  _$$_ : ∀ {Γ i} → ∀[ Kripke 𝓥 𝓒 Γ i ⇒ (Γ ─Env) 𝓥 ⇒ 𝓒 i ]
-  _$$_ {[]}    f ts = f
-  _$$_ {_ ∷ _} f ts = extract f ts
-
-  th^Kr : (Γ : List I) → (∀ {i} → Thinnable (𝓒 i)) →
-          {i : I} → Thinnable (Kripke 𝓥 𝓒 Γ i)
-  th^Kr []       th^𝓒 = th^𝓒
-  th^Kr (_ ∷ _)  th^𝓒 = th^□
+th^Kr : (Γ : List I) → (∀ {i} → Thinnable (𝓒 i)) →
+        Thinnable (Kripke 𝓥 𝓒 Γ i)
+th^Kr []       th^𝓒 = th^𝓒
+th^Kr (_ ∷ _)  th^𝓒 = th^□
 
 open import Category.Applicative
 
-module _ {𝓥 : I ─Scoped} {A : Set → Set} {{app : RawApplicative A}} where
+module _ {A : Set → Set} {{app : RawApplicative A}} where
 
  private module A = RawApplicative app
  open A
 
- sequenceA : {Γ Δ : List I} → (Γ ─Env) (λ i Γ → A (𝓥 i Γ)) Δ → A ((Γ ─Env) 𝓥 Δ)
+ sequenceA : (Γ ─Env) (λ i Γ → A (𝓥 i Γ)) Δ → A ((Γ ─Env) 𝓥 Δ)
  sequenceA = go _ where
 
-   go : ∀ Γ {Δ} → (Γ ─Env) (λ i Γ → A (𝓥 i Γ)) Δ → A ((Γ ─Env) 𝓥 Δ)
+   go : ∀ Γ → (Γ ─Env) (λ i Γ → A (𝓥 i Γ)) Δ → A ((Γ ─Env) 𝓥 Δ)
    go []       ρ = pure ε
-   go (σ ∷ Γ)  ρ = flip _∙_ A.<$> lookup ρ z ⊛ go Γ (select extend ρ)
+   go (σ ∷ Γ)  ρ = _∙_ A.<$> go Γ (select extend ρ) ⊛ lookup ρ z
 \end{code}

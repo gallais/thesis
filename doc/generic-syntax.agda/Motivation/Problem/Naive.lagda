@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Motivation.Problem.Naive where
 
 open import Relation.Unary

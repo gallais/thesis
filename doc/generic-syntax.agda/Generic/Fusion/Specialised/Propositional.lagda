@@ -9,6 +9,8 @@
 -- with renaming, substitution, and let-elaboration simpler.
 --------------------------------------------------------------------------------
 
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Fusion.Specialised.Propositional where
 
 open import Relation.Unary
@@ -19,7 +21,7 @@ open import Data.Relation
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Zip
+open import Generic.Relator
 open import Generic.Fusion
 open import Generic.Identity
 
@@ -37,7 +39,7 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
             All Eqᴿ _ (select ρ₁ ρ₂) ρ₃ →
             let f = λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ
                 g = Semantics.body S ρ₃
-            in Zip d (Kripkeᴿ Eqᴿ Eqᴿ) (fmap d f b) (fmap d g b) →
+            in ⟦ d ⟧ᴿ (Kripkeᴿ Eqᴿ Eqᴿ) (fmap d f b) (fmap d g b) →
             Semantics.alg S (fmap d f b) ≡ Semantics.alg S (fmap d g b))
         where
 
@@ -83,7 +85,7 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
     Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) (fmap d (Semantics.body Renaming ρ₁) b))
       ≡⟨ cong (Semantics.alg S) aux ⟩
     Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ) b)
-      ≡⟨ alg-fusion b ρᴿ (subst (λ t → Zip d _ t v₃) aux zp) ⟩
+      ≡⟨ alg-fusion b ρᴿ (subst (λ t → ⟦ d ⟧ᴿ _ t v₃) aux zp) ⟩
     Semantics.alg S v₃
       ∎
 \end{code}

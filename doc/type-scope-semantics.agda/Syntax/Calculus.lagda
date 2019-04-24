@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Syntax.Calculus where
 
 open import Data.Var

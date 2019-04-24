@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 open import Data.Var hiding (z; s; _<$>_)
 
 module Generic.Fusion {I : Set} {𝓥ᴬ 𝓥ᴮ 𝓥ᴬᴮ 𝓒ᴬ 𝓒ᴮ 𝓒ᴬᴮ : I ─Scoped} where
@@ -16,7 +18,7 @@ open import Data.Environment
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Zip
+open import Generic.Relator
 
 private
   variable
@@ -101,7 +103,7 @@ record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Se
                 bᴬ   = fmap d (𝓢ᴬ.body ρᴬ) b
                 bᴮ   = fmap d (λ Δ i → 𝓢ᴮ.body ρᴮ Δ i ∘ quoteᴬ Δ i) bᴬ
                 bᴬᴮ  = fmap d (𝓢ᴬᴮ.body ρᴬᴮ) b
-           in Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) bᴮ bᴬᴮ → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ (`con b)
+           in ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) bᴮ bᴬᴮ → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ (`con b)
 \end{code}
 %</algR>
 %<*fusiontype>
@@ -120,10 +122,10 @@ record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Se
 %<*fusioncode>
 \begin{code}
   fusion ρᴿ (`var v) = varᴿ ρᴿ v
-  fusion ρᴿ (`con t) = algᴿ ρᴿ t (rew (zip d (body ρᴿ) t)) where
+  fusion ρᴿ (`con t) = algᴿ ρᴿ t (rew (liftᴿ d (body ρᴿ) t)) where
 
      eq  = fmap² d (𝓢ᴬ.body _) (λ Δ i t → 𝓢ᴮ.body _ Δ i (quoteᴬ Δ i t)) t
-     rew = subst (λ v → Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) v _) (sym eq)
+     rew = subst (λ v → ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) v _) (sym eq)
 \end{code}
 %</fusioncode>
 %<*bodycode>

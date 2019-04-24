@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Simulation.Syntactic where
 
 open import Size
@@ -8,14 +10,13 @@ open import Relation.Binary.PropositionalEquality
 
 open import Data.Var.Varlike
 open import Data.Environment
-open import Data.Relation
+open import Data.Relation as Relation
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Zip
-open import Generic.Simulation
-
-open Simulation
+open import Generic.Relator as Relator
+open import Generic.Simulation as Simulation
+open Simulation.Simulation
 
 module _ {I : Set} {d : Desc I} where
 
@@ -26,7 +27,7 @@ module _ {I : Set} {d : Desc I} where
  RenExt .thᴿ   = λ ρ → cong (lookup ρ)
  RenExt .varᴿ  = cong `var
  RenExt .algᴿ  = λ _ _ →
-   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d
+   cong `con ∘ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var))
 \end{code}
 %</renext>
 %<*subext>
@@ -35,7 +36,7 @@ module _ {I : Set} {d : Desc I} where
  SubExt .thᴿ   = λ ρ → cong (ren ρ)
  SubExt .varᴿ  = id
  SubExt .algᴿ  = λ _ _ →
-   cong `con ∘ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d
+   cong `con ∘ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm))
 \end{code}
 %</subext>
 %<*rensub>
@@ -44,7 +45,7 @@ module _ {I : Set} {d : Desc I} where
  RenSub .varᴿ  = id
  RenSub .thᴿ   = λ ρ → cong (λ t → th^Tm t ρ)
  RenSub .algᴿ  = λ _ _ →
-   cong `con ∘ zip^reify VarTmᴿ (reifyᴿ VarTmᴿ Eqᴿ vl^VarTm) d
+   cong `con ∘ Relator.reifyᴿ VarTmᴿ d (Simulation.reifyᴿ VarTmᴿ Eqᴿ vl^VarTm)
 \end{code}
 %</rensub>
 \begin{code}
@@ -57,6 +58,6 @@ module _ {I : Set} {d : Desc I} where
 %<*rensubfun>
 \begin{code}
  rensub :  (ρ : Thinning Γ Δ) (t : Tm d ∞ σ Γ) → ren ρ t ≡ sub (`var <$> ρ) t
- rensub ρ = Simulation.sim RenSub (packᴿ (λ _ → refl))
+ rensub ρ = Simulation.sim RenSub (packᴿ λ _ → refl)
 \end{code}
 %</rensubfun>

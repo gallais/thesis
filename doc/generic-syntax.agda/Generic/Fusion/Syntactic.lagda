@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Fusion.Syntactic where
 
 open import Size
@@ -10,13 +12,13 @@ open import Function
 open import Data.Var hiding (_<$>_)
 open import Data.Var.Varlike
 open import Data.Environment
-open import Data.Relation
+open import Data.Relation as Relation
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Simulation
+open import Generic.Simulation as Simulation
 import Generic.Simulation.Syntactic as S
-open import Generic.Zip
+open import Generic.Relator as Relator
 open import Generic.Identity
 open import Generic.Fusion
 open import Generic.Fusion.Utils
@@ -32,19 +34,19 @@ module _ {I : Set} (d : Desc I) where
 
  Ren² : Fusion d Renaming Renaming Renaming (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  Ren² = FusProp.ren-sem d Renaming $ λ b ρᴿ zp →
-   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) d zp
+   cong `con $ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) zp
 
  ren² : (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
         ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
- ren² t ρ₁ ρ₂ = Fusion.fusion Ren² reflᴿ t
+ ren² t ρ₁ ρ₂ = Fusion.fusion Ren² Relation.reflᴿ t
 
  RenSub : Fusion d Renaming Substitution Substitution (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
  RenSub = FusProp.ren-sem d Substitution $ λ b ρᴿ zp →
-   cong `con $ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zp
+   cong `con $ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) zp
 
  rensub :  (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
            sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
- rensub t ρ₁ ρ₂ = Fusion.fusion RenSub reflᴿ t
+ rensub t ρ₁ ρ₂ = Fusion.fusion RenSub Relation.reflᴿ t
 
  SubRen : Fusion d Substitution Renaming Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
  Fusion.reifyᴬ  SubRen = λ _ → id
@@ -64,7 +66,7 @@ module _ {I : Set} (d : Desc I) where
      fmap d (reify vl^Var) (fmap d (Semantics.body Renaming ρ₂) (fmap d (reify vl^Tm) v₁))
          ≡⟨ cong (fmap d (reify vl^Var)) (fmap² d (reify vl^Tm) (Semantics.body Renaming ρ₂) v₁) ⟩
      fmap d (reify vl^Var) (fmap d (λ Φ i → (Semantics.body Renaming ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
-         ≡⟨ zip^reify VarTmᴿ (reifyᴿ VarTmᴿ Eqᴿ vl^VarTm) d zipped ⟩
+         ≡⟨ Relator.reifyᴿ VarTmᴿ d (Simulation.reifyᴿ VarTmᴿ Eqᴿ vl^VarTm) zipped ⟩
       fmap d (reify vl^Tm) v₃
    ∎
 
@@ -76,7 +78,7 @@ module _ {I : Set} (d : Desc I) where
 \end{code}
 %</subren>
 \begin{code}
- subren t ρ₁ ρ₂ = Fusion.fusion SubRen reflᴿ t
+ subren t ρ₁ ρ₂ = Fusion.fusion SubRen Relation.reflᴿ t
 
  Sub² : Fusion d Substitution Substitution Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
  Fusion.reifyᴬ Sub² = λ _ t → t
@@ -96,7 +98,7 @@ module _ {I : Set} (d : Desc I) where
      fmap d (reify vl^Tm) (fmap d (Semantics.body Substitution ρ₂) (fmap d (reify vl^Tm) v₁))
          ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body Substitution ρ₂) v₁) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Φ i → (Semantics.body Substitution ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
-         ≡⟨ zip^reify Eqᴿ (reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) d zipped ⟩
+         ≡⟨ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) zipped ⟩
       fmap d (reify vl^Tm) v₃
    ∎
 
@@ -108,7 +110,7 @@ module _ {I : Set} (d : Desc I) where
 \end{code}
 %</subsub>
 \begin{code}
- sub² t ρ₁ ρ₂ = Fusion.fusion Sub² reflᴿ t
+ sub² t ρ₁ ρ₂ = Fusion.fusion Sub² Relation.reflᴿ t
 
  ren-sub-fusionᴿ : ∀ {Δ Γ Θ} (σ : (Δ ─Env) (Tm d ∞) Γ) (ρ : Thinning Γ Θ) →
    All Eqᴿ _ (select (lift vl^Var Δ ρ) (base vl^Tm <+> (ren ρ <$> σ)))
@@ -151,7 +153,7 @@ module _ {I : Set} (d : Desc I) where
      ∎
 
  sub-sub-fusionᴿ : ∀ {Δ Γ Θ} (σ : (Δ ─Env) (Tm d ∞) Γ) (ρ : (Γ ─Env) (Tm d ∞) Θ) →
-   All (Eqᴿ {I} {Tm d ∞}) _ (sub (base vl^Tm {Θ} <+> (sub ρ <$> σ)) <$> lift vl^Tm Δ {Γ} ρ)
+   All (Eqᴿ {I} {Tm d ∞}) _ (sub (base vl^Tm {Θ} <+> (sub ρ <$> σ)) <$> lift vl^Tm Δ ρ)
                           (sub ρ <$> (base vl^Tm <+> σ))
  lookupᴿ (sub-sub-fusionᴿ {Δ} {Γ} {Θ} σ ρ) k with split Δ k
  ... | inj₁ k₁ = begin

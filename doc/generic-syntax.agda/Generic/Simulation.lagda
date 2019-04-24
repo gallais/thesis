@@ -1,4 +1,5 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
 
 open import Data.Var hiding (_<$>_; z; s)
 open import Data.Relation
@@ -16,7 +17,7 @@ open import Data.Var.Varlike
 open import Data.Environment
 open import Generic.Syntax
 open import Generic.Semantics
-open import Generic.Zip
+open import Generic.Relator using (⟦_⟧ᴿ ; liftᴿ)
 
 private
   variable
@@ -66,7 +67,7 @@ record Simulation (d : Desc I)
     algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
             let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
                  vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
-            in Zip d (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
+            in ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
 \end{code}
 %</algR>
 %<*simbody>
@@ -77,7 +78,7 @@ record Simulation (d : Desc I)
            Kripkeᴿ 𝓥ᴿ 𝓒ᴿ Δ j (𝓢ᴬ.body ρᴬ Δ j t) (𝓢ᴮ.body ρᴮ Δ j t)
 
   sim ρᴿ (`var k) = varᴿ (lookupᴿ ρᴿ k)
-  sim ρᴿ (`con t) = algᴿ t ρᴿ (zip d (body ρᴿ) t)
+  sim ρᴿ (`con t) = algᴿ t ρᴿ (liftᴿ d (body ρᴿ) t)
 
   body ρᴿ []       i t = sim ρᴿ t
   body ρᴿ (_ ∷ _)  i t = λ σ vsᴿ → sim (vsᴿ >>ᴿ (thᴿ σ <$>ᴿ ρᴿ)) t

@@ -1,5 +1,7 @@
 \begin{code}
-module Data.Relation {I : Set} where
+{-# OPTIONS --safe --sized-types #-}
+
+module Data.Relation where
 
 open import Size
 open import Data.Sum
@@ -12,6 +14,13 @@ open import Relation.Unary hiding (U)
 open import Agda.Builtin.Equality
 open import Function
 
+private
+  variable
+    I : Set
+    σ : I
+    T U : I ─Scoped
+    Γ Δ : List I
+
 \end{code}
 %<*rel>
 \begin{code}
@@ -23,27 +32,21 @@ record Rel (T U : I ─Scoped) : Set₁ where
 \begin{code}
 open Rel public
 
-private
-  variable
-    σ : I
-
-module _ {T U} {Δ} where
 \end{code}
 %<*all>
 \begin{code}
-  record All (𝓡 : Rel T U) Γ (ρᵀ : (Γ ─Env) T Δ) (ρᵁ : (Γ ─Env) U Δ) : Set where
-    constructor packᴿ
-    field lookupᴿ : (k : Var σ Γ) → rel 𝓡 σ (lookup ρᵀ k) (lookup ρᵁ k)
+record All (𝓡 : Rel T U) Γ (ρᵀ : (Γ ─Env) T Δ) (ρᵁ : (Γ ─Env) U Δ) : Set where
+  constructor packᴿ
+  field lookupᴿ : (k : Var σ Γ) → rel 𝓡 σ (lookup ρᵀ k) (lookup ρᵁ k)
 \end{code}
 %</all>
 \begin{code}
-  open All public
+open All public
 
 module _ {T U : I ─Scoped} {𝓡 : Rel T U} where
 
   private
     variable
-      Γ Δ : List I
       ρᵀ σᵀ : (Γ ─Env) T Δ
       ρᵁ σᵁ : (Γ ─Env) U Δ
       vᵀ : T σ Γ
@@ -82,7 +85,6 @@ module _ {A : I ─Scoped} where
 
   private
     variable
-      Γ Δ : List I
       ρ : (Γ ─Env) A Δ
 
   Eqᴿ : Rel A A

@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Fusion.Utils where
 
 open import Data.Var hiding (_<$>_)
@@ -6,9 +8,9 @@ open import Data.Var hiding (_<$>_)
 open import Size
 open import Data.List hiding ([_] ; zip ; lookup)
 open import Function renaming (_∘′_ to _∘_) hiding (_∘_)
+open import Relation.Unary
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
-open import Relation.Unary
 open import Data.Relation hiding (_>>ᴿ_)
 open import Data.Var.Varlike
 open import Data.Environment
@@ -16,7 +18,6 @@ open import Data.Environment
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
-open import Generic.Zip
 open import Generic.Fusion
 
 module _ {I : Set} {T : I ─Scoped} where

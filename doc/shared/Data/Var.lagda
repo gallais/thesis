@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 -- When scopes are represented by lists of kinds, a variable of
 -- a given kind is a position in such a list. This is a strongly
 -- typed version of de Bruijn indices hence the name we picked

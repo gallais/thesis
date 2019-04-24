@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Semantics.Printing where
 
 open import Size using (∞)
@@ -145,7 +147,7 @@ print t = proj₁ $ printer t names
 \end{code}
 %<*test>
 \begin{code}
-_ :  print (Term (σ `→ α) (α ∷ β ∷ []) ∋ `lam (`var (s z))) ≡ "λc. a"
+_ :  print (Term (σ `→ α) (α ∷ β ∷ []) ∋ `lam (`var (s z))) ≡ "λc. b"
 _ = refl
 \end{code}
 %</test>

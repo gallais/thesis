@@ -1,4 +1,5 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
 
 module Generic.Semantics {I : Set} where
 
