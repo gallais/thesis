@@ -1,18 +1,27 @@
 \chapter{Introduction}
 
-In modern typed programming languages, programmers writing embedded Domain Specific
-Languages (DSLs) (\cite{hudak1996building}) and researchers formalising them can
-now use the host language's type system to help them. Using Generalised Algebraic
-Data Types (GADTs) or the more general indexed families of type theory
-(\cite{dybjer1994inductive}) for representing their syntax, programmers can
-\emph{statically} enforce some of the invariants in their languages. Managing
-variable scope is a popular use case (\cite{altenkirch1999monadic}) as directly
-manipulating raw de Bruijn indices is error-prone. Solutions range from enforcing
-well scopedness to ensuring full type and scope correctness. In short, we use
-types to ensure that ``illegal states are unrepresentable'', where illegal states
-are ill scoped or ill typed terms.
+In modern typed programming languages, programmers writing embedded Domain
+Specific Languages (DSLs) (\cite{hudak1996building}) and researchers
+formalising them can now get help from the host language's type system.
+Their language's deep embeddings as inductive types can enforce strong
+invariants, their programs can be proven to be invariant-respecting,
+and they can even prove theorems about these programs.
 
-The definition of scope-and-type safe representations is naturally only a start:
+\paragraph{Data} Using Generalised Algebraic Data Types (GADTs) or the more
+general indexed families of type theory (\cite{dybjer1994inductive}) for
+representing their syntax, programmers can \emph{statically} enforce some of
+the invariants in their languages.
+
+Managing variable scope is a popular use case
+(\cite{BELLEGARDE1994287,bird_paterson_1999,altenkirch1999monadic}) as directly
+manipulating raw de Bruijn indices (\cite{de1972lambda}) is error-prone.
+
+
+Solutions range from enforcing well scopedness to ensuring full type and scope
+correctness. In short, we use types to ensure that ``illegal states are unrepresentable'',
+where illegal states are ill scoped or ill typed terms.
+
+\paragraph{Programs} The definition of \scopeandtypesafe{} representations is naturally only a start:
 once the programmer has access to a good representation of the language they are
 interested in, they will then want to (re)implement standard traversals
 manipulating terms. Renaming and substitution are the two most typical examples
@@ -20,9 +29,9 @@ of such traversals. Other common examples include an evaluator, a printer for
 debugging purposes and eventually various compilation passes such as a continuation
 passing style transformation or some form of inlining. Now that well-typedness
 and well-scopedness are enforced statically, all of these traversals have to be
-implemented in a type and scope safe manner.
+implemented in a \scopeandtypesafe{} manner.
 
-The third hurdle is only faced by those that want really high assurance or whose
+\paragraph{Proofs} This last problem is only faced by those that want really high assurance or whose
 work is to study a language's meta-theory: they need to prove theorems about these
 traversals. The most common statements are simulation lemmas stating that two
 semantics transport related inputs to related outputs, or fusion lemmas demonstrating
@@ -63,11 +72,12 @@ these programs.
 
 \section{Source Material}
 
-This thesis is based on the content of two fully-formalised published papers which correspond
-roughly to part one and two: ``Type-and-scope Safe Programs and Their Proofs''
-(\cite{allais2017type, repo2017}) and
-``A Type and Scope Safe Universe of Syntaxes with Binding: Their Semantics and Proofs''
-(\cite{generic-syntax, repo2018}).
+This thesis is based on the content of two fully-formalised published papers. They
+correspond roughly to part one and two on the one hand
+(``Type-and-scope Safe Programs and Their Proofs'' \cite{allais2017type, repo2017})
+and part three on the other
+(``A Type and Scope Safe Universe of Syntaxes with Binding: Their Semantics and Proofs''
+\cite{generic-syntax, repo2018}).
 
 The study of variations on normalisation by evaluation in \cref{sec:variationsnormalisation}
 originated from the work on a third paper ``New equations for neutral terms''
@@ -80,3 +90,5 @@ POPLMark Reloaded challenge currently under review for publication
 (\cite{poplmarkreloaded, poplmark2}) for which we formalised a proof of
 strong normalisation for the simply-typed lambda-calculus (and its extension
 with sum types).
+
+\section{Plan}

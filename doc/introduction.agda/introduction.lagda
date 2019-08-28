@@ -1,7 +1,40 @@
 \begin{code}
 module introduction where
 
+open import Agda.Builtin.Equality
+
 \end{code}
+%<*idType>
+\begin{code}
+ID : Set₁
+ID = {A : Set} → A → A
+\end{code}
+%</idType>
+
+%<*idTerm>
+\begin{code}
+id : ID
+id x = x
+\end{code}
+%</idTerm>
+
+
+%<*bool>
+\begin{code}
+data Bool : Set where
+  true   : Bool
+  false  : Bool
+\end{code}
+%</bool>
+
+%<*ifte>
+\begin{code}
+if_then_else_ : {A : Set} → Bool → A → A → A
+if true   then t else f = t
+if false  then t else f = f
+\end{code}
+%</ifte>
+
 
 %<*variable>
 \begin{code}
@@ -10,6 +43,8 @@ variable
 \end{code}
 %</variable>
 
+
+
 %<*nat>
 \begin{code}
 data ℕ : Set where
@@ -17,12 +52,36 @@ data ℕ : Set where
   suc   : ℕ → ℕ
 \end{code}
 %</nat>
+
+
+%<*add>
+\begin{code}
+_+_ : ℕ → ℕ → ℕ
+zero   + n = n
+suc m  + n = suc (m + n)
+\end{code}
+%</add>
+
+
+
+
 %<*unit>
 \begin{code}
 record ⊤ : Set where
   constructor tt
 \end{code}
 %</unit>
+
+%<*uniteq>
+\begin{code}
+_ : (t u : ⊤) → t ≡ u
+_ = λ t u → refl
+\end{code}
+%</uniteq>
+
+
+
+
 \begin{code}
 infixr 5 _×_
 infixr 20 _,_
@@ -34,6 +93,25 @@ record _×_ (A B : Set) : Set where
   field fst : A; snd : B
 \end{code}
 %</pair>
+\begin{code}
+open _×_
+\end{code}
+
+%<*duplicate>
+\begin{code}
+duplicate : A → A × A
+duplicate a = (a , a)
+\end{code}
+%</duplicate>
+
+%<*swap>
+\begin{code}
+swap : A × B → B × A
+swap p = (snd p , p .fst)
+\end{code}
+%</swap>
+
+
 \begin{code}
 open _×_
 infixl 5 _-Tuple_

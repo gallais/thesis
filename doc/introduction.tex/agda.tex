@@ -5,33 +5,94 @@ all the results can be replicated in any Martin L\"of Type Theory
 (\citeyear{martin1982constructive}) equipped with inductive
 families~(\cite{dybjer1994inductive}). In practice, all of the content of this
 thesis has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
-introduction to dependently-typed programming in Agda. It is a dependently-typed
+introduction to dependently-typed programming in Agda. It is a dependently typed
 programming language based on Martin-L\"{o}f Type Theory with inductive families,
 induction-recursion (\cite{Dybjer1999}), copattern-matching
 (\cite{abelPientkaThibodeauSetzer:popl13}) and sized types
 (\cite{DBLP:journals/corr/abs-1012-4896}).
 
-\paragraph{Mixfix Identifiers} We use Agda's mixfix operator notation
-(\cite{danielsson2011parsing}) where underscores denote argument positions.
-See e.g. the notation \AR{\_×\_} for the type of pairs defined in \cref{par:recordtypes}.
+\section{Set and Universe Levels}
 
-\paragraph{Syntax Highlighting} We rely on Agda's \LaTeX{} backend to produce
+Agda is both a dependently typed programming language and a proof assistant.
+As such, its type system needs to be sound. A direct consequence is that the
+type of all types cannot itself be a type. This is solved by using a stratified
+tower of universes.
+
+\begin{feature}[Universe Levels]
+Agda avoids Russell-style paradoxes by introducing a tower of universes
+\AF{Set₀} (usually written \AF{Set}), \AF{Set₁}, \AF{Set₂}, etc. Each
+\AF{Setₙ} does not itself have type \AF{Setₙ} but rather \AF{Setₙ₊₁} thus
+preventing circularity.
+\end{feature}
+
+In practice most of our constructions will stay at the lowest level \AF{Set}
+(commonly called the ``type of small sets''), and we will only occasionally
+mention \AF{Set₁}. The barest of examples involving both notions is the
+following definition of \AF{ID}, the (large) type of the identity function on
+small sets, together with \AF{id} the corresponding identity function.
+
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{idType}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{idTerm}
+\end{minipage}
+
+In the type \AF{ID} we wrapped the \AF{Set} argument using curly braces.
+This is our way of telling Agda that this argument should be easy to figure
+out and that we do not want to have to write it explicitly every time we
+call \AF{id}.
+
+\begin{feature}[Implicit Arguments]
+Programmers can mark some of a function's arguments as implicit by
+wrapping them in curly braces. The values of these implicit arguments
+can be left out at the function's call sites and Agda will reconstruct
+them by unification~(\cite{DBLP:conf/tlca/AbelP11}).
+\end{feature}
+
+\section{Data and (co)pattern matching}
+
+\paragraph{Sum Types} Agda supports inductive families
+(\cite{dybjer1991inductive}), a generalisation of the algebraic data types
+one can find in most functional programming languages. The plainest of sum
+types is the type of boolean values. We define it as the datatype with two
+constructors \AIC{true} and \AIC{false}. The function \AF{if\_then\_else\_}
+is defined by pattern-matching on the boolean value.
+
+\begin{minipage}{0.35\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{bool}
+\end{minipage}\begin{minipage}{0.65\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{ifte}
+\end{minipage}
+
+\begin{feature}[Mixfix Identifiers] We use Agda's mixfix operator notation
+(\cite{danielsson2011parsing}) where underscores denote argument positions.
+This empowers us to define the \AF{if\_then\_else\_} construct rather than
+relying on it being built in like in so many other languages. For another
+example, at the type-level this time, see e.g. the notation \AR{\_×\_} for
+the type of pairs defined in \cref{par:recordtypes}.
+\end{feature}
+
+\begin{feature}[Syntax Highlighting] We rely on Agda's \LaTeX{} backend to produce
 syntax highlighting for all the code fragments in this thesis. The convention
 is as follows: keywords are highlighted in \AK{orange}, data constructors in
 \AIC{green}, record fields in \ARF{pink}, types and functions in \AD{blue}
 while bound variables are \AB{black}.
+\end{feature}
 
-\paragraph{Implicit Generalisation} The latest version of Agda supports ML-style
-implicit prenex polymorphism and we make heavy use of it: every unbound variable
-should be considered implicitly bound at the beginning of the telescope.
+\paragraph{Inductive Types}
 
-\section{Data and (co)pattern matching}
+As is customary, our first inductive type will be the natural numbers.
+They are defined as an inductive type with two constructors: \AIC{zero}
+and \AIC{suc}cessor.
 
-As is customary, we start our introduction to dependently-typed programming with
-the natural numbers. They are defined as an inductive type with two
-constructors: \AIC{zero} and \AIC{suc}cessor.
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{add}
+\end{minipage}
 
-\ExecuteMetaData[introduction.agda/introduction.tex]{nat}
+\begin{feature}[Termination Checking](\cite{abel1998foetus})
+\end{feature}
 
 \paragraph{Record Types}\label{par:recordtypes}
 
@@ -41,21 +102,49 @@ values of the same record type are judgmentally equal whenever all of their
 fields' values are.
 
 We define the unit type (\AR{⊤}) which has one constructor (\AIC{tt}) but no
-field together with the pair type \AR{\_×\_} which has an infix constructor
+field. As a consequence, the η-rule for \AR{⊤} states that any two values of
+the unit type are equal to each other. This is demonstrated by the equality
+proof we provide.
+
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{unit}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\ExecuteMetaData[introduction.agda/introduction.tex]{uniteq}
+\end{minipage}
+
+\begin{feature}[Underscore as Placeholder Name]
+An underscore used in place of an identifier in a binder means that the binding
+should be discarded. For instance {(\AS{λ} \_ \AS{→} a)} defines a constant function.
+Toplevel bindings can similarly be discarded which is a convenient way of
+writing unit tests (in type theory programs can be run at typechecking time)
+without polluting the namespace.
+\end{feature}
+
+ogether with the pair type \AR{\_×\_} which has an infix constructor
 \AIC{\_,\_} and two fields: its first (\ARF{fst}) and second (\ARF{snd})
 projections.
 
-\begin{minipage}{0.5\textwidth}
-  \ExecuteMetaData[introduction.agda/introduction.tex]{unit}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
 \ExecuteMetaData[introduction.agda/introduction.tex]{pair}
-\end{minipage}
 
 Defining a record type \AR{R} also results in the definition of a module \AB{R}
 parametrised by a value of type \AR{R} and containing a projection function
 for each field. We can \AK{open} it to make these projections available to the
-outside world, or use \AB{R}-qualified names.
+outside world, or use \AB{R}-qualified names. Projections may be used prefix
+or suffix (in which case one needs to add a dot).
+
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{duplicate}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[introduction.agda/introduction.tex]{swap}
+\end{minipage}
+
+\begin{feature}[Implicit Generalisation] The latest version of Agda supports ML-style
+implicit prenex polymorphism and we make heavy use of it: every unbound variable
+should be considered implicitly bound at the beginning of the telescope. In the above
+example, \AB{A} and \AB{B} are introduced using this mechanism.
+\end{feature}
 
 \paragraph{Recursive Functions}
 
