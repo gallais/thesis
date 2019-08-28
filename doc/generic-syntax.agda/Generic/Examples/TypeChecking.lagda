@@ -8,7 +8,7 @@ open import Data.Unit
 open import Data.Bool
 open import Data.Product as P
 open import Data.List hiding ([_])
-open import Data.Maybe as Maybe
+open import Data.Maybe as Maybe using (Maybe; nothing; just)
 open import Data.Maybe.Categorical as MC
 
 open import Relation.Unary

@@ -9,7 +9,7 @@ open import Data.Bool
 open import Data.Product as Prod
 open import Data.List hiding ([_] ; lookup)
 open import Data.List.Relation.Unary.All as All hiding (lookup)
-open import Data.Maybe as Maybe
+open import Data.Maybe as Maybe using (Maybe; nothing; just)
 import Data.Maybe.Categorical as MC
 
 open import Generic.Examples.TypeChecking
