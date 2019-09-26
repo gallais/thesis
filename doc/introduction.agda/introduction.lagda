@@ -18,6 +18,18 @@ id x = x
 \end{code}
 %</idTerm>
 
+%<*bottom>
+\begin{code}
+data ⊥ : Set where
+\end{code}
+%</bottom>
+
+%<*bottomelim>
+\begin{code}
+⊥-elim : {A : Set} → ⊥ → A
+⊥-elim ()
+\end{code}
+%</bottomelim>
 
 %<*bool>
 \begin{code}
@@ -27,6 +39,13 @@ data Bool : Set where
 \end{code}
 %</bool>
 
+%<*boolis2>
+\begin{code}
+true≢false : true ≡ false → ⊥
+true≢false ()
+\end{code}
+%</boolis2>
+
 %<*ifte>
 \begin{code}
 if_then_else_ : {A : Set} → Bool → A → A → A
@@ -34,6 +53,14 @@ if true   then t else f = t
 if false  then t else f = f
 \end{code}
 %</ifte>
+
+%<*not>
+\begin{code}
+not : Bool → Bool
+not b = if b then false else true
+\end{code}
+%</not>
+
 
 
 %<*variable>
@@ -97,6 +124,14 @@ record _×_ (A B : Set) : Set where
 open _×_
 \end{code}
 
+
+%<*paireq>
+\begin{code}
+_ : (p : A × B) → p ≡ (fst p , snd p)
+_ = λ p → refl
+\end{code}
+%</paireq>
+
 %<*duplicate>
 \begin{code}
 duplicate : A → A × A
@@ -137,6 +172,16 @@ map^-Tuple zero     f tt        = tt
 map^-Tuple (suc n)  f (a , as)  = f a , map^-Tuple n f as
 \end{code}
 %</mapntuple>
+
+%<*sigma>
+\begin{code}
+record Σ (A : Set) (B : A → Set) : Set where
+  constructor _,_
+  field  proj₁ : A
+         proj₂ : B proj₁
+\end{code}
+%</sigma>
+
 %<*tuple>
 \begin{code}
 record Tuple (A : Set) : Set where

@@ -4,10 +4,11 @@ The techniques and abstractions defined in this thesis are language-independent:
 all the results can be replicated in any Martin L\"of Type Theory
 (\citeyear{martin1982constructive}) equipped with inductive
 families~(\cite{dybjer1994inductive}). In practice, all of the content of this
-thesis has been formalised in Agda~(\cite{norell2009dependently}) so we provide a (brutal)
-introduction to dependently-typed programming in Agda. It is a dependently typed
-programming language based on Martin-L\"{o}f Type Theory with inductive families,
-induction-recursion (\cite{Dybjer1999}), copattern-matching
+thesis has been formalised in Agda~(\cite{norell2009dependently}) so we provide
+a (brutal) introduction to dependently-typed programming in Agda.
+
+Agda a dependently typed programming language based on Martin-L\"{o}f Type Theory
+with inductive families, induction-recursion (\cite{Dybjer1999}), copattern-matching
 (\cite{abelPientkaThibodeauSetzer:popl13}) and sized types
 (\cite{DBLP:journals/corr/abs-1012-4896}).
 
@@ -53,16 +54,55 @@ them by unification~(\cite{DBLP:conf/tlca/AbelP11}).
 
 \paragraph{Sum Types} Agda supports inductive families
 (\cite{dybjer1991inductive}), a generalisation of the algebraic data types
-one can find in most functional programming languages. The plainest of sum
-types is the type of boolean values. We define it as the datatype with two
-constructors \AIC{true} and \AIC{false}. The function \AF{if\_then\_else\_}
-is defined by pattern-matching on the boolean value.
+one can find in most functional programming languages.
 
-\begin{minipage}{0.35\textwidth}
-  \ExecuteMetaData[introduction.agda/introduction.tex]{bool}
-\end{minipage}\begin{minipage}{0.65\textwidth}
-  \ExecuteMetaData[introduction.agda/introduction.tex]{ifte}
+The plainest of sum types is the empty type \AD{⊥}, a type with no constructor.
+We define it together with \AF{⊥-elim} also known as the principle of explosion:
+from something absurd, we can deduce anything. The absurd pattern \AS{()} is
+used to communicate the fact that there can be no value of type \AD{⊥}.
+
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{bottom}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{bottomelim}
 \end{minipage}
+
+\begin{feature}[Syntax Highlighting] We rely on Agda's \LaTeX{} backend to produce
+syntax highlighting for all the code fragments in this thesis. The convention
+is as follows: keywords are highlighted in \AK{orange}, data constructors in
+\AIC{green}, record fields in \ARF{pink}, types and functions in \AD{blue}
+while bound variables are \AB{black}.
+\end{feature}
+
+The next classic example of a sum type is the type of boolean values. We define
+it as the datatype with two constructors \AIC{true} and \AIC{false}. These
+constructors are \emph{distinct} and Agda understands that fact: an argument
+of type {\AIC{true} \AD{≡} \AIC{false}} can be dismissed with the same absurd
+pattern one uses for values of type \AD{⊥}.
+
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{bool}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{boolis2}
+\end{minipage}
+
+All definitions in Agda need to be total. In particular this means that a
+function is only considered defined once Agda is convinced that all the
+possible input values have been covered by the pattern-matching equations
+the user has written. The coverage checker performs this analysis.
+
+\begin{feature}[Coverage Checking] During typechecking the coverage checker
+elaborates the given pattern-matching equations into a case tree. It makes
+sure that all the branches are either assigned a right-hand side or obviously
+impossible. This allows users to focus on the cases of interest, letting the
+machine check the other ones.
+\end{feature}
+
+The function \AF{if\_then\_else\_} is defined by pattern-matching on its
+boolean argument. If it is \AIC{true} then the second argument is returned,
+otherwise we get back the third one.
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{ifte}
 
 \begin{feature}[Mixfix Identifiers] We use Agda's mixfix operator notation
 (\cite{danielsson2011parsing}) where underscores denote argument positions.
@@ -72,18 +112,12 @@ example, at the type-level this time, see e.g. the notation \AR{\_×\_} for
 the type of pairs defined in \cref{par:recordtypes}.
 \end{feature}
 
-\begin{feature}[Syntax Highlighting] We rely on Agda's \LaTeX{} backend to produce
-syntax highlighting for all the code fragments in this thesis. The convention
-is as follows: keywords are highlighted in \AK{orange}, data constructors in
-\AIC{green}, record fields in \ARF{pink}, types and functions in \AD{blue}
-while bound variables are \AB{black}.
-\end{feature}
-
 \paragraph{Inductive Types}
 
-As is customary, our first inductive type will be the natural numbers.
-They are defined as an inductive type with two constructors: \AIC{zero}
-and \AIC{suc}cessor.
+As is customary in introductions to dependently typed programming, our first
+inductive type will be the natural numbers. They are defined as an inductive
+type with two constructors: \AIC{zero} and \AIC{suc}cessor. Our first program
+manipulating them is addition; it is defined by recursion on the first argument.
 
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{nat}
@@ -91,7 +125,15 @@ and \AIC{suc}cessor.
   \ExecuteMetaData[introduction.agda/introduction.tex]{add}
 \end{minipage}
 
-\begin{feature}[Termination Checking](\cite{abel1998foetus})
+For recursive definitions ensuring that all definitions are total entails
+an additional check on top of coverage checking: all calls to that function
+should be terminating.
+
+\begin{feature}[Termination Checking] Agda is equipped with a sophisticated
+termination checking algorithm (\cite{abel1998foetus}). For each function it
+attempts to produce a well-founded lexicographic ordering of its input such
+that each recursive call is performed on smaller inputs according to this
+order.
 \end{feature}
 
 \paragraph{Record Types}\label{par:recordtypes}
@@ -121,17 +163,25 @@ writing unit tests (in type theory programs can be run at typechecking time)
 without polluting the namespace.
 \end{feature}
 
-ogether with the pair type \AR{\_×\_} which has an infix constructor
-\AIC{\_,\_} and two fields: its first (\ARF{fst}) and second (\ARF{snd})
-projections.
+The second classic example of a record type is the pair type \AR{\_×\_} which
+has an infix constructor \AIC{\_,\_} and two fields: its first (\ARF{fst}) and
+second (\ARF{snd}) projections. The η-rule for pairs states that any value is
+equal to the pairing of its first and second projection. This is demonstrated
+by the equality proof we provide.
 
-\ExecuteMetaData[introduction.agda/introduction.tex]{pair}
+
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{pair}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\ExecuteMetaData[introduction.agda/introduction.tex]{paireq}
+\end{minipage}
 
 Defining a record type \AR{R} also results in the definition of a module \AB{R}
 parametrised by a value of type \AR{R} and containing a projection function
 for each field. We can \AK{open} it to make these projections available to the
 outside world, or use \AB{R}-qualified names. Projections may be used prefix
-or suffix (in which case one needs to add a dot).
+or suffix (in which case one needs to prefix the projection's name with a dot).
 
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{duplicate}
@@ -157,21 +207,21 @@ smaller, the function is total. All definitions have to be total in Agda.
 The main difference with Haskell is that in Agda, we can perform so-called
 ``large elimination'': we can define a \AF{Set} by pattern-matching on a
 piece of data. Here we use our unit and pair records to define a tuple of
-size \AB{n} by recursion over \AB{n}: a (\AIC{zero} \AF{-Tuple}) is empty
-whilst a (\AIC{suc n} \AF{-Tuple}) is a value paired with an (\AB{n} \AF{-Tuple}).
+size \AB{n} by recursion over \AB{n}: a tuple of size \AIC{zero} is empty
+whilst a (\AIC{suc} \AB{n}) tuple is a value paired with an \AB{n} tuple.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
 
-Because types can now depend on the shape of values, in a definition by pattern
+Types can now depend on values, as a consequence in a definition by pattern
 matching each clause has a type \emph{refined} based on the patterns which appear
 on the left hand side. This will be familiar to Haskell programmers used to
 manipulating Generalized Algebraic Data Types (GADTs). Let us see two examples of
 a type being refined based on the pattern appearing in a clause.
 
 First, we introduce \AF{replicate} which takes a natural number \AB{n} and a value
-\AB{a} of type \AB{A} and returns an (\AB{n} \AF{-Tuple}) by duplicating \AB{a}.
-The return type of \AF{replicate} reduces to \AR{⊤} when the natural number is
-\AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
+\AB{a} of type \AB{A} and returns a tuple of \AB{A}s of size \AB{n} by duplicating
+\AB{a}. The return type of \AF{replicate} reduces to \AR{⊤} when the natural number
+is \AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
 (\AIC{suc} \AB{n}).
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
@@ -235,6 +285,8 @@ simple traversal. The usual solution to this issue is to remove the level of
 indirection introduced by the call to \AF{map\textasciicircum{}Tuple} by mutually
 defining with \AF{map\textasciicircum{}Rose} an inlined version of
 (\AF{map\textasciicircum{}Tuple} (\AF{map\textasciicircum{}Rose} \AB{f})).
+In other words, we have to effectively perform supercompilation
+(\cite{mendelgleason2012}) by hand.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{inlinedmaprose}
 
@@ -270,6 +322,15 @@ concisely. We are going to manipulate a lot of indexed families representing
 scoped languages so we give ourselves a few combinators corresponding to the
 typical operations we want to perform on them.
 
+These combinators will allow us to write the types for index-preserving
+operations without having to mention the indices. This will empower us
+to use very precise indexed types whilst having normal looking type
+declarations. We have implemented a generalisation of these combinators
+to n-ary relations (\cite{DBLP:conf/icfp/Allais19}) but this work is out
+of the scope of this thesis.
+
+
+
 First, noticing that most of the time we silently thread the current scope, we lift
 the function space pointwise with \AF{\_⇒\_}.
 
@@ -285,9 +346,19 @@ Set it operates on.
 
 Although it may seem surprising at first to define binary infix operators as having
 arity three, they are meant to be used partially applied, surrounded by \AF{∀[\_]}
-which turns an indexed Set into a Set by implicitly quantifying over the index.
+or \AF{∃⟨\_⟩}. These combinators turn an indexed Set into a Set by quantifying over
+the index. The function \AF{∀[\_]} universally quantifies over an implicit value
+of the right type while \AF{∃⟨\_⟩}, defined using a dependent record, corresponds
+to an existential quantifier.
 
 \ExecuteMetaData[shared/Stdlib.tex]{forall}
+
+\begin{minipage}[t]{0.6\textwidth}
+  \ExecuteMetaData[shared/Stdlib.tex]{sigma}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+  \ExecuteMetaData[shared/Stdlib.tex]{exists}
+\end{minipage}
 
 We make \AF{\_⇒\_} associate to the right as one would expect and give it the
 highest precedence level as it is the most used combinator. These combinators
@@ -295,7 +366,6 @@ lead to more readable type declarations.  For instance, the compact expression
 \AF{∀[} \AF{suc} \AF{⊢} (\AB{P} \AF{⇒} \AB{Q}) \AF{⇒} \AB{R} \AF{]}
 desugars to the more verbose type
 \AS{∀} \{\AB{i}\} \AS{→} (\AB{P} (\AF{suc} \AB{i}) \AS{→} \AB{Q} (\AF{suc} \AB{i})) \AS{→} \AB{R} \AB{i}.
-
 
 As the combinators act on the \emph{last} argument of any indexed family, this inform our
 design: our notions of variables, languages, etc. will be indexed by their kind first and
