@@ -213,12 +213,16 @@ whilst a (\AIC{suc} \AB{n}) tuple is a value paired with an \AB{n} tuple.
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
 
 \begin{technique}[Intrinsically Enforced Properties]
-In the definition of an \AB{n}-ary tuple, the length of the tuple is
-part of the type (indeed the definition proceeds by induction over
-this natural number). We say that the property that the tuple has
-length \AB{n} is enforced \emph{intrinsically}. Conversely some
-properties are only proven after the fact, they are called
-\emph{extrinsic}.
+In the definition of an \AB{n}-ary tuple, the length of the tuple is part
+of the type (indeed the definition proceeds by induction over this natural
+number). We say that the property that the tuple has length \AB{n} is
+enforced \emph{intrinsically}. Conversely some properties are only proven
+after the fact, they are called \emph{extrinsic}.
+
+The choice of whether a property should be enforced intrinsically or
+extrinsically is for the programmer to make, trying to find a sweet
+spot for the datastructure and the task at hand. We typically build
+basic hygiene intrinsically and prove more complex properties later.
 \end{technique}
 
 
