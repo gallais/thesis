@@ -198,7 +198,7 @@ example, \AB{A} and \AB{B} are introduced using this mechanism.
 
 \paragraph{Recursive Functions}
 
-Definitions taking values of an inductive type as argument are defined by
+Definitions taking values of an inductive type as argument are constructed by
 pattern matching in a style familiar to Haskell programmers: one lists
 clauses assuming a first-match semantics. If the patterns on the left hand
 side are covering all possible cases and the recursive calls are structurally
@@ -211,6 +211,16 @@ size \AB{n} by recursion over \AB{n}: a tuple of size \AIC{zero} is empty
 whilst a (\AIC{suc} \AB{n}) tuple is a value paired with an \AB{n} tuple.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{ntuple}
+
+\begin{technique}[Intrinsically Enforced Properties]
+In the definition of an \AB{n}-ary tuple, the length of the tuple is
+part of the type (indeed the definition proceeds by induction over
+this natural number). We say that the property that the tuple has
+length \AB{n} is enforced \emph{intrinsically}. Conversely some
+properties are only proven after the fact, they are called
+\emph{extrinsic}.
+\end{technique}
+
 
 Types can now depend on values, as a consequence in a definition by pattern
 matching each clause has a type \emph{refined} based on the patterns which appear
@@ -226,7 +236,7 @@ is \AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
 
-Second, we define \AF{map\textasciicircum{}-Tuple} which takes a function and
+Second, we define \AF{map} which takes a function and
 applies it to each one of the elements in a \AF{-Tuple}. Both the type of the
 \AF{-Tuple} argument and the \AF{-Tuple} return type are refined based on the
 pattern the natural number matches. In the second clause, this tells us the
@@ -234,6 +244,8 @@ pattern the natural number matches. In the second clause, this tells us the
 constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
+
+\todo{Functor}
 
 \paragraph{Dependent Record Types}
 
@@ -312,6 +324,78 @@ the added bonus that we have now \emph{proven} the function to be total.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{irose}
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapirose}
+
+\section{Proving the Properties of Programs}
+
+We make explicit some of our programs' invariants directly in their
+type thus guaranteeing that the implementation respects them. The
+type of \AF{map} for instance tells us that
+this is a length preserving operation. We cannot possibly encode all
+of a function's properties directly into its type but we can use
+Agda's to state and prove theorems of interest.
+
+In Agda, programming \emph{is} proving. The main distinction between
+a proof and a program is a social one: we tend to call programs the
+objects whose computational behaviour matters to us while the other
+results correspond to proofs.
+
+We can for instance prove that mapping the identity function over a
+tuple amounts to not doing anything.
+
+\begin{lemma}[Identity lemma for \AF{map}]
+Given a function \AB{f} extensionally equal to the identity,
+{(\AF{map} \AB{f})} is itself extensionally
+equal to the identity.
+\end{lemma}
+
+\begin{technique}[Extensional Statements] Note that we have stated
+the theorem not in terms of the identity function but rather in
+terms of a function which behaves like it. Agda's notion of equality
+is intensional, that is to say that we cannot prove that two functions
+yielding the same results when applied to the same inputs are necessarily
+equal. In practice this means that stating a theorem in terms of the
+specific implementation of a function rather than its behaviour limits
+vastly our ability to use this lemma. Additionally, we can always
+obtain the more specific statement as a corollary.
+\end{technique}
+
+The proof of this statement is a program proceeding by induction
+on \AB{n} followed by a case analysis on the \AB{n}-ary tuple.
+In the base case, the equality is trivial and in the second case
+\AF{map} computes just enough to reveal
+the constructor pairing {(\AB{f} \AB{a})} together with the result
+obtained recursively. We can combine the proof that {(\AB{f} \AB{a})}
+is equal to \AB{a} and the induction hypothesis by an appeal to
+congruence for the pair constructor \AIC{\_,\_}.
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{mapidentity}
+
+\begin{technique}[Functional Induction] Whenever we need to prove
+a theorem about a function's behaviour, it is best to proceed by
+functional induction. That is to say that the proof and the function
+will follow the same pattern-matching strategy.
+\end{technique}
+
+\begin{lemma}[Fusion lemma for \AF{map}]
+Provided a function \AB{f} from \AB{A} to \AB{B},
+a function \AB{g} from \AB{B} to \AB{C}, and
+a function \AB{h} from \AB{A} to \AB{C} extensionally equal to the
+composition of \AB{f} followed by \AB{g},
+mapping \AB{f} and then \AB{g} over an \AB{n}-ary
+tuple \AB{as} is the same as merely mapping \AB{h}.
+\end{lemma}
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{mapfusion}
+
+\begin{lemma}[Fusion Lemma for \AF{replicate}]
+Given a function \AB{f} from \AB{A} to \AB{B}, a value \AB{a} of type \AB{A},
+and a natural number \AB{n}, mapping \AB{f} over the \AB{n}-ary tuple obtained
+by replicating \AB{a} is the same as replicating (\AB{f} \AB{a}).
+\end{lemma}
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{mapreplicate}
+
+
 
 \section{Working with Indexed Families}
 \label{sec:indexed-combinators}

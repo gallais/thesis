@@ -66,7 +66,7 @@ not b = if b then false else true
 %<*variable>
 \begin{code}
 variable
-  A B : Set
+  A B C : Set
 \end{code}
 %</variable>
 
@@ -165,13 +165,60 @@ replicate zero     a = tt
 replicate (suc n)  a = a , replicate n a
 \end{code}
 %</replicate>
+%<*cong>
+\begin{code}
+cong : ∀ (f : A → B) {a₁ a₂} → a₁ ≡ a₂ → f a₁ ≡ f a₂
+cong f refl = refl
+\end{code}
+%</cong>
+%<*cong2>
+\begin{code}
+cong₂ : ∀ (f : A → B → C) {a₁ a₂ b₁ b₂} →
+        a₁ ≡ a₂ → b₁ ≡ b₂ → f a₁ b₁ ≡ f a₂ b₂
+cong₂ f refl refl = refl
+\end{code}
+%</cong2>
+\begin{code}
+module -Tuple where
+\end{code}
 %<*mapntuple>
 \begin{code}
-map^-Tuple : ∀ n → (A → B) → n -Tuple A → n -Tuple B
-map^-Tuple zero     f tt        = tt
-map^-Tuple (suc n)  f (a , as)  = f a , map^-Tuple n f as
+ map : ∀ n → (A → B) → n -Tuple A → n -Tuple B
+ map zero     f tt        = tt
+ map (suc n)  f (a , as)  = f a , map n f as
 \end{code}
 %</mapntuple>
+%<*mapidentity>
+\begin{code}
+ map-identity :
+   ∀ n {f : A → A} → (∀ a → f a ≡ a) →
+   ∀ as → map n f as ≡ as
+ map-identity zero     f-id tt        = refl
+ map-identity (suc n)  f-id (a , as)  =
+   cong₂ _,_ (f-id a) (map-identity n f-id as)
+\end{code}
+%</mapidentity>
+
+%<*mapfusion>
+\begin{code}
+ map-fusion :
+   ∀ n {f : A → B} {g : B → C} {h} → (∀ a → g (f a) ≡ h a) →
+   ∀ as → map n g (map n f as) ≡ map n h as
+ map-fusion zero     gf≈h tt        = refl
+ map-fusion (suc n)  gf≈h (a , as)  =
+   cong₂ _,_ (gf≈h a) (map-fusion n gf≈h as)
+\end{code}
+%</mapfusion>
+
+%<*mapreplicate>
+\begin{code}
+ map-replicate : ∀ n (f : A → B) (a : A) →
+   map n f (replicate n a) ≡ replicate n (f a)
+ map-replicate zero     f a = refl
+ map-replicate (suc n)  f a =
+   cong (f a ,_) (map-replicate n f a)
+\end{code}
+%</mapreplicate>
 
 %<*sigma>
 \begin{code}
@@ -195,10 +242,10 @@ open Tuple
 \end{code}
 %<*maptuple>
 \begin{code}
-map^Tuple : (A → B) → Tuple A → Tuple B
-map^Tuple f as = λ where
+map : (A → B) → Tuple A → Tuple B
+map f as = λ where
   .length   → as .length
-  .content  → map^-Tuple (as .length) f (as .content)
+  .content  → -Tuple.map (as .length) f (as .content)
 \end{code}
 %</maptuple>
 \begin{code}
@@ -219,7 +266,7 @@ module Unsized where
   {-# TERMINATING #-}
   map^Rose : (A → B) → Rose A → Rose B
   map^Rose f (leaf a)   = leaf (f a)
-  map^Rose f (node rs)  = node (map^Tuple (map^Rose f) rs)
+  map^Rose f (node rs)  = node (map (map^Rose f) rs)
 \end{code}
 %</maprose>
 \begin{code}
@@ -257,7 +304,7 @@ module Implicit where
 \begin{code}
   map^Rose : ∀ {i} → (A → B) → Rose A i → Rose B i
   map^Rose f (leaf a)   = leaf (f a)
-  map^Rose f (node rs)  = node (map^Tuple (map^Rose f) rs)
+  map^Rose f (node rs)  = node (map (map^Rose f) rs)
 \end{code}
 %</mapirose>
 \begin{code}
@@ -274,7 +321,7 @@ module Explicit where
 \begin{code}
   map^Rose : ∀ i → (A → B) → Rose A i → Rose B i
   map^Rose i f (leaf a)     = leaf (f a)
-  map^Rose i f (node j rs)  = node j (map^Tuple (map^Rose j f) rs)
+  map^Rose i f (node j rs)  = node j (map (map^Rose j f) rs)
 \end{code}
 %</maperose>
 \begin{code}
