@@ -168,8 +168,14 @@ have the same type.
 \caption{Typing Rules for our Language\label{fig:typingrules}}
 \end{figure}
 
-\begin{convention}[Only Mention Changes to the Ambient Context]
-\todo{fill in}
+\begin{convention}[Assume an Ambient Context]
+Following Martin-Löf (\citeyear{martin1982constructive}) we adopt the
+convention that all of our typing rules are defined in an ambient
+context \AB{Γ} and only mention the \emph{adjustments} made to it.
+Crucially, we can see that the only rule which modifies the context
+is the introduction rule for lambda abstractions: in the premise,
+{(\AB{x} : \AB{σ} ⊢)} indicates that the ambient context is extended
+with a new bound variable \AB{x} of type \AB{σ}.
 \end{convention}
 
 \subsection{Well Scoped and Typed by Construction}
@@ -221,10 +227,10 @@ to show only local changes to the context.
 The \AIC{z} (for zero) constructor refers to the nearest binder in a non-empty scope.
 The \AIC{s} (for successor) constructor lifts an existing variable in a given scope
 to the extended scope where an extra variable has been bound. The constructors' types
-respectively normalise to the fully expanded types on their right hand side.
+respectively normalise to the fully expanded types displayed on their right.
 
-The syntax for this calculus guarantees that terms are well scoped-and-typed
-by construction. This presentation due to
+The syntax for this calculus, shown in~\cref{fig:term}, guarantees that
+terms are \scopeandtypesafe{} by construction. This presentation due to
 Altenkirch and Reus~(\citeyear{altenkirch1999monadic}) relies heavily on
 Dybjer's~(\citeyear{dybjer1991inductive}) inductive families. Rather than
 having untyped pre-terms and a typing relation assigning a type to
@@ -232,11 +238,13 @@ them, the typing rules are here enforced in the syntax. Notice that
 the only use of \AF{\_⊢\_} to extend the context is for the body of
 a \AIC{`lam}.
 
-\begin{convention}[Using Spaces to Mimick Natural Deduction Rules]
-\todo{fill in}
-\end{convention}
-
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{term}
 \caption{Well Scoped and Typed Calculus\label{fig:term}}
 \end{figure}
+
+\begin{convention}[Using Comments to Mimick Natural Deduction Rules]
+In the definition of the calculus' syntax we use comment lines to mimick
+inference rules in natural deduction. This definition style is already
+present in Pollack's PhD thesis (\citeyear{pollack1994}).
+\end{convention}

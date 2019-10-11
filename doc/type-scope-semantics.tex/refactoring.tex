@@ -9,11 +9,18 @@ invariants. But the traversals now have to be invariant preserving too!
 
 \section{McBride's Kit}
 
-In an unpublished manuscript, McBride~(\citeyear{mcbride2005type}) observes the
-similarity between the types and implementations of renaming and substitution for
-the simply typed λ-calculus (STλC) in a dependently typed language as shown in
-\cref{ren} (we focus only on \AIC{`var}, \AIC{`app}, and \AIC{`lam} for the moment).
-There are three differences between the implementations of renaming and substitution:
+McBride observed the similarity between the types and implementations of renaming
+and substitution for a well scoped language in his thesis~(\citeyear{mcbride1999})
+and then for the simply typed λ-calculus (STλC) in an unpublished
+manuscript~(\citeyear{mcbride2005type}). This work building on Goguen and McKinna's
+candidates for substitution~(\citeyear{goguen1997candidates}) and leading to the
+collaboration with Benton, Hur, and Kennedy~(\citeyear{benton2012strongly}) teaches
+us how to refactor both traversals into a single more general function.
+
+We highlight these similarities in~\cref{ren}, focusing only on \AIC{`var},
+\AIC{`app}, and \AIC{`lam} only for the moment as they allow us to make all
+of the needed observations. There are three differences between the implementations
+of renaming and substitution:
 
 \begin{enumerate}
   \item
