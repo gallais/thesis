@@ -40,8 +40,11 @@ The language is obtained as the least fixpoint of $T$:
 
 Since `UTLC' is an endofunction on \AD{Set}, it makes sense to ask whether it is
 also a functor and a monad. Indeed it is, as Altenkirch and Reus have shown. The
-functorial action corresponds to renaming, the monadic `return' corresponds to
-the use of variables, and the monadic `bind' corresponds to substitution. The
+functorial action corresponds to renaming, the monadic
+`return : \AB{A} → \AB{UTLC} \AB{A}'
+corresponds to the use of variables, and the monadic
+`bind : \AB{UTLC} \AB{A} → (A → \AB{UTLC} \AB{B}) → \AB{UTLC} \AB{B}'
+corresponds to substitution. The
 functor and monad laws correspond to well known properties from the equational
 theories of renaming and substitution. We will revisit these properties
 below in \cref{sec:fusionrel}.
@@ -87,10 +90,18 @@ grammar and the corresponding inductive type in Agda in~\cref{fig:type}.
 \caption{Types used in our Running Example\label{fig:type}}
 \end{figure}
 
-The language's constructs are those one expects from a λ-calculus: variables,
-application and λ-abstraction. We then have a constructor for values of the unit
-type but no eliminator (a term of unit type carries no information). Finally,
-we have two constructors for boolean values and the expected if-then-else eliminator.
+\begin{convention}[Object and Meta Syntaxes]
+When we represent object syntax in the meta language (Agda here) we
+use backquotes to make explicit the fact that we are manipulating
+quoted objects.
+\end{convention}
+
+The language's constructs are layed out in~\cref{fig:grammar:term}.
+They naturally include the basic constructs of any λ-calculus: variables,
+application and λ-abstraction. We then have a constructor for values of
+the unit type but no eliminator (a term of unit type carries no information).
+Finally, we have two constructors for boolean values and the expected
+if-then-else eliminator.
 
 \begin{figure}[h]
 \[
@@ -108,57 +119,81 @@ we have two constructors for boolean values and the expected if-then-else elimin
 \caption{Grammar of our Language\label{fig:grammar:term}}
 \end{figure}
 
+This syntax is given a static semantics by the type system for the simply
+typed lambda calculus described in~\cref{fig:typingrules}. Variables have
+the type they are assigned by the typing context; an application node only
+makes sense if the function has an arrow type and the argument's type matches
+the function's codomain; similarly an \ifte{\_}{\_}{\_} construct demands
+that the condition branched over has type \bool{} and that both branches
+have the same type.
+
 \begin{figure}[h]
 \begin{mathpar}
 \inferrule
   {x : σ \in Γ
- }{Γ ⊢ x : σ
+ }{x : σ
  }{var}
 
 \inferrule
-  {Γ ⊢ f : \arrow{σ}{τ}
-  \and Γ ⊢ t : σ
- }{Γ ⊢ \app{f}{t} : τ
+  {f : \arrow{σ}{τ}
+  \and t : σ
+ }{\app{f}{t} : τ
  }{app}
 
 \inferrule
-  {Γ, x : σ ⊢ b : τ
- }{Γ ⊢ \lam{x}{b} : \arrow{σ}{τ}
+  {x : σ ⊢ b : τ
+ }{\lam{x}{b} : \arrow{σ}{τ}
  }{lam}
 
 \inferrule
   {
- }{Γ ⊢ \uni{} : \unit{}
+ }{\uni{} : \unit{}
  }{unit}
 
 \inferrule
   {
- }{Γ ⊢ \tru{} : \bool{}
+ }{\tru{} : \bool{}
  }{true}
 
 \inferrule
   {
- }{Γ ⊢ \fls{} : \bool{}
+ }{\fls{} : \bool{}
  }{false}
 
 \inferrule
-  {Γ ⊢ b : \bool{} \and Γ ⊢ l : σ \and Γ ⊢ r : σ
- }{Γ ⊢ \ifte{b}{l}{r} : \sigma
+  {b : \bool{} \and l : σ \and r : σ
+ }{\ifte{b}{l}{r} : \sigma
  }{ifte}
 \end{mathpar}
 \caption{Typing Rules for our Language\label{fig:typingrules}}
 \end{figure}
 
+\begin{convention}[Only Mention Changes to the Ambient Context]
+\todo{fill in}
+\end{convention}
+
 \subsection{Well Scoped and Typed by Construction}
+
+We decide to represent this language in our host language not as terms in
+a raw syntax together with typing derivations ruling out badly behaved
+expressions but rather as a syntax which is \emph{intrinsically} well scoped
+and typed by construction.
+
+The first hurdle in our way is the representation of contexts, the notion
+of scope they induce and the concept of variables in a given scope. This
+matter has been studied at length and multiple competing solutions have been
+offered~(\cite{DBLP:conf/tphol/AydemirBFFPSVWWZ05}). We opt for well scoped
+and typed de Bruijn indices.
 
 To talk about the variables in scope and their type, we need \emph{contexts}. We
 choose to represent them as lists of types; \AIC{[]} denotes the empty list and
 (\AB{σ} \AIC{∷} \AB{Γ}) the list \AB{Γ} extended with a fresh variable of type \AB{σ}.
 Because we are going to work with a lot of well typed and well scoped families,
-we defined (\AB{I} \AR{−Scoped}) as the set of type and scope indexed families.
+we define (\AB{I} \AR{−Scoped}) as the set of type and scope indexed families
+where the argument \AB{I} plays the role of the set of valid types.
 
 \begin{figure}[h]
-\ExecuteMetaData[shared/Data/Var.tex]{scoped}
+  \ExecuteMetaData[shared/Data/Var.tex]{scoped}
 \caption{Typed and Scoped Definitions\label{fig:scoped}}
 \end{figure}
 
@@ -169,22 +204,24 @@ context membership. We use the combinators defined in \cref{sec:indexed-combinat
 to show only local changes to the context.
 
 \begin{figure}[h]
-\ExecuteMetaData[shared/Data/Var.tex]{var}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Var.tex]{var}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \vspace*{\baselineskip}
+  \AIC{z} : {\AS{∀} $\lbrace$\AB{σ} \AB{Γ}$\rbrace$ \AS{→}
+            \AD{Var} \AB{σ} (\AB{σ} \AIC{::} \AB{Γ})}
+  \\
+  \AIC{s} : {\AS{∀} $\lbrace$\AB{σ} \AB{τ} \AB{Γ}$\rbrace$ \AS{→}
+            \AD{Var} \AB{σ} \AB{Γ} \AS{→} \AD{Var} \AB{σ} (\AB{τ} \AIC{::} \AB{Γ})}
+\end{minipage}
 \caption{Well Scoped and Typed de Bruijn indices\label{fig:variable}}
 \end{figure}
 
 The \AIC{z} (for zero) constructor refers to the nearest binder in a non-empty scope.
 The \AIC{s} (for successor) constructor lifts an existing variable in a given scope
 to the extended scope where an extra variable has been bound. The constructors' types
-respectively normalise to:
-
-\begin{center}
-  \AIC{z} : {\AS{∀} $\lbrace$\AB{σ} \AB{Γ}$\rbrace$ \AS{→}
-            \AD{Var} \AB{σ} (\AB{σ} \AIC{::} \AB{Γ})}
-  \qquad
-  \AIC{s} : {\AS{∀} $\lbrace$\AB{σ} \AB{τ} \AB{Γ}$\rbrace$ \AS{→}
-            \AD{Var} \AB{σ} \AB{Γ} \AS{→} \AD{Var} \AB{σ} (\AB{τ} \AIC{::} \AB{Γ})}
-\end{center}
+respectively normalise to the fully expanded types on their right hand side.
 
 The syntax for this calculus guarantees that terms are well scoped-and-typed
 by construction. This presentation due to
@@ -194,6 +231,10 @@ having untyped pre-terms and a typing relation assigning a type to
 them, the typing rules are here enforced in the syntax. Notice that
 the only use of \AF{\_⊢\_} to extend the context is for the body of
 a \AIC{`lam}.
+
+\begin{convention}[Using Spaces to Mimick Natural Deduction Rules]
+\todo{fill in}
+\end{convention}
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{term}

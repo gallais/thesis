@@ -23,11 +23,33 @@ private
 %<*term>
 \begin{code}
 data Term : Type ─Scoped where
-  `var     :  ∀[ Var σ ⇒ Term σ ]
-  `app     :  ∀[ Term (σ `→ τ) ⇒ Term σ ⇒ Term τ ]
-  `lam     :  ∀[  (σ ∷_) ⊢ Term τ ⇒ Term (σ `→ τ) ]
-  `one     :  ∀[ Term `Unit ]
-  `tt `ff  :  ∀[ Term `Bool ]
-  `ifte    :  ∀[ Term `Bool ⇒ Term σ ⇒ Term σ ⇒ Term σ ]
+
+  `var     :  ∀[ Var σ
+              ---------
+              ⇒  Term σ ]
+
+  `app     :  ∀[ Term (σ `→ τ) ⇒ Term σ
+              ----------------------
+              ⇒ Term τ ]
+
+  `lam     :  ∀[ (σ ∷_) ⊢ Term τ
+              ---------------
+              ⇒ Term (σ `→ τ) ]
+
+  `one     :  ∀[
+              ---------
+              Term `Unit ]
+
+  `tt      :  ∀[
+              ---------
+              Term `Bool ]
+
+  `ff      :  ∀[
+              ---------
+              Term `Bool ]
+
+  `ifte    :  ∀[ Term `Bool ⇒ Term σ ⇒ Term σ
+              ----------------------------
+              ⇒ Term σ ]
 \end{code}
 %</term>
