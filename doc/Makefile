@@ -92,6 +92,7 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/safe-programs.tex \
   latex/generic-syntax.tex/catalogue/desugaring.tex \
   latex/generic-syntax.tex/catalogue/inlining.tex \
+  latex/generic-syntax.tex/catalogue/normalising.tex \
   latex/generic-syntax.tex/typechecking.tex \
   latex/generic-syntax.tex/proofs.tex \
   latex/conclusion.tex \
