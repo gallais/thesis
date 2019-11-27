@@ -1,43 +1,66 @@
+\section{Printing with Names}\label{section:genericprinting}
 
-\subsection{Printing with Names}\label{section:genericprinting}
+Coming back to our work on (rudimentary) printing with names in
+\cref{prettyprint}, we can now give a generic account of it. This is a
+particularly interesting example because it demonstrates that we may
+sometimes want to give \AD{Desc} a different semantics to accommodate
+a specific use-case: we do not want our users to deal explicitly with
+name generation, explicit variable binding, etc.
 
-We have seen in Section~\ref{section:printing} that printing with names
-is an instance of ACMM's notion of \semrec{}. We will now show that this
-observation can be generalised to arbitrary syntaxes with binding. Unlike
-renaming or substitution, this generic program will require user guidance:
-there is no way for us to guess how an encoded term should be printed. We
-can however take care of the name generation (using the monad \AF{Fresh}
-introduced in Figure~\ref{fig:fresh}), deal with variable binding,
-and implement the traversal generically. We want our printer to have type:
+Unlike renaming or substitution, this generic program will require user
+guidance: there is no way for us to guess how an encoded term should be
+printed. We can however take care of the name generation, deal with variable
+binding, and implement the traversal generically. We are going to reuse
+some of the components defined in \cref{prettyprint}: we can rely on the
+same state monad (\AF{Fresh}) for name generation, the same \AF{fresh}
+function and the same notions of \AF{Name} and \AF{Printer} for the
+semantics' values and computations.
+%
+We want our printer to have type:
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{printtype}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{printtype}
 \end{agdasnippet}
 %
 where \AF{Display} explains how to print one `layer' of term provided that
 we are handed the \AF{Pieces} corresponding to the printed subterm and
-names for the bound variables:
+names for the bound variables.
+%
 \begin{agdasnippet}
-  \ExecuteMetaData[Generic/Semantics/Printing.tex]{display}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{display}
 \end{agdasnippet}
 %
 Reusing the notion of \AR{Name} introduced in Section~\ref{section:printing},
-we can make \AF{Pieces} formal. A subterm has already been printed if we
-have a string representation of it together with an environment of \AR{Name}s
-we have attached to the newly-bound variables this structure contains.
-That is to say:
+we can make \AF{Pieces} formal.
+%
+The structure of \AR{Semantics} would suggest giving our users an interface
+where sub-structures are interpreted as \AF{Kripke} function spaces expecting
+fresh names for the fresh variables and returning a printer i.e. a monadic
+computation returning a \AD{String}. However we can do better: we can
+preemptively generate a set of fresh names for the newly-bound variables and
+hand them to the user together with the result of printing the body with
+these names. As usual we have a special case for the substructures without
+any newly-bound variable. Note that the specific target context of the
+environment of \AF{Name}s is only picked for convenience as \AF{Name}
+ignores the scope: ({\AB{Δ} \AF{++} \AB{Γ}}) is what \AF{freshˡ} gives us.
+%
+In other words: \AF{Pieces} states that a subterm has already been printed
+if we have a string representation of it together with an environment of
+\AR{Name}s we have attached to the newly-bound variables this structure
+contains.
 %
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{pieces}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{pieces}
 \end{agdasnippet}
 %
 The key observation that will help us define a generic printer is that
-\AF{Fresh} composed with \AR{Name} is \AR{VarLike}. Indeed, as the composition
-of a functor and a trivially thinnable \AR{Wrap}per, \AF{Fresh} is \AF{Thinnable},
-and \AF{fresh} (defined in Figure~\ref{fig:fresh}) is the proof that we
-can generate placeholder values thanks to the name supply.
+\AF{Fresh} composed with \AR{Name} is \AR{VarLike}. Indeed, as the
+composition of a functor and a trivially thinnable \AR{Wrap}per,
+\AF{Fresh} is \AF{Thinnable}, and \AF{fresh} (defined in
+Figure~\ref{fig:fresh}) is the proof that we can generate
+placeholder values thanks to the name supply.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{vlmname}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{vlmname}
 \end{agdasnippet}
 
 This \AR{VarLike} instance empowers us to reify in an effectful manner
@@ -45,7 +68,7 @@ a \AF{Kripke} function space taking \AF{Name}s and returning a \AF{Printer}
 to a set of \AF{Pieces}.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{reifytype}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{reifytype}
 \end{agdasnippet}
 
 In case there are no newly bound variables, the \AF{Kripke} function space
@@ -53,7 +76,7 @@ collapses to a mere \AR{Printer} which is precisely the wrapped version of
 the type we expect.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{reifybase}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{reifybase}
 \end{agdasnippet}
 
 Otherwise we proceed in a manner reminiscent of the pure reification function
@@ -68,7 +91,7 @@ on these names to obtain the string representation of the subterm. We finally
 return the names we used together with this string.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{reifypieces}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{reifypieces}
 \end{agdasnippet}
 
 We can put all of these pieces together to obtain the \AF{Printing} semantics
@@ -79,20 +102,19 @@ of term of our syntaxes with binding is always traversable to combine all of
 these results into a value we can apply our display function to.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{printing}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{printing}
 \caption{Printing with \AF{Name}s as a \AR{Semantics}}\label{fig:genericprinting}
 \end{figure}
 
 This allows us to write a \AF{printer} for open terms as demonstrated in
 Figure~\ref{fig:genericprint}.
-\reva{We start by using \AF{base} (defined in Section~\ref{sec:varlike:base})
-}
+We start by using \AF{base} (defined in Section~\ref{sec:varlike:base})
 to generate an environment of \AR{Name}s for the free variables, then use
 our semantics to get a \AF{printer} which we can run using a stream \AF{names} of distinct
 strings as our name supply.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Semantics/Printing.tex]{print}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{print}
 \caption{Generic Printer for Open Terms}\label{fig:genericprint}
 \end{figure}
 
@@ -107,7 +129,7 @@ representation; it is once more a matter of putting the \AF{Pieces}
 together.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Examples/Printing.tex]{printUTLC}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/Printing.tex]{printUTLC}
 \end{agdasnippet}
 
 As always, these functions are readily executable and we can check
@@ -120,11 +142,11 @@ expression itself is printed.
 
 \begin{minipage}[t]{0.45\textwidth}
   \begin{agdasnippet}
-  \ExecuteMetaData[Generic/Examples/Printing.tex]{printid}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/Printing.tex]{printid}
   \end{agdasnippet}
 \end{minipage}
 \begin{minipage}[t]{0.45\textwidth}
   \begin{agdasnippet}
-  \ExecuteMetaData[Generic/Examples/Printing.tex]{printopen}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/Printing.tex]{printopen}
   \end{agdasnippet}
 \end{minipage}
