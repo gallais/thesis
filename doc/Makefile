@@ -38,11 +38,13 @@ AGDA_FILES:=\
   generic-syntax.agda/Motivation/Problem/Naive.lagda \
   generic-syntax.agda/Generic/Data.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
+  generic-syntax.agda/Generic/Syntax/LetBinder.lagda \
   generic-syntax.agda/Generic/Syntax/LetCounter.lagda \
   generic-syntax.agda/Generic/Examples/STLC.lagda \
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
   generic-syntax.agda/Generic/Semantics.lagda \
   generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
+  generic-syntax.agda/Generic/Semantics/Elaboration/LetBinder.lagda \
   generic-syntax.agda/Generic/Semantics/Elaboration/LetCounter.lagda \
   generic-syntax.agda/Generic/Relator.lagda \
   generic-syntax.agda/Generic/Identity.lagda \
