@@ -1,11 +1,10 @@
 \begin{code}
 module Stdlib where
 
-open import Data.Product
+open import Data.Product using (_×_)
 open import Data.List.Base
 
 private
-
   variable
     A B : Set
 \end{code}
@@ -53,6 +52,25 @@ data ⊥ : Set where
 %</bottom>
 \begin{code}
 
+\end{code}
+%<*sigma>
+\begin{code}
+record Σ (A : Set) (B : A → Set) : Set where
+  constructor _,_
+  field  proj₁ : A
+         proj₂ : B proj₁
+\end{code}
+%</sigma>
+\begin{code}
+
+\end{code}
+%<*exists>
+\begin{code}
+∃⟨_⟩ : (A → Set) → Set
+∃⟨_⟩ P = Σ _ P
+\end{code}
+%</exists>
+\begin{code}
 
 \end{code}
 %<*dec>
