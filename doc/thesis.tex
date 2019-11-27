@@ -37,6 +37,14 @@
 \newtheorem{feature}{Feature}
 \newtheorem{technique}{Technique}
 
+\newenvironment{agdasnippet}[1][0]
+ {\small\ifx{#1}\undefined
+   \centering
+  \else
+  \fi
+}{\ignorespacesafterend%
+}
+
 \input{unicode}
 \input{commands}
 \input{robust-catch}
