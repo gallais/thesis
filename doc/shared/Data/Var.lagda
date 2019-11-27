@@ -14,7 +14,7 @@ open import Data.Sum hiding (map)
 open import Data.List.Base hiding ([_]; _─_)
 open import Data.List.All using (All ; _∷_)
 open import Relation.Unary
-open import Function
+open import Function.Base
 open import Agda.Builtin.Equality
 
 \end{code}
@@ -35,8 +35,8 @@ private
 %<*var>
 \begin{code}
 data Var : I ─Scoped where
-  z : ∀[          (σ  ∷_) ⊢ Var σ ]
-  s : ∀[ Var σ ⇒  (τ  ∷_) ⊢ Var σ ]
+  z : ∀[ (σ ∷_) ⊢ Var σ ]
+  s : ∀[ Var σ ⇒ (τ ∷_) ⊢ Var σ ]
 \end{code}
 %</var>
 \begin{code}

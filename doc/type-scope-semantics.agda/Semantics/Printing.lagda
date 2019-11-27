@@ -4,7 +4,7 @@
 module Semantics.Printing where
 
 open import Size using (∞)
-open import Data.List.Base using (List; []; _∷_)
+open import Data.List.Base as List using (List; []; _∷_)
 open import Data.Var hiding (_<$>_; get)
 open import Data.Environment hiding (_<$>_; _>>_)
 open import Syntax.Type
@@ -23,34 +23,52 @@ open import Codata.Thunk
 open import Codata.Stream as Stream using (Stream ; head ; tail ; zipWith ; _∷_)
 open import Category.Monad.State
 open RawIMonadState (StateMonadState (Stream String _)) hiding (zipWith ; pure)
+open import Relation.Unary
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
 private
   variable
-    Γ : List Type
-    α β σ : Type
     I : Set
+    Γ Δ : List I
+    α β σ τ : I
+    A B : Set
 
 \end{code}
 %<*monad>
 \begin{code}
-M : Set → Set
-M = State (Stream String ∞)
+Fresh : Set → Set
+Fresh = State (Stream String ∞)
 \end{code}
 %</monad>
-\begin{code}
 
+%<*valprint>
+\begin{code}
+record Wrap (A : Set) (σ : I) (Γ : List I) : Set where
+  constructor MkW; field getW : A
+\end{code}
+%</valprint>
+\begin{code}
+open Wrap public
+
+th^Wrap : Thinnable {I} (Wrap A σ)
+th^Wrap w ρ = MkW (getW w)
+
+map^Wrap : (A → B) → ∀[ Wrap A σ ⇒ Wrap B σ ]
+map^Wrap f (MkW a) = MkW (f a)
+
+reindex^Wrap : Wrap A σ Γ → Wrap A τ Δ
+reindex^Wrap (MkW w) = MkW w
 \end{code}
 %<*name>
 \begin{code}
 Name : I ─Scoped
-Name σ Γ = String
+Name = Wrap String
 \end{code}
 %</name>
 %<*printer>
 \begin{code}
 Printer : I ─Scoped
-Printer σ Γ = M String
+Printer = Wrap (Fresh String)
 \end{code}
 %</printer>
 \begin{code}
@@ -58,55 +76,70 @@ Printer σ Γ = M String
 parens : String → String
 parens str = "(" ++ str ++ ")"
 
-open Semantics
+unwords : List String → String
+unwords = concat ∘ List.intersperse " "
 
 \end{code}
 %<*fresh>
 \begin{code}
-fresh : M String
-fresh = do
+fresh : ∀ σ → Fresh (Name σ (σ ∷ Γ))
+fresh σ = do
   names ← get
   put (tail names)
-  return (head names)
+  return (MkW (head names))
 \end{code}
 %</fresh>
-%<*printingdef>
+
+%<*semprint>
 \begin{code}
 Printing : Semantics Name Printer
+Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
+                  ; one = one; tt = tt; ff = ff; ifte = ifte }
 \end{code}
-%</printingdef>
-%<*printingvar>
+%</semprint>
 \begin{code}
-Printing .th^𝓥  = th^const
-Printing .var   = return
+  where
 \end{code}
-%</printingvar>
-%<*printinglam>
+%<*printvar>
 \begin{code}
-Printing .lam {σ} mb = do
-  x ← fresh; b ← mb (bind σ) x
-  return $ "λ" ++ x ++ ". " ++ b
+  var : ∀[ Name σ ⇒ Printer σ ]
+  var = map^Wrap return
 \end{code}
-%</printinglam>
-%<*printingcons>
+%</printvar>
+%<*printapp>
 \begin{code}
-Printing .one  = return "<>"
-Printing .tt   = return "true"
-Printing .ff   = return "false"
+  app : ∀[ Printer (σ `→ τ) ⇒ Printer σ ⇒ Printer τ ]
+  app mf mt = MkW do
+    f ← getW mf
+    t ← getW mt
+    return (f ++ " (" ++ t ++ ")")
 \end{code}
-%</printingcons>
-%<*printingstruct>
+%</printapp>
+%<*printlam>
 \begin{code}
-Printing .app mf mt = do
-  f ← mf; t ← mt
-  return $ parens f ++ " " ++ t
-Printing .ifte mb ml mr = do
-  b ← mb; l ← ml; r ← mr
-  return $  "if " ++ parens b ++
-            " then " ++ parens l ++  " else " ++ parens r
+  lam : ∀[ □ (Name σ ⇒ Printer τ) ⇒ Printer (σ `→ τ) ]
+  lam {σ} mb = MkW do
+    x ← fresh σ
+    b ← getW (mb extend x)
+    return ("λ" ++ getW x ++ ". " ++ b)
 \end{code}
-%</printingstruct>
+%</printlam>
 \begin{code}
+  one : ∀[ Printer `Unit ]
+  one = MkW (return "()")
+
+  tt : ∀[ Printer `Bool ]
+  tt = MkW (return "true")
+
+  ff : ∀[ Printer `Bool ]
+  ff = MkW (return "false")
+
+  ifte : ∀[ Printer `Bool ⇒ Printer σ ⇒ Printer σ ⇒ Printer σ ]
+  ifte mb ml mr = MkW do
+    b ← getW mb
+    l ← getW ml
+    r ← getW mr
+    return (unwords ("if" ∷ parens b ∷ "then" ∷ parens l ∷ "else" ∷ parens r ∷ []) )
 
 alphabetWithSuffix : String → List⁺ String
 alphabetWithSuffix suffix = List⁺.map (λ c → fromList (c ∷ []) ++ suffix)
@@ -122,32 +155,16 @@ names = Stream.concat
 
 instance _ = rawIApplicative
 
-\end{code}
-%<*init>
-\begin{code}
-init : M ((Γ ─Env) Name Γ)
-init = sequenceA (pack (const fresh))
-\end{code}
-%</init>
-%<*printerfun>
-\begin{code}
-printer : Term σ Γ → M String
-printer t = do
-  ρ ← init
-  Fundamental.lemma Printing ρ t
-\end{code}
-%</printerfun>
-%<*print>
-\begin{code}
-print : Term σ Γ → String
-print t = proj₁ $ printer t names
-\end{code}
-%</print>
+print : ∀ σ → Term σ [] → String
+print σ t = proj₁ (getW printer names) where
+
+  printer : Printer σ []
+  printer = Fundamental.lemma Printing ε t
 
 \end{code}
 %<*test>
 \begin{code}
-_ :  print (Term (σ `→ α) (α ∷ β ∷ []) ∋ `lam (`var (s z))) ≡ "λc. b"
+_ :  print (σ `→ σ) (`lam (`var z)) ≡ "λa. a"
 _ = refl
 \end{code}
 %</test>

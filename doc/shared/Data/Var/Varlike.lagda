@@ -4,14 +4,14 @@
 module Data.Var.Varlike where
 
 open import Data.List.Base hiding (lookup ; [_])
-open import Function
+open import Function.Base
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 open import Relation.Unary using (IUniversal; _⊢_; _⇒_)
 open import Data.Var
 open import Data.Pred as Pred hiding (All)
 open import Data.Relation
-open import Data.Environment
+open import Data.Environment hiding (uncurry)
 open import Generic.Syntax
 
 private

@@ -14,7 +14,7 @@ open import Relation.Unary
 open import Data.Var hiding (_<$>_)
 open import Data.Relation
 open import Data.Var.Varlike
-open import Data.Environment
+open import Data.Environment hiding (uncurry)
 open import Generic.Syntax
 open import Generic.Semantics
 open import Generic.Semantics.Syntactic
@@ -47,7 +47,7 @@ module _ {I : Set} {d : Desc I} where
  UnLet : Semantics (d `+ Let) (Tm d ∞) (Tm d ∞)
  UnLet .th^𝓥  = th^Tm
  UnLet .var    = id
- UnLet .alg    = case (Substitution .alg) λ where
+ UnLet .alg    = case (Sub .alg) λ where
    (_ , e , t , refl) → extract t (ε ∙ e)
 \end{code}
 %</letelab>
@@ -69,7 +69,7 @@ module _ {I : Set} {d : Desc I} where
             (Σ A B ∋ x , b₁) ≡ (x , b₂) → b₁ ≡ b₂
  proj₂-eq refl = refl
 
- RenUnLet : Fusion (d `+ Let) Renaming UnLet UnLet
+ RenUnLet : Fusion (d `+ Let) Ren UnLet UnLet
                    (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (select ρ₁ ρ₂)) Eqᴿ Eqᴿ
  Fusion.reifyᴬ RenUnLet = λ σ t → t
  Fusion.vl^𝓥ᴬ RenUnLet = vl^Var
@@ -80,7 +80,7 @@ module _ {I : Set} {d : Desc I} where
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
  Fusion.algᴿ RenUnLet {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ (true , t) eq^t
    = cong `con $ begin
-     let t′ = fmap d (Semantics.body Renaming ρ₁) t in
+     let t′ = fmap d (Semantics.body Ren ρ₁) t in
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Var) t′))
        ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Var) (Semantics.body UnLet ρ₂) t′) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Δ i → (Semantics.body UnLet ρ₂ Δ i) ∘ reify vl^Var Δ i) t′)
@@ -93,7 +93,7 @@ module _ {I : Set} {d : Desc I} where
  unLetRen-body :
    ∀ Ξ σ {Γ Δ Θ s} (t : Scope (Tm (d `+ Let) s) Ξ σ Γ) {ρ₁ ρ₃} {ρ₂ : Thinning Δ Θ} →
    All Eqᴿ _ (ren ρ₂ <$> ρ₁) ρ₃ →
-   reify vl^Var Ξ σ (Semantics.body Renaming ρ₂ Ξ σ (reify vl^Tm Ξ σ (Semantics.body UnLet ρ₁ Ξ σ t)))
+   reify vl^Var Ξ σ (Semantics.body Ren ρ₂ Ξ σ (reify vl^Tm Ξ σ (Semantics.body UnLet ρ₁ Ξ σ t)))
    ≡ reify vl^Tm Ξ σ (Semantics.body UnLet ρ₃ Ξ σ t)
 
  unLetRen (`var v) ρᴿ = lookupᴿ ρᴿ v
@@ -109,8 +109,8 @@ module _ {I : Set} {d : Desc I} where
      ren (pack id) (lookup ρ₃ v)
        ∎
  unLetRen (`con (true  , r)) {ρ₁} {ρ₃} {ρ₂} ρᴿ = cong `con $ begin
-   fmap d (reify vl^Var) (fmap d (Semantics.body Renaming ρ₂) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)))
-     ≡⟨ fmap² d (Semantics.body Renaming ρ₂) (reify vl^Var) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)) ⟩
+   fmap d (reify vl^Var) (fmap d (Semantics.body Ren ρ₂) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)))
+     ≡⟨ fmap² d (Semantics.body Ren ρ₂) (reify vl^Var) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)) ⟩
    fmap d _ (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r))
      ≡⟨ fmap² d (reify vl^Tm) _ _ ⟩
    fmap d _ (fmap d (Semantics.body UnLet ρ₁) r)
@@ -184,7 +184,7 @@ module _ {I : Set} {d : Desc I} where
     lookupᴿ eqᴿ k with split Ξ (injectʳ Ξ k) | split-injectʳ Ξ k
     lookupᴿ eqᴿ k | .(inj₂ k) | refl = refl
 
- SubUnLet : Fusion (d `+ Let) Substitution UnLet UnLet
+ SubUnLet : Fusion (d `+ Let) Sub UnLet UnLet
                    (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (unLet ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
  Fusion.reifyᴬ SubUnLet = λ σ t → t
  Fusion.vl^𝓥ᴬ SubUnLet = vl^Tm
@@ -201,7 +201,7 @@ module _ {I : Set} {d : Desc I} where
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
  Fusion.algᴿ  SubUnLet {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ (true , t) eq^t
    = cong `con $ begin
-     let t′ = fmap d (Semantics.body Substitution ρ₁) t in
+     let t′ = fmap d (Semantics.body Sub ρ₁) t in
      fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₂) (fmap d (reify vl^Tm) t′))
        ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body UnLet ρ₂) t′) ⟩
      fmap d (reify vl^Tm) (fmap d (λ Δ i → Semantics.body UnLet ρ₂ Δ i ∘ reify vl^Tm Δ i) t′)
@@ -214,7 +214,7 @@ module _ {I : Set} {d : Desc I} where
  unLetSub-body :
    ∀ Ξ σ {Γ Δ Θ s} (t : Scope (Tm (d `+ Let) s) Ξ σ Γ) {ρ₁ ρ₃} {ρ₂ : (Δ ─Env) (Tm d ∞) Θ} →
    All Eqᴿ _ (sub ρ₂ <$> ρ₁) ρ₃ →
-   reify vl^Tm Ξ σ (Semantics.body Substitution ρ₂ Ξ σ (reify vl^Tm Ξ σ (Semantics.body UnLet ρ₁ Ξ σ t)))
+   reify vl^Tm Ξ σ (Semantics.body Sub ρ₂ Ξ σ (reify vl^Tm Ξ σ (Semantics.body UnLet ρ₁ Ξ σ t)))
    ≡ reify vl^Tm Ξ σ (Semantics.body UnLet ρ₃ Ξ σ t)
 
  unLetSub (`var v) ρᴿ = lookupᴿ ρᴿ v
@@ -230,8 +230,8 @@ module _ {I : Set} {d : Desc I} where
      ren (pack id) (lookup ρ₃ v)
        ∎
  unLetSub (`con (true  , r)) {ρ₁} {ρ₃} {ρ₂} ρᴿ = cong `con $ begin
-   fmap d (reify vl^Tm) (fmap d (Semantics.body Substitution ρ₂) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)))
-     ≡⟨ fmap² d (Semantics.body Substitution ρ₂) (reify vl^Tm) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)) ⟩
+   fmap d (reify vl^Tm) (fmap d (Semantics.body Sub ρ₂) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)))
+     ≡⟨ fmap² d (Semantics.body Sub ρ₂) (reify vl^Tm) (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r)) ⟩
    fmap d _ (fmap d (reify vl^Tm) (fmap d (Semantics.body UnLet ρ₁) r))
      ≡⟨ fmap² d (reify vl^Tm) _ _ ⟩
    fmap d _ (fmap d (Semantics.body UnLet ρ₁) r)

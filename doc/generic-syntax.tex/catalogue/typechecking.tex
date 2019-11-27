@@ -1,0 +1,110 @@
+\subsection{An Algebraic Approach to Typechecking}\label{section:typechecking}
+
+Following Atkey~\citeyear{atkey2015algebraic}, we can consider type checking
+and type inference as a possible semantics for a bidirectional~\cite{pierce2000local}
+language. We reuse the syntax introduced in Section~\ref{par:bidirectional}
+and the types introduced in Figure~\ref{fig:intrinsic-stlc}; it
+gives us a simply typed bidirectional calculus as a bisorted language using
+a notion of \AD{Mode} to distinguish between terms for which we will be able to
+\AIC{Infer} the type and the ones for which we will have to \AIC{Check} a type
+candidate.
+
+The values stored in the environment of the typechecking function attach \AD{Type}
+information to bound variables whose \AD{Mode} is \AIC{Infer}, guaranteeing no
+variable ever uses the \AIC{Check} mode. In contrast, the generated computations
+will, depending on the mode, either take a type candidate and \AIC{Check} it is
+valid or \AIC{Infer} a type for their argument. These computations are always
+potentially failing so we use the \AD{Maybe} monad.
+\revb{In an actual compiler pipeline we would naturally use a different error monad
+and generate helpful error messages pointing out where the type error occured. The
+interested reader can see a fine-grained analysis of type errors in the extended
+example of a typechecker in \citet{DBLP:journals/jfp/McBrideM04}.}
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.40\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{varmode}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.50\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{typemode}
+\end{minipage}
+\caption{Var- and Type- Relations indexed by Mode}
+\end{figure}
+
+A change of direction from inferring to checking will require being able to check
+that two types agree so we introduce the function \AF{\_=?\_}. Similarly we will
+sometimes expect a function type but may be handed anything so we will have to check
+with \AF{isArrow} that our candidate's head constructor is indeed an arrow, and
+collect the domain and codomain.
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{typeeq}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{isArrow}
+\end{minipage}
+\caption{Tests for \AD{Type} values}
+\end{figure}
+
+We can now define typechecking as a \semrec{}. We describe the algorithm constructor
+by constructor; in the \AR{Semantics} definition (omitted here) the algebra will
+simply perform a dispatch and pick the relevant auxiliary lemma. Note that in the
+following code, \AF{\_<\$\_} is, following classic Haskell notations, the function
+which takes an \AB{A} and a {\AD{Maybe} \AB{B}} and returns a {\AD{Maybe} \AB{A}}
+which has the same structure as its second argument.
+
+\paragraph{Application} When facing an application: infer the type of the function,
+make sure it is an arrow type, check the argument at the domain's type and return
+the codomain.
+\begin{agdasnippet}
+\ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{app}
+\end{agdasnippet}
+%
+\paragraph{λ-abstraction} For a λ-abstraction: check that the input
+type \AB{arr} is an arrow type and check the body \AB{b} at the
+codomain type in the extended environment (using \AF{bind}) where the
+newly-bound variable is of mode \AIC{Infer} and has the domain's type.
+\begin{agdasnippet}
+\ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{lam}
+\end{agdasnippet}
+%
+\paragraph{Embedding of \AD{Infer} into \AD{Check}} The change of
+direction from \AIC{Infer}rable to \AIC{Check}able is successful when the
+inferred type is equal to the expected one.
+\begin{agdasnippet}
+\ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{emb}
+\end{agdasnippet}
+%
+\paragraph{Cut: A \AD{Check} in an \AD{Infer} position} 
+\revc{So far, our bidirectional syntax only permits the construction
+  of STLC terms in \emph{canonical
+    form}~\cite{Pfenning:04,Dunfield:2004:TT:964001.964025}. In order to construct
+  non-normal (redex) terms, whose semantics is given logically by the
+  `cut' rule, we need to reverse direction. } 
+Our final semantic operation, \AF{cut}, 
+always comes with a type candidate against which to check the term and
+to be returned in case of success.
+\begin{agdasnippet}
+\ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{cut}
+\end{agdasnippet}
+%
+We have defined a bidirectional typechecker for this simple language by
+leveraging the \semrec{} framework. We can readily run it on closed terms
+using the \AF{closed} corollary defined in Figure~\ref{fig:evalclosed}
+and (defining \AF{β} to be {(\AIC{α} \AIC{`→} \AIC{α})}) infer the type of
+the expression {(λx. x : β → β) (λx. x)}.
+
+\begin{figure}[h!]
+\begin{minipage}{0.35\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{type-}
+\end{minipage}\hfill
+\begin{minipage}{0.55\textwidth}
+  \ExecuteMetaData[Generic/Semantics/TypeChecking.tex]{example}
+\end{minipage}
+\caption{Type- Inference / Checking as a Semantics\label{defn:BidiSemantics}}
+\end{figure}
+
+The output of this function is not very informative. As we will see shortly,
+there is nothing stopping us from moving away from a simple computation
+returning a {(\AD{Maybe} \AD{Type})} to an evidence-producing function
+elaborating a term in \AF{Bidi} to a well scoped and typed term in \AF{STLC}.

@@ -37,13 +37,15 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
          (alg-fusion :
             ∀ {i σ Γ Δ Θ} (b : ⟦ d ⟧ (Scope (Tm d i)) σ Γ) {ρ₁ ρ₃} {ρ₂ : (Δ ─Env) 𝓥 Θ} →
             All Eqᴿ _ (select ρ₁ ρ₂) ρ₃ →
-            let f = λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ
+            let f = λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Ren ρ₁ Δ σ
                 g = Semantics.body S ρ₃
             in ⟦ d ⟧ᴿ (Kripkeᴿ Eqᴿ Eqᴿ) (fmap d f b) (fmap d g b) →
             Semantics.alg S (fmap d f b) ≡ Semantics.alg S (fmap d g b))
         where
 
-  ren-sem : Fusion d Renaming S S (λ Γ Δ σ → All Eqᴿ Γ ∘ (select σ)) Eqᴿ Eqᴿ
+  module Ren = Semantics (Ren {d = d})
+
+  ren-sem : Fusion d Ren S S (λ Γ Δ σ → All Eqᴿ Γ ∘ (select σ)) Eqᴿ Eqᴿ
   Fusion.reifyᴬ ren-sem = λ _ t → t
   Fusion.vl^𝓥ᴬ ren-sem = vl^Var
   Fusion.th^𝓔ᴿ   ren-sem = λ ρᴿ σ → packᴿ (λ v → cong (λ ρ → Semantics.th^𝓥 S ρ σ) (lookupᴿ ρᴿ v))
@@ -69,22 +71,22 @@ module _ {I} (d : Desc I) {𝓥 𝓒} (S : Semantics d 𝓥 𝓒)
   Fusion.varᴿ  ren-sem = λ ρᴿ v → cong (Semantics.var S) (lookupᴿ ρᴿ v)
   Fusion.algᴿ  ren-sem {Γ} {Δ} {ρ₁} {Θ} {ρ₂} {ρ₃} ρᴿ b zp = begin
     let
-      v₁  = fmap d (Semantics.body Renaming ρ₁) b
+      v₁  = fmap d (Ren.body ρ₁) b
       v₃  = fmap d (Semantics.body S ρ₃) b
 
       aux : fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) v₁
-          ≡ fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ) b
+          ≡ fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Ren.body ρ₁ Δ σ) b
       aux = begin
         fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) v₁
-          ≡⟨ fmap² d (Semantics.body Renaming ρ₁) (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) b ⟩
-        fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ) b
+          ≡⟨ fmap² d (Ren.body ρ₁) (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) b ⟩
+        fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Ren.body ρ₁ Δ σ) b
           ∎
     in
     Semantics.alg S (fmap d (Semantics.body S ρ₂) (fmap d (reify vl^Var) v₁))
-      ≡⟨ cong (Semantics.alg S) (fmap² d (reify vl^Var) (Semantics.body S ρ₂) (fmap d (Semantics.body Renaming ρ₁) b)) ⟩
-    Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) (fmap d (Semantics.body Renaming ρ₁) b))
+      ≡⟨ cong (Semantics.alg S) (fmap² d (reify vl^Var) (Semantics.body S ρ₂) (fmap d (Ren.body ρ₁) b)) ⟩
+    Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ) (fmap d (Ren.body ρ₁) b))
       ≡⟨ cong (Semantics.alg S) aux ⟩
-    Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Semantics.body Renaming ρ₁ Δ σ) b)
+    Semantics.alg S (fmap d (λ Δ σ → Semantics.body S ρ₂ Δ σ ∘ reify vl^Var Δ σ ∘ Ren.body ρ₁ Δ σ) b)
       ≡⟨ alg-fusion b ρᴿ (subst (λ t → ⟦ d ⟧ᴿ _ t v₃) aux zp) ⟩
     Semantics.alg S v₃
       ∎

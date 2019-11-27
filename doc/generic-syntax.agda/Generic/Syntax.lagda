@@ -6,14 +6,14 @@ module Generic.Syntax where
 open import Size
 open import Data.Bool
 open import Data.List.Base as L hiding ([_])
-open import Data.List.All hiding (sequenceA)
+open import Data.List.Relation.Unary.All hiding (mapA; sequenceA)
 open import Data.Product as Prod
 open import Function hiding (case_of_)
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 open import Data.Var hiding (z; s)
 open import Relation.Unary
-open import Data.Environment as E hiding (sequenceA)
+open import Data.Environment as E hiding (sequenceA; uncurry)
 
 -- Descriptions and their Interpretation
 
@@ -35,8 +35,10 @@ reindex f (`∎ i)     = `∎ (f i)
 private
   variable
     I : Set
-    i : I
+    i σ : I
+    Γ₁ Γ₂ : List I
     s : Size
+    X Y : List I → I ─Scoped
 \end{code}
 %<*interp>
 \begin{code}
@@ -97,7 +99,8 @@ module _ {I : Set} where
 %<*descsum>
 \begin{code}
  _`+_ : Desc I → Desc I → Desc I
- d `+ e = `σ Bool $ λ isLeft → if isLeft then d else e
+ d `+ e = `σ Bool $ λ isLeft →
+          if isLeft then d else e
 \end{code}
 %</descsum>
 \begin{code}
@@ -106,7 +109,8 @@ module _ {I : Set} {d e : Desc I} {X : List I → I ─Scoped}
 \end{code}
 %<*case>
 \begin{code}
- case :  (⟦ d ⟧ X i Γ → A) → (⟦ e ⟧ X i Γ → A) → (⟦ d `+ e  ⟧ X i Γ → A)
+ case : (⟦ d ⟧ X i Γ → A) → (⟦ e ⟧ X i Γ → A) →
+        (⟦ d `+ e  ⟧ X i Γ → A)
  case l r (true   , t) = l t
  case l r (false  , t) = r t
 \end{code}
@@ -199,15 +203,21 @@ module _ {I : Set} {X Y Z : List I → I ─Scoped} where
 
 open import Category.Applicative
 
-module _ {I : Set} {X : List I → I ─Scoped} {A : Set → Set} {{app : RawApplicative A}} where
+module _ {A : Set → Set} {{app : RawApplicative A}} where
 
  module A = RawApplicative app
  open A
 
- sequenceA : {i : I} (d : Desc I) → ∀[ ⟦ d ⟧ (λ Δ j Γ → A (X Δ j Γ)) i ⇒ A ∘ ⟦ d ⟧ X i ]
+ sequenceA : (d : Desc I) →
+             ∀[ ⟦ d ⟧ (λ Δ j Γ → A (X Δ j Γ)) i ⇒ A ∘ ⟦ d ⟧ X i ]
  sequenceA (`σ A d)    (a , t)  = (λ b → a , b) A.<$> sequenceA (d a) t
  sequenceA (`X Δ j d)  (r , t)  = _,_ A.<$> r ⊛ sequenceA d t
  sequenceA (`∎ i)      t        = pure t
+
+ mapA : (d : Desc I) →
+        (f : ∀ Δ j → X Δ j Γ₁ → A (Y Δ j Γ₂))
+        → ⟦ d ⟧ X σ Γ₁ → A (⟦ d ⟧ Y σ Γ₂)
+ mapA d f = sequenceA d ∘ fmap d f
 
 -- Desc Morphisms
 
