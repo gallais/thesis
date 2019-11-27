@@ -181,91 +181,9 @@ for syntaxes with binding.
 
 \input{generic-syntax.tex/catalogue/desugaring}
 \input{generic-syntax.tex/catalogue/inlining}
+\input{generic-syntax.tex/catalogue/normalising}
 
 
-\section{(Unsafe) Normalisation by Evaluation}\label{section:unsafenbyeval}
-
-A key type of traversal we have not studied yet is a language's evaluator. Our
-universe of syntaxes with binding does not impose any typing discipline on the
-user-defined languages and as such cannot guarantee their totality. This is
-embodied by one of our running examples: the untyped $\lambda$-calculus. As a
-consequence there is no hope for a safe generic framework to define normalisation
-functions.
-
-The clear connection between the \AF{Kripke} functional space characteristic of
-our semantics and the one that shows up in normalisation by evaluation suggests
-we ought to manage to give an unsafe generic framework for normalisation by evaluation.
-By temporarily \textbf{disabling Agda's positivity checker}, we can define a
-generic reflexive domain \AD{Dm} in which to interpret our syntaxes. It has three
-constructors corresponding respectively to a free variable, a constructor's
-counterpart where scopes have become \AF{Kripke} functional spaces on \AD{Dm}
-and an error token because the evaluation of untyped programs may go wrong.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{domain}
-\caption{Corollary: \AF{Let}-Elaboration via Evaluation with Placeholders}
-\end{figure}
-
-This datatype definition is utterly unsafe. The more conservative user will happily
-restrict herself to typed settings where the domain can be defined as a logical
-predicate or opt instead for a step-indexed approach. But this domain does make it
-possible to define a generic \AF{nbe} semantics by only specifying an algebra to
-evaluate one ``layer'' of term. This constraint is minimal: there is no way for
-us to know a priori what a constructor means; a binder could represent
-$\lambda$-abstractions, $\Sigma$-types, fixpoints, or anything else.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{alg}
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{nbe}
-\caption{Evaluation as a \AR{Semantics}}
-\end{figure}
-
-Thanks to the fact we have picked a universe of finitary syntaxes, we can
-\emph{traverse} (\cite{mcbride_paterson_2008}) the functor to define a
-(potentially failing) reification function turning elements of the reflexive
-domain into terms. The Kripke function spaces can themselves be reified:
-\AD{Dm} is \AR{VarLike} thanks to the \AIC{V} constructor.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{reify}
-\caption{Generic Reification via \AF{sequenceA}}
-\end{figure}
-
-By composing them, we obtain the normalisation function which gives its name
-to normalisation by evaluation: provided a term, we produce a value in the
-reflexive domain by evaluating it in an environment made of placeholder values
-and then reify it to a (maybe) term.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{norm}
-\caption{Normalisation by Evaluation}
-\end{figure}
-
-\subsection{Example: Evaluator for the Untyped Lambda-Calculus}
-
-Using this setup, we can write a normaliser for the untyped $\lambda$-calculus:
-we use a pattern matching lambda to distinguish between the counterpart of the
-$\lambda$-abstraction constructor on one hand and the application one on the other.
-The former is trivial: functions are already values! The semantical counterpart of
-application proceeds by case analysis on the function: if it corresponds
-to a $\lambda$-abstraction, we can fire the redex by using the Kripke functional space;
-otherwise we grow the spine of stuck applications.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{norm}
-\caption{Normalisation for the Untyped $\lambda$-calculus}
-\end{figure}
-
-We have not used the \AIC{⊥} constructor so \emph{if} the evaluation terminates
-(by disabling the strict positivity check we have lost all guarantees of the sort)
-we know we will get a term in normal form. For instance: identity applied twice
-to itself yield a strongly normalising term and if we run the evaluator we indeed
-get the identity as an output as demonstrated in \cref{fig:normid3}.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{example}
-\caption{Normalization Example\label{fig:normid3}}
-\end{figure}
 
 
 \section{Printing with Names, Generically}

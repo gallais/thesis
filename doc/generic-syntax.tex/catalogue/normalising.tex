@@ -1,4 +1,4 @@
-\subsection{(Unsafe) Normalisation by Evaluation}\label{section:nbyeval}
+\section{(Unsafe) Normalisation by Evaluation}\label{section:unsafenbyeval}
 
 A key type of traversal we have not studied yet is a language's
 evaluator. Our universe of syntaxes with binding does not impose
@@ -21,7 +21,7 @@ scopes have become \AF{Kripke} functional spaces on \AD{Dm} and
 an error token because the evaluation of untyped programs may go wrong.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Semantics/NbyE.tex]{domain}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{domain}
 \caption{Generic Reflexive Domain}\label{fig:reflexivedomain}
 \end{figure}
 
@@ -47,9 +47,11 @@ stand for λ-abstractions, $\Sigma$-types, fixpoints, or
 anything else.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Semantics/NbyE.tex]{nbe-setup}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{nbe-setup}
 \caption{Generic Normalisation by Evaluation Framework\label{defn:NbE}}
 \end{figure}
+
+\subsection{Example: Evaluator for the Untyped Lambda-Calculus}
 
 Using this setup, we can write a normaliser for the untyped λ-calculus
 by providing an algebra. The key observation that allows us to implement
@@ -64,7 +66,7 @@ environment {(\AF{ε} \AB{∙} \AB{t})} containing the value \AB{t} of type
 \AB{σ}.
 
 \begin{figure}[h]
-  \ExecuteMetaData[Generic/Examples/NbyE.tex]{app}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{app}
 \caption{Applying a Kripke Function to an argument}\label{fig:kripkeapp}
 \end{figure}
 
@@ -73,7 +75,7 @@ the other for lambda abstraction. This should make the case of interest of
 our algebra (a function applied to an argument) fairly readable.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Examples/NbyE.tex]{nbepatterns}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{nbepatterns}
 \caption{Pattern synonyms for UTLC-specific \AD{Dm} values}
 \end{figure}
 
@@ -84,7 +86,7 @@ stuck application or a lambda, in other words we already have a value and can
 simply return it using \AIC{C}.
 
 \begin{figure}[h]
-  \ExecuteMetaData[Generic/Examples/NbyE.tex]{nbelc}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{nbelc}
 \caption{Normalisation by Evaluation for the Untyped λ-Calculus}
 \end{figure}
 
@@ -95,7 +97,7 @@ Figure~\ref{fig:normuntyped} the evaluation of an untyped yet normalising
 term: {(λx. x) ((λx. x) (λx. x))} normalises to {(λx. x)}.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Examples/NbyE.tex]{example}
+\ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{example}
 \caption{Example of a normalising untyped term}
 \label{fig:normuntyped}
 \end{figure}
