@@ -9,7 +9,7 @@ open import Syntax.MoggiML.Calculus
 open import Data.List.Base using (List; []; _∷_; map)
 open import Data.Product as Prod hiding (map)
 open import Data.Var
-open import Data.Environment hiding (_<$>_)
+open import Data.Environment hiding (_<$>_; uncurry)
 open import Semantics.Specification
 open import Function
 open import Relation.Unary

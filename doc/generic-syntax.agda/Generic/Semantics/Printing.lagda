@@ -1,16 +1,13 @@
 \begin{code}
+{-# OPTIONS --safe --sized-types #-}
+
 module Generic.Semantics.Printing {I : Set} where
 
-open import Codata.Thunk using (Thunk; force)
-open import Codata.Stream as Stream using (Stream; _∷_)
-
+open import Codata.Stream using (Stream)
+open import Size
 open import Data.Product
-open import Data.Nat.Base
-open import Data.Nat.Show as Nat
 open import Data.List.Base using (List; []; _∷_; _++_)
-open import Data.List.NonEmpty as List⁺ using (List⁺; _∷_)
-open import Data.Char
-open import Data.String using (String ; fromList ; toList)
+open import Data.String using (String)
 open import Category.Monad
 open import Category.Monad.State
 open import Function
@@ -18,12 +15,14 @@ open import Relation.Unary
 
 -- We reuse Name, Printer, M, fresh, and names from the STLC printing example
 
-open import Semantics.Printing using (Name; Printer; M; fresh; names)
+open import Semantics.Printing
+  using (Fresh; Wrap; Name; Printer; MkW; getW; map^Wrap; th^Wrap; fresh; names)
 
 private
   variable
     Γ Δ : List I
     σ : I
+    i : Size
 
 -- The Printing Monad we are working with: a state containing a stream
 -- of *distinct* Strings.
@@ -37,22 +36,18 @@ open import Data.Var.Varlike
 open import Generic.Syntax hiding (sequenceA)
 open import Generic.Semantics
 
-
--- Names are varlike in the monad M: we use the state to generate fresh
--- ones. Closure under thinning is a matter of wrapping / unwrapping the
--- name.
-
 \end{code}
-%</name>
-%<*vlMName>
+%<*vlmname>
 \begin{code}
-vl^MName : VarLike {I} (λ i Γ → M (Name i Γ))
-vl^MName .new   = fresh
-vl^MName .th^𝓥  = th^const
+vl^FreshName : VarLike (λ (σ : I) → Fresh ∘ (Name σ))
+vl^FreshName = record
+  { th^𝓥  = th^Functor functor^M th^Wrap
+  ; new   = fresh _
+  }
 \end{code}
-%</vlMName>
+%</vlmname>
 \begin{code}
-
+    where open ST renaming (rawFunctor to functor^M)
 
 -- To print a term the user need to explain to us how to display one
 -- layer of term given that the newly-bound variables have been assigned
@@ -67,13 +62,21 @@ Pieces []  i Γ = String
 Pieces Δ   i Γ = (Δ ─Env) Name (Δ ++ Γ) × String
 \end{code}
 %</pieces>
+%<*reifytype>
+\begin{code}
+reify^Pieces : ∀ Δ i → Kripke Name Printer Δ i Γ → Fresh (Pieces Δ i Γ)
+\end{code}
+%</reifytype>
+%<*reifybase>
+\begin{code}
+reify^Pieces []         i p  = getW p
+\end{code}
+%</reifybase>
 %<*reifypieces>
 \begin{code}
-reify^M : ∀ Δ i → Kripke Name Printer Δ i Γ → M (Pieces Δ i Γ)
-reify^M []         i p  = p
-reify^M Δ@(_ ∷ _)  i f  = do
-  ρ ← sequenceA (freshˡ vl^MName _)
-  b ← f (freshʳ vl^Var Δ) ρ
+reify^Pieces Δ@(_ ∷ _)  i f  = do
+  ρ ← sequenceA (freshˡ vl^FreshName _)
+  b ← getW (f (freshʳ vl^Var Δ) ρ)
   return (ρ , b)
 \end{code}
 %</reifypieces>
@@ -103,10 +106,10 @@ module _ {d : Desc I} where
 \end{code}
 %<*printing>
 \begin{code}
-  printing : Display d → Semantics d Name Printer
-  printing dis .th^𝓥  = th^const
-  printing dis .var   = return
-  printing dis .alg   = λ v → dis <$> sequenceA d (fmap d reify^M v)
+  Printing : Display d → Semantics d Name Printer
+  Printing dis .th^𝓥  = th^Wrap
+  Printing dis .var   = map^Wrap return
+  Printing dis .alg   = λ v → MkW $ dis <$> mapA d reify^Pieces v
 \end{code}
 %</printing>
 \begin{code}
@@ -116,11 +119,29 @@ module _ {d : Desc I} where
 
 -- Corollary: a generic printer using a silly name supply
 
+
+  open Data.Environment
+  instance _ = ApplicativeM
+
 \end{code}
 %<*print>
+\begin{AgdaAlign}
+\AgdaNoSpaceAroundCode
+%<*printtype>
 \begin{code}
-  print : Display d → TM d σ → String
-  print dis t = proj₁ $ closed (printing dis) t names
+  print : Display d → Tm d i σ Γ → String
 \end{code}
+%</printtype>
+\begin{AgdaSuppressSpace}
+\begin{code}
+  print dis t = proj₁ (printer names) where
+    printer : Fresh String
+    printer = do
+      init ← sequenceA (base vl^FreshName)
+      getW (Semantics.semantics (Printing dis) init t)
+\end{code}
+\AgdaSpaceAroundCode
+\end{AgdaSuppressSpace}
+\end{AgdaAlign}
 %</print>
 \begin{code}

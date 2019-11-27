@@ -38,10 +38,12 @@ AGDA_FILES:=\
   generic-syntax.agda/Motivation/Problem/Naive.lagda \
   generic-syntax.agda/Generic/Data.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
+  generic-syntax.agda/Generic/Syntax/LetCounter.lagda \
   generic-syntax.agda/Generic/Examples/STLC.lagda \
   generic-syntax.agda/Generic/Examples/UntypedLC.lagda \
   generic-syntax.agda/Generic/Semantics.lagda \
   generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
+  generic-syntax.agda/Generic/Semantics/Elaboration/LetCounter.lagda \
   generic-syntax.agda/Generic/Relator.lagda \
   generic-syntax.agda/Generic/Identity.lagda \
   generic-syntax.agda/Generic/Simulation.lagda \
@@ -69,6 +71,7 @@ THESIS_DEPENDENCIES:=\
   latex/agda.sty \
   latex/unicode.tex \
   latex/commands.tex \
+  latex/robust-catch.tex \
   latex/main.bib \
   latex/cover.tex \
   latex/introduction.tex/intro.tex \
@@ -107,6 +110,10 @@ latex/agda.sty: $(AGDA_OUTPUT)
 	cp latex-agda-output/shared/agda.sty $@
 
 latex/commands.tex: commands.tex
+	@mkdir -p $(dir $@)
+	cp $< $@
+
+latex/robust-catch.tex: robust-catch.tex
 	@mkdir -p $(dir $@)
 	cp $< $@
 

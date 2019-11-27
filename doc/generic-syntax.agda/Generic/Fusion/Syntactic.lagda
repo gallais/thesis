@@ -32,23 +32,23 @@ module _ {I : Set} (d : Desc I) where
      σ : I
      i : Size
 
- Ren² : Fusion d Renaming Renaming Renaming (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
- Ren² = FusProp.ren-sem d Renaming $ λ b ρᴿ zp →
+ Ren² : Fusion d Ren Ren Ren (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
+ Ren² = FusProp.ren-sem d Ren $ λ b ρᴿ zp →
    cong `con $ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Var)) zp
 
  ren² : (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : Thinning Δ Θ) →
         ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
  ren² t ρ₁ ρ₂ = Fusion.fusion Ren² Relation.reflᴿ t
 
- RenSub : Fusion d Renaming Substitution Substitution (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
- RenSub = FusProp.ren-sem d Substitution $ λ b ρᴿ zp →
+ RenSub : Fusion d Ren Sub Sub (λ Γ Δ ρ₁ → All Eqᴿ Γ ∘ (select ρ₁)) Eqᴿ Eqᴿ
+ RenSub = FusProp.ren-sem d Sub $ λ b ρᴿ zp →
    cong `con $ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) zp
 
  rensub :  (t : Tm d i σ Γ) (ρ₁ : Thinning Γ Δ) (ρ₂ : (Δ ─Env) (Tm d ∞) Θ) →
            sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
  rensub t ρ₁ ρ₂ = Fusion.fusion RenSub Relation.reflᴿ t
 
- SubRen : Fusion d Substitution Renaming Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
+ SubRen : Fusion d Sub Ren Sub (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (ren ρ₂ <$> ρ₁)) VarTmᴿ Eqᴿ
  Fusion.reifyᴬ  SubRen = λ _ → id
  Fusion.vl^𝓥ᴬ  SubRen = vl^Tm
  Fusion.th^𝓔ᴿ    SubRen {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
@@ -57,15 +57,15 @@ module _ {I : Set} (d : Desc I) where
      ren σ (ren ρ₂ (lookup ρ₁ k))    ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k) ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fusion._>>ᴿ_  SubRen {ρᴬ = ρ₁} = subBodyEnv Renaming Ren² (λ σ t → refl) ρ₁
+ Fusion._>>ᴿ_  SubRen {ρᴬ = ρ₁} = subBodyEnv Ren Ren² (λ σ t → refl) ρ₁
  Fusion.varᴿ   SubRen = λ ρᴿ v → lookupᴿ ρᴿ v
  Fusion.algᴿ   SubRen {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
-   let v₁ = fmap d (Semantics.body Substitution ρ₁) b
-       v₃ = fmap d (Semantics.body Substitution ρ₃) b in
+   let v₁ = fmap d (Semantics.body Sub ρ₁) b
+       v₃ = fmap d (Semantics.body Sub ρ₃) b in
    begin
-     fmap d (reify vl^Var) (fmap d (Semantics.body Renaming ρ₂) (fmap d (reify vl^Tm) v₁))
-         ≡⟨ cong (fmap d (reify vl^Var)) (fmap² d (reify vl^Tm) (Semantics.body Renaming ρ₂) v₁) ⟩
-     fmap d (reify vl^Var) (fmap d (λ Φ i → (Semantics.body Renaming ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
+     fmap d (reify vl^Var) (fmap d (Semantics.body Ren ρ₂) (fmap d (reify vl^Tm) v₁))
+         ≡⟨ cong (fmap d (reify vl^Var)) (fmap² d (reify vl^Tm) (Semantics.body Ren ρ₂) v₁) ⟩
+     fmap d (reify vl^Var) (fmap d (λ Φ i → (Semantics.body Ren ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
          ≡⟨ Relator.reifyᴿ VarTmᴿ d (Simulation.reifyᴿ VarTmᴿ Eqᴿ vl^VarTm) zipped ⟩
       fmap d (reify vl^Tm) v₃
    ∎
@@ -80,7 +80,7 @@ module _ {I : Set} (d : Desc I) where
 \begin{code}
  subren t ρ₁ ρ₂ = Fusion.fusion SubRen Relation.reflᴿ t
 
- Sub² : Fusion d Substitution Substitution Substitution (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
+ Sub² : Fusion d Sub Sub Sub (λ Γ Δ ρ₁ ρ₂ → All Eqᴿ Γ (sub ρ₂ <$> ρ₁)) Eqᴿ Eqᴿ
  Fusion.reifyᴬ Sub² = λ _ t → t
  Fusion.vl^𝓥ᴬ Sub² = vl^Tm
  Fusion.th^𝓔ᴿ Sub² {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} = λ ρᴿ σ → packᴿ $ λ k →
@@ -89,15 +89,15 @@ module _ {I : Set} (d : Desc I) where
      ren σ (sub ρ₂ (lookup ρ₁ k))     ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k)   ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fusion._>>ᴿ_ Sub² {ρᴬ = ρ₁} = subBodyEnv Substitution RenSub (λ σ t → refl) ρ₁
+ Fusion._>>ᴿ_ Sub² {ρᴬ = ρ₁} = subBodyEnv Sub RenSub (λ σ t → refl) ρ₁
  Fusion.varᴿ Sub² = λ ρᴿ v → lookupᴿ ρᴿ v
  Fusion.algᴿ Sub² {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
-   let v₁ = fmap d (Semantics.body Substitution ρ₁) b
-       v₃ = fmap d (Semantics.body Substitution ρ₃) b in
+   let v₁ = fmap d (Semantics.body Sub ρ₁) b
+       v₃ = fmap d (Semantics.body Sub ρ₃) b in
    begin
-     fmap d (reify vl^Tm) (fmap d (Semantics.body Substitution ρ₂) (fmap d (reify vl^Tm) v₁))
-         ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body Substitution ρ₂) v₁) ⟩
-     fmap d (reify vl^Tm) (fmap d (λ Φ i → (Semantics.body Substitution ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
+     fmap d (reify vl^Tm) (fmap d (Semantics.body Sub ρ₂) (fmap d (reify vl^Tm) v₁))
+         ≡⟨ cong (fmap d (reify vl^Tm)) (fmap² d (reify vl^Tm) (Semantics.body Sub ρ₂) v₁) ⟩
+     fmap d (reify vl^Tm) (fmap d (λ Φ i → (Semantics.body Sub ρ₂ Φ i) ∘ (reify vl^Tm Φ i)) v₁)
          ≡⟨ Relator.reifyᴿ Eqᴿ d (Simulation.reifyᴿ Eqᴿ Eqᴿ (vl^Refl vl^Tm)) zipped ⟩
       fmap d (reify vl^Tm) v₃
    ∎

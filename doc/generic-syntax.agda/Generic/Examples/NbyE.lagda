@@ -1,44 +1,64 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Examples.NbyE where
 
 open import Size
+open import Data.Bool.Base
+open import Data.List.Base
 open import Data.Maybe
-open import Data.Bool
 open import Data.Product
-open import Agda.Builtin.List
-open import Agda.Builtin.Equality
+open import Data.Unit
 open import Function
-
 open import Relation.Unary
+open import Relation.Binary.PropositionalEquality
+
+open import Data.Var using (_─Scoped)
 open import Data.Var.Varlike
-open import Data.Environment
+open import Data.Environment hiding (_$$_)
 open import Generic.Syntax
-import Generic.Semantics.NbyE as NbyE
-open NbyE hiding (norm)
+open import Generic.Syntax.UTLC
+open import Generic.Semantics.NbyE
 
-open import Generic.Examples.UntypedLC
+private
+  variable
+    I : Set
+    𝓥 𝓒 : I ─Scoped
+    σ τ : I
 
--- Normalization by Evaluation for the Untyped Lambda Calculus
-
--- * A Lambda is Already a Value
--- * An Application can behave in two different ways:
---   1. if the function is a lambda then it reduces
---   2. Otherwise the spine of eliminators grows
 
 \end{code}
-%<*norm>
+%<*nbepatterns>
 \begin{code}
-norm : ∀[ Tm UTLC ∞ _ ⇒ Maybe ∘ Tm UTLC ∞ _ ]
-norm = NbyE.norm $ λ where
-  (false , b)                         → C (false , b)
-  (true , C (false , b , _) , t , _)  → b (base vl^Var) (ε ∙ t)
-  (true , ft)                         → C (true , ft)
+pattern LAM  f   = C (false , f , refl)
+pattern APP' f t = (true , f , t , refl)
+\end{code}
+%</nbepatterns>
+
+\begin{code}
+\end{code}
+%<*app>
+\begin{code}
+_$$_ : ∀[ Kripke 𝓥 𝓒 (σ ∷ []) τ ⇒ (𝓥 σ ⇒ 𝓒 τ) ]
+f $$ t = extract f (ε ∙ t)
+\end{code}
+%</app>
+
+%<*nbelc>
+\begin{code}
+norm^LC : ∀[ Tm UTLC ∞ tt ⇒ Maybe ∘ Tm UTLC ∞ tt ]
+norm^LC = norm $ λ where
+  (APP' (LAM f) t)  → f $$ t  -- redex
+  t                 → C t     -- value
+\end{code}
+%</nbelc>
+\begin{code}
+open import Relation.Binary.PropositionalEquality hiding ([_] ; refl)
 
 \end{code}
-%</norm>
 %<*example>
 \begin{code}
-_ : norm (`app `id (`app `id `id)) ≡ just `id
+_ : norm^LC (`app id^U (`app id^U id^U)) ≡ just id^U
 _ = refl
 \end{code}
 %</example>

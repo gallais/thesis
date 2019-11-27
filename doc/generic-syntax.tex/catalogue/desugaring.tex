@@ -1,0 +1,91 @@
+\subsection{Sugar and Desugaring as a Semantics}\label{section:letbinding}
+
+One of the advantages of having a universe of programming language
+descriptions is the ability to concisely define an \emph{extension}
+of an existing language by using \AD{Desc}ription transformers
+grafting extra constructors à la Swiestra~\citeyear{swierstra_2008}.
+This is made extremely simple by the disjoint sum combinator
+\AF{\_`+\_} which we defined in Figure~\ref{figure:descsum}.
+An example of such an extension is the addition of let-bindings to
+an existing language.
+
+Let bindings allow the user to avoid repeating themselves by naming
+sub-expressions and then using these names to refer to the associated
+terms. Preprocessors adding these types of mechanisms to existing
+languages (from C to CSS) are rather popular. In Figure~\ref{defn:letD},
+we introduce a description \AD{Let} which can be used to extend any
+language description \AB{d} to a language with let-bindings
+(\AB{d} \AF{`+} \AF{Let}).
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/LetBinder.tex]{letcode}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/LetBinder.tex]{letpattern}
+\end{minipage}
+\caption{Description of a single let binding, associated pattern synonyms
+  \label{defn:letD}}
+\end{figure}
+
+This description states that a let-binding node stores a pair of types
+\AB{σ} and \AB{τ} and two subterms. First comes the let-bound
+expression of type \AB{σ} and second comes the body of the let which
+has type \AB{τ} in a context extended with a fresh variable of type
+\AB{σ}. This defines a term of type \AB{τ}.
+
+In a dependently typed language, a type may depend on a value which
+in the presence of let bindings may be a variable standing for an
+expression. The user naturally does not want it to make any difference
+whether they used a variable referring to a let-bound expression or
+the expression itself. Various typechecking strategies can accommodate
+this expectation: in Coq~\cite{Coq:manual} let bindings are primitive
+constructs of the language and have their own typing and reduction
+rules whereas in Agda they are elaborated away to the core language
+by inlining.
+
+This latter approach to extending a language \AB{d} with let bindings
+by inlining them before typechecking can be implemented generically as
+a semantics over (\AB{d} \AF{`+} \AF{Let}). For this semantics values
+in the environment and computations are both let-free terms. The algebra
+of the semantics can be defined by parts thanks to \AF{case}, the eliminator
+for \AF{\_`+\_} defined in Figure~\ref{figure:descsum}:
+the old constructors are kept the same by
+interpreting them using the generic substitution algebra (\AF{Substitution});
+whilst the let-binder precisely provides the extra value to be added to the
+environment.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/LetBinder.tex]{unletcode}
+\caption{Desugaring as a \AR{Semantics}\label{defn:UnLet}}
+\end{figure}
+
+The process of removing let binders is then kickstarted with the placeholder
+environment \AF{id\textasciicircum{}Tm}~=~\AIC{pack}~\AIC{`var}
+of type {(\AB{Γ} \AR{─Env}) (\AD{Tm} \AB{d} ∞) \AB{Γ}}.
+
+\begin{figure}[h]
+  \ExecuteMetaData[Generic/Semantics/Elaboration/LetBinder.tex]{unlet}
+\caption{Specialising \AF{semantics} with an environment of placeholder values\label{defn:unlet}}
+\end{figure}
+
+In less than 10 lines of code we have defined a generic extension of
+syntaxes with binding together with a semantics which corresponds
+to an elaborator translating away this new construct.
+In \cref{cps-transformation} we had focused on STLC only
+and showed that it is similarly possible to implement a Continuation
+Passing Style transformation as the composition of two semantics
+à la Hatcliff and Danvy~\citeyear{hatcliff1994generic}.
+The first semantics embeds STLC into Moggi's
+Meta-Language~\citeyear{DBLP:journals/iandc/Moggi91} and thus fixes
+an evaluation order. The second one translates Moggi's ML back into
+STLC in terms of explicit continuations with a fixed return type.
+
+We have demonstrated how easily one can define extensions and combine
+them on top of a base language without having to reimplement common
+traversals for each one of the intermediate representations. Moreover,
+it is possible to define \emph{generic} transformations elaborating
+these added features in terms of lower-level ones. This suggests that
+this setup could be a good candidate to implement generic compilation
+passes and could deal with a framework using a wealth of slightly
+different intermediate languages à la Nanopass~\cite{Keep:2013:NFC:2544174.2500618}.

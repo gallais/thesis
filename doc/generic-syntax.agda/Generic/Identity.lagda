@@ -8,7 +8,7 @@ open import Agda.Builtin.List
 open import Data.Product hiding (zip)
 open import Data.Sum
 open import Data.Var
-open import Data.Relation
+open import Data.Relation as R
 open import Data.Var.Varlike
 open import Data.Environment
 open import Generic.Syntax
@@ -23,58 +23,48 @@ open import Relation.Binary.PropositionalEquality as PEq
 open import Relation.Binary.PropositionalEquality.WithK
 open ≡-Reasoning
 
--- If we directly try to prove that t[id] ≡ t we run into size-related issues.
--- So we start by definining a size-heterogeneous notion of pointwise equality
--- and then prove it equivalent to propositional equality when all sizes are ∞.
+private
+  variable
+    I : Set
+    d : Desc I
+    σ : I
+    Γ : List I
+    i j : Size
 
-module _ {I : Set} {d : Desc I} where
+data _≅_ {d : Desc I} {σ} {Γ} : {s : Size} → Tm d s σ Γ → {t : Size} → Tm d t σ Γ → Set
+⟨_⟩_≅_ : {d : Desc I} (e : Desc I) → ⟦ e ⟧ (Scope (Tm d i)) σ Γ → ⟦ e ⟧ (Scope (Tm d j)) σ Γ → Set
 
--- We mutually define pointwise equality on terms and pointwise equality on
--- constructor telescopes
+data _≅_ {d = d} {σ} {Γ} where
+  `var : {k l : Var σ Γ} → k ≡ l → `var {s = i} k ≅ `var {s = j} l
+  `con : {b : ⟦ d ⟧ (Scope (Tm d i)) σ Γ} {c : ⟦ d ⟧ (Scope (Tm d j)) σ Γ} →
+         ⟨ d ⟩ b ≅ c → `con {s = i} b ≅ `con {s = j} c
 
- data _≅_ {σ : I} {Γ : List I} : {s : Size} → Tm d s σ Γ → {t : Size} → Tm d t σ Γ → Set
- ⟨_⟩_≅_ : (e : Desc I) {σ : I} {Γ : List I} {s : Size} → ⟦ e ⟧ (Scope (Tm d s)) σ Γ → {t : Size} → ⟦ e ⟧ (Scope (Tm d t)) σ Γ → Set
+⟨ e ⟩ b ≅ c = ⟦ e ⟧ᴿ (λ _ _  t u → t ≅ u) b c
 
--- Equality of constructors is boring; except for the size mismatch on both sides
--- and the requirement that the telescopes match up in the `con case.
- data _≅_ {σ} {Γ} where
-   `var : {s t : Size} {k l : Var σ Γ} → k ≡ l → `var {s = s} k ≅ `var {s = t} l
-   `con : {s t : Size} {b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ} {c : ⟦ d ⟧ (Scope (Tm d t)) σ Γ} →
-          ⟨ d ⟩ b ≅ c → `con b ≅ `con c
+≅⇒≡    : ∀ {t u : Tm d ∞ σ Γ} → t ≅ u → t ≡ u
+⟨_⟩≅⇒≡ : ∀ e {t u : ⟦ e ⟧ (Scope (Tm d ∞)) σ Γ} → ⟨ e ⟩ t ≅ u → t ≡ u
 
--- Equality of constructor telescopes is given to use by `Zip` together with the
--- mutually defined notion of equality
- ⟨ e ⟩ b ≅ c = ⟦ e ⟧ᴿ (λ _ _  t u → t ≅ u) b c
+≅⇒≡ (`var eq) = cong `var eq
+≅⇒≡ (`con eq) = cong `con (⟨ _ ⟩≅⇒≡ eq)
 
-
--- Proof that size-heterogeneous pointwise equality coincides with propositional
--- equality when sizes are ∞
- ≅⇒≡   : ∀ {σ Γ} {t u : Tm d ∞ σ Γ} → t ≅ u → t ≡ u
- ⟨_⟩≅⇒≡ : ∀ {σ Γ} e {t u : ⟦ e ⟧ (Scope (Tm d ∞)) σ Γ} → ⟨ e ⟩ t ≅ u → t ≡ u
-
- ≅⇒≡ (`var eq) = cong `var eq
- ≅⇒≡ (`con eq) = cong `con (⟨ d ⟩≅⇒≡ eq)
-
- ⟨ `σ A d   ⟩≅⇒≡ (refl , eq) = cong -,_ (⟨ d _ ⟩≅⇒≡ eq)
- ⟨ `X Δ j d ⟩≅⇒≡ (≅-pr , eq) = cong₂ _,_ (≅⇒≡ ≅-pr) (⟨ d ⟩≅⇒≡ eq)
- ⟨ `∎ i     ⟩≅⇒≡ eq          = ≡-irrelevant _ _
-
--- We can now prove a lemma stating that t[id] ≅ t and we will obtain t[id] ≡ t as
--- a corrolary.
+⟨ `σ A d   ⟩≅⇒≡ (refl , eq) = cong -,_ (⟨ d _ ⟩≅⇒≡ eq)
+⟨ `X Δ j d ⟩≅⇒≡ (≅-pr , eq) = cong₂ _,_ (≅⇒≡ ≅-pr) (⟨ d ⟩≅⇒≡ eq)
+⟨ `∎ i     ⟩≅⇒≡ eq          = ≡-irrelevant _ _
 
 module RenId {I : Set} {d : Desc I} where
 
- ren-id      : ∀ {s : Size} {i Γ} (t : Tm d s i Γ) {ρ : Thinning Γ Γ} → All Eqᴿ Γ ρ (base vl^Var) → ren ρ t ≅ t
- ren-body-id : ∀ Δ i {Γ s} (t : Scope (Tm d s) Δ i Γ) {ρ : Thinning Γ Γ} → All Eqᴿ Γ ρ (base vl^Var) → reify vl^Var Δ i (Semantics.body Renaming ρ Δ i t) ≅ t
+ ren-id      : ∀ (t : Tm d i σ Γ) {ρ} → R.All Eqᴿ Γ ρ (base vl^Var) → ren ρ t ≅ t
+ ren-body-id : ∀ Δ σ (t : Scope (Tm d i) Δ σ Γ) {ρ} → R.All Eqᴿ Γ ρ (base vl^Var) →
+               reify vl^Var Δ σ (Semantics.body Ren ρ Δ σ t) ≅ t
 
  ren-id (`var k) ρᴿ = `var (trans (lookupᴿ ρᴿ k) (lookup-base^Var k))
- ren-id (`con t) ρᴿ = `con (subst₂ (⟨ d ⟩_≅_) (sym $ fmap² d (Semantics.body Renaming _) (reify vl^Var) _) (fmap-id d _)
+ ren-id (`con t) ρᴿ = `con (subst₂ (⟨ d ⟩_≅_) (sym $ fmap² d (Semantics.body Ren _) (reify vl^Var) _) (fmap-id d _)
                             $ liftᴿ d (λ Δ i t → ren-body-id Δ i t ρᴿ) _)
 
- ren-body-id []        i t     = ren-id t
- ren-body-id Δ@(_ ∷ _) i {Γ} t {ρ} ρᴿ = ren-id t eqᴿ where
+ ren-body-id []        σ t    = ren-id t
+ ren-body-id {Γ = Γ} Δ@(_ ∷ _) σ t {ρ} ρᴿ = ren-id t eqᴿ where
 
-  eqᴿ : All Eqᴿ _ (lift vl^Var Δ ρ) (base vl^Var)
+  eqᴿ : R.All Eqᴿ _ (lift vl^Var Δ ρ) (base vl^Var)
   lookupᴿ eqᴿ k with split Δ k | inspect (split Δ) k
   ... | inj₁ k₁ | PEq.[ eq ] = begin
     injectˡ Γ (lookup (base vl^Var) k₁) ≡⟨ cong (injectˡ Γ) (lookup-base^Var k₁) ⟩
@@ -107,22 +97,21 @@ module _ {I : Set} {d : Desc I} where
     ren (pack id)   t ≡⟨ ren-id′ t ⟩
     t                 ∎
 
-  lift[]^Tm : ∀ {Γ Δ} (ρ : (Γ ─Env) (Tm d ∞) Δ) → All Eqᴿ Γ ρ (lift vl^Tm [] ρ)
+  lift[]^Tm : ∀ {Γ Δ} (ρ : (Γ ─Env) (Tm d ∞) Δ) → R.All Eqᴿ Γ ρ (lift vl^Tm [] ρ)
   lookupᴿ (lift[]^Tm ρ) k = sym (ren-id (lookup ρ k))
 
 
-  th^base₁^Var : ∀ {Γ Δ} (ρ : Thinning {I} Γ Δ) → All Eqᴿ Γ (th^Env th^Var (base vl^Var) ρ) ρ
+  th^base₁^Var : ∀ {Γ Δ} (ρ : Thinning {I} Γ Δ) → R.All Eqᴿ Γ (th^Env th^Var (base vl^Var) ρ) ρ
   lookupᴿ (th^base₁^Var ρ) k = cong (lookup ρ) (lookup-base^Var k)
 
-  th^base₂^Var : ∀ {Γ Δ} (ρ : Thinning {I} Γ Δ) → All Eqᴿ Γ (th^Env th^Var ρ (base vl^Var)) ρ
+  th^base₂^Var : ∀ {Γ Δ} (ρ : Thinning {I} Γ Δ) → R.All Eqᴿ Γ (th^Env th^Var ρ (base vl^Var)) ρ
   lookupᴿ (th^base₂^Var ρ) k = `var-inj (ren-id (`var (lookup ρ k)))
 
-  th^base^Tm : ∀ {Γ Δ} (ρ : (Γ ─Env) (Tm d ∞) Δ) → All Eqᴿ Γ (th^Env th^Tm ρ (base vl^Var)) ρ
+  th^base^Tm : ∀ {Γ Δ} (ρ : (Γ ─Env) (Tm d ∞) Δ) → R.All Eqᴿ Γ (th^Env th^Tm ρ (base vl^Var)) ρ
   lookupᴿ (th^base^Tm ρ) k = ren-id (lookup ρ k)
 
-  th^base^s∙z : ∀ {σ Γ} → All Eqᴿ (σ ∷ Γ)  (th^Env th^Tm (base vl^Tm) (pack s) ∙ `var z)
-                                           ((_ ─Env) (Tm d _) _ ∋ pack `var)
+  th^base^s∙z : ∀ {σ Γ} → R.All Eqᴿ _ (th^Env th^Tm (base vl^Tm) (pack s) ∙ `var z)
+                                      ((σ ∷ Γ ─Env) (Tm d ∞) (σ ∷ Γ) ∋ pack `var)
   lookupᴿ th^base^s∙z z     = refl
   lookupᴿ th^base^s∙z (s k) = cong (ren (pack s)) (lookup-base^Tm k)
-
 \end{code}

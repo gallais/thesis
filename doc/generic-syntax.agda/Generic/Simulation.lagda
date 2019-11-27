@@ -17,7 +17,7 @@ open import Data.Var.Varlike
 open import Data.Environment
 open import Generic.Syntax
 open import Generic.Semantics
-open import Generic.Relator using (⟦_⟧ᴿ ; liftᴿ)
+open import Generic.Relator as Relator using (⟦_⟧ᴿ; liftᴿ)
 
 private
   variable
@@ -37,8 +37,28 @@ module _ (𝓥ᴿ  : Rel 𝓥ᴬ 𝓥ᴮ) (𝓒ᴿ  : Rel 𝓒ᴬ 𝓒ᴮ) where
   reifyᴿ vlᴿ []         σ kᴿ = kᴿ
   reifyᴿ vlᴿ Δ@(_ ∷ _)  σ kᴿ = kᴿ (freshʳ vl^Var Δ) (VarLikeᴿ.freshˡᴿ vlᴿ _)
 
-
+  private
+   module DISPLAYONLY where
 \end{code}
+%<*recsim1>
+\begin{code}
+   record Simulation (d : Desc I)
+     (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Semantics d 𝓥ᴮ 𝓒ᴮ)
+     (𝓥ᴿ  : Rel 𝓥ᴬ 𝓥ᴮ) (𝓒ᴿ  : Rel 𝓒ᴬ 𝓒ᴮ) : Set where
+     module 𝓢ᴬ = Semantics 𝓢ᴬ
+     module 𝓢ᴮ = Semantics 𝓢ᴮ
+     field  thᴿ   :  (ρ : Thinning Γ Δ) → rel 𝓥ᴿ σ vᴬ vᴮ →
+                     rel 𝓥ᴿ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
+            varᴿ  : rel 𝓥ᴿ σ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.var vᴬ) (𝓢ᴮ.var vᴮ)
+     bodyᴿ : ⟦ d ⟧ (Kripke 𝓥ᴬ 𝓒ᴬ) σ Δ → ⟦ d ⟧ (Kripke 𝓥ᴮ 𝓒ᴮ) σ Δ → Set
+     bodyᴿ vᴬ vᴮ = ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ
+     field  algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
+                    let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
+                         vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
+                    in bodyᴿ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
+\end{code}
+%</recsim1>
+
 %<*recsim>
 \begin{code}
 record Simulation (d : Desc I)
@@ -53,8 +73,7 @@ record Simulation (d : Desc I)
 \end{code}
 %<*thR>
 \begin{code}
-    thᴿ   :  (ρ : Thinning Γ Δ) → rel 𝓥ᴿ σ vᴬ vᴮ →
-             rel 𝓥ᴿ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
+    thᴿ   :  (ρ : Thinning Γ Δ) → rel 𝓥ᴿ σ vᴬ vᴮ → rel 𝓥ᴿ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
 \end{code}
 %</thR>
 %<*varR>
@@ -62,12 +81,21 @@ record Simulation (d : Desc I)
     varᴿ  : rel 𝓥ᴿ σ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.var vᴬ) (𝓢ᴮ.var vᴮ)
 \end{code}
 %</varR>
+%<*bodyR>
+\begin{code}
+  bodyᴿ : ⟦ d ⟧ (Kripke 𝓥ᴬ 𝓒ᴬ) σ Δ → ⟦ d ⟧ (Kripke 𝓥ᴮ 𝓒ᴮ) σ Δ → Set
+  bodyᴿ vᴬ vᴮ = ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ
+\end{code}
+%</bodyR>
+\begin{code}
+  field
+\end{code}
 %<*algR>
 \begin{code}
     algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
             let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
                  vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
-            in ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
+            in bodyᴿ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
 \end{code}
 %</algR>
 %<*simbody>

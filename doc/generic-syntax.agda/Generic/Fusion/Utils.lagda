@@ -57,7 +57,7 @@ module _ {I : Set} {T : I ─Scoped} where
 
 module _ {I : Set} {d : Desc I}  {𝓥 𝓒 : I ─Scoped}
          (𝓢 : Semantics d 𝓥 𝓒)
-         (𝓕 : Fusion d Renaming 𝓢 𝓢 (λ Γ Δ ρᴬ ρᴮ → All Eqᴿ _ (select ρᴬ ρᴮ)) Eqᴿ Eqᴿ)
+         (𝓕 : Fusion d Ren 𝓢 𝓢 (λ Γ Δ ρᴬ ρᴮ → All Eqᴿ _ (select ρᴬ ρᴮ)) Eqᴿ Eqᴿ)
          (eq^quote : ∀ σ {Γ} (t : Tm d ∞ σ Γ) → Fusion.reifyᴬ 𝓕 σ t ≡ t) where
 
   open ≡-Reasoning
