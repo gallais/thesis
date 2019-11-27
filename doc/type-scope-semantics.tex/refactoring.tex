@@ -481,7 +481,7 @@ values and computations is once more instrumental: we get to give the procedure
 a precise type guiding our implementation. The environment carries \emph{names}
 for the variables currently in scope whilst the computations thread a name-supply
 (a stream of strings) to be used to generate fresh names for bound variables
-(here we use \AF{M} for the state monad threading that name supply).
+(here we use \AF{Fresh} for the state monad threading that name supply).
 If the values in the environment had to be computations too, we would not root
 out some faulty implementations e.g a program picking a new name each time a
 variable is mentioned.
@@ -502,7 +502,7 @@ handling languages with effects (\cite{moggi1991notions}), or effectful
 semantics e.g. logging the various function calls. Here is the full definition
 of the printer.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingdef}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{semprint}
 
 Because the output type is not scoped in any way, thinning for \AF{Name}s
 (\ARF{th\textasciicircum{}𝓥}) is trivial: we return the same name. The variable
@@ -510,25 +510,25 @@ case (\ARF{var}) is a bit more interesting: after looking up a variable's \AF{Na
 in the environment, we use \AF{return} to produce the trivial \AF{Printer} constantly
 returning that name.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingvar}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printvar}
 
 As often, the case for λ-abstraction (\ARF{lam}) is the most interesting one.
 We first use \AF{fresh} to generate a \AF{Name} for the newly-bound variable,
 then run the printer for the body in the environment extended with that fresh
 name and finally build a string combining the name and the body together.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printinglam}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printlam}
 
 We then have a collection of base cases for the data constructors of type
 \AIC{`Unit} and \AIC{`Bool}. These give rise to constant printers.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingcons}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printcons}
 
 Finally we have purely structural cases: we run the printers for each of~
 the subparts and put the results together, throwing in some extra parenthesis~
 to guarantee that the result is unambiguous.
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printingstruct}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printstruct}
 
 
 The fundamental \AF{lemma} of \AR{Semantics} will deliver a printer which needs to be run
@@ -540,30 +540,20 @@ be replaced with a more sophisticated one in a user-facing language: we could
 e.g. use naming hints for user-introduced binders and type-based schemes otherwise
 ($f$ or $g$ for functions, $i$ or $j$ for integers, etc.).
 
-In order to kickstart the evaluation, we still need to provide \AR{Name}s
-for each one of the free variables in scope. We deliver that environment
-by a simple stateful computation \AF{init} chopping off an initial segment
-of the name supply of the appropriate length. We can define it using \AF{sequenceA}
-because environments are traversable (\cite{mcbride_paterson_2008}).
-The definition of \AF{print} follows.
+In order to kickstart the evaluation, we still need to provide \AR{Name}s for each
+one of the free variables in scope. We will see in \cref{section:genericprinting}
+how to build an initial environment to print open terms using more advanced tools.
+Here we are satisfied with a simple \AF{print} function for closed terms.
 
 \begin{figure}[h]
-\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{init}
-\end{minipage}\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printerfun}
-\end{minipage}
-
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{print}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printclosed}
 \caption{Printer\label{fig:printer}}
 \end{figure}
 
 We can observe \AF{print}'s behaviour by writing a test; we state it as a
 propositional equality and prove it using \AIC{refl}, forcing the typechecker
 to check that both expressions indeed compute to the same normal form. Here
-we display the identity function defined in a context of size 2. As we can see,
-the binder receives the name \AStr{"c"} because \AStr{"a"} and \AStr{"b"} have
-already been assigned to the free variables in scope.
+we display the identity function.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{test}

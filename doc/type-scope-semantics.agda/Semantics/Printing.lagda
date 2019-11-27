@@ -106,15 +106,6 @@ Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
   var = map^Wrap return
 \end{code}
 %</printvar>
-%<*printapp>
-\begin{code}
-  app : ∀[ Printer (σ `→ τ) ⇒ Printer σ ⇒ Printer τ ]
-  app mf mt = MkW do
-    f ← getW mf
-    t ← getW mt
-    return (f ++ " (" ++ t ++ ")")
-\end{code}
-%</printapp>
 %<*printlam>
 \begin{code}
   lam : ∀[ □ (Name σ ⇒ Printer τ) ⇒ Printer (σ `→ τ) ]
@@ -124,6 +115,7 @@ Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
     return ("λ" ++ getW x ++ ". " ++ b)
 \end{code}
 %</printlam>
+%<*printcons>
 \begin{code}
   one : ∀[ Printer `Unit ]
   one = MkW (return "()")
@@ -133,6 +125,15 @@ Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
 
   ff : ∀[ Printer `Bool ]
   ff = MkW (return "false")
+\end{code}
+%</printcons>
+%<*printstruct>
+\begin{code}
+  app : ∀[ Printer (σ `→ τ) ⇒ Printer σ ⇒ Printer τ ]
+  app mf mt = MkW do
+    f ← getW mf
+    t ← getW mt
+    return (f ++ parens t)
 
   ifte : ∀[ Printer `Bool ⇒ Printer σ ⇒ Printer σ ⇒ Printer σ ]
   ifte mb ml mr = MkW do
@@ -140,6 +141,9 @@ Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
     l ← getW ml
     r ← getW mr
     return (unwords ("if" ∷ parens b ∷ "then" ∷ parens l ∷ "else" ∷ parens r ∷ []) )
+\end{code}
+%</printstruct>
+\begin{code}
 
 alphabetWithSuffix : String → List⁺ String
 alphabetWithSuffix suffix = List⁺.map (λ c → fromList (c ∷ []) ++ suffix)
@@ -155,13 +159,16 @@ names = Stream.concat
 
 instance _ = rawIApplicative
 
+\end{code}
+%<*printclosed>
+\begin{code}
 print : ∀ σ → Term σ [] → String
 print σ t = proj₁ (getW printer names) where
 
   printer : Printer σ []
   printer = Fundamental.lemma Printing ε t
-
 \end{code}
+%</printclosed>
 %<*test>
 \begin{code}
 _ :  print (σ `→ σ) (`lam (`var z)) ≡ "λa. a"
