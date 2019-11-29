@@ -46,6 +46,9 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Semantics/Syntactic.lagda \
   generic-syntax.agda/Generic/Semantics/Elaboration/LetBinder.lagda \
   generic-syntax.agda/Generic/Semantics/Elaboration/LetCounter.lagda \
+  generic-syntax.agda/Generic/Semantics/TypeChecking.lagda \
+  generic-syntax.agda/Generic/Semantics/Elaboration/Typed.lagda \
+  generic-syntax.agda/Generic/Scopecheck.lagda \
   generic-syntax.agda/Generic/Relator.lagda \
   generic-syntax.agda/Generic/Identity.lagda \
   generic-syntax.agda/Generic/Simulation.lagda \
@@ -94,7 +97,10 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/catalogue/inlining.tex \
   latex/generic-syntax.tex/catalogue/normalising.tex \
   latex/generic-syntax.tex/catalogue/printing.tex \
-  latex/generic-syntax.tex/typechecking.tex \
+  latex/generic-syntax.tex/catalogue/typechecking.tex \
+  latex/generic-syntax.tex/catalogue/elaborating.tex \
+  latex/generic-syntax.tex/catalogue/scopechecking.tex \
+  latex/generic-syntax.tex/compiling.tex \
   latex/generic-syntax.tex/proofs.tex \
   latex/conclusion.tex \
   $(AGDA_OUTPUT_PROCESSED)

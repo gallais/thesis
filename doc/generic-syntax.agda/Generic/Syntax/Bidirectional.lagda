@@ -12,7 +12,10 @@ open import Function
 open import Data.Var
 open import Generic.Syntax
 
-open import StateOfTheArt.ACMM using (Type; α; _`→_) public
+infixr 5 _`→_
+data Type : Set where
+  α : Type
+  _`→_ : Type → Type → Type
 
 -- We have an *untyped* language presented in a bidirectional manner
 -- where phases are statically checked
