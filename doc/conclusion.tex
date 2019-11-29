@@ -49,7 +49,231 @@ termination checking and the consequent library we could rely on thanks to the
 work presented in this thesis meant that our proofs were just as short as
 the tactics-based ones.
 
-\section{Further Work}
+\section{Related Work}
+
+
+\subsection{Variable Binding} The representation of variable binding
+in formal systems has been a hot topic for decades. Part of the purpose
+of the first POPLMark challenge~\citeyear{poplmark} was to explore and
+compare various methods.
+
+Having based our work on a de Bruijn encoding of variables, and thus a
+canonical treatment of \(\alpha\)-equivalence classes, our work has no
+direct comparison with permutation-based treatments such as those of
+Pitts' and Gabbay's nominal syntax~\citeyear{gabbay:newaas-jv}.
+
+Our generic universe of syntax is based on
+scoped and typed de Bruijn indices~\cite{de1972lambda} but it is not
+a necessity. It is for instance possible to give an interpretation
+of \AD{Desc}riptions corresponding to Chlipala's Parametric Higher-Order
+Abstract Syntax~\citeyear{DBLP:conf/icfp/Chlipala08} and we would be interested
+to see what the appropriate notion of \AD{Semantics} is for this representation.
+
+\subsection{Alternative Binding Structures} The binding structure we
+present here is based on a flat, lexical scoping strategy. There are
+other strategies and it would be interesting to see whether
+our approach could be reused in these cases.
+
+Weirich, Yorgey, and Sheard's work~\citeyear{DBLP:conf/icfp/WeirichYS11}
+encompassing a large array of patterns (nested, recursive, telescopic, and
+n-ary) can inform our design. They do not enforce scoping invariants internally
+which forces them to introduce separate constructors for a simple binder, a
+recursive one, or a telescopic pattern. They recover guarantees by giving
+their syntaxes a nominal semantics thus bolting down the precise meaning of
+each combinator and then proving that users may only generate well formed
+terms.
+
+Bach Poulsen, Rouvoet, Tolmach, Krebbers and Visser~\citeyear{BachPoulsen}
+introduce notions of scope graphs and frames to scale the techniques typical
+of well scoped and typed deep embeddings to imperative languages.
+They showcase the core ideas of their work using STLC extended with references
+and then demonstrate that they can already handle a large subset of Middleweight
+Java.
+%
+We have demonstrated that our framework could be used to define effectful
+semantics by choosing an appropriate monad stack~\cite{DBLP:journals/iandc/Moggi91}.
+This suggests we should be able to model STLC+Ref. It is however clear that
+the scoping structures handled by scope graphs and frames are, in their full
+generality, out of reach for our framework. In constrast, our work shines by
+its generality: we define an entire universe of syntaxes and provide users
+with traversals and lemmas implemented \emph{once and for all}.
+
+Many other opportunities to enrich the notion of binder in our library are
+highlighted by Cheney~\citeyear{DBLP:conf/icfp/Cheney05a}. As we have demonstrated
+in Sections~\ref{section:letbinding} and \ref{section:inlining} we can already
+handle let-bindings generically for all syntaxes. We are currently considering
+the modification of our system to handle deeply-nested patterns by removing the
+constraint that the binders' and variables' sorts are identical. A notion of
+binding corresponding to hierarchical namespaces would be an exciting addition.
+
+We have demonstrated how to write generic programs over the potentially
+cyclic structures of Ghani, Hamana, Uustalu and Vene~\citeyear{ghani2006representing}.
+Further work by Hamana~\citeyear{Hamana2009} yielded a different presentation
+of cyclic structures which preserves sharing: pointers can not only refer
+to nodes above them but also across from them in the cyclic tree. Capturing
+this class of inductive types as a set of syntaxes with binding and writing
+generic programs over them is still an open problem.
+
+\subsection{Semantics of Syntaxes with Binding} An early foundational study
+of a general \emph{semantic} framework for signatures with binding, algebras
+for such signatures, and initiality of the term algebra, giving rise to a
+categorical `program' for substitution and proofs of its properties, was given
+by Fiore, Plotkin and Turi~\cite{FiorePlotkinTuri99}. They worked in the category of presheaves
+over renamings, (a skeleton of) the category of finite sets. The presheaf
+condition corresponds to our notion of being \AF{Thinnable}. Exhibiting
+algebras based on both de Bruijn \emph{level} and \emph{index} encodings,
+their approach isolates the usual (abstract) arithmetic required of such encodings.
+
+By contrast, we are working in an \emph{implemented} type theory where the
+encoding can be understood as its own foundation without appeal to an external
+mathematical semantics. We are able to go further in developing machine-checked
+such implementations and proofs, themselves generic with respect to an abstract syntax
+\AD{Desc} of syntaxes-with-binding. Moreover, the usual source of implementation
+anxiety, namely concrete arithmetic on de Bruijn indices, has been successfully
+encapsulated via the \AF{□} coalgebra structure. It is perhaps noteworthy that
+our type-theoretic constructions, by contrast with their categorical ones,
+appear to make fewer commitments as to functoriality, thinnability, etc. in our
+specification of semantics, with such properties typically being \emph{provable}
+as a further instance of our framework.
+
+\subsection{Meta-Theory Automation via Tactics and Code Generation} The
+tediousness of repeatedly
+proving similar statements has unsurprisingly led to various attempts at
+automating the pain away via either code generation or the definition of
+tactics. These solutions can be seen as untrusted oracles driving the
+interactive theorem prover.
+
+Polonowski's DBGen~\citeyear{polonowski:db} takes as input a raw syntax with
+comments annotating binding sites. It generates a module defining lifting,
+substitution as well as a raw syntax using names and a validation function
+transforming named terms into de Bruijn ones; we refrain from calling it a
+scopechecker as terms are not statically proven to be well scoped.
+
+Kaiser, Schäfer, and Stark~\citeyear{Kaiser-wsdebr} build on our previous paper
+to draft possible theoretical foundations for Autosubst, a so-far untrusted
+set of tactics. The paper is based on a specific syntax: well scoped call-by-value
+System F. In contrast, our effort has been here to carve out
+a precise universe of syntaxes with binding and give a systematic account
+of these syntaxes' semantics and proofs.
+
+Keuchel, Weirich, and Schrijvers' Needle~\citeyear{needleandknot} is a code
+generator written in Haskell producing syntax-specific Coq modules
+implementing common traversals and lemmas about them.
+
+\subsection{Universes of Syntaxes with Binding} Keeping in mind Altenkirch
+and McBride's observation that generic programming is everyday programming
+in dependently-typed languages~\citeyear{DBLP:conf/ifip2-1/AltenkirchM02}, we can naturally
+expect generic, provably sound, treatments of these notions in tools such as
+Agda or Coq.
+
+Keuchel~\citeyear{Keuchel:Thesis:2011} together with Jeuring~\citeyear{DBLP:conf/icfp/KeuchelJ12}
+define a universe of syntaxes with binding with a rich notion of binding patterns
+closed under products but also sums as long as the disjoint patterns bind the same
+variables. They give their universe two distinct semantics: a first one based on well
+scoped de Bruijn indices and a second one based on Parametric Higher-Order Abstract
+Syntax (PHOAS)~\cite{DBLP:conf/icfp/Chlipala08} together with a generic conversion
+function from the de Bruijn syntax to the PHOAS one. Following McBride~\citeyear{mcbride2005type},
+they implement both renaming and substitution in one fell swoop. They leave other
+opportunities for generic programming and proving to future work.
+
+Keuchel, Weirich, and Schrijvers' Knot~\citeyear{needleandknot} implements
+as a set of generic programs the traversals and lemmas generated in specialised
+forms by their Needle program. They see Needle as a pragmatic choice: working
+directly with the free monadic terms over finitary containers would be too cumbersome. In
+our experience solving the POPLMark Reloaded challenge, Agda's pattern
+synonyms make working with an encoded definition almost
+seamless.
+
+The GMeta generic framework~\citeyear{gmeta} provides a universe of syntaxes
+and offers various binding conventions (locally nameless~\cite{Chargueraud2012}
+or de Bruijn indices). It also generically implements common traversals (e.g. computing
+the sets of free variables,
+% measuring the size of a term,
+shifting
+de Bruijn indices or substituting terms for parameters) as well as common
+predicates (e.g. being a closed term) and provides generic lemmas proving that
+they are well behaved. It does not offer a generic framework
+for defining new well scoped-and-typed semantics and proving their properties.
+
+Érdi~\citeyear{gergodraft} defines a universe inspired by a first draft of this
+paper and gives three different interpretations (raw, scoped and typed syntax)
+related via erasure. He provides scope- and type- preserving renaming and
+substitution as well as various generic proofs that they are well behaved but
+offers neither a generic notion of semantics, nor generic proof frameworks.
+
+Copello~\citeyear{copello2017} works with \emph{named} binders and
+defines nominal techniques (e.g. name swapping) and ultimately $\alpha$-equivalence
+over a universe of regular trees with binders inspired by Morris'~\citeyear{morris-regulartt}.
+
+\subsection{Fusion of Successive Traversals}
+
+The careful characterisation of the successive recursive traversals which can be
+fused together into a single pass in a semantics-preserving way is not new. This
+transformation is a much needed optimisation principle in a high-level functional
+language.
+
+Through the careful study of the recursion operator associated to each
+strictly positive datatype,
+Malcolm~\citeyear{DBLP:journals/scp/Malcolm90} defined optimising
+fusion proof principles.
+%
+Other optimisations such as deforestation~\cite{DBLP:journals/tcs/Wadler90}
+or the compilation of a recursive definition into an equivalent abstract
+machine-based tail-recursive program~\cite{DBLP:conf/icfp/CortinasS18}
+rely on similar generic proofs that these transformations are meaning-preserving.
+
+
+\section{Limitations of the Current Framework}
+
+
+Although quite versatile already our current framework has some limitations
+which suggest avenues for future work. We list these limitations from easiest
+to hardest to resolve. Remember that each modification to the universe of
+syntaxes needs to be given an appropriate semantics.
+
+\paragraph{Closure under Products} Our current universe of descriptions is
+closed under sums as demonstrated in Section~\ref{desccomb}. It is however
+not closed under products: two arbitrary right-nested products conforming
+to a description may disagree on the sort of the term they are constructing.
+An approach where the sort is an input from which the description of allowed
+constructors is computed (à la Dagand \citeyear{DBLP:phd/ethos/Dagand13} where,
+for instance, the \AIC{`lam} constructor is only offered if the input sort is
+a function type) would not suffer from this limitation.
+
+\paragraph{Unrestricted Variables} Our current notion of variable can be used
+to form a term of any kind. We remarked in Sections~\ref{section:typechecking}
+and \ref{section:elaboration} that in some languages we want to restrict this
+ability to one kind in particular. In that case, we wanted users to only be able
+to use variables at the kind \AIC{Infer} of our bidirectional language. For the
+time being we made do by restricting the environment values our \AR{Semantics}
+use to a subset of the kinds: terms with variables of the wrong kind will not be
+given a semantics.
+
+\paragraph{Flat Binding Structure} Our current setup limits us to flat binding
+structures: variable and binder share the same kinds. This prevents us from
+representing languages with binding patterns, for instance pattern-matching
+let-binders which can have arbitrarily nested patterns taking pairs apart.
+
+\paragraph{Closure under Derivation} One-hole contexts play a major role in the
+theory of programming languages. Just like the one-hole context of a datatype is
+a datatype~\cite{DBLP:journals/fuin/AbbottAMG05}, we would like our universe to
+be closed under derivatives so that the formalisation of e.g. evaluation contexts
+could benefit directly from the existing machinery.
+
+\paragraph{Closure under Closures} Jander's work on formalising and certifying
+continuation passing style transformations~\cite{Jander:Thesis:2019}
+highlighted the need for a notion of syntaxes with closures. Recalling
+that our notion of Semantics is always compatible with precomposition
+with a renaming~\cite{Kaiser-wsdebr} but not necessarily
+precomposition with a substitution (printing is for instance not
+stable under substitution), accommodating terms with suspended
+substitutions is a real challenge. Preliminary experiments show that a
+drastic modification of the type of the fundamental lemma of
+\AR{Semantics} makes dealing with such closures possible. Whether the
+resulting traversal has good properties that can be proven generically
+is still an open problem.
+
+\section{Future Work}
 
 The diverse influences leading to this work suggest many opportunities
 for future research.
