@@ -10,7 +10,7 @@ open import Agda.Builtin.Equality
 open import Agda.Builtin.List
 open import Generic.Syntax
 open import Data.Var
-open import StateOfTheArt.ACMM using (Type ; α ; _`→_)
+open import Generic.Syntax.Bidirectional using (Type ; α ; _`→_)
 open import Function
 
 private

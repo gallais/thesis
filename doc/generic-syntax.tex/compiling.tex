@@ -1,0 +1,20 @@
+\chapter{Compiler Passes as Semantics}
+
+In the previous chapter we have seen various generic semantics one may be
+interested in when working on a deeply embedded language: renaming,
+substitution, printing with names or evaluation. All of these fit neatly
+in the \AR{Semantics} framework.
+
+Now we wish to focus on other instances of \AR{Semantics} that implement
+the functions used by different stages of a compiler. Some, like the
+scoping (\cref{section:genericscoping}), desugaring (\cref{section:letbinding}),
+and inlining (\cref{section:inlining}) passes will be fully generic
+while others like the typechecking (\cref{section:typechecking}) and
+elaboration (\cref{section:elaboration}) passes will correspond to a
+specific language and its particular type system.
+
+\input{generic-syntax.tex/catalogue/scopechecking.tex}
+\input{generic-syntax.tex/catalogue/typechecking.tex}
+\input{generic-syntax.tex/catalogue/elaborating.tex}
+\input{generic-syntax.tex/catalogue/desugaring.tex}
+\input{generic-syntax.tex/catalogue/inlining.tex}
