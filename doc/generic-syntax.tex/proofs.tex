@@ -8,12 +8,85 @@ not only reveals the shared structure of common traversals, it also allows
 us to give abstract proof frameworks for simulation or fusion lemmas. These
 ideas naturally extend to our generic presentation of semantics for all syntaxes.
 
-\label{def:zipd}
-The most important concept going forward is (\AF{Zip} \AB{d}), a relation
-transformer which characterises structurally equal layers such that their
-substructures are themselves related by the relation it is passed as an
-argument. It inherits a lot of its relational arguments' properties: whenever
-\AB{R} is reflexive (respectively symmetric or transitive) so is {\AF{Zip} \AB{d} \AB{R}}.\label{lem:zipstable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% RELATORS
+
+\subsection{Relations and Relation Transformers}
+
+In our exploration of generic proofs about the behaviour of various \AR{Semantics},
+we are going to need to manipulate relations between distinct notions of values or
+computations. In this section, we introduce the notion of relation we are going to
+use as well as these two key relation transformers.
+
+In Section~\ref{sec:genenvironment} we introduced a generic notion of well typed
+and scoped environment as a function from variables to values. Its formal definition
+is given in Figure~\ref{fig:environment} as a record type. This record wrapper helps
+Agda's type inference reconstruct the type family of values whenever it is passed an
+environment.
+
+For the same reason, we will use a record wrapper for the concrete implementation of
+our notion of relation over (I \AF{─Scoped}) families. A \AR{Rel}ation between two
+such families \AB{T} and \AB{U} is a function which to any \AB{σ} and \AB{Γ}
+associates a relation between (\AB{T} \AB{σ} \AB{Γ}) and (\AB{U} \AB{σ} \AB{Γ}).
+Our first example of such a relation is \AF{Eqᴿ} the equality relation between
+an (\AB{I}\AF{─Scoped}) family \AB{T} and itself.
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.65\textwidth}
+  \ExecuteMetaData[shared/Data/Relation.tex]{rel}
+\end{minipage}
+\begin{minipage}[t]{0.25\textwidth}
+  \ExecuteMetaData[shared/Data/Relation.tex]{eqR}
+\end{minipage}
+\caption{Relation Between \AB{I}\AF{─Scoped} Families and Equality Example\label{ex:fam-eq}}
+\label{fig:reldef}
+\end{figure}
+
+Once we know what relations are, we are going to have to lift relations on values
+and computations to relations on environments, \AF{Kripke} function spaces or
+on \AB{d}-shaped terms whose subterms have been evaluated already.
+This is what the rest of this section focuses on.
+
+\paragraph{Environment relator}
+Provided a relation \AB{𝓥ᴿ} for notions of values \AB{𝓥ᴬ} and \AB{𝓥ᴮ}, by
+pointwise lifting we can define a relation {(\AR{All} \AB{𝓥ᴿ} \AB{Γ})} on
+\AB{Γ}-environments of values \AB{𝓥ᴬ} and \AB{𝓥ᴮ} respectively. We once more
+use a record wrapper simply to facilitate Agda's job when reconstructing
+implicit arguments.
+
+\begin{figure}[h]
+  \ExecuteMetaData[shared/Data/Relation.tex]{all}
+\caption{Relating \AB{Γ}-Environments in a Pointwise Manner\label{defn:Env-rel}}
+\end{figure}
+
+The first example of two environment being related is \AF{reflᴿ} that, to any
+environment \AB{ρ} associates a trivial proof of the statement
+{(\AR{All} \AF{Eqᴿ} \AB{Γ} \AB{ρ} \AB{ρ})}.
+The combinators we introduced in Figure~\ref{fig:baseenv} to build environments
+(\AF{ε}, \AF{\_∙\_}, etc.) have natural relational counterparts. We reuse the same
+names for them, simply appending an \AF{ᴿ} suffix.
+
+\paragraph{Kripke relator}
+We assume that we have two types of values \AB{𝓥ᴬ} and \AB{𝓥ᴮ}
+as well as a relation \AB{𝓥ᴿ} for pairs of such values, and two types of computations
+\AB{𝓒ᴬ} and \AB{𝓒ᴮ} whose notion of relatedness is given by \AB{𝓒ᴿ}. We can define
+\AF{Kripkeᴿ} relating Kripke functions of type
+{(\AF{Kripke} \AB{𝓥ᴬ} \AB{𝓒ᴬ})} and {(\AF{Kripke} \AB{𝓥ᴮ} \AB{𝓒ᴮ})}
+respectively by stating that they send related inputs
+to related outputs. We use the relation transformer \AF{All} defined in the previous
+paragraph.
+
+\begin{figure}[h]
+ \ExecuteMetaData[shared/Data/Var/Varlike.tex]{kripkeR}
+\caption{Relational Kripke Function Spaces: From Related Inputs to Related Outputs\label{fig:Kripke-rel}}
+\end{figure}
+
+\paragraph{Desc relator}
+The relator (\AF{⟦} \AB{d} \AF{⟧ᴿ}) is a relation transformer which characterises
+structurally equal layers such that their substructures are themselves related
+by the relation it is passed as an argument. It inherits a lot of its relational
+arguments' properties: whenever \AB{R} is reflexive (respectively symmetric or
+transitive) so is {(\AF{⟦} \AB{d} \AF{⟧ᴿ} \AB{R})}.\label{lem:zipstable}
 
 It is defined by induction on the description and case analysis on the two
 layers which are meant to be equal:
@@ -22,21 +95,24 @@ layers which are meant to be equal:
     be trivially equal (i.e. the constraint generated is the unit type)
   \item When facing a recursive position {\AIC{`X} \AB{$\Delta$} \AB{j} \AB{d}}, we
     demand that the two substructures are related by {\AB{R} \AB{$\Delta$} \AB{j}}
-    and that the rest of the layers are related by \AF{Zip} \AB{d} \AB{R}
+    and that the rest of the layers are related by (\AF{⟦} \AB{d} \AF{⟧ᴿ} \AB{R})
   \item Two nodes of type {\AIC{`$\sigma$} \AB{A} \AB{d}} will
     be related if they both carry the same payload \AB{a} of type \AB{A} and if
-    the rest of the layers are related by {\AF{Zip} (\AB{d} \AB{a}) \AB{R}}.
+    the rest of the layers are related by (\AF{⟦} \AB{d} \AB{a} \AF{⟧ᴿ} \AB{R})
 \end{itemize}
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Relator.tex]{ziptype}
-\caption{Zip: Characterising Structurally Equal Values with Related Substructures}
+ \ExecuteMetaData[generic-syntax.agda/Generic/Relator.tex]{ziptype}
+\caption{Relator: Characterising Structurally Equal Values with Related Substructures\label{fig:zip-rel}}
 \end{figure}
 
-If we were to take a fixpoint of \AF{Zip}, we could obtain a structural
+If we were to take a fixpoint of \AF{⟦\_⟧ᴿ}, we could obtain a structural
 notion of equality for terms which we could prove equivalent to propositional
-equality. Although interesting in its own right, we will instead focus on more
-advanced use-cases.
+equality. Although interesting in its own right, this section will focus
+on more advanced use-cases.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMULATION
 
 \section{Simulation Lemma}\label{section:simulation}
 
