@@ -164,12 +164,26 @@ and such that we can craft placeholder values in non-empty contexts.
 \caption{\AR{VarLike}: \AF{Thinnable} and with placeholder values}
 \end{figure}
 
+\label{sec:varlike:base}
+Given a proof that \AB{𝓥} is \AR{VarLike}, we can manufacture
+several useful \AB{𝓥}-environments. We provide users with
+\AF{base} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Γ}},
+\AF{fresh\textsuperscript{r}} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ})}
+and \AF{fresh\textsuperscript{l}} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ})}
+by combining the use of placeholder values and thinnings.
+In the \AD{Var} case these very general definitions respectively specialise
+to the identity renaming for a context \AB{Γ} and the injection of \AB{Γ}
+fresh variables to the right or the left of an ambiant context \AB{Δ}.
+
 For any \AR{VarLike} \AB{𝓥}, we can define \AF{fresh\textsuperscript{r}} of
 type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ}))} and \AF{fresh\textsuperscript{l}} of
 type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ}))} by combining the use
-of placeholder values and thinnings. Hence, we can then write a generic \AF{reify}
-(\cref{fig:kripkereify}) turning \AF{Kripke} function spaces from \AB{𝓥} to \AB{𝓒}
-into \AF{Scope}s of \AB{𝓒} computations.
+of placeholder values and thinnings.
+
+It is almost immediate that variables are \AR{VarLike}. Hence, we can
+then implement \AF{reify} as in Figure~\ref{fig:kripkereify} turning
+\AF{Kripke} function spaces from \AB{𝓥} to \AB{𝓒} into \AF{Scope}s of
+\AB{𝓒} computations.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var/Varlike.tex]{reify}
