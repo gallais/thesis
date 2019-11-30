@@ -240,12 +240,26 @@ is \AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
 
-Second, we define \AF{map} which takes a function and
-applies it to each one of the elements in a \AF{-Tuple}. Both the type of the
-\AF{-Tuple} argument and the \AF{-Tuple} return type are refined based on the
-pattern the natural number matches. In the second clause, this tells us the
-\AF{-Tuple} argument is a pair, allowing us to match on it with the pair
-constructor \AIC{\_,\_}.
+Second, we define \AF{map\textasciicircum{}-Tuple} which takes a function and
+applies it to each one of the elements in a \AF{-Tuple}.
+
+\begin{convention}[Caret-based naming]
+We use a caret to generate a mnemonic name: \AF{map} refers to the fact
+that we can map a function over the content of a data structure and
+\AF{-Tuple} clarifies that the data structure in question is the family
+of \AB{n}-ary tuples.
+
+We use this convention consistently throughout this thesis, using names
+such as \AF{map\textasciicircum{}Rose} for the proof that we can map a
+function over the content of a rose tree, \AF{th\textasciicircum{}Var}
+for the proof that \emph{var}iables are \emph{th}innable,
+or \AF{vl\textasciicircum{}Tm} for the proof that terms are var-like.
+\end{convention}
+
+Both the type of the \AF{-Tuple} argument and the \AF{-Tuple} return type are
+refined based on the pattern the natural number matches. In the second clause,
+this tells us the \AF{-Tuple} argument is a pair, allowing us to match on it
+with the pair constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
