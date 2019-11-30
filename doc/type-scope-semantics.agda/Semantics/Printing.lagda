@@ -43,7 +43,7 @@ Fresh = State (Stream String ∞)
 
 %<*valprint>
 \begin{code}
-record Wrap (A : Set) (σ : I) (Γ : List I) : Set where
+record Wrap A (σ : I) (Γ : List I) : Set where
   constructor MkW; field getW : A
 \end{code}
 %</valprint>
