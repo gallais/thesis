@@ -364,10 +364,14 @@ computations \AB{𝓒}.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
 
-The semantic λ-abstraction is notable for two reasons: first, following
-Mitchell and Moggi~(\citeyear{mitchell1991kripke}), its \AF{□}-structure is
-typical of models à la Kripke allowing arbitrary extensions of the context;
-and second, instead of being a function in the host language taking
+The semantic λ-abstraction is notable for two reasons.
+%
+First, following Mitchell and Moggi~(\citeyear{mitchell1991kripke}),
+its \AF{□}-structure allowing arbitrary extensions of the context is typical
+of models à la Kripke  one can find in normalisation by
+evaluation~(\cite{berger1991inverse,berger1993program,CoqDybSK,coquand2002formalised}).
+%
+Second, instead of being a function in the host language taking
 computations to computations,  it takes \emph{values} to computations.
 This is concisely expressed by the type ({\AF{□} (\AB{𝓥}~\AB{σ} \AF{⇒} \AB{𝓒}~\AB{τ})}).
 
@@ -479,28 +483,38 @@ But we stick to the simpler setup as \emph{pretty} printing is not our focus her
 This example is interesting for two reasons. Firstly, the distinction between
 values and computations is once more instrumental: we get to give the procedure
 a precise type guiding our implementation. The environment carries \emph{names}
-for the variables currently in scope whilst the computations thread a name-supply
-(a stream of strings) to be used to generate fresh names for bound variables
-(here we use \AF{Fresh} for the state monad threading that name supply).
-If the values in the environment had to be computations too, we would not root
-out some faulty implementations e.g a program picking a new name each time a
-variable is mentioned.
-
-\begin{figure}[h]
-\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{name}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printer}
-\end{minipage}
-\caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
-\end{figure}
-
+for the variables currently in scope while the computations thread a name-supply
+to be used to generate fresh names for bound variables. If the values in the
+environment had to be computations too, we would not root out some faulty
+implementations e.g a program picking a new name each time a variable is mentioned.
+%
 Secondly, the fact that the model's computation type is a monad and that this
 poses no problem whatsoever in this framework means it is appropriate for
 handling languages with effects (\cite{moggi1991notions}), or effectful
 semantics e.g. logging the various function calls. Here is the full definition
 of the printer.
+
+In the implementation, we define \AF{Name} and \AF{Printer} using a \AR{Wrap}per
+with a type and a context as phantom types in order to help Agda's inference
+propagate the appropriate constraints. We also call \AF{Fresh} the state monad
+threading the name supply which is essentially a stream of distinct strings.
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.6\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{valprint}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{name}
+\end{minipage}
+
+\begin{minipage}[t]{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{monad}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printer}
+\end{minipage}
+\caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
+\end{figure}
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{semprint}
 
