@@ -102,6 +102,7 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/catalogue/scopechecking.tex \
   latex/generic-syntax.tex/compiling.tex \
   latex/generic-syntax.tex/proofs.tex \
+  latex/generic-syntax.tex/proofs/simulation.tex \
   latex/conclusion.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
