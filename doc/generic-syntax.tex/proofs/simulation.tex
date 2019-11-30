@@ -1,0 +1,98 @@
+\section{Simulation Lemma}\label{section:simulation}
+
+A constraint mentioning all three relation transformers appears naturally when
+we want to say that a semantics can simulate another one. For instance, renaming
+is simulated by substitution: we simply have to restrict ourselves to environments
+mapping variables to terms which happen to be variables.
+More generally, given a semantics \AB{𝓢ᴬ} with values \AB{𝓥ᴬ} and computations
+\AB{𝓒ᴬ} and a semantics \AB{𝓢ᴮ} with values \AB{𝓥ᴮ} and computations \AB{𝓒ᴮ},
+we want to establish the constraints under which these two semantics yield
+related computations provided they were called with environments of related values.
+
+These constraints are packaged in a record type called \AR{Simulation} and
+parametrised over the semantics as well as the notion of relatedness used
+for values (given by a relation \AB{𝓥ᴿ}) and computations
+(given by a relation \AB{𝓒ᴿ}).
+
+\begin{agdasnippet}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{recsim}
+\end{agdasnippet}
+
+The two first constraints are self-explanatory: the operations
+\ARF{th\textasciicircum{}𝓥} and \ARF{var} defined by each semantics
+should be compatible with the notions of relatedness used for values and computations.
+
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{thR}
+\end{agdasnippet}
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{varR}
+\end{agdasnippet}
+
+The third constraint is similarly simple: the algebras (\ARF{alg}) should take
+related recursively evaluated subterms of respective types
+\AF{⟦} \AB{d} \AF{⟧} (\AF{Kripke} \AB{𝓥ᴬ} \AB{𝓒ᴬ}) and
+\AF{⟦} \AB{d} \AF{⟧} (\AF{Kripke} \AB{𝓥ᴮ} \AB{𝓒ᴮ}) to related computations.
+The difficuly is in defining an appropriate notion of relatedness \AF{bodyᴿ}
+for these recursively evaluated subterms.
+
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{algR}
+\end{agdasnippet}
+
+We can combine \AF{⟦\_⟧ᴿ} and \AF{Kripkeᴿ} to express the idea that two recursively
+evaluated subterms are related whenever they have an equal shape (which means their
+Kripke functions can be grouped in pairs) and that all the pairs of Kripke function
+spaces take related inputs to related outputs.
+
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{bodyR}
+\end{agdasnippet}
+
+The fundamental lemma of simulations is a generic theorem showing that for
+each pair of \semrec{} respecting the \AR{Simulation} constraint, we
+get related computations given environments of related input values.
+In Figure~\ref{defn:Simulation}, this theorem is once more mutually
+proven with a statement about \AF{Scope}s,
+and \AD{Size}s play a crucial role in ensuring that the function is indeed total.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Simulation.tex]{simbody}
+\caption{Fundamental Lemma of \AR{Simulation}s\label{defn:Simulation}}
+\end{figure}
+
+Instantiating this generic simulation lemma, we can for instance prove
+that renaming is a special case of substitution, or that renaming and
+substitution are extensional i.e. that given environments equal in
+a pointwise manner they produce syntactically equal terms. Of course these
+results are not new but having them generically over all syntaxes with
+binding is convenient. We experience this first hand when tackling the
+POPLMark Reloaded challenge~\citeyear{poplmarkreloaded} where
+\AF{rensub} (defined in Figure~\ref{defn:RenSub}) was actually needed.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{rensub}
+\ExecuteMetaData[generic-syntax.agda/Generic/Simulation/Syntactic.tex]{rensubfun}
+\caption{Renaming as a Substitution via Simulation\label{defn:RenSub}}
+\end{figure}
+
+When studying specific languages, new opportunities to deploy the
+fundamental lemma of simulations arise. Our solution to the POPLMark
+Reloaded challenge for instance describes the fact that
+{(\AF{sub} \AB{$\rho$} \AB{t})}
+reduces to {(\AF{sub} \AB{$\rho$'} \AB{t})} whenever for all \AB{v},
+\AB{$\rho$}(\AB{v}) reduces to \AB{$\rho$'}(\AB{v}) as a \AR{Simulation}.
+The main theorem (strong normalisation of STLC via a logical relation)
+is itself an instance of (the unary version of) the simulation lemma.
+
+The \AR{Simulation} proof framework is the simplest example of the abstract
+proof frameworks introduced in ACMM~\citeyear{allais2017type}. We also
+explain how a similar framework can be defined
+for fusion lemmas and deploy it for the renaming-substitution interactions
+but also their respective interactions with normalisation by evaluation.
+Now that we are familiarised with the techniques at hand, we can tackle
+this more complex example for all syntaxes definable in our framework.
