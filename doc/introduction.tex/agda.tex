@@ -177,18 +177,63 @@ by the equality proof we provide.
 \ExecuteMetaData[introduction.agda/introduction.tex]{paireq}
 \end{minipage}
 
-Defining a record type \AR{R} also results in the definition of a module \AB{R}
-parametrised by a value of type \AR{R} and containing a projection function
-for each field. We can \AK{open} it to make these projections available to the
-outside world, or use \AB{R}-qualified names. Projections may be used prefix
-or suffix (in which case one needs to prefix the projection's name with a dot).
+%% Defining a record type \AR{R} also results in the definition of a module \AB{R}
+%% parametrised by a value of type \AR{R} and containing a projection function
+%% for each field. We can \AK{open} it to make these projections available to the
+%% outside world, or use \AB{R}-qualified names.
 
-\begin{minipage}{0.5\textwidth}
-  \ExecuteMetaData[introduction.agda/introduction.tex]{duplicate}
+Agda gives us a lot of different ways to construct a value of a record type
+and to project the content of a field out of a record value. We will now
+consider the same function \AF{swap} implemented in many different fashion
+to highlight all the possibilities offered to us.
+
+If the record declaration introduced a \AK{constructor} we may use to
+pattern-match on values of that record type on the left or construct
+values of that record type on the right. We can always also simply use
+the \AK{record} keyword and list the record's fields. The two following
+equivalent definitions are demonstrating these possibilities.
+
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{swaprecord}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{swaprecordlhs}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-\ExecuteMetaData[introduction.agda/introduction.tex]{swap}
+
+From now on, we will only use the constructor \AIC{\_,\_} rather than the
+more verbose definition involving the \AK{record} keyword. Instead of
+pattern-matching on a record, we may want to project out the values of
+its fields. For each field, Agda defines a projection of the same name.
+They may be used prefix or suffix in which case one needs to prefix the
+projection's name with a dot. This is demonstrated in the two following
+equivalent definitions.
+
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{swapprefix}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
+\ExecuteMetaData[introduction.agda/introduction.tex]{swapsuffix}
 \end{minipage}
+
+Instead of using the record constructor to build a value of a record type,
+we may define it by explaining what ought to happen when a user attempts
+to project out the value of a field. This definition style dubbed
+copattern-matching focuses on the \emph{observations} one may make of the
+value. It was introduced by Abel, Pientka, Thibodeau,
+and Setzer~(\citeyear{abelPientkaThibodeauSetzer:popl13}).
+It can be used both in prefix and suffix style.
+
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{swapcoprefix}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[introduction.agda/introduction.tex]{swapcosuffix}
+\end{minipage}
+
+Finally, we may use an anonymous copattern-matching function to define
+the record value by the observation one may make of it. Just like any
+other anonymous (co)pattern-matching function, it is introduced by the
+construct {(λ \AK{where})} followed by a block of clauses.
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{swapcoanonymous}
+
 
 \begin{feature}[Implicit Generalisation] The latest version of Agda supports ML-style
 implicit prenex polymorphism and we make heavy use of it: every unbound variable

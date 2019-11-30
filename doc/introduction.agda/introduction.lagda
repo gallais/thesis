@@ -139,13 +139,84 @@ duplicate a = (a , a)
 \end{code}
 %</duplicate>
 
-%<*swap>
 \begin{code}
-swap : A × B → B × A
-swap p = (snd p , p .fst)
+module recsyntax where
 \end{code}
-%</swap>
+%<*swaprecord>
+\begin{code}
+ swap : A × B → B × A
+ swap (a , b) = record
+   { fst  = b
+   ; snd  = a
+   }
+\end{code}
+%</swaprecord>
 
+\begin{code}
+module recpattern where
+\end{code}
+%<*swaprecordlhs>
+\begin{code}
+ swap : A × B → B × A
+ swap record  { fst  = a
+              ; snd  = b
+              } = (b , a)
+\end{code}
+%</swaprecordlhs>
+
+\begin{code}
+module prefix where
+\end{code}
+%<*swapprefix>
+\begin{code}
+ swap : A × B → B × A
+ swap p = (snd p , fst p)
+\end{code}
+%</swapprefix>
+
+\begin{code}
+module suffix where
+\end{code}
+%<*swapsuffix>
+\begin{code}
+ swap : A × B → B × A
+ swap p = (p .snd , p .fst)
+\end{code}
+%</swapsuffix>
+
+\begin{code}
+module coprefix where
+\end{code}
+%<*swapcoprefix>
+\begin{code}
+ swap : A × B → B × A
+ fst  (swap (a , b)) = b
+ snd  (swap (a , b)) = a
+\end{code}
+%</swapcoprefix>
+
+\begin{code}
+module cosuffix where
+\end{code}
+%<*swapcosuffix>
+\begin{code}
+ swap : A × B → B × A
+ swap (a , b) .fst  = b
+ swap (a , b) .snd  = a
+\end{code}
+%</swapcosuffix>
+
+\begin{code}
+module coanonymous where
+\end{code}
+%<*swapcoanonymous>
+\begin{code}
+ swap : A × B → B × A
+ swap (a , b) = λ where
+   .fst  → b
+   .snd  → a
+\end{code}
+%</swapcoanonymous>
 
 \begin{code}
 open _×_
