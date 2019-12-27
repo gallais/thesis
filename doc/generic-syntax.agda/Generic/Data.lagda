@@ -11,6 +11,10 @@ open import Data.Product as Prod
 open import Function
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
+private
+  variable
+   A B : Set
+
 \end{code}
 %<*desc>
 \begin{code}
@@ -102,18 +106,31 @@ listD A =  `σ Bool $ λ isNil →
            else `σ A (λ _ → `X tt (`∎ tt))
 \end{code}
 %</listD>
+
+%<*list>
 \begin{code}
 List : Set → Set
 List A = μ (listD A) ∞ tt
+\end{code}
+%</list>
 
-[] : {A : Set} → μ (listD A) ∞ tt
-[] = `con (true , refl)
-
+\begin{code}
 infixr 10 _∷_
+\end{code}
+%<*nil>
+\begin{code}
+pattern []'  = (true , refl)
+pattern []   = `con []'
+\end{code}
+%</nil>
+%<*cons>
+\begin{code}
+pattern _∷'_ x xs  = (false , x , xs , refl)
+pattern _∷_ x xs   = `con (x ∷' xs)
+\end{code}
+%</cons>
 
-_∷_ : {A : Set} → A → List A → List A
-x ∷ xs = `con (false , x , xs , refl)
-
+\begin{code}
 example : List (List Bool)
 example  = (false ∷ []) ∷ (true ∷ []) ∷ []
 \end{code}
@@ -129,13 +146,16 @@ vecD A =  `σ Bool $ λ isNil →
 Vec : Set → ℕ → Set
 Vec A = μ (vecD A) ∞
 
-foldr : {A B : Set} → (A → B → B) → B → List A → B
-foldr {A} {B} c n = fold (listD A) alg where
-
-  alg : ⟦ listD A ⟧ (const B) tt → B
-  alg (true             , refl)  = n
-  alg (false , hd , rec , refl)  = c hd rec
-
+\end{code}
+%<*foldr>
+\begin{code}
+foldr : (A → B → B) → B → List A → B
+foldr c n = fold (listD _) $ λ where
+  []'          → n
+  (hd ∷' rec)  → c hd rec
+\end{code}
+%</foldr>
+\begin{code}
 _++_ : {A : Set} → List A  → List A → List A
 _++_ = foldr (λ hd rec → hd ∷_ ∘ rec) id
 
