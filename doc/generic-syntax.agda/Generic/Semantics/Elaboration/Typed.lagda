@@ -110,16 +110,19 @@ _=?_ : (σ τ : Type) → Maybe (σ ≡ τ)
 _ =? _ = nothing
 \end{code}
 %</equal>
-%<*arrow>
+%<*arrowdata>
 \begin{code}
 data Arrow : Type → Set where
   _`→_ : ∀ σ τ → Arrow (σ `→ τ)
-
+\end{code}
+%</arrowdata>
+%<*arrowview>
+\begin{code}
 isArrow : ∀ σ → Maybe (Arrow σ)
 isArrow (σ `→ τ)  = just (σ `→ τ)
 isArrow _         = nothing
 \end{code}
-%</arrow>
+%</arrowview>
 %<*app>
 \begin{code}
 app : ∀[ Elab- Infer ⇒ Elab- Check ⇒ Elab- Infer ]
