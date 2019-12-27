@@ -100,6 +100,33 @@ proving that \AF{map\textasciicircum{}Rose} was total in~\cref{sec:sizeterminati
 \caption{Least Fixpoint of an Endofunctor and Corresponding Generic Fold}\label{figure:datamu}
 \end{figure}
 
+We can see in Figure~\ref{fig:listpat} that we can recover the types we are
+used to thanks to this least fixpoint. Pattern synonyms let us hide away
+the encoding: users can use them to pattern-match on lists and Agda
+conveniently resugars them when displaying a goal.
+
+\begin{figure}[h]
+\begin{center}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{list}
+\end{center}
+
+\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{nil}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{cons}
+\end{minipage}
+\caption{The list type and its usual constructors\label{fig:listpat}}
+\end{figure}
+
+Finally, Figure~\ref{fig:listfold} demonstrates that we can get our
+hands on the types' eliminators by instantiating the generic \AF{fold}.
+
+\begin{figure}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{foldr}
+\caption{The eliminator for \AD{List}\label{fig:listfold}}
+\end{figure}
+
 The CDMM approach therefore allows us to generically define iteration principles
 for all data types that can be described. These are exactly the features we desire
 for a universe of syntaxes with binding, so in the next section we will see how
