@@ -231,6 +231,23 @@ which suggest avenues for future work. We list these limitations from easiest
 to hardest to resolve. Remember that each modification to the universe of
 syntaxes needs to be given an appropriate semantics.
 
+\paragraph{Inefficient Environment Weakening} Our fundamental lemma of
+semantics systematically traverses its environment of values whenever it
+needs to push it under a binder. This means that if we need to push an
+environment under $n$ successive binders, we will thin each of the values
+it carries $n$ times.
+%
+Preliminary work demonstrates that it is possible to avoid these repeated
+traversals. The key idea is to use an inductive notion of environments in
+which the thin-and-extend operation used to go under a binder is reified
+as a constructor. At variable-lookup time, we merge the accumulated
+thinnings and actually apply them to the original value.
+%
+Intuitively, going under a binder amounts to pushing a frame consisting of
+a thinning and an environment of values for the newly-bound variables onto
+the evaluation stack (which is essentially a type-aligned list of frames).
+
+
 \paragraph{Closure under Products} Our current universe of descriptions is
 closed under sums as demonstrated in Section~\ref{desccomb}. It is however
 not closed under products: two arbitrary right-nested products conforming
