@@ -9,11 +9,13 @@ and are used to represent data and index constraints respectively.
 
 \section{Descriptions and Their Meaning as Functors}
 
-What distinguishes this new universe \AD{Desc} from that of Section~\ref{section:data}
-is that the \AIC{`X} constructor is now augmented with an additional {\AD{List} \AB{I}}
-argument that describes the new binders that are brought into scope at this recursive
-position. This list of the kinds of the newly-bound variables will play a crucial role when
-defining the description's semantics as a binding structure in
+What distinguishes this new universe \AD{Desc} from that of
+Section~\ref{section:data} is that the \AIC{`X} constructor is now
+augmented with an additional {\AD{List} \AB{I}} argument that describes
+the new binders that are brought into scope at this recursive
+position. This list of the kinds of the newly-bound variables will
+play a crucial role when defining the description's semantics as a
+binding structure in
 \cref{figure:syntaxmeaning,figure:debruijnscope,figure:freemonad}.
 
 \begin{figure}[h]
@@ -24,23 +26,27 @@ defining the description's semantics as a binding structure in
 The meaning function \AF{⟦\_⟧} we associate to a description follows closely
 its CDMM equivalent. It only departs from it in the \AIC{`X} case and the fact
 it is not an endofunctor on \AB{I} \AF{─Scoped}; it is more general than that.
-The function takes an \AB{X} of type {\AD{List} \AB{I} $\rightarrow$ \AB{I} \AD{─Scoped}}
+The function takes an \AB{X} of type
+{\AD{List} \AB{I} $\rightarrow$ \AB{I} \AD{─Scoped}}
 to interpret {\AIC{`X} \AB{Δ} \AB{j}} (i.e. substructures of sort \AB{j} with
-newly-bound variables in \AB{Δ}) in an ambient scope \AB{Γ} as {\AB{X} \AB{Δ} \AB{j} \AB{Γ}}.
+newly-bound variables in \AB{Δ}) in an ambient scope \AB{Γ} as
+{\AB{X} \AB{Δ} \AB{j} \AB{Γ}}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp}
 \caption{Descriptions' Meanings}\label{figure:syntaxmeaning}
 \end{figure}
 
-The astute reader may have noticed that \AF{⟦\_⟧} is uniform in $X$ and $\Gamma$; however
-refactoring \AF{⟦\_⟧} to use the partially applied $X\,\_\,\_\,\Gamma$ following
-this observation would lead to a definition harder to use with the
-combinators for indexed sets described in \cref{sec:indexed-combinators}
+The astute reader may have noticed that \AF{⟦\_⟧} is uniform in $X$
+and $\Gamma$; however refactoring \AF{⟦\_⟧} to use the partially
+applied $X\,\_\,\_\,\Gamma$ following this observation would lead to
+a definition harder to use with the combinators for indexed sets
+described in \cref{sec:indexed-combinators}
 which make our types much more readable.
 
-If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of `de Bruijn scopes'
-(denoted \AF{Scope} here) which turns any \AB{I} \AF{─Scoped} family into a function
+If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of
+`de Bruijn scopes' (denoted \AF{Scope} here) which turns any
+{(\AB{I} \AF{─Scoped})} family into a function
 of type \AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped} by appending the two
 \AD{List} indices, we recover a meaning function producing an endofunctor on
 \AB{I} \AF{─Scoped}.
@@ -62,7 +68,8 @@ general type we can, the action of functors is then a specialized version of it.
 
 \section{Terms as Free Relative Monads}
 
-The endofunctors thus defined are strictly positive and we can take their fixpoints.
+The endofunctors thus defined are strictly positive and we can take
+their fixpoints.
 As we want to define the terms of a language with variables, instead of
 considering the initial algebra, this time we opt for the free relative
 monad (\cite{Altenkirch2010, JFR4389}) with respect to the functor \AF{Var}.
@@ -86,35 +93,71 @@ in concrete examples, we name this notion.
 
 \subsection{Examples of Syntaxes With Binding}
 
-Coming back to our original example, we now have the ability to give a code for
-the intrinsically typed STλC. But we start with a simpler example to lay
-down the foundations: the well scoped untyped λ-calculus. In both cases, the
-variable case will be added by the free monad construction so we only have to
-describe two constructors: application and λ-abstraction.
+Coming back to our original example, we now have the ability to give a
+code for the intrinsically typed STλC. We add two other examples to show
+the whole spectrum of syntaxes.
+%
+We start with the simplest example to lay down the foundations: the well
+scoped untyped λ-calculus.
+%
+We then itnroduce a well scoped and well sorted but not well typed
+bidirectional language.
+%
+We finally consider the code for the intrinsically typed STλC.
+%
+In all examples, the variable case will be added by the free monad
+construction so we only have to describe the other constructors.
 
 \paragraph{Untyped} languages are, as Harper would say, uni-typed syntaxes and
-can thus be modelled using descriptions whose kind parameter is the unit type.
+can thus be modelled using descriptions whose kind parameter is the unit type
+(\AR{⊤}).
+%
 We take the disjoint sum of the respective descriptions for the application and
 λ-abstraction constructors by using the classic construction in type theory: a
 dependent pair of a \AF{Bool} picking one of the two branches and a second
 component whose type is either that of application or λ-abstraction depending
 on that boolean.
 
-Application has two substructures (\AIC{`X}) which do not bind any extra argument
-and λ-abstraction has exactly one substructure with precisely one extra bound variable.
-Both constructors' descriptions end with (\AIC{`∎} \AIC{tt}), the only inhabitant
-of the trivial kind.
+Application has two substructures (\AIC{`X}) which do not bind any extra
+argument and λ-abstraction has exactly one substructure with precisely
+one extra bound variable. Both constructors' descriptions end with
+(\AIC{`∎} \AIC{tt}), the only inhabitant of the trivial kind.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
 \caption{\AF{Desc}ription of The Untyped Lambda Calculus\label{fig:desculc}}
 \end{figure}
 
+\paragraph{Bidirectional STLC}\label{par:bidirectional} Our second example is a
+bidirectional~\cite{pierce2000local} language hence the introduction of a
+notion of \AD{Mode}: each term is either part of the \AIC{Infer} or
+\AIC{Check} fraction of the language. This language has four constructors
+which we list in the ad-hoc \AD{`Bidi} type of constructor tags, its
+decoding \AD{Bidi} is defined by a pattern-matching λ-expression in Agda.
+Application and λ-abstraction behave as expected, with the important
+observation that λ-abstraction binds an \AIC{Infer}rable term. The two
+remaining constructors correspond to changes of direction: one can freely
+\AIC{Emb}bed inferrable terms as checkable ones whereas we require a type
+annotation when forming a \AIC{Cut} (we reuse the notion of \AD{Type} introduced
+in Figure~\ref{fig:intrinsic-stlc}).
 
-\paragraph{Typed} syntax comes with extra constraints: our tags need to carry
-extra information about the types involved so we use the ad-hoc \AD{`STLC} type.
-The description is then the dependent pairing of an \AD{`STLC} tag together with
-its decoding defined by a pattern-matching λ-expression in Agda.
+\begin{figure}[h]
+\begin{minipage}[t]{0.4\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{tagmode}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{desc}
+\end{minipage}
+  \caption{Description for the bidirectional STLC\label{fig:descBidiSTLC}}
+\end{figure}
+
+\paragraph{Intrinsically typed STLC}\label{par:intrinsicSTLC}
+In the typed case (for the same notion of \AD{Type} defined in
+Figure~\ref{fig:intrinsic-stlc}), we are back to two
+constructors: the terms are fully annotated and therefore it is not necessary
+to distinguish between \AD{Mode}s anymore. We need our tags to carry extra
+information about the types involved so we use once more and ad-hoc datatype
+\AD{`STLC}, and define its decoding \AD{STLC} by a pattern-matching λ-expression.
 
 Application has two substructures none of which bind extra variables. The first
 has a function type and the second the type of its domain. The overall type of
@@ -141,12 +184,33 @@ arguments by using ``\AS{\_}'', in which case they will be filled in
 by unification just like any other implicit argument: there is no
 extra cost to using an encoding!  The only downside is that the
 language currently does not allow the user to specify type annotations
-for pattern synonyms.
+for pattern synonyms. We only include examples of pattern synonyms
+for the two extreme examples, the definition for \AF{Bidi} are similar.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{patterns}
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{identity}
-\caption{Recovering Readable Syntax via Pattern Synonyms}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{patterns}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{patterns}
+  \caption{Respective Pattern Synonyms for \AF{UTLC} and \AF{STLC}%
+    \label{fig:patsLC}}
+\end{figure}
+
+As a usage example of these pattern synonyms, we define the identity
+function in all three languages in Figure~\ref{fig:identity}, using the
+same caret-based naming convention we introduced earlier. The code
+is virtually the same except for \AF{Bidi} which explicitly records
+the change of direction from \AIC{Check} to \AIC{Infer}.
+
+\begin{figure}[h]
+\begin{minipage}{0.25\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{identity}
+\end{minipage}\hfill
+\begin{minipage}{0.35\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{BDid}
+\end{minipage}\hfill
+\begin{minipage}{0.30\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{identity}
+\end{minipage}
+\caption{Identity function in all three languages}\label{fig:identity}
 \end{figure}
 
 \section{Common Combinators and Their Properties}\label{desccomb}
