@@ -180,17 +180,21 @@ respectively).
 Given a proof that \AB{𝓥} is \AR{VarLike}, we can manufacture
 several useful \AB{𝓥}-environments. We provide users with
 \AF{base} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Γ}},
-\AF{fresh\textsuperscript{r}} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ})}
-and \AF{fresh\textsuperscript{l}} of type {(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ})}
+\AF{fresh\textsuperscript{r}} of type
+{(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ})}
+and \AF{fresh\textsuperscript{l}} of type
+{(\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ})}
 by combining the use of placeholder values and thinnings.
+%
 In the \AD{Var} case these very general definitions respectively specialise
 to the identity renaming for a context \AB{Γ} and the injection of \AB{Γ}
 fresh variables to the right or the left of an ambient context \AB{Δ}.
-
-For any \AR{VarLike} \AB{𝓥}, we can define \AF{fresh\textsuperscript{r}} of
-type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ}))} and \AF{fresh\textsuperscript{l}} of
-type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ}))} by combining the use
-of placeholder values and thinnings.
+%
+Similarly, in the \AD{Tm} case, we can show
+{(\AF{base} \AF{vl\textasciicircum{}Tm})}
+extensionally equal to the identity environment \AF{id\textasciicircum{}Tm}
+given by {\AF{lookup} \AF{id\textasciicircum{}Tm} = \AIC{`var}},
+which associates each variable to itself (seen as a term).
 
 Using these definitions, we can then implement \AF{reify} as in
 Figure~\ref{fig:kripkereify} turning \AF{Kripke} function spaces
@@ -198,7 +202,8 @@ from \AB{𝓥} to \AB{𝓒} into \AF{Scope}s of \AB{𝓒} computations.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var/Varlike.tex]{reify}
-\caption{Generic Reification thanks to \AR{VarLike} Values\label{fig:kripkereify}}
+\caption{Generic Reification thanks to \AR{VarLike} Values%
+\label{fig:kripkereify}}
 \end{figure}
 
 We can now showcase other usages by providing a catalogue of generic programs
