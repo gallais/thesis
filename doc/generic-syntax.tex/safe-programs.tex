@@ -1,24 +1,29 @@
 \chapter{Generic Scope Safe and Well Kinded Programs for Syntaxes}\label{chapter:generic-semantics}
 
-The set of constraints we called a \AR{Semantics} in \cref{section:generic-semantics}
-for the specific example of the simply typed λ-calculus could be divided in two groups:
-the one arising from the fact that we need to be able to push environment values under
-binders and the ones in one-to-one correspondence with constructors for the language.
+The set of constraints we called a \AR{Semantics} in
+\cref{section:generic-semantics} for the specific example of the
+simply typed λ-calculus could be divided in two groups: the one
+arising from the fact that we need to be able to push environment
+values under binders and the ones in one-to-one correspondence
+with constructors for the language.
 
-Based on this observation, we can define a generic notion of semantics for all syntax
-descriptions. It is once more parametrised by two (\AB{I}\AF{─Scoped}) families \AB{𝓥}
-and \AB{𝓒} corresponding respectively to values associated to bound variables and
-computations delivered by evaluating terms.
+Based on this observation, we can define a generic notion of semantics
+for all syntax descriptions. It is once more parametrised by two
+{(\AB{I}\AF{─Scoped})} families \AB{𝓥} and \AB{𝓒} corresponding
+respectively to values associated to bound variables and computations
+delivered by evaluating terms.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semrec}
 
-These two families have to abide by three constraints. First, values should be thinnable
-so that we can push the evaluation environment under binders.
+These two families have to abide by three constraints. First, values
+should be thinnable so that we can push the evaluation environment
+under binders.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{thv}
 
-Second, values should embed into computations for us to be able to return the value
-associated to a variable in the environment as the result of its evaluation.
+Second, values should embed into computations for us to be able to
+return the value associated to a variable in the environment as the
+result of its evaluation.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{var}
 
