@@ -312,48 +312,62 @@ of the simply typed λ-calculus.
 \section{Semantics and Their Generic Evaluators}
 \label{section:generic-semantics}
 
-The upcoming sections demonstrate that renaming, substitution, and printing with
-names all share the same structure. We start by abstracting away a notion of
-\AR{Semantics} encompassing all these constructions. This approach will make it
-possible for us to implement a generic traversal parametrised by such a
-\AR{Semantics} once and for all and to focus on the interesting model constructions
-instead of repeating the same pattern over and over again.
+The upcoming sections demonstrate that renaming, substitution, and printing
+with names all share the same structure. We start by abstracting away a notion
+of \AR{Semantics} encompassing all these constructions. This approach will
+make it possible for us to implement a generic traversal parametrised by
+such a \AR{Semantics} once and for all and to focus on the interesting
+model constructions instead of repeating the same pattern over and over
+again.
 
-Broadly speaking, a semantics turns our deeply embedded abstract syntax trees
-into the shallow embedding of the corresponding parametrised higher order abstract
-syntax term (\cite{chlipala2008parametric}). We get a choice of useful type-and-scope
-safe traversals by using different `host languages' for this shallow embedding.
+Broadly speaking, a semantics turns our deeply embedded abstract syntax
+trees into the shallow embedding of the corresponding parametrised higher
+order abstract syntax term (\cite{chlipala2008parametric}). We get a
+choice of useful type-and-scope safe traversals by using different `host
+languages' for this shallow embedding.
 
-A semantics is parametrised by two (\AD{Type} \AR{−Scoped}) type families \AB{𝓥}
-and \AB{𝓒}. Realisation of a semantics will produce a computation in \AB{𝓒} for every
-term whose variables are assigned values in \AB{𝓥}. Just as an environment interprets
-variables in a model, a computation gives a meaning to terms into a model. We can
-define \AF{─Comp} to make this parallel explicit.
+A semantics is parametrised by two (\AD{Type} \AR{−Scoped}) type families
+\AB{𝓥} and \AB{𝓒}. Realisation of a semantics will produce a computation
+in \AB{𝓒} for every term whose variables are assigned values in \AB{𝓥}.
+Just as an environment interprets variables in a model, a computation
+gives a meaning to terms into a model. We can define \AF{─Comp} to make
+this parallel explicit.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{comp}
 \caption{Generic Notion of Computation\label{fig:comp}}
 \end{figure}
 
-An appropriate notion of semantics for the calculus is one that will map environments
-to computations. In other words, a set of constraints on $𝓥$ and $𝓒$ guaranteeing
-the existence of a function of type
+An appropriate notion of semantics for the calculus is one that will
+map environments to computations. In other words, a set of constraints on
+\AB{𝓥} and \AB{𝓒} guaranteeing the existence of a function of type
 ((\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Δ} \AS{→} (\AB{Γ} \AF{─Comp}) \AB{𝓒} \AB{Δ}).
-In cases such as substitution or normalisation by evaluation, \AB{𝓥} and \AB{𝓒} will
-happen to coincide but keeping these two relations distinct is precisely what makes
-it possible to go beyond these and also model renaming or printing with names.
+In cases such as substitution or normalisation by evaluation,
+\AB{𝓥} and \AB{𝓒} will happen to coincide but keeping these two relations
+distinct is precisely what makes it possible to go beyond these and
+also model renaming or printing with names.
 
-Concretely, we define \AR{Semantics} as a record packing the properties these families
-need to satisfy for the evaluation function to exist.
+Concretely, we define \AR{Semantics} as a record packing the properties
+these families need to satisfy for the evaluation function to exist.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}
+
+In the following paragraphs, we interleave the definition of the record
+of constraints \semrec{} with explanations of our choices. It is important
+to understand that all of the indented Agda snippets are part of the record's
+definition. Some correspond to record fields (highlighted in \ARF{pink})
+while others are mere auxiliary definitions (highlighted in \AF{blue}) as
+permitted by Agda.
 
 The first method of a \AR{Semantics} deals with environment values. They
 need to be thinnable (\ARF{th\textasciicircum{}𝓥}) so that the traversal
 may introduce fresh variables when going under a binder whilst keeping
 the environment well-scoped.
 
+{
+\addtolength{\leftskip}{\parindent}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
+}
 
 The structure of the model is quite constrained: each constructor
 in the language needs a semantic counterpart. We start with the
@@ -362,7 +376,10 @@ case bridges the gap between the fact that the environment translates
 variables into values \AB{𝓥} but the evaluation function returns
 computations \AB{𝓒}.
 
+{
+\addtolength{\leftskip}{\parindent}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
+}
 
 The semantic λ-abstraction is notable for two reasons.
 %
@@ -380,7 +397,10 @@ one extra free variable, prompting us to extend the environment with a
 value for it. In the special case where \AB{𝓥} = \AB{𝓒} (normalisation
 by evaluation for instance), we recover the usual Kripke structure.
 
+{
+\addtolength{\leftskip}{\parindent}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
+}
 
 The remaining fields' types are a direct translation of the types of the
 constructor they correspond to: substructures have simply been replaced with
@@ -389,15 +409,20 @@ For instance, the semantical counterpart of application is an operation that
 takes a representation of a function and a representation of an argument and
 produces a representation of the result.
 
+{
+\addtolength{\leftskip}{\parindent}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{cons}
+}
 
-The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful enough that
-even logical predicates are instances of it. And we indeed exploit this power when
-defining normalisation by evaluation as a semantics: the model construction is, after
-all, nothing but a logical predicate. As a consequence it seems rather natural to call
-\AF{semantics} ``the fundamental lemma of semantics''. We prove it in a module parametrised
-by a \AF{Semantics}, which would correspond to using a Section in Coq. It is defined by
-structural recursion on the term. Each constructor is replaced by its semantic counterpart
+The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful
+enough that even logical predicates are instances of it. And we indeed
+exploit this power when defining normalisation by evaluation as a semantics:
+the model construction is, after all, nothing but a logical predicate.
+As a consequence it seems rather natural to call \AF{semantics}
+``the fundamental lemma of semantics''. We prove it in a module parametrised
+by a \AF{Semantics}, which would correspond to using a Section in Coq.
+It is defined by structural recursion on the term. Each constructor is
+replaced by its semantic counterpart
 which combines the induction hypotheses for its subterms.
 
 \begin{figure}[h]
