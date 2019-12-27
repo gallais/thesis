@@ -262,8 +262,7 @@ map-identity :
   ∀ n {f : A → A} → (∀ a → f a ≡ a) →
   ∀ as → map^-Tuple n f as ≡ as
 map-identity zero     f-id tt        = refl
-map-identity (suc n)  f-id (a , as)  =
-  cong₂ _,_ (f-id a) (map-identity n f-id as)
+map-identity (suc n)  f-id (a , as)  = cong₂ _,_ (f-id a) (map-identity n f-id as)
 \end{code}
 %</mapidentity>
 

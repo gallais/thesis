@@ -60,25 +60,36 @@ We can return that type paired with the variable \AIC{z}.
 \caption{Inference Function for the 0-th Variable\label{fig:elabvar0}}
 \end{figure}
 
-The computations are a bit more tricky. On the one hand, if we are in checking mode
-then we expect that for any typing of the scope of modes and any type candidate we
-can \AD{Maybe} return a term at that type in the induced context. On the other hand,
-in the inference mode we expect that given any typing of the scope, we can \AD{Maybe}
-return a type together with a term at that type in the induced context.
+The computations are a bit more tricky. On the one hand, if we are in
+checking mode then we expect that for any typing of the scope of modes
+and any type candidate we can \AD{Maybe} return a term at that type
+in the induced context. On the other hand, in the inference mode we
+expect that given any typing of the scope, we can \AD{Maybe} return
+a type together with a term at that type in the induced context.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{elabmode}
 \caption{Computations as \AD{Mode}-indexed Elaboration Functions\label{fig:elabcomputations}}
 \end{figure}
 
-Because we are now writing a typechecker which returns evidence of its claims, we need
-more informative variants of the equality and \AF{isArrow} checks. In the equality
-checking case we want to get a proof of propositional equality but we only care
-about the successful path and will happily return \AIC{nothing} when failing.
-Agda's support for (dependent!) \AK{do}-notation makes writing the check
-really easy. For the arrow type, we introduce a family \AD{Arrow} constraining the
-shape of its index to be an arrow type and redefine \AF{isArrow} as a \emph{view} targeting
-this inductive family~\cite{DBLP:conf/popl/Wadler87,DBLP:journals/jfp/McBrideM04}.
+Because we are now writing a typechecker which returns evidence of its
+claims, we need more informative variants of the equality and
+\AF{isArrow} checks.
+%
+In the equality checking case we want to get a proof of propositional
+equality but we only care about the successful path and will happily
+return \AIC{nothing} when failing. Agda's support for (dependent!)
+\AK{do}-notation makes writing the check really easy.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{equal}
+\caption{Informative Equality Check\label{fig:informativeeqcheck}}
+\end{figure}
+
+For the arrow type, we introduce a family \AD{Arrow} constraining the
+shape of its index to be an arrow type and redefine \AF{isArrow} as
+a \emph{view} targeting this inductive
+family~\cite{DBLP:conf/popl/Wadler87,DBLP:journals/jfp/McBrideM04}.
 %
 We deliberately overload the constructor of the \AD{isArrow} family by calling
 it \AIC{\_`→\_}. This means that the proof that a given type has the shape
@@ -90,12 +101,11 @@ with the added confidence that ours are guaranteed to be total.
 
 \begin{figure}[h]
 \begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{equal}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{arrowdata}
+\end{minipage}\hfill\begin{minipage}[t]{0.45\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{arrowview}
 \end{minipage}
-\begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{arrow}
-\end{minipage}
-\caption{Informative Equality Check and Arrow View\label{fig:informativecheck}}
+\caption{Arrow View\label{fig:informativecheck}}
 \end{figure}
 
 We now have all the basic pieces and can start writing elaboration code. We
