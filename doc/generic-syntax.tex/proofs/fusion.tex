@@ -1,0 +1,201 @@
+\section{Fusion Lemma}\label{section:fusion}
+
+Results that can be reformulated as the ability to fuse two traversals
+obtained as \AR{Semantics} into one abound. When claiming that \AF{Tm} is
+a Functor, we have to prove that two successive renamings can be fused into
+a single renaming where the \AF{Thinning}s have been composed. Similarly,
+demonstrating that \AF{Tm} is a relative Monad (\cite{JFR4389}) implies proving
+that two consecutive substitutions can be merged into a single one whose
+environment is the first one, where the second one has been applied in a
+pointwise manner. The \emph{Substitution Lemma} central
+to most model constructions (see for instance~\cite{mitchell1991kripke}) states
+that a syntactic substitution followed by the evaluation of the resulting term
+into the model is equivalent to the evaluation of the original term with an
+environment corresponding to the evaluated substitution.
+
+A direct application of these results is our (to be published) entry to the
+POPLMark Reloaded challenge (\citeyear{poplmarkreloaded}). By using a
+\AD{Desc}-based representation of intrinsically well typed and well scoped
+terms we directly inherit not only renaming and substitution but also all
+four fusion lemmas as corollaries
+of our generic results. This allows us to remove the usual boilerplate
+and go straight to the point.
+As all of these statements have precisely the same structure, we can
+once more devise a framework which will, provided that its constraints are
+satisfied, prove a generic fusion lemma.
+
+Fusion is more involved than simulation so we will step through
+each one of the constraints individually, trying to give the reader an intuition
+for why they are shaped the way they are.
+
+
+\subsection{The Fusion Constraints}
+
+The notion of fusion is defined for a triple of \AR{Semantics}; each \AB{𝓢ⁱ}
+being defined for values in \AB{𝓥ⁱ} and computations in \AB{𝓒ⁱ}. The
+fundamental lemma associated to such a set of constraints will state that
+running \AB{𝓢ᴮ} after \AB{𝓢ᴬ} is equivalent to running \AB{𝓢ᴬᴮ} only.
+
+The definition of fusion is parametrised by three relations: \AB{𝓔ᴿ} relates
+triples of environments of values in {(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬ} \AB{Δ}},
+{(\AB{Δ} \AR{─Env}) \AB{𝓥ᴮ} \AB{Θ}} and {(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬᴮ} \AB{Θ}}
+respectively; \AB{𝓥ᴿ} relates pairs of values \AB{𝓥ᴮ} and \AB{𝓥ᴬᴮ};
+and \AB{𝓒ᴿ}, our notion of equivalence for evaluation results, relates pairs
+of computation in \AB{𝓒ᴮ} and \AB{𝓒ᴬᴮ}.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusionrec}
+
+The first obstacle we face is the formal definition of ``running \AB{𝓢ᴮ}
+after \AB{𝓢ᴬ}'': for this statement to make sense, the result of running
+\AB{𝓢ᴬ} ought to be a term. Or rather, we ought to be able to extract a
+term from a \AB{𝓒ᴬ}. Hence the first constraint: the existence of a
+\ARF{reifyᴬ} function, which we supply as a field of the record \AR{Fusion}.
+When dealing with syntactic semantics such as renaming or substitution
+this function will be the identity. Nothing prevents proofs, such as the
+idempotence of NbE, which use a bona fide reification function that extracts
+terms from model values.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{reify}
+
+Then, we have to think about what happens when going under a binder: \AB{𝓢ᴬ}
+will produce a \AF{Kripke} function space where a syntactic value is required.
+Provided that \AB{𝓥ᴬ} is \AR{VarLike}, we can make use of \AF{reify} to get a
+\AF{Scope} back. Hence the second constraint.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{vlV}
+
+We can combine these two functions to define the reification procedure we will
+use in practice when facing Kripke function spaces: \AF{quoteᴬ} which takes such
+a function and returns a term by first feeding placeholder values to the Kripke
+function space and getting a \AB{𝓒ᴬ} back and then reifying it thanks to \ARF{reifyᴬ}.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{quote}
+
+Still thinking about going under binders: if three evaluation environments
+\AB{ρᴬ} of type
+{(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬ} \AB{Δ}}, \AB{𝓥ᴮ}
+in {(\AB{Δ} \AR{─Env}) \AB{𝓥ᴮ} \AB{Θ}},
+and \AB{ρᴬᴮ} in {(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬᴮ} \AB{Θ}}
+are related by \AB{𝓔ᴿ} and we are
+given a thinning \AB{ρ} from \AB{Θ} to \AB{Ω} then \AB{ρᴬ},
+the thinned \AB{𝓥ᴮ} and the
+thinned \AB{ρᴬᴮ} should still be related.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{thV}
+
+Remembering that \AF{\_>>\_} is used in the definition of \AF{body}
+(cf. \cref{fig:genbody})
+to combine two disjoint environments {(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Θ}} and
+{(\AB{Δ} \AR{─Env}) \AB{𝓥} \AB{Θ}} into one of type
+{((\AB{Γ} \AF{++} \AB{Δ}) \AR{─Env}) \AB{𝓥} \AB{Θ})}, we mechanically need a
+constraint stating that \AF{\_>>\_} is compatible with \AB{𝓔ᴿ}. We demand
+as an extra precondition that the values \AB{ρᴮ} and \AB{ρᴬᴮ} are extended
+with are related in a pointwise manner according to \AB{𝓥ᴿ}. Lastly, for all
+the types to match up, \AB{ρᴬ} has to be extended with placeholder variables
+which we can do thanks to the \AR{VarLike} constraint \ARF{vl\textasciicircum{}𝓥ᴬ}.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{appendR}
+
+We finally arrive at the constraints focusing on the semantical counterparts
+of the terms' constructors. In order to have readable type we introduce an
+auxiliary definition \AF{𝓡}. Just like in \cref{sec:fusionrel}, it relates at
+a given type a term and three environments by stating that sequentially evaluating
+the term in the first and then the second environment on the one hand and directly
+evaluating the term in the third environment on the other yields related computations.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{crel}
+
+As one would expect, the \ARF{varᴿ} constraint states that from related environments
+the two evaluation processes described by \AF{𝓡} yield related outputs.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{varR}
+
+The case of the algebra follows a similar idea albeit being more complex.
+It states that we should be able to prove that a \AIC{`con}-headed term's
+evaluations are related according to \AF{𝓡} provided that the evaluation
+of the constructor's body one way or the other yields structurally similar
+results (hence the use of the ({\AF{⟦} \AB{d} \AF{⟧ᴿ}})
+relation transformer defined in \cref{def:zipd}) where the relational
+Kripke function space relates the semantical objects one can find in place
+of the subterms.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{algR}
+
+\subsection{Fundamental Lemma of Fusion}
+
+This set of constraint is enough to prove a fundamental lemma
+of \AR{Fusion} stating that from a triple of related environments,
+one gets a pair of related computations: the composition of \AB{𝓢ᴬ}
+and \AB{𝓢ᴮ} on one hand and \AB{𝓢ᴬᴮ} on the other.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusiontype}
+\caption{Statement of the Fundamental Lemma of Fusion\label{fig:fusiontype}}
+\end{figure}
+
+This lemma is once again proven mutually with its counterpart for \AR{Semantics}'
+\AF{body}'s action on \AR{Scope}s: given related environments and a scope, the
+evaluation of the recursive positions using \AB{𝓢ᴬ} followed by their reification
+and their evaluation in \AB{𝓢ᴮ} should yield a piece of data \emph{structurally}
+equal to the one obtained by using \AB{𝓢ᴬᴮ} instead where the values replacing
+the recursive substructures are \AF{Kripkeᴿ}-related.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodytype}
+\caption{Statement of the Fundamental Lemma of Fusion for Bodies\label{fig:fusiontype}\label{defn:Fusion}}
+\end{figure}
+
+The proofs involve two functions we have not mentioned before:
+\AF{zip} maps a proof that a property holds for any recursive substructure
+over the arguments of constructor to obtain a \AF{Zip} object. The proof
+we obtain does not exactly match the premise in \ARF{algᴿ}; we need to
+adjust it by rewriting an \AF{fmap}-fusion equality called \AF{fmap²}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusioncode}
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{bodycode}
+\caption{Proof of the Fundamental Lemma of Fusion}
+\end{figure}
+
+\subsection{Applications}
+
+A direct consequence of this result is the four lemmas collectively stating
+that any pair of renamings and / or substitutions can be fused together to
+produce either a renaming (in the renaming-renaming interaction case) or a
+substitution (in all the other cases).
+
+One such example is the fusion of substitution followed by renaming into a
+single substitution where the renaming has been applied to the environment.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion/Syntactic.tex]{subren}
+\caption{Generic Substitution-Renaming Fusion Principle\label{defn:SubRen-Fusion}}
+\end{figure}
+
+All four lemmas are proved in rapid succession by instantiating the \AR{Fusion}
+framework four times, using the first results to discharge constraints in the
+later ones. The last such result is the generic fusion result for substitution
+with itself.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Fusion/Syntactic.tex]{subsub}
+\caption{Generic Substitution-Substitution Fusion Principle}
+\end{figure}
+
+Another corollary of the fundamental lemma of fusion is the observation that
+Kaiser, Schäfer, and Stark (\citeyear{Kaiser-wsdebr}) make: \emph{assuming
+functional extensionality}, all of our kind-and-scope safe traversals are
+compatible with variable renaming.
+%
+We reproduced this result generically for all syntaxes (see accompanying code).
+The need for functional extensionality arises in the proof when dealing with
+subterms which have extra bound variables. These terms are interpreted as
+Kripke functional spaces in the host language and we can only prove that they
+take equal inputs to equal outputs. An intensional notion of equality will
+simply not do here.
+%
+As a consequence, we refrain from using the generic result in practice when
+an axiom-free alternative is provable. Kaiser, Schäfer and Stark's observation
+naturally raises the question of whether the same semantics are also stable
+under substitution. Our semantics implementing printing with names is a clear
+counter-example.

@@ -13,7 +13,10 @@ for all syntax descriptions. It is once more parametrised by two
 respectively to values associated to bound variables and computations
 delivered by evaluating terms.
 
+{
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semrec}
+\label{defn:Semantics}
+}
 
 These two families have to abide by three constraints. First, values
 should be thinnable so that we can push the evaluation environment
@@ -49,17 +52,21 @@ space. In any context extension, it will take an environment of values for the
 newly-bound variables and produce a computation corresponding to the evaluation
 of the body of the binder.
 
+{
 \ExecuteMetaData[shared/Data/Environment.tex]{kripke}
+\label{defn:Kripke}
+}
 
 %The name \AF{Kripke} comes from the connection with the interpretation of
 %implication in Kripke models where if something holds in one world, it holds
 %in all successive ones.
 
-It is once more the case that the abstract notion of Semantics comes with a
-fundamental lemma: all \AB{I} \AF{─Scoped} families \AB{𝓥} and \AB{𝓒} satisfying
-the three criteria we have put forward give rise to an evaluation function.
-We introduce a notion of computation \AF{\_─Comp} analogous to that of environments:
-instead of associating values to variables, it associates computations to terms.
+It is once more the case that the abstract notion of Semantics comes with
+a fundamental lemma: all \AB{I} \AF{─Scoped} families \AB{𝓥} and \AB{𝓒}
+satisfying the three criteria we have put forward give rise to an evaluation
+function. We introduce a notion of computation \AF{\_─Comp} analogous to
+that of environments: instead of associating values to variables, it
+associates computations to terms.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{comp}
@@ -75,7 +82,7 @@ value for each newly bound variable).
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semtype}
-\caption{Statement of the Fundamental Lemma of \AR{Semantics}}
+\caption{Statement of the Fundamental Lemma of \AR{Semantics}\label{defn:semantics}}
 \end{figure}
 
 The proof of \AF{semantics} is straightforward now that we have clearly identified the
@@ -173,7 +180,7 @@ respectively).
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var/Varlike.tex]{varlike}
-\caption{\AR{VarLike}: \AF{Thinnable} and with placeholder values}
+\caption{\AR{VarLike}: \AF{Thinnable} and with placeholder values\label{fig:VarLike}}
 \end{figure}
 
 \label{sec:varlike:base}

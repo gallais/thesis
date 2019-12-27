@@ -20,7 +20,7 @@ binding structure in
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc}
-\caption{Syntax Descriptions}
+\caption{Syntax Descriptions\label{fig:Desc}}
 \end{figure}
 
 The meaning function \AF{⟦\_⟧} we associate to a description follows closely
@@ -125,7 +125,7 @@ one extra bound variable. Both constructors' descriptions end with
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
-\caption{\AF{Desc}ription of The Untyped Lambda Calculus\label{fig:desculc}}
+\caption{\AF{Desc}ription of The Untyped Lambda Calculus\label{fig:desculc}\label{fig:descUTLC}}
 \end{figure}
 
 \paragraph{Bidirectional STLC}\label{par:bidirectional} Our second example is a
@@ -170,7 +170,7 @@ by \AIC{`∎}: it is (\AB{σ} \AIC{`→} \AB{τ}).
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{stlc}
-\caption{\AF{Desc}ription of the Simply Typed Lambda Calculus\label{fig:descstlc}}
+\caption{\AF{Desc}ription of the Simply Typed Lambda Calculus\label{fig:descstlc}\label{fig:descBidiSTLC}}
 \end{figure}
 
 For convenience we use Agda's pattern synonyms corresponding to the
