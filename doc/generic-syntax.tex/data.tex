@@ -71,16 +71,18 @@ non-empty one in which case we store a natural number \AB{n}, the head of type
 \caption{The Description of the base functor for \AD{Vec} \AB{A} \AB{n}}\label{figure:vecD}
 \end{figure}
 
-The payoff for encoding our datatypes as descriptions is that we can define
-generic programs for whole classes of data types. The decoding function \AF{⟦\_⟧}
-acted on the objects of $\Set{}^J$, and we will now define the function \AF{fmap} by
-recursion over a code \AB{d}. It describes the action of the functor corresponding
-to \AB{d} over morphisms in $\Set{}^J$. This is the first example of generic
-programming over all the functors one can obtain as the meaning of a description.
+The payoff for encoding our datatypes as descriptions is that we can
+define generic programs for whole classes of data types. The decoding
+function \AF{⟦\_⟧} acted on the objects of $\Set{}^J$, and we will now
+define the function \AF{fmap} by recursion over a code \AB{d}.
+It describes the action of the functor corresponding to \AB{d} over
+morphisms in $\Set{}^J$. This is the first example of generic
+programming over all the functors one can obtain as the meaning
+of a description.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{fmap}
-\caption{Action on Morphisms of the Functor corresponding to a \AF{Desc}ription}
+\caption{Action on Morphisms of the Functor corresponding to a \AF{Desc}ription\label{fig:fmapD}}
 \end{figure}
 
 \section{Datatypes as Least Fixpoints}

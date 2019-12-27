@@ -224,10 +224,11 @@ to show only local changes to the context.
 \caption{Well Scoped and Typed de Bruijn indices\label{fig:variable}}
 \end{figure}
 
-The \AIC{z} (for zero) constructor refers to the nearest binder in a non-empty scope.
-The \AIC{s} (for successor) constructor lifts an existing variable in a given scope
-to the extended scope where an extra variable has been bound. The constructors' types
-respectively normalise to the fully expanded types displayed on their right.
+The \AIC{z} (for zero) constructor refers to the nearest binder in a
+non-empty scope. The \AIC{s} (for successor) constructor lifts an
+existing variable in a given scope to the extended scope where an
+extra variable has been bound. The constructors' types respectively
+normalise to the fully expanded types displayed on their right.
 
 The syntax for this calculus, shown in~\cref{fig:term}, guarantees that
 terms are \scopeandtypesafe{} by construction. This presentation due to
