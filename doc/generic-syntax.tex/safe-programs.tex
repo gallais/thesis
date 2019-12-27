@@ -152,11 +152,13 @@ corollary of the fundamental lemma of \AR{Semantics}.
 \caption{Generic Parallel Substitution for All Syntaxes with Binding\label{fig:gensub}}
 \end{figure}
 
-\paragraph{The reification process} mentioned in the definition of renaming and substitution
-can be implemented generically for \AR{Semantics} families which have \AR{VarLike}
-values (\AF{vl\textasciicircum{}Var} and \AF{vl\textasciicircum{}Tm} are proofs of
-\AR{VarLike} for \AD{Var} and \AD{Tm} respectively) i.e. values which are thinnable
-and such that we can craft placeholder values in non-empty contexts.
+\paragraph{The reification process} mentioned in the definition of renaming
+and substitution can be implemented generically for \semrec{} families
+which have \AR{VarLike} values, i.e.  values which are thinnable and
+such that we can craft placeholder values in non-empty contexts. It is
+almost immediate that both \AD{Var} and \AD{Tm} are \AR{VarLike} (with
+proofs \AF{vl\textasciicircum{}Var} and \AF{vl\textasciicircum{}Tm},
+respectively).
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var/Varlike.tex]{varlike}
@@ -179,7 +181,7 @@ type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ}))} and \AF{fresh
 type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ}))} by combining the use
 of placeholder values and thinnings.
 
-It is almost immediate that variables are \AR{VarLike}. Hence, we can
+Hence, we can
 then implement \AF{reify} as in Figure~\ref{fig:kripkereify} turning
 \AF{Kripke} function spaces from \AB{𝓥} to \AB{𝓒} into \AF{Scope}s of
 \AB{𝓒} computations.
