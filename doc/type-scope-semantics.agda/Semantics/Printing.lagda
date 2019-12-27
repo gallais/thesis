@@ -15,7 +15,7 @@ open import Function
 open import Data.Nat
 open import Data.Product hiding (map)
 open import Data.Char using (Char)
-open import Data.String hiding (show)
+open import Data.String using (String; _++_; concat; fromList; toList)
 open import Data.Nat.Show as NatShow
 open import Data.List.NonEmpty as List⁺ using (List⁺; _∷_)
 
