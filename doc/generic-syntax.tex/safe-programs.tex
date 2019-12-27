@@ -103,9 +103,14 @@ calls and the subterms they are acting upon, the fact that our terms are indexed
 by a \AF{Size} is once more crucial in getting the termination checker to see
 that our proof is indeed well founded.
 
-Because most of our examples involve closed terms (for which we have introduced a special
-notation in \cref{fig:closedtm}), we define a specialised of the fundamental lemma of semantics
-for closed terms and apply it to the empty environment.
+Because most of our examples involve closed terms (for which we have
+introduced a special notation in \cref{fig:closedtm}), we immediately
+introduce \AF{closed}, a corollary of the fundamental lemma of semantics
+for the special cases of closed terms in Figure~\ref{fig:closedsem}.
+Given a \AR{Semantics} with value type \AB{𝓥} and computation type \AB{𝓒},
+we can evaluate a closed term of type \AB{σ} and obtain a computation of
+type {(\AB{𝓒} \AB{σ} \AIC{[]})} by kickstarting the evaluation with an
+empty environment.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{closed}
@@ -140,11 +145,12 @@ a corollary of the fundamental lemma of \AR{Semantics}.
 \caption{Corollary: Generic Thinning\label{fig:genren}}
 \end{figure}
 
-\paragraph{Substitution} is defined in a similar manner with \AD{Tm} as both values and computations.
-Of the two constraints applying to terms as values, the first one corresponds to renaming
-and the second one is trivial. The algebra is once more defined by using \AF{fmap} and
-reifying the bodies of binders. We can, once more, obtain parallel substitution as a
-corollary of the fundamental lemma of \AR{Semantics}.
+\paragraph{Substitution} is defined in a similar manner with \AD{Tm}
+as both values and computations. Of the two constraints applying to
+terms as values, the first one corresponds to renaming and the second
+one is trivial. The algebra is once more defined by using \AF{fmap} and
+reifying the bodies of binders. We can, once more, obtain parallel
+substitution as a corollary of the fundamental lemma of \AR{Semantics}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{substitution}
@@ -181,10 +187,9 @@ type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Δ} \AF{++} \AB{Γ}))} and \AF{fresh
 type {((\AB{Γ} \AR{─Env}) \AB{𝓥} (\AB{Γ} \AF{++} \AB{Δ}))} by combining the use
 of placeholder values and thinnings.
 
-Hence, we can
-then implement \AF{reify} as in Figure~\ref{fig:kripkereify} turning
-\AF{Kripke} function spaces from \AB{𝓥} to \AB{𝓒} into \AF{Scope}s of
-\AB{𝓒} computations.
+Using these definitions, we can then implement \AF{reify} as in
+Figure~\ref{fig:kripkereify} turning \AF{Kripke} function spaces
+from \AB{𝓥} to \AB{𝓒} into \AF{Scope}s of \AB{𝓒} computations.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Var/Varlike.tex]{reify}
