@@ -38,6 +38,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Motivation/Problem/Naive.lagda \
   generic-syntax.agda/Generic/Data.lagda \
   generic-syntax.agda/Generic/Syntax.lagda \
+  generic-syntax.agda/Generic/Syntax/Bidirectional.lagda \
   generic-syntax.agda/Generic/Syntax/LetBinder.lagda \
   generic-syntax.agda/Generic/Syntax/LetCounter.lagda \
   generic-syntax.agda/Generic/Examples/STLC.lagda \

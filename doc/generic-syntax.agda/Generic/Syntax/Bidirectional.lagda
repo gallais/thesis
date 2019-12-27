@@ -73,7 +73,7 @@ module PATTERNS where
 
 %<*BDid>
 \begin{code}
-id^B : Tm Bidi ∞ Check []
+id^B : TM Bidi Check
 id^B = `lam (`emb (`var z))
 \end{code}
 %</BDid>
