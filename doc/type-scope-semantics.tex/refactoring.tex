@@ -496,8 +496,13 @@ of the printer.
 
 In the implementation, we define \AF{Name} and \AF{Printer} using a \AR{Wrap}per
 with a type and a context as phantom types in order to help Agda's inference
-propagate the appropriate constraints. We also call \AF{Fresh} the state monad
-threading the name supply which is essentially a stream of distinct strings.
+propagate the appropriate constraints. The wrapper \AR{Wrap} does not depend on
+the scope \AB{Γ} so it is automatically a \AF{Thinnable} functor, as witnessed by
+the (used but not shown) definitions \AF{map\textasciicircum{}Wrap} (functoriality)
+and \AF{th\textasciicircum{}Wrap} (thinnability).
+%
+We also call \AF{Fresh} the state monad threading the name supply which is
+essentially a stream of distinct strings.
 
 \begin{figure}[h]
 \begin{minipage}[t]{0.6\textwidth}
@@ -516,13 +521,22 @@ threading the name supply which is essentially a stream of distinct strings.
 \caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
 \end{figure}
 
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{semprint}
+We define the printing semantics by collecting intermediate definitions in
+a record. For this semantics' notion of values, the scope and type indices
+are phantom types. As a consequence thinning for \AF{Name}s (the field
+\ARF{th\textasciicircum{}𝓥}) is trivial: we reuse \AF{th\textasciicircum{}Wrap},
+a function that simply returns the same name with changed phantom indices.
+We are now going to look in details at the more interesting cases.
 
-Because the output type is not scoped in any way, thinning for \AF{Name}s
-(\ARF{th\textasciicircum{}𝓥}) is trivial: we return the same name. The variable
-case (\ARF{var}) is a bit more interesting: after looking up a variable's \AF{Name}
-in the environment, we use \AF{return} to produce the trivial \AF{Printer} constantly
-returning that name.
+\begin{figure}[h]
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{semprint}
+  \caption{Printing as a semantics}
+\end{figure}
+
+%
+The variable case (\ARF{var}) is a bit more interesting: after looking up a
+variable's \AF{Name} in the environment, we use \AF{return} to produce the
+trivial \AF{Printer} constantly returning that name.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printvar}
 
