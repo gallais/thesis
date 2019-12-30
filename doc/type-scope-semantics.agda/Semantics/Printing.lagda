@@ -140,7 +140,8 @@ Printing = record { th^𝓥 = th^Wrap; var = var; app = app; lam = lam
     b ← getW mb
     l ← getW ml
     r ← getW mr
-    return (unwords ("if" ∷ parens b ∷ "then" ∷ parens l ∷ "else" ∷ parens r ∷ []) )
+    return (unwords ("if" ∷ parens b  ∷ "then" ∷ parens l
+                                      ∷ "else" ∷ parens r ∷ []) )
 \end{code}
 %</printstruct>
 \begin{code}
