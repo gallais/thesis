@@ -514,7 +514,8 @@ make a detour to a perhaps slightly more surprising example of a
 avoid directly building a \AD{String} and rather construct an inhabitant of
 a more sophisticated datatype in order to generate a prettier output
 (\cite{hughes1995design,wadler2003prettier,Bernardy:2017:PBG:3136534.3110250}).
-But we stick to the simpler setup as \emph{pretty} printing is not our focus here.
+But we stick to the simpler setup as \emph{pretty} printing is not our
+focus here.
 
 This example is interesting for two reasons. Firstly, the distinction between
 values and computations is once more instrumental: we get to give the procedure
@@ -534,10 +535,10 @@ In the implementation, we define \AF{Name} and \AF{Printer} using a \AR{Wrap}per
 with a type and a context as phantom types in order to help Agda's inference
 propagate the appropriate constraints. The wrapper \AR{Wrap} does not depend on
 the scope \AB{Γ} so it is automatically a \AF{Thinnable} functor, as witnessed by
-the (used but not shown) definitions \AF{map\textasciicircum{}Wrap} (functoriality)
-and \AF{th\textasciicircum{}Wrap} (thinnability).
+the (used but not shown) definitions \AF{map\textasciicircum{}Wrap}
+(functoriality) and \AF{th\textasciicircum{}Wrap} (thinnability).
 %
-We also call \AF{Fresh} the state monad threading the name supply which is
+We also call \AF{Fresh} the State monad threading the name supply which is
 essentially a stream of distinct strings.
 
 \begin{figure}[h]
@@ -577,9 +578,10 @@ trivial \AF{Printer} constantly returning that name.
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printvar}
 
 As often, the case for λ-abstraction (\ARF{lam}) is the most interesting one.
-We first use \AF{fresh} to generate a \AF{Name} for the newly-bound variable,
-then run the printer for the body in the environment extended with that fresh
-name and finally build a string combining the name and the body together.
+We first use \AF{fresh} to generate a \AF{Name}, \AB{x}, for the newly-bound
+variable, then run the printer for the body, \AB{mb}, in the environment
+extended with that fresh name and finally build a string combining the name
+and the body together.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printlam}
 
