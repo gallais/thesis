@@ -260,7 +260,8 @@ The \AF{□} combinator turns any (\AD{List} \AB{I})-indexed Set into
 one that can absorb thinnings. This is accomplished by abstracting
 over all possible thinnings from the current scope, akin to an
 S4-style necessity modality. The axioms of S4 modal logic incite us
-to observe that the functor \AF{□} is a comonad: \AF{extract} applies
+to observe that \AF{□} is not only a functor, as witnessed by
+\AF{map\textasciicircum{}□}, but also a comonad: \AF{extract} applies
 the identity \AF{Thinning} to its argument, and \AF{duplicate} is obtained
 by composing the two \AF{Thinning}s we are given (\AF{select} defined in
 \cref{fig:extendth} corresponds to transitivity in the special case
@@ -268,7 +269,12 @@ where \AB{𝓥} is \AD{Var}). The expected laws hold trivially thanks
 to Jeffrey's trick mentioned above.
 
 \begin{figure}[h]
-\ExecuteMetaData[shared/Data/Environment.tex]{box}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[shared/Data/Environment.tex]{box}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+\ExecuteMetaData[shared/Data/Environment.tex]{mapbox}
+\end{minipage}
+
 \begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[shared/Data/Environment.tex]{extract}
 \end{minipage}\begin{minipage}{0.5\textwidth}

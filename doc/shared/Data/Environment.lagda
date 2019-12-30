@@ -148,6 +148,13 @@ injectʳ-<+> (x ∷ Γ) ρ₁ ρ₂ v = injectʳ-<+> Γ ρ₁ (select extend ρ�
 (□ T) Γ = ∀[ Thinning Γ ⇒ T ]
 \end{code}
 %</box>
+
+%<*mapbox>
+\begin{code}
+map^□ : ∀[ S ⇒ T ] → ∀[ □ S ⇒ □ T ]
+map^□ f v th = f (v th)
+\end{code}
+%</mapbox>
 \begin{code}
 infixl 5 _◃_
 record ◇ (T : List I → Set) (Γ : List I) : Set where
