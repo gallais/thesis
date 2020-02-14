@@ -1,4 +1,4 @@
-\chapter{Generic Compiler Passes and Compiler Passes as Semantics}
+\chapter{Compiler Passes as Semantics}
 
 In the previous chapter we have seen various generic semantics one may be
 interested in when working on a deeply embedded language: renaming,
@@ -6,9 +6,9 @@ substitution, printing with names or evaluation. All of these fit neatly
 in the \AR{Semantics} framework.
 
 Now we wish to focus on the kind of traversals one may find in a compiler
-pipeline such as a generic scopechecker, an elaboration function from an
-untyped surface syntax to an intrinsically typed syntax, or an optimisation
-pass inlining definitions used at most once.
+pipeline such as a scopechecker, an elaboration function from an untyped
+surface syntax to an intrinsically typed syntax, or an optimisation pass
+inlining definitions used at most once.
 
 All of the examples but the scopechecker are instances of \AR{Semantics}.
 Some, like the scoping (\cref{section:genericscoping}), desugaring
