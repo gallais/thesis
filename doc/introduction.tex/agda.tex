@@ -7,7 +7,7 @@ families~(\cite{dybjer1994inductive}). In practice, all of the content of this
 thesis has been formalised in Agda~(\cite{norell2009dependently}) so we provide
 a (brutal) introduction to dependently-typed programming in Agda.
 
-Agda a dependently typed programming language based on Martin-L\"{o}f Type Theory
+Agda is a dependently typed programming language based on Martin-L\"{o}f Type Theory
 with inductive families, induction-recursion (\cite{Dybjer1999}), copattern-matching
 (\cite{abelPientkaThibodeauSetzer:popl13}) and sized types
 (\cite{DBLP:journals/corr/abs-1012-4896}).
@@ -61,9 +61,9 @@ We define it together with \AF{⊥-elim} also known as the principle of explosio
 from something absurd, we can deduce anything. The absurd pattern \AS{()} is
 used to communicate the fact that there can be no value of type \AD{⊥}.
 
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}[t]{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{bottom}
-\end{minipage}\begin{minipage}{0.5\textwidth}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{bottomelim}
 \end{minipage}
 
@@ -80,9 +80,9 @@ constructors are \emph{distinct} and Agda understands that fact: an argument
 of type {\AIC{true} \AD{≡} \AIC{false}} can be dismissed with the same absurd
 pattern one uses for values of type \AD{⊥}.
 
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}[t]{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{bool}
-\end{minipage}\begin{minipage}{0.5\textwidth}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
   \ExecuteMetaData[introduction.agda/introduction.tex]{boolis2}
 \end{minipage}
 
@@ -131,7 +131,7 @@ should be terminating.
 
 \begin{feature}[Termination Checking] Agda is equipped with a sophisticated
 termination checking algorithm (\cite{abel1998foetus}). For each function it
-attempts to produce a well-founded lexicographic ordering of its input such
+attempts to produce a well-founded lexicographic ordering of its inputs such
 that each recursive call is performed on smaller inputs according to this
 order.
 \end{feature}
@@ -187,7 +187,7 @@ and to project the content of a field out of a record value. We will now
 consider the same function \AF{swap} implemented in many different fashion
 to highlight all the possibilities offered to us.
 
-If the record declaration introduced a \AK{constructor} we may use to
+If the record declaration introduced a \AK{constructor} we may use it to
 pattern-match on values of that record type on the left or construct
 values of that record type on the right. We can always also simply use
 the \AK{record} keyword and list the record's fields. The two following
