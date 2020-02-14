@@ -1,21 +1,28 @@
-\subsection{Generic Decidable Equality for Terms}
+\section{Generic Decidable Equality for Terms}
 
-Haskell programmers are used to receiving help from the `deriving'
-mechanism~\cite{DBLP:journals/entcs/HinzeJ00,DBLP:conf/haskell/MagalhaesDJL10}
+A program deciding whether two terms are equal is clearly another good
+example of a function that cannot be written as an instance of our notion
+of \AR{Semantics}. In type theory we can do better than an uninformative
+boolean function claiming that two terms are equal: we can implement a
+decision procedure for propositional equality~(\cite{DBLP:conf/icfp/LohM11})
+which either returns a proof that its two inputs are equal or a proof that
+they cannot possibly be. Such a decidability proof necessarily mentions
+its inputs in the type of its output while our framework does not allow
+these type of dependencies.
+
+This kind of boilerplate function is however something users really do
+not want to write themselves. Haskell programmers for instance are used
+to receiving help from the `deriving'
+mechanism~(\cite{DBLP:journals/entcs/HinzeJ00,DBLP:conf/haskell/MagalhaesDJL10})
 to automatically generate common traversals for every inductive type
-they define. Recalling that generic programming is normal programming
-over a universe in a dependently typed
-language~\cite{DBLP:conf/ifip2-1/AltenkirchM02}, we ought to be able to
-deliver similar functionalities for syntaxes with binding.
+they define.
 
-We will focus in this section on the definition of an equality test. The
-techniques used in this concrete example are general enough that they also
-apply to the definition of an ordering test, a \texttt{Show} instance, etc.
-In type theory we can do better than an uninformative boolean function
-claiming that two terms are equal: we can implement a decision procedure
-for propositional equality~\cite{DBLP:conf/icfp/LohM11} which either
-returns a proof that its two inputs are equal or a proof that they
-cannot possibly be.
+Recalling that generic programming is normal programming over a universe
+in a dependently typed language~(\cite{DBLP:conf/ifip2-1/AltenkirchM02}),
+we ought to be able to deliver similar functionalities for syntaxes with
+binding. The techniques used in this concrete example are general enough
+that they also apply to the definition of an ordering test, a \texttt{Show}
+instance, etc.
 
 The notion of decidability can be neatly formalised by an inductive family
 with two constructors: a \AF{Set} \AB{P} is decidable if we can either say
@@ -25,10 +32,10 @@ the negation of \AB{P} (here, a proof that \AB{P} implies the empty type
 
 \begin{figure}[h]
 \begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[Stdlib.tex]{bottom}
+  \ExecuteMetaData[shared/Stdlib.tex]{bottom}
 \end{minipage}
 \begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[Stdlib.tex]{dec}
+  \ExecuteMetaData[shared/Stdlib.tex]{dec}
 \end{minipage}
 \caption{Empty Type and Decidability as an Inductive Family}
 \end{figure}
@@ -36,14 +43,14 @@ the negation of \AB{P} (here, a proof that \AB{P} implies the empty type
 To get acquainted with these new notions we can start by proving that equality
 of variables is decidable.
 
-\subsubsection{Deciding Variable Equality}
+\subsection{Deciding Variable Equality}
 
 The type of the decision procedure for equality of variables is as follows:
 given any two variables (of the same type, in the same context), the set of
 equality proofs between them is \AD{Dec}idable.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Equality.tex]{eqVarType}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{eqVarType}
 \end{agdasnippet}
 
 We can easily dismiss two trivial cases: if the two variables have distinct
@@ -52,7 +59,7 @@ dismiss the impossible premise of the function stored in the \AIC{no}
 contructor by using an absurd pattern \AS{()}.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Equality.tex]{eqVarNo}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{eqVarNo}
 \end{agdasnippet}
 
 Otherwise if the two head constructors agree we can be in one of two
@@ -60,7 +67,7 @@ situations. If they are both \AIC{z} then we can conclude that the two
 variables are indeed equal to each other.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Equality.tex]{eqVarYesZ}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{eqVarYesZ}
 \end{agdasnippet}
 
 Finally if the two variables are {(\AIC{s} \AB{v})} and {(\AIC{s} \AB{w})}
@@ -71,10 +78,10 @@ rule for \AIC{s}. If \AB{v} and \AB{w} are not equal then a proof that
 contradiction by injectivity of the constructor \AIC{s}.
 
 \begin{agdasnippet}
-\ExecuteMetaData[Generic/Equality.tex]{eqVarYesS}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{eqVarYesS}
 \end{agdasnippet}
 
-\subsubsection{Deciding Term Equality}
+\subsection{Deciding Term Equality}
 
 The constructor \AIC{`σ} for descriptions gives us the ability to store
 values of any \AF{Set} in terms. For some of these \AF{Set}s (e.g.
@@ -85,17 +92,17 @@ itself, as show in Figure~\ref{fig:eqconstraints}. We demand that we are
 able to decide equality for all of the \AF{Set}s mentioned in a description.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Equality.tex]{constraints}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{constraints}
 \caption{Constraints Necessary for Decidable Equality}\label{fig:eqconstraints}
 \end{figure}
 
 Remembering that our descriptions are given a semantics as a big right-nested
 product terminated by an equality constraint, we realise that proving decidable
 equality will entail proving equality between proofs of equality. We are happy
-to assume Streicher's axiom K~\cite{DBLP:conf/lics/HofmannS94} to easily
+to assume Streicher's axiom K~(\cite{DBLP:conf/lics/HofmannS94}) to easily
 dismiss this case. A more conservative approach would be to demand that equality
 is decidable on the index type \AB{I} and to then use the classic Hedberg
-construction~\cite{DBLP:journals/jfp/Hedberg98} to recover uniqueness of
+construction~(\citeyear{DBLP:journals/jfp/Hedberg98}) to recover uniqueness of
 identity proofs for \AB{I}.
 
 Assuming that the constraints computed by {(\AF{Constraints} \AB{d})} are
@@ -108,7 +115,7 @@ otherwise. The latter is defined by induction over \AB{e}. The somewhat
 verbose definitions are not enlightening so we leave them out here.
 
 \begin{figure}[h]
-\ExecuteMetaData[Generic/Equality.tex]{eqTmType}
+\ExecuteMetaData[generic-syntax.agda/Generic/Equality.tex]{eqTmType}
 \caption{Type of Decidable Equality for Terms and Bodies}\label{fig:eqtype}
 \end{figure}
 

@@ -1,0 +1,49 @@
+\chapter{Other Programs}
+
+All the programs operating on syntax we have seen so far have been
+instances of our notion of \AR{Semantics}. This shows that our
+framework covers a lot of useful cases.
+
+An interesting question raised by this observation is whether there
+are any interesting traversals that are not captured by this setting.
+At least two types of programs are clearly not instances of \AR{Semantics}:
+those that do not assign a meaning to a term in terms of the meaning of
+its direct subterms, and those whose return type depends on the input
+term.
+
+In this chapter we study two such programs. We also demonstrate that
+although they may not fit the exact pattern we have managed to abstract,
+it is still sometimes possible to take advantage of our data-generic
+setting and to implement them once and for all syntaxes with binding.
+
+\section{Big Step Evaluators}
+
+Chapman's thesis~(\citeyear{chapman2009type}) provides us with a good
+example of a function that does not assign a meaning to a term by only
+relying on the meaning of its direct subterms: a big step evaluator.
+
+Setting aside the issue of proving such a function terminating, a big
+step evaluator computes the normal form of a term by first recursively
+computing the normal forms of its subterms and then either succeeding
+or, having uncovered a new redex, firing it and then normalising the
+reduct. This is embodied by the case for application
+(cf. ~\cref{figure:bigstepapp}).
+
+\begin{figure}
+\begin{mathpar}
+\inferrule
+  {f ⇓ λx.b \and t ⇓ v \and b [x ↦ v] ⇓ nf}
+  {f\,t ⇓ nf}
+\end{mathpar}
+\caption{Big step evaluation of an application}\label{figure:bigstepapp}
+\end{figure}
+
+In contrast, the \AR{Semantics} constraints enforce that the meaning
+of each term constructor is directly expressed in terms of the meaning
+of its arguments. There is no way to ``restart'' the evaluator once the
+redex has been fired. This means we will not be able to make it an
+instance of our framework and, consequently, we will not be able to use
+the tools introduced in the next chapters to reason generically over
+such functions.
+
+\input{generic-syntax.tex/catalogue/equality.tex}

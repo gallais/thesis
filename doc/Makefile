@@ -65,7 +65,7 @@ AGDA_FILES:=\
   generic-syntax.agda/Generic/Examples/TypeChecking.lagda \
   generic-syntax.agda/Generic/Examples/Elaboration.lagda \
   generic-syntax.agda/Generic/Examples/Printing.lagda \
-
+  generic-syntax.agda/Generic/Equality.lagda \
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex-agda-output/%.tex,$(AGDA_FILES))
 AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
@@ -101,7 +101,9 @@ THESIS_DEPENDENCIES:=\
   latex/generic-syntax.tex/catalogue/typechecking.tex \
   latex/generic-syntax.tex/catalogue/elaborating.tex \
   latex/generic-syntax.tex/catalogue/scopechecking.tex \
+  latex/generic-syntax.tex/catalogue/equality.tex \
   latex/generic-syntax.tex/compiling.tex \
+  latex/generic-syntax.tex/other-programs.tex \
   latex/generic-syntax.tex/proofs.tex \
   latex/generic-syntax.tex/proofs/simulation.tex \
   latex/generic-syntax.tex/proofs/fusion.tex \
