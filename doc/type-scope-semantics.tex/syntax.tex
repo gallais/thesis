@@ -18,7 +18,8 @@ syntax. Indeed, using a family indexed by a \AD{Set}, we can track scoping
 information at the type level. The empty \AD{Set} represents the empty scope.
 The functor $1 + (\_)$ extends the running scope with an extra variable.
 
-An inductive type is the fixpoint of an endofunctor on \AD{Set}. Similarly, an
+An inductive type is the fixpoint of an endofunctor on \AD{Set}
+(cf. \cref{def:endofunctor}). Similarly, an
 inductive family is the fixpoint of an endofunctor on ({\AD{Set} \AS{→} \AD{Set}}).
 Using inductive families to enforce scope safety, we get the following definition
 of the untyped $\lambda$-calculus:

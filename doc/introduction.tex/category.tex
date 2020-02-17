@@ -1,0 +1,141 @@
+\chapter{Introduction to Category Theory}
+\label{introduction-category}
+
+Although this thesis is not about category theory, some categorical
+notions do show up. They help us expose the structure of the problem
+and the solutions we designed. Hence this (short) introduction to
+category theory focused on the notions that will be of use to us.
+Computer scientists looking for a slightly more substantial introduction
+to category theory can refer to Pierce's little book~(\citeyear{DBLP:books/daglib/0069193}).
+
+\section{What even is a Category?}
+
+\begin{definition}\label{def:category}
+A \textbf{category} \AB{𝓒} is defined by a set of objects (written Obj(\AB{𝓒}))
+and a family of morphisms (written \AB{𝓒}(\AB{A},\AB{B})) between any two
+such objects \AB{A} and \AB{B} such that:
+\begin{enumerate}
+  \item For any object \AB{A}, we have a morphism $id_{\AB{A}}$ in {\AB{𝓒}(\AB{A},\AB{A})}
+  \item Given three objects \AB{A}, \AB{B}, and \AB{C}, and two morphisms
+    \AB{f} in {\AB{𝓒}(\AB{A},\AB{B})} and \AB{g} in {\AB{𝓒}(\AB{B},\AB{C})},
+    we have a unique morphism {(\AB{g} $∘_{\AB{𝓒}}$ \AB{f})} in
+    {\AB{𝓒}(\AB{A},\AB{C})} corresponding to the composition
+    of \AB{f} and \AB{g}.
+  \item Composition is associative
+  \item The appropriate identities are left and right neutral elements for composition
+\end{enumerate}
+\end{definition}
+
+\begin{convention} When the reader should be able to reconstruct the
+information from the context, we may write $id$ instead of $id_{\AB{A}}$
+and $(\_∘\_)$ instead of $(\_∘_{\AB{𝓒}}\_)$ respectively.
+\end{convention}
+
+\begin{example}[Sets and functions]
+In this category called \Set, objects are sets and morphisms are total
+functions between them. Identities and compositions are the usual notions
+of identity and composition for functions.
+\end{example}
+
+\begin{example}[Families and index-respecting functions]
+\label{example:familiescat}
+Given a set \AB{I}, we define $\Set^I$ as the category whose objects
+are families of type {(\AB{I} → Set)} and whose morphisms between
+two families \AB{P} and \AB{Q} are index preserving functions i.e.
+functions of type {(∀\AB{i} → \AB{P} \AB{i} → \AB{Q} \AB{i})}.
+\end{example}
+
+\section{Functors}
+
+\begin{definition}[Functor]\label{def:functor}
+A functor \AB{F} between two categories
+\AB{𝓒} and \AB{𝓓} is defined by its action on the objects and
+morphisms of \AB{𝓒}. It takes objects in \AB{𝓒} to objects in
+\AB{𝓓}, and morphisms in {\AB{𝓒}(\AB{A},\AB{B})} to morphisms in
+{\AB{𝓓}(\AB{F} \AB{A}, \AB{F} \AB{B})} such that the structure of
+\AB{𝓒} is preserved. In other words:
+\begin{enumerate}
+  \item {\AB{F} $id_{\AB{A}}$} is equal to $id_{\AB{F} \AB{A}}$
+  \item {\AB{F} (\AB{g} $∘_{\AB{𝓒}}$ \AB{f})} is equal to
+      {(\AB{F} \AB{g} $∘_{\AB{𝓓}}$ \AB{F} \AB{f})}
+\end{enumerate}
+\end{definition}
+
+
+\begin{definition}[Endofunctor]\label{def:endofunctor}
+An endofunctor on a category \AB{𝓒} is a functor
+from \AB{𝓒} to \AB{𝓒}.
+\end{definition}
+
+\begin{example} Given a set \AB{I}, every function \AB{f} from \AB{I}
+to itself induces an endofunctor on the category $\Set^I$
+(cf. \cref{example:familiescat}).
+We write {(\AB{f} ⊢\_)} for this functor, recalling the definition in
+section~\ref{sec:indexed-combinators} and define its action on objects
+and morphisms as follows:
+
+\begin{itemize}
+  \item Given an object \AB{P} (i.e. a predicate of type (\AB{I} → Set)),
+    we define {(\AB{f} ⊢ \AB{P})} to be the
+    family {(λ\AB{i} → \AB{P} (\AB{f} \AB{i}))}
+  \item Given a morphism \AB{prf} from \AB{P} to \AB{Q} (i.e. a function
+    of type {(∀\AB{i} → \AB{P} \AB{i} → \AB{Q} \AB{i})}),
+    we define {(\AB{f} ⊢ \AB{prf})} to be
+    the morphism {(λ \AB{i} \AB{p} → \AB{prf} (\AB{f} \AB{i}) \AB{p})}
+\end{itemize}
+
+The constraints spelt out in the definition of a functor are trivially verified.
+\end{example}
+
+\section{(Co)Monads}
+
+\begin{definition}[Monad]
+\label{def:monad}
+A monad is an endofunctor \AB{T} on \AB{𝓒} equipped with:
+\begin{enumerate}
+  \item For any object \AB{A}, a function $η_{\AB{A}}$ of type
+    {\AB{𝓒}(\AB{A}, \AB{T} \AB{A})} (the unit)
+  \item For any objects \AB{A} and \AB{B}, a mapping $\_^*$ from
+    {\AB{𝓒}(\AB{A}, \AB{T} \AB{B})} to {\AB{𝓒}(\AB{T} \AB{A}, \AB{T} \AB{B})}
+    (the Kleisli extension)
+\end{enumerate}
+
+such that:
+
+\begin{enumerate}
+  \item For any object \AB{A}, $η_{\AB{A}}\,^*$ is equal to $id_{\AB{T} \AB{A}}$
+  \item For any objects \AB{A} and \AB{B} and \AB{f} a morphism of type
+    {\AB{𝓒}(\AB{A}, \AB{T} \AB{B})}, $\AB{f}\,^* ∘ η_{\AB{A}}$ is equal to \AB{f}
+  \item For any objects \AB{A}, \AB{B}, \AB{C} and two morphisms
+    \AB{f} in {\AB{𝓒}(\AB{A}, \AB{T} \AB{B})} and \AB{g} in {\AB{𝓒}(\AB{B}, \AB{T} \AB{C})},
+    $(\AB{g}^* ∘ \AB{f})^*$ is equal to $(\AB{g}^* ∘ \AB{f}^*)$
+\end{enumerate}
+\end{definition}
+
+\begin{example}[Maybe]\todo{}
+\end{example}
+
+\begin{example}[Expression with free variables]\todo{}
+\end{example}
+
+\section{Monads need not be Endofunctors}
+
+Although monads are defined as endofunctors, we can relax this
+constraint by studying Altenkirch, Chapman and Uustalu's
+\emph{relative} monads instead~(\citeyear{Altenkirch2010,JFR4389}).
+
+\begin{definition}[Relative Monad]
+\label{def:relative-monad}
+A monad relative to a functor \AB{V} from \AB{𝓒} to \AB{𝓓}
+is a functor \AB{T} from \AB{𝓒} to \AB{𝓓} equipped with:
+\begin{enumerate}
+  \item For any object \AB{A}, a mapping \AB{pure}$_{\AB{A}}$ of type
+    {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{A})} (the unit)
+  \item For any objects \AB{A} and \AB{B}, a mapping $\_^*$
+    from {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{B})}
+    to {\AB{𝓓}(\AB{T} \AB{A}, \AB{T} \AB{A})} (the Kleisli extension)
+\end{enumerate}
+
+such that they verify similar constraints to the ones spelt out in the
+definition of a monad (\ref{def:monad}).
+\end{definition}

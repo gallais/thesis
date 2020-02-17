@@ -82,6 +82,8 @@ THESIS_DEPENDENCIES:=\
   latex/cover.tex \
   latex/introduction.tex/intro.tex \
   latex/introduction.tex/agda.tex \
+  latex/introduction.tex/type-theory.tex \
+  latex/introduction.tex/category.tex \
   latex/type-scope-semantics.tex/syntax.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
