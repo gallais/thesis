@@ -3,26 +3,89 @@
 
 In modern typed programming languages, programmers writing embedded Domain
 Specific Languages (DSLs) (\cite{hudak1996building}) and researchers
-formalising them can now get help from the host language's type system.
-Their language's deep embeddings as inductive types can enforce strong
-invariants, their programs can be proven to be invariant-respecting,
-and they can even prove theorems about these programs.
+formalising them can now get help from the host language's type system
+to make illegal states unrepresentable. Their language's deep embeddings
+as inductive types can enforce strong invariants, their programs can be
+proven to be invariant-respecting, and they can even prove theorems about
+these programs.
 
-\paragraph{Data} Using Generalised Algebraic Data Types (GADTs) or the more
-general indexed families of type theory (\cite{dybjer1994inductive}) for
-representing their syntax, programmers can \emph{statically} enforce some of
-the invariants in their languages.
+\section{A Motivating Example}
 
-Managing variable scope is a popular use case
-(\cite{BELLEGARDE1994287,bird_paterson_1999,altenkirch1999monadic}) as directly
-manipulating raw de Bruijn indices (\cite{de1972lambda}) is error-prone.
+The representation of variables and binders gives us a prototypical
+example of the benefits an astute type-based design can bring. Let
+us quickly survey different representations of the untyped λ-calculus,
+informally given by the following grammar:
 
+\[
+t, u, \dots ∷= x \mid λx.\,t \mid t \, u
+\]
+
+\subsection{Naïve Representation}
+
+Closely following the informal specification leads us to a naïve
+solution: introduce an inductive type to represent terms and use
+strings to represent variables. A variable is bound by the closest
+enclosing binder that uses the same string. For example in the
+expression (λx.λx.x) the variable x in the body of the expression is
+bound by the innermost λ-abstraction.
+
+This means that some terms may be essentially the same despite using
+different names e.g. the above expression is equivalent to (λy.λx.x).
+%
+This notion of equivalence up to renaming is called
+α-equivalence~(\cite{DBLP:books/daglib/0067558}) and it is clearly
+going to be a bit tricky to implement: given two terms we may need
+to rename all of their bound variables to decide whether they are
+α-equivalent.
+
+\subsection{Nameless Representation}
+
+The problem of having to rename variables to compare terms for
+equality can be solved by adopting a nameless representation
+based on a positional system.
+%
+We can for instance represent variables as de Bruijn indices
+(\citeyear{de1972lambda}): variables are modelled as natural numbers,
+counting the number of enclosing binders one needs to go through before
+reaching the binder the variable points to. That is to say that we
+represent both (λx.λx.x) \emph{and} (λy.λx.x) by the term (λ.λ.0).
+
+This solution is not perfect either: if a natural number is larger
+than the number of enclosing binders, the variable is free. When
+substituting a term containing free variables into a term containing
+binders, we need to remember to increment the natural numbers
+corresponding to free variables (and only those) every time we push
+the substitution under a binder. This is quite error prone.
+
+\subsection{Well-scoped Representation}
+
+As we have just seen, directly manipulating a string-based representation
+or even one using raw de Bruijn indices is error-prone. As a consequence,
+managing variable binding by making the scope part of the typing discipline
+is a popular use case
+(\cite{BELLEGARDE1994287,bird_paterson_1999,altenkirch1999monadic}).
+
+We will study this representation in more details in
+Section~\ref{sec:scopedtypedterms}.
+
+\section{Scope of This Thesis}
+
+This thesis focuses on the representations providing users with strong
+built-in guarantees. It covers the data representations, the programs
+acting on this data and the proofs that these programs are well-behaved.
+
+\paragraph{Data}
+Using Generalised Algebraic Data Types (GADTs) or the more general indexed
+families of type theory (\cite{dybjer1994inductive}) for representing their
+syntax, programmers can \emph{statically} enforce some of the invariants
+in their languages.
 
 Solutions range from enforcing well scopedness to ensuring full type and scope
 correctness. In short, we use types to ensure that ``illegal states are unrepresentable'',
 where illegal states are ill scoped or ill typed terms.
 
-\paragraph{Programs} The definition of \scopeandtypesafe{} representations is naturally only a start:
+\paragraph{Programs}
+The definition of \scopeandtypesafe{} representations is naturally only a start:
 once the programmer has access to a good representation of the language they are
 interested in, they will then want to (re)implement standard traversals
 manipulating terms. Renaming and substitution are the two most typical examples
