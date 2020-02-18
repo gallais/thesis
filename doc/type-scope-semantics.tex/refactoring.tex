@@ -7,184 +7,40 @@ from the typechecker in order to fend off common bugs, they will have opted
 for inductive families (\cite{dybjer1991inductive}) to enforce precise
 invariants. But the traversals now have to be invariant preserving too!
 
-\section{McBride's Kit}
-
-McBride observed the similarity between the types and implementations of renaming
-and substitution for a well scoped language in his thesis~(\citeyear{mcbride1999})
-and then for the simply typed λ-calculus (STλC) in an unpublished
-manuscript~(\citeyear{mcbride2005type}). This work building on Goguen and McKinna's
-candidates for substitution~(\citeyear{goguen1997candidates}) and leading to the
-collaboration with Benton, Hur, and Kennedy~(\citeyear{benton2012strongly}) teaches
-us how to refactor both traversals into a single more general function.
-
-We highlight these similarities in~\cref{ren}, focusing only on \AIC{`var},
-\AIC{`app}, and \AIC{`lam} only for the moment as they allow us to make all
-of the needed observations. There are three differences between the implementations
-of renaming and substitution:
-
-\begin{enumerate}
-  \item
-    in the variable case, after renaming a variable we must wrap it
-    in a \AIC{`var} constructor whereas a substitution directly
-    produces a term;
-  \item
-    when weakening a renaming to push it under a $λ$ we need only
-    post-compose the renaming with the De Bruijn variable successor
-    constructor \AIC{s} (which is essentially weakening for variables)
-    whereas for a substitution we need a weakening operation for terms.
-    It can be given by renaming via the successor constructor
-    (\AF{ren} (\AIC{pack} \AIC{s}));
-  \item
-    also in the $λ$ case, when pushing a renaming or a substitution under
-    a binder we must extend it to ensure that the variable bound by the
-    $λ$ is mapped to itself. For renaming this involves its extension by
-    the zeroth variable \AIC{z} whereas for substitutions we must extend by
-    the zeroth variable seen as a term (\AIC{`var} \AIC{z}).
-\end{enumerate}
-
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
-\caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
-\end{figure}
-
-McBride then defines a notion of ``Kit'' abstracting these differences.
-Rather than considering \AD{Var} and \AD{Tm} in isolation as different
-types of environment values, he considers \AB{⧫}, an arbitrary
-(\AD{Type} \AR{−Scoped}) and designs three constraints:
-
-\begin{enumerate}
-  \item
-    One should be able to turn any environment value into a term of
-    the same type and defined in the same scope (\ARF{var});
-  \item
-    One should be able to craft a fresh environment value associated
-    to the zeroth variable of a scope (\ARF{zro});
-  \item
-    One should be able to embed environment values defined in a given
-    scope into ones in a scope extended with a fresh variable (\ARF{wkn}).
-\end{enumerate}
-
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitdef}
-\caption{\AR{Kit} as a set of constraints on \AB{⧫}}
-\end{figure}
-
-Whenever these constraints are met we can define a type and scope preserving
-traversal which is based on an environment of \AB{⧫}-values. This is the
-fundamental lemma of \AR{Kit}s stated and proved in \cref{fig:kitlemma}.
-
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
-\caption{Fundamental lemma of \AR{Kit}\label{fig:kitlemma}}
-\end{figure}
-
-Thankfully, we can indeed recover renaming and substitution as two instances of
-the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
-and \AF{ren} defined this time as a corollary of \AF{kit}
-
-\begin{figure}[h]
-\begin{minipage}{0.4\textwidth}
-  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{renkit}
-\end{minipage}
-\begin{minipage}{0.6\textwidth}
-  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
-\end{minipage}
-\caption{\AR{Kit} for Renaming, Renaming as a Corollary of \AF{kit}\label{fig:renkit}}
-\end{figure}
-
-Just like we needed \AF{ren} to define \AF{sub}, once we have recovered \AF{ren}
-we can define the \AR{Kit} for substitution.
-
-\begin{figure}[h]
-\begin{minipage}{0.4\textwidth}
-  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{subkit}
-\end{minipage}
-\begin{minipage}{0.6\textwidth}
-  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
-\end{minipage}
-\caption{\AR{Kit} for Substitution, Substitution as a Corollary of \AF{kit}\label{fig:subkit}}
-\end{figure}
-
-\section{Opportunities for Further Generalizations}
-
-After noticing that renaming and substitution fit the pattern, it is
-natural to wonder about other traversals.
-
-The evaluation function used in normalization by evaluation, although
-not fitting \emph{exactly} in the \AR{Kit}-based approach, relies on
-the same general structure. The variable case is nothing more than a
-lookup in the environment; the application case is defined by combining
-the results of two structural calls; and the lambda case corresponds to
-the evaluation of the lambda's body in an extended context provided that
-we can get a value for the newly-bound variable. Ignoring for now the
-definitions of \AF{APP} and \AF{LAM}, we can see the similarities
-in~\cref{nbe}.
-
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{nbe}
-\caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
-\end{figure}
-
-\subsection{Outline} Building on this observation, our contributions
-here are twofold:
-
-\begin{itemize}
-  \item
-    We generalise the ``Kit'' approach from syntax to semantics bringing
-    operations like normalisation by evaluation (cf.~\cref{nbe}) but also
-    printing with a name supply, or continuation passing style translation
-    into our framework.
-
-  \item
-    We prove generic results about simulations between and fusions of
-    semantics given by, and enabled by, Kit.
-\end{itemize}
-
-We start by introducing a notion of environments and one well known instance:
-the category of renamings. This leads us to defining a generic notion of type
-and scope-preserving Semantics together with a generic evaluation function.
-We then showcase the ground covered by these Semantics: from the syntactic ones
-corresponding to renaming and substitution to printing with names,
-variations of Normalisation by Evaluation or CPS transformations.
-Finally, given the generic
-definition of Semantics, we can prove fundamental lemmas about these
-evaluation functions: we characterise the semantics which can simulate
-one another and give an abstract treatment of composition yielding
-compaction and reuse of proofs compared to Benton et
-al.~(\citeyear{benton2012strongly}).
-
-
 \section{A Generic Notion of Environment}
+\label{sec:genenvironment}
 
-All the semantics we are interested in defining associate to a term \AB{t}
-of type \AD{Term} \AB{σ} \AB{Γ}, a value of type \AB{𝓒} \AB{σ} \AB{Δ} given
-an interpretation \AB{𝓥} \AB{Δ} {τ} for each one of its free variables
-\AB{τ} in \AB{Γ}. We call the collection of these interpretations an
-\AB{𝓥}-(evaluation) environment. We leave out \AB{𝓥} when it can easily
+Renamings and substitutions have in common that they map variables
+to something: other variables in one case, terms in the other. We
+can abstract over these differences and provide users with a generic
+notion of environment that may be used in both cases.
+
+Assuming that we are given an (\AB{I}-\AR{Scoped}) family \AB{𝓥}
+corresponding to a notion of values variables should be mapped to,
+we call \AB{𝓥}-(evaluation) environment this generalisation of both
+renamings and substitutions. We leave out \AB{𝓥} when it can easily
 be inferred from the context.
 
-The content of environments may vary wildly between different semantics:
-when defining renaming, the environments will carry variables whilst the
-ones used for normalisation by evaluation contain elements of the model.
-But their structure stays the same which prompts us to define the notion
-of evaluation environment generically for any (\AB{I} \AR{−Scoped}) family
-of values.
-
-Formally, this translates to \AB{𝓥}-environments being the
-pointwise lifting of the relation \AB{𝓥} between contexts and types to a
-relation between two contexts. Rather than using a datatype to represent
-such a lifting, we choose to use a function space. This decision is based
-on Jeffrey's observation~(\citeyear{jeffrey2011assoc}) that one can obtain
-associativity of append for free by using difference lists. In our case the
-interplay between various combinators (e.g. \AF{identity} and \AF{select})
-defined later on is vastly simplified by this rather simple decision.
+Formally, this translates to \AB{𝓥}-environments being the pointwise
+lifting of the relation \AB{𝓥} between contexts and types to a relation
+between two contexts. Rather than using a datatype to represent such a
+lifting, we choose to use a function space.
+%
+This decision is based on Jeffrey's observation~(\citeyear{jeffrey2011assoc})
+that one can obtain associativity of append for free by using difference lists.
+In our case the interplay between various combinators (e.g. \AF{identity} and
+\AF{select}) defined later on is vastly simplified by this rather simple
+decision.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{env}
 \caption{Generic Notion of Environment\label{fig:env}}
 \end{figure}
 
+We write {((\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Δ})} for an environment that
+associates a value \AB{𝓥} well scoped and typed in \AB{Δ} to every
+entry in \AB{Γ}.
+%
 These environments naturally behave like the contexts they are indexed by:
 there is a trivial environment for the empty context and one can easily
 extend an existing one by providing an appropriate value. The packaging of
@@ -213,6 +69,173 @@ referring to a value in the original environment and can simply look it up.
 \ExecuteMetaData[shared/Data/Environment.tex]{extension}
 \caption{Environment Extension\label{fig:envextend}}
 \end{figure}
+
+We also include the definition of \AF{\_<\$>\_}, which lifts in a
+pointwise manner a function acting on values into a function acting
+on environment of such values.
+
+\begin{figure}[h]
+\ExecuteMetaData[shared/Data/Environment.tex]{envmap}
+\caption{Environment Mapping}\label{fig:baseenv}
+\end{figure}
+
+Now that we have a generic notion of environment, we can focus on
+refactoring various traversals as instances of a more general one.
+
+\section{McBride's Kit}
+
+McBride observed the similarity between the types and implementations of renaming
+and substitution for a well scoped language in his thesis~(\citeyear{mcbride1999})
+and then for the simply typed λ-calculus (STλC) in an unpublished
+manuscript~(\citeyear{mcbride2005type}). This work building on Goguen and McKinna's
+candidates for substitution~(\citeyear{goguen1997candidates}) and leading to the
+collaboration with Benton, Hur, and Kennedy~(\citeyear{benton2012strongly}) teaches
+us how to refactor both traversals into a single more general function.
+
+We highlight these similarities for a scope- and type- preserving
+implementation of renaming and substitution in~\cref{ren}, focusing
+only on \AIC{`var}, \AIC{`app}, and \AIC{`lam} for the moment as
+they allow us to make all of the needed observations.
+%
+There are three differences between the two functions.
+
+\begin{enumerate}
+  \item
+    in the variable case, after renaming a variable we must wrap it
+    in a \AIC{`var} constructor whereas a substitution directly
+    produces a term;
+  \item
+    when weakening a renaming to push it under a $λ$ we need only
+    post-compose the renaming with the De Bruijn variable successor
+    constructor \AIC{s} (which is essentially weakening for variables)
+    whereas for a substitution we need a weakening operation for terms.
+    It can be given by renaming via the successor constructor
+    (\AF{ren} (\AIC{pack} \AIC{s}));
+  \item
+    also in the $λ$ case, when pushing a renaming or a substitution under
+    a binder we must extend it to ensure that the variable bound by the
+    $λ$ is mapped to itself. For renaming this involves its extension by
+    the zeroth variable \AIC{z} whereas for substitutions we must extend by
+    the zeroth variable seen as a term (\AIC{`var} \AIC{z}).
+\end{enumerate}
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
+\caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
+\end{figure}
+
+Having spotted the small differences between renaming and substitution,
+it is now possible to extract the essence of the the two traversals.
+McBride defines a notion of ``Kit'' covering these differences. Rather
+than considering \AD{Var} and \AD{Tm} in isolation as different types
+of environment values, he considers \AB{⧫}, an arbitrary
+(\AD{Type} \AR{−Scoped}) and designs three constraints:
+
+\begin{enumerate}
+  \item
+    One should be able to turn any environment value into a term of
+    the same type and defined in the same scope (\ARF{var});
+  \item
+    One should be able to craft a fresh environment value associated
+    to the zeroth variable of a scope (\ARF{zro});
+  \item
+    One should be able to embed environment values defined in a given
+    scope into ones in a scope extended with a fresh variable (\ARF{wkn}).
+\end{enumerate}
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitdef}
+\caption{\AR{Kit} as a set of constraints on \AB{⧫}}
+\end{figure}
+
+Whenever these constraints are met we can define a type and scope
+preserving traversal which is based on an environment of \AB{⧫}-values.
+This is the fundamental lemma of \AR{Kit}s stated and proved in \cref{fig:kitlemma}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
+\caption{Fundamental lemma of \AR{Kit}\label{fig:kitlemma}}
+\end{figure}
+
+Thankfully, we can indeed recover renaming and substitution as two instances of
+the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
+and \AF{ren} defined this time as a corollary of \AF{kit}
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{renkit}
+\end{minipage}
+\begin{minipage}[t]{0.6\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{ren}
+\end{minipage}
+\caption{\AR{Kit} for Renaming, Renaming as a Corollary of \AF{kit}\label{fig:renkit}}
+\end{figure}
+
+Just like we needed \AF{ren} to define \AF{sub}, once we have recovered \AF{ren}
+we can define the \AR{Kit} for substitution.
+
+\begin{figure}[h]
+\begin{minipage}[t]{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{subkit}
+\end{minipage}
+\begin{minipage}[t]{0.6\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{sub}
+\end{minipage}
+\caption{\AR{Kit} for Substitution, Substitution as a Corollary of \AF{kit}\label{fig:subkit}}
+\end{figure}
+
+\section{Opportunities for Further Generalizations}
+
+After noticing that renaming and substitution fit the pattern, it is
+natural to wonder about other traversals. The observations made here
+will set the agenda for the next stage of the development in
+Section~\ref{section:generic-semantics}.
+
+The evaluation function used in normalization by evaluation, although
+not fitting \emph{exactly} in the \AR{Kit}-based approach, relies on
+the same general structure. The variable case is nothing more than a
+lookup in the environment; the application case is defined by combining
+the results of two structural calls; and the lambda case corresponds to
+the evaluation of the lambda's body in an extended context provided that
+we can get a value for the newly-bound variable. Ignoring for now the
+definitions of \AF{APP} and \AF{LAM}, we can see the similarities
+in~\cref{nbe}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{nbe}
+\caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
+\end{figure}
+
+\subsection{Outline} Building on this observation, our contributions here are twofold:
+
+\begin{itemize}
+  \item
+    We generalise the ``Kit'' approach from syntax to semantics bringing
+    operations like normalisation by evaluation (cf.~\cref{nbe}) but also
+    printing with a name supply, or continuation passing style translation
+    into our framework.
+
+  \item
+    We prove generic results about simulations between and fusions of
+    semantics given by, and enabled by, Kit.
+\end{itemize}
+
+To make this idea formal, we need to study a well known instance
+of the generic notion of environments introduced in
+Section~\ref{sec:genenvironment}: the category of renamings.
+This leads us to defining a generic notion of type
+and scope-preserving Semantics together with a generic evaluation function.
+We then showcase the ground covered by these Semantics: from the syntactic ones
+corresponding to renaming and substitution to printing with names,
+variations of Normalisation by Evaluation or CPS transformations.
+Finally, given the generic
+definition of Semantics, we can prove fundamental lemmas about these
+evaluation functions: we characterise the semantics which can simulate
+one another and give an abstract treatment of composition yielding
+compaction and reuse of proofs compared to Benton et
+al.~(\citeyear{benton2012strongly}).
+
 
 \subsection{The Category of Thinnings}
 \label{sec:categoryrenamings}

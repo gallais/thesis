@@ -309,7 +309,13 @@ with the pair constructor \AIC{\_,\_}.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapntuple}
 
-\todo{Functor}
+\begin{remark}[Functor]
+In Section~\ref{sec:intro-proving} we will prove that applying
+\AF{map\textasciicircum{}-Tuple} to the identity yields the identity
+and that \AF{map\textasciicircum{}-Tuple} commutes with function
+composition. That is to say we will prove that {(\AB{n} \AF{-Tuple})}
+is an endofunctor (see \cref{def:endofunctor}) on \Set.
+\end{remark}
 
 \paragraph{Dependent Record Types}
 
@@ -390,7 +396,7 @@ the added bonus that we have now \emph{proven} the function to be total.
 \ExecuteMetaData[introduction.agda/introduction.tex]{mapirose}
 
 \section{Proving the Properties of Programs}
-
+\label{sec:intro-proving}
 We make explicit some of our programs' invariants directly in their
 type thus guaranteeing that the implementation respects them. The
 type of \AF{map} for instance tells us that

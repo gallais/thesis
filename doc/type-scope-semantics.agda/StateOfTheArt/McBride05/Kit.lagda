@@ -51,7 +51,7 @@ ren^Kit .wkn  = s
 
 %<*ren>
 \begin{code}
-ren : Thinning Γ Δ → Tm σ Γ → Tm σ Δ
+ren : (Γ ─Env) Var Δ → Tm σ Γ → Tm σ Δ
 ren = kit ren^Kit
 \end{code}
 %</ren>
