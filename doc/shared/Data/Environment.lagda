@@ -18,8 +18,8 @@ private
 
   variable
     I A : Set
-    i σ : I
-    S T : List I → Set
+    i j k l σ : I
+    S T U : List I → Set
     𝓥 𝓦 𝓒 : I ─Scoped
     Γ Δ Θ : List I
     F : Set → Set
@@ -155,6 +155,21 @@ map^□ : ∀[ S ⇒ T ] → ∀[ □ S ⇒ □ T ]
 map^□ f v th = f (v th)
 \end{code}
 %</mapbox>
+
+\begin{code}
+-- functor laws
+map^□-identity : ∀ (v : □ S i) →
+  (λ {j} (th : Thinning i j) →
+  map^□ (λ x → x) v th) ≡ v
+map^□-identity v = refl
+
+map^□-compose :
+  ∀ (f : ∀[ S ⇒ T ]) (g : ∀[ T ⇒ U ]) (v : □ S i) →
+  (λ {j : List I} (th : Thinning i j) →
+  map^□ g (map^□ f v) th) ≡ map^□ (g ∘ f) v
+map^□-compose f g v = refl
+\end{code}
+
 \begin{code}
 infixl 5 _◃_
 record ◇ (T : List I → Set) (Γ : List I) : Set where
@@ -176,6 +191,24 @@ duplicate t ρ σ = t (select ρ σ)
 \end{code}
 %</duplicate>
 \begin{code}
+
+-- comonad laws
+extract-duplicate₁ : ∀ (v : □ T i) →
+  (λ {j} (th : Thinning i j) → extract (duplicate v) th) ≡ v
+extract-duplicate₁ v = refl
+
+extract-duplicate₂ : ∀ (v : □ T i) →
+  (λ {j} (th : Thinning i j) → map^□ extract (duplicate v) th) ≡ v
+extract-duplicate₂ v = refl
+
+duplicate-duplicate : ∀ (v : □ T i) →
+  (λ {j} (thᵢⱼ : Thinning i j)
+     {k} (thⱼₖ : Thinning j k)
+     {l} (thₖₗ : Thinning k l) →
+  duplicate (duplicate v) thᵢⱼ thⱼₖ thₖₗ)
+  ≡ map^□ duplicate (duplicate v)
+duplicate-duplicate v = refl
+
 
 module □ where
 

@@ -6,7 +6,11 @@ notions do show up. They help us expose the structure of the problem
 and the solutions we designed. Hence this (short) introduction to
 category theory focused on the notions that will be of use to us.
 Computer scientists looking for a more substantial introduction
-to category theory can refer to Pierce's little book~(\citeyear{DBLP:books/daglib/0069193}).
+to category theory can refer to
+Pierce's little book~(\citeyear{DBLP:books/daglib/0069193}) for general
+notions and Altenkirch, Chapman and Uustalu's papers
+(\citeyear{Altenkirch2010,JFR4389}) if they are
+specifically interested in relative monads.
 
 \section{What even is a Category?}
 
@@ -15,14 +19,14 @@ A \textbf{category} \AB{𝓒} is defined by a set of objects (written Obj(\AB{�
 and a family of morphisms (written \AB{𝓒}(\AB{A},\AB{B})) between any two
 such objects \AB{A} and \AB{B} such that:
 \begin{enumerate}
-  \item For any object \AB{A}, we have a morphism $id_{\AB{A}}$ in {\AB{𝓒}(\AB{A},\AB{A})}
+  \item For any object \AB{A}, we have an \emph{identity morphism} $id_{\AB{A}}$ in {\AB{𝓒}(\AB{A},\AB{A})}
   \item Given three objects \AB{A}, \AB{B}, and \AB{C}, and two morphisms
     \AB{f} in {\AB{𝓒}(\AB{A},\AB{B})} and \AB{g} in {\AB{𝓒}(\AB{B},\AB{C})},
     we have a unique morphism {(\AB{g} $∘_{\AB{𝓒}}$ \AB{f})} in
     {\AB{𝓒}(\AB{A},\AB{C})} corresponding to the composition
     of \AB{f} and \AB{g}.
   \item Composition is associative
-  \item The appropriate identities are left and right neutral elements for composition
+  \item The appropriate identity morphisms are left and right neutral elements for composition
 \end{enumerate}
 \end{definition}
 
@@ -70,8 +74,8 @@ from \AB{𝓒} to \AB{𝓒}.
 \begin{example} Given a set \AB{I}, every function \AB{f} from \AB{I}
 to itself induces an endofunctor on the category $\Set^I$
 (cf. \cref{example:familiescat}).
-We write {(\AB{f} ⊢\_)} for this functor, recalling the definition in
-section~\ref{sec:indexed-combinators} and define its action on objects
+We write {(\AB{f} ⊢\_)} for this functor (we explain this notation in
+section~\ref{sec:indexed-combinators}) and define its action on objects
 and morphisms as follows:
 
 \begin{itemize}
@@ -129,7 +133,7 @@ constraint by studying Altenkirch, Chapman and Uustalu's
 A monad relative to a functor \AB{V} from \AB{𝓒} to \AB{𝓓}
 is a functor \AB{T} from \AB{𝓒} to \AB{𝓓} equipped with:
 \begin{enumerate}
-  \item For any object \AB{A}, a mapping \AB{pure}$_{\AB{A}}$ of type
+  \item For any object \AB{A}, a mapping \AB{η}$_{\AB{A}}$ of type
     {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{A})} (the unit)
   \item For any objects \AB{A} and \AB{B}, a mapping $\_^*$
     from {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{B})}
