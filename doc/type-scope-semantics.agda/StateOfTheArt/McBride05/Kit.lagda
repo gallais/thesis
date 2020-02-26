@@ -73,25 +73,25 @@ sub = kit sub^Kit
 \begin{code}
 
 
-Val : Type ─Scoped
-Val base      Γ = Tm base Γ
-Val (arr σ τ) Γ = ∀ {Δ} → Thinning Γ Δ → Val σ Δ → Val τ Δ
+Model : Type ─Scoped
+Model base      Γ = Tm base Γ
+Model (arr σ τ) Γ = ∀ {Δ} → Thinning Γ Δ → Model σ Δ → Model τ Δ
 
-th^Val : ∀ {σ} → Thinning Γ Δ → Val σ Γ → Val σ Δ
-th^Val {σ = base   } ρ v = ren ρ v
-th^Val {σ = arr σ τ} ρ v = v ∘ (select ρ)
+th^Model : ∀ {σ} → Thinning Γ Δ → Model σ Γ → Model σ Δ
+th^Model {σ = base   } ρ v = ren ρ v
+th^Model {σ = arr σ τ} ρ v = v ∘ (select ρ)
 
-APP : Val (arr σ τ) Γ →  Val σ Γ → Val τ Γ
+APP : Model (arr σ τ) Γ →  Model σ Γ → Model τ Γ
 APP f t = f (pack id) t
 
-LAM : Val (arr σ τ) Γ → Val (arr σ τ) Γ
+LAM : Model (arr σ τ) Γ → Model (arr σ τ) Γ
 LAM = id
 \end{code}
 %<*nbe>
 \begin{code}
-nbe : (Γ ─Env) Val Δ → Tm σ Γ → Val σ Δ
+nbe : (Γ ─Env) Model Δ → Tm σ Γ → Model σ Δ
 nbe ρ (`var v)    = lookup ρ v
 nbe ρ (`app f t)  = APP (nbe ρ f) (nbe ρ t)
-nbe ρ (`lam t)    = LAM (λ re v → nbe ((th^Val re <$> ρ) ∙ v) t)
+nbe ρ (`lam t)    = LAM (λ re v → nbe ((th^Model re <$> ρ) ∙ v) t)
 \end{code}
 %</nbe>

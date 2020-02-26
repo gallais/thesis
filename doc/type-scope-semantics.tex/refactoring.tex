@@ -192,7 +192,9 @@ natural to wonder about other traversals. The observations made here
 will set the agenda for the next stage of the development in
 Section~\ref{section:generic-semantics}.
 
-The evaluation function used in normalization by evaluation, although
+The evaluation function used in normalization by evaluation
+(cf. Catarina Coquand's~(\citeyear{coquand2002formalised}) work
+for instance), although
 not fitting \emph{exactly} in the \AR{Kit}-based approach, relies on
 the same general structure. The variable case is nothing more than a
 lookup in the environment; the application case is defined by combining
@@ -207,35 +209,32 @@ in~\cref{nbe}.
 \caption{Normalisation by Evaluation for the ST$λ$C\label{nbe}}
 \end{figure}
 
-\subsection{Outline} Building on this observation, our contributions here are twofold:
+Building on this observation, we are going to generalise the ``Kit''
+approach from mere syntactic transformations to full blown semantics
+producing values in a given model. This generalisation will bring
+operations like
+normalisation by evaluation (\cref{sec:variationsnormalisation})
+but also printing with a name supply (\cref{prettyprint}),
+or various continuation passing style translations (\cref{cps-transformation})
+into our framework.
 
-\begin{itemize}
-  \item
-    We generalise the ``Kit'' approach from syntax to semantics bringing
-    operations like normalisation by evaluation (cf.~\cref{nbe}) but also
-    printing with a name supply, or continuation passing style translation
-    into our framework.
+In normalisation by evaluation, the notion of arbitrary extensions of
+the context at hand plays a crucial role in the definition of said model.
+Indeed, computing with \emph{open} terms implies that model values may be
+used in a scope that is not the one they came from: evaluation happily goes
+under binders and brings the evaluation environment along.
+%
+These extensions explain the changes made to the scope between the time a
+value was constructed and the time it was used. Provided that values can be
+transported along such extensions, they give us a way to get the values at
+the scope we need from the ones at the scope we had.
 
-  \item
-    We prove generic results about simulations between and fusions of
-    semantics given by, and enabled by, Kit.
-\end{itemize}
-
-To make this idea formal, we need to study a well known instance
+This idea of arbitrary extensions of the context at hand will be crucial
+to the definition of our generic notion of
+semantics (\cref{section:generic-semantics}). To make it formal,
+we need to study a well known instance
 of the generic notion of environments introduced in
-Section~\ref{sec:genenvironment}: the category of renamings.
-This leads us to defining a generic notion of type
-and scope-preserving Semantics together with a generic evaluation function.
-We then showcase the ground covered by these Semantics: from the syntactic ones
-corresponding to renaming and substitution to printing with names,
-variations of Normalisation by Evaluation or CPS transformations.
-Finally, given the generic
-definition of Semantics, we can prove fundamental lemmas about these
-evaluation functions: we characterise the semantics which can simulate
-one another and give an abstract treatment of composition yielding
-compaction and reuse of proofs compared to Benton et
-al.~(\citeyear{benton2012strongly}).
-
+Section~\ref{sec:genenvironment}: the category of thinnings.
 
 \subsection{The Category of Thinnings}
 \label{sec:categoryrenamings}
