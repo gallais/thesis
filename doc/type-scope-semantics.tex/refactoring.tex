@@ -356,11 +356,16 @@ again.
 Broadly speaking, a semantics turns our deeply embedded abstract syntax
 trees into the shallow embedding of the corresponding parametrised higher
 order abstract syntax term (\cite{chlipala2008parametric}). We get a
-choice of useful type-and-scope safe traversals by using different `host
+choice of useful scope- and type- safe traversals by using different `host
 languages' for this shallow embedding.
 
-A semantics is parametrised by two (\AD{Type} \AR{−Scoped}) type families
-\AB{𝓥} and \AB{𝓒}. Realisation of a semantics will produce a computation
+In more concrete terms, the semantics of a term is a mapping from the
+meaning of its variables to the meaning of the overall term itself.
+In practice, our semantics is parametrised by two (\AD{Type} \AR{−Scoped})
+type families \AB{𝓥} and \AB{𝓒} used to assign meanings to variables
+and terms respectively.
+%
+That is to say: realisation of a semantics will produce a computation
 in \AB{𝓒} for every term whose variables are assigned values in \AB{𝓥}.
 Just as an environment interprets variables in a model, a computation
 gives a meaning to terms into a model. We can define \AF{─Comp} to make
