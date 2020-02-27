@@ -386,87 +386,109 @@ distinct is precisely what makes it possible to go beyond these and
 also model renaming or printing with names.
 
 Concretely, we define \AR{Semantics} as a record packing the properties
-these families need to satisfy for the evaluation function to exist.
+these families need to satisfy for the evaluation function \AF{semantics}
+to exist.
 
+\begin{AgdaSuppressSpace}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-type}
+\end{AgdaSuppressSpace}
 
-In the following paragraphs, we interleave the definition of the record
-of constraints \semrec{} with explanations of our choices. It is important
-to understand that all of the indented Agda snippets are part of the record's
-definition. Some correspond to record fields (highlighted in \ARF{pink})
-while others are mere auxiliary definitions (highlighted in \AF{blue}) as
-permitted by Agda.
+In the following paragraphs, we interleave the definition of the record of
+constraints \semrec{} and the evaluation function \AF{semantics} (the fields
+of the record appear in \ARF{pink}). In practice the definitions do not need
+to be mutual.
 
-The first method of a \AR{Semantics} deals with environment values. They
-need to be thinnable (\ARF{th\textasciicircum{}𝓥}) so that the traversal
-may introduce fresh variables when going under a binder whilst keeping
-the environment well-scoped.
+The structure of the model is quite constrained: each constructor in the
+language needs a semantic counterpart. We start with the two most interesting
+cases: \ARF{var} and \ARF{lam}.
 
-{
-\addtolength{\leftskip}{\parindent}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
-}
+In the variable case, the \AF{semantics} function looks up the meaning of the
+variable at hand in the evaluation environment. It gets back a value \AB{𝓥} but
+needs to return a computation \AB{𝓒} instead. This gives us our first constraint:
+we should be able to embed values into computations.
 
-The structure of the model is quite constrained: each constructor
-in the language needs a semantic counterpart. We start with the
-two most interesting cases: \ARF{var} and \ARF{lam}. The variable
-case bridges the gap between the fact that the environment translates
-variables into values \AB{𝓥} but the evaluation function returns
-computations \AB{𝓒}.
-
-{
-\addtolength{\leftskip}{\parindent}
+\begin{AgdaSuppressSpace}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
-}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-var}
+\end{AgdaSuppressSpace}
 
 The semantic λ-abstraction is notable for two reasons.
 %
 First, following Mitchell and Moggi~(\citeyear{mitchell1991kripke}),
-its \AF{□}-structure allowing arbitrary extensions of the context is typical
-of models à la Kripke  one can find in normalisation by
+its \AF{□}-structure allowing arbitrary extensions of the context is
+typical of models à la Kripke one can find in normalisation by
 evaluation~(\cite{berger1991inverse,berger1993program,CoqDybSK,coquand2002formalised}).
 %
 Second, instead of being a function in the host language taking
-computations to computations,  it takes \emph{values} to computations.
+computations to computations, it takes \emph{values} to computations.
 This is concisely expressed by the type ({\AF{□} (\AB{𝓥}~\AB{σ} \AF{⇒} \AB{𝓒}~\AB{τ})}).
 
-It matches precisely the fact that the body of a λ-abstraction exposes
-one extra free variable, prompting us to extend the environment with a
-value for it. In the special case where \AB{𝓥} = \AB{𝓒} (normalisation
-by evaluation for instance), we recover the usual Kripke structure.
-
-{
-\addtolength{\leftskip}{\parindent}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
-}
+
+This constraint matches precisely the fact that the body of a λ-abstraction
+exposes one extra free variable, prompting us to extend the environment with
+a value for it. We face one last hurdle: the value handed to us lives in
+the extended scope while the ones in the evaluation environment live in
+the original one. Luckily we were also handed a thinning from the original
+scope to the extended one. This incites us to add a constraint stating that
+all values should be thinnable.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
+
+Using both \ARF{lam} and \ARF{th\textasciicircum{}𝓥} together with
+\AF{th\textasciicircum{}Env} (defined in \cref{fig:thinVarEnv}) and
+\AF{\_∙\_} (defined in \cref{fig:envextend}), we are able to give a
+semantics to a λ-abstraction by evaluating its body in a thinned and
+extended evaluation environment.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-lam}
 
 The remaining fields' types are a direct translation of the types of the
 constructor they correspond to: substructures have simply been replaced with
 computations thus making these operators ideal to combine induction hypotheses.
 For instance, the semantical counterpart of application is an operation that
 takes a representation of a function and a representation of an argument and
-produces a representation of the result.
+produces a representation of the result. The evaluation function can simply
+use this field to combine the result of two recursive calls.
 
-{
-\addtolength{\leftskip}{\parindent}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{cons}
-}
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{app}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-app}
+\end{AgdaSuppressSpace}
+
+The same goes for the constructor \AIC{`one} of values of the unit type.
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{one}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-one}
+\end{AgdaSuppressSpace}
+
+Or the constructors true and false for boolean values
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{bool}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-bool}
+\end{AgdaSuppressSpace}
+
+Or the `if-then-else' eliminator for booleans.
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{ifte}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-ifte}
+\end{AgdaSuppressSpace}
 
 The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful
-enough that even logical predicates are instances of it. And we indeed
-exploit this power when defining normalisation by evaluation as a semantics:
+enough that even logical predicates are instances of it. And we will indeed
+exploit this power when defining normalisation by evaluation as a semantics
+(cf. \cref{sec:variationsnormalisation}):
 the model construction is, after all, nothing but a logical predicate.
 As a consequence it seems rather natural to call \AF{semantics}
-``the fundamental lemma of semantics''. We prove it in a module parametrised
-by a \AF{Semantics}, which would correspond to using a Section in Coq.
-It is defined by structural recursion on the term. Each constructor is
-replaced by its semantic counterpart
-which combines the induction hypotheses for its subterms.
+``the fundamental lemma of \AR{Semantics}'' because it essentially is the
+computational content that such a proof would implicitly carry.
 
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{fundamental}
-\caption{Fundamental Lemma of \AR{Semantics}\label{fig:fundsem}}
-\end{figure}
+But before demonstrating that we can encompass new traversals, it is important
+to verify that we can still capture the same traversals as McBride's Kit.
 
 \section{Syntax Is the Identity Semantics}
 \label{sec:syntactic}
@@ -475,13 +497,14 @@ As we have explained earlier, this work has been directly influenced by
 McBride's ~(\citeyear{mcbride2005type}) manuscript. It seems appropriate
 to start our exploration of \AR{Semantics} with the two operations he
 implements as a single traversal. We call these operations syntactic
-because the computations in the model are actual terms and almost all term
-constructors are kept as their own semantic counterpart. As observed by
+because the computations in the model are actual terms. We say that ``syntax
+is the identity semantics'' because almost all term constructors are kept
+as their own semantic counterpart. As observed by
 McBride, it is enough to provide three operations describing the properties
 of the values in the environment to get a full-blown \AR{Semantics}. This
 fact is witnessed by our simple \AR{Syntactic} record type together with
-the fundamental \AF{lemma} of \AR{Syntactic}, a function turning its
-inhabitants into associated \AR{Semantics}.
+the fundamental lemma of \AR{Syntactic} we call \AF{syntactic}, a function
+producing a \AR{Semantics} from a \AR{Syntactic}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Specification.tex]{syntactic}
@@ -507,9 +530,9 @@ the \AIC{`var} constructor. The type of \AF{sem} specialised to this
 semantics is then precisely the proof that terms are thinnable.
 
 \begin{figure}[h]
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}[t]{0.5\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synren}
-\end{minipage}\begin{minipage}{0.5\textwidth}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{ren}
 \end{minipage}
 \caption{Thinning as a \AR{Syntactic} Instance\label{fig:synren}}
@@ -523,9 +546,9 @@ previous example. Again, specialising the type of \AF{sem}
 reveals that it delivers precisely the simultaneous substitution.
 
 \begin{figure}[h]
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}[t]{0.4\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{synsub}
-\end{minipage}\begin{minipage}{0.6\textwidth}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{sub}
 \end{minipage}
 \caption{Parallel Substitution as a \AR{Syntactic} Instance\label{fig:synsub}}

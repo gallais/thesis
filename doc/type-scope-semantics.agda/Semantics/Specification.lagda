@@ -54,15 +54,27 @@ record Semantics (𝓥 𝓒 : Type ─Scoped) : Set where
     lam    :  ∀[ □ (𝓥 σ ⇒ 𝓒 τ) ⇒ 𝓒 (σ `→ τ) ]
 \end{code}
 %</lam>
-%<*cons>
+%<*app>
 \begin{code}
     app    :  ∀[ 𝓒 (σ `→ τ) ⇒ 𝓒 σ ⇒ 𝓒 τ ]
+\end{code}
+%</app>
+%<*one>
+\begin{code}
     one    :  ∀[ 𝓒 `Unit ]
+\end{code}
+%</one>
+%<*bool>
+\begin{code}
     tt     :  ∀[ 𝓒 `Bool ]
     ff     :  ∀[ 𝓒 `Bool ]
+\end{code}
+%</bool>
+%<*ifte>
+\begin{code}
     ifte   :  ∀[ 𝓒 `Bool ⇒ 𝓒 σ ⇒ 𝓒 σ ⇒ 𝓒 σ ]
 \end{code}
-%</cons>
+%</ifte>
 \begin{code}
 Evaluation : (𝓥 𝓒 : Type ─Scoped) → Set
 Evaluation 𝓥 𝓒 = ∀ {Γ Δ} → (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
@@ -72,20 +84,50 @@ Evaluation' 𝓒 = ∀ {Γ} → (Γ ─Comp) 𝓒 Γ
 
 \end{code}
 %<*fundamental>
+\begin{AgdaSuppressSpace}
 \begin{code}
 module Fundamental (𝓢 : Semantics 𝓥 𝓒) where
   open Semantics 𝓢
 
-  lemma : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
-  lemma ρ (`var v)       = var (lookup ρ v)
-  lemma ρ (`app t u)     = app (lemma ρ t) (lemma ρ u)
-  lemma ρ (`lam t)       = lam (λ re u → lemma (th^Env th^𝓥 ρ re ∙ u) t)
-  lemma ρ `one           = one
-  lemma ρ `tt            = tt
-  lemma ρ `ff            = ff
-  lemma ρ (`ifte b l r)  = ifte (lemma ρ b) (lemma ρ l) (lemma ρ r)
 \end{code}
+%<*semantics-type>
+\begin{code}
+  semantics : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
+\end{code}
+%</semantics-type>
+%<*semantics-var>
+\begin{code}
+  semantics ρ (`var v)       = var (lookup ρ v)
+\end{code}
+%</semantics-var>
+%<*semantics-app>
+\begin{code}
+  semantics ρ (`app t u)     = app (semantics ρ t) (semantics ρ u)
+\end{code}
+%</semantics-app>
+%<*semantics-lam>
+\begin{code}
+  semantics ρ (`lam t)       = lam (λ re u → semantics (th^Env th^𝓥 ρ re ∙ u) t)
+\end{code}
+%</semantics-lam>
+%<*semantics-one>
+\begin{code}
+  semantics ρ `one           = one
+\end{code}
+%</semantics-one>
+%<*semantics-bool>
+\begin{code}
+  semantics ρ `tt            = tt
+  semantics ρ `ff            = ff
+\end{code}
+%</semantics-bool>
+%<*semantics-ifte>
+\begin{code}
+  semantics ρ (`ifte b l r)  = ifte (semantics ρ b) (semantics ρ l) (semantics ρ r)
+\end{code}
+%</semantics-ifte>
+\end{AgdaSuppressSpace}
 %</fundamental>
 \begin{code}
-eval = Fundamental.lemma
+eval = Fundamental.semantics
 \end{code}

@@ -35,17 +35,14 @@ module Fundamental (𝓢 : Syntactic 𝓣) where
 
   open Syntactic 𝓢
 
-  lemma : Semantics 𝓣 Term
-  Semantics.th^𝓥  lemma = th^𝓣
-  Semantics.var   lemma = var
-  Semantics.lam   lemma = λ b → `lam (b extend zro)
-  Semantics.app   lemma = `app
-  Semantics.one   lemma = `one
-  Semantics.tt    lemma = `tt
-  Semantics.ff    lemma = `ff
-  Semantics.ifte  lemma = `ifte
+  syntactic : Semantics 𝓣 Term
+  Semantics.th^𝓥  syntactic = th^𝓣
+  Semantics.var   syntactic = var
+  Semantics.lam   syntactic = λ b → `lam (b extend zro)
+  Semantics.app   syntactic = `app
+  Semantics.one   syntactic = `one
+  Semantics.tt    syntactic = `tt
+  Semantics.ff    syntactic = `ff
+  Semantics.ifte  syntactic = `ifte
 \end{code}
 %</syntacticsem>
-\begin{code}
-syntactic = Fundamental.lemma
-\end{code}
