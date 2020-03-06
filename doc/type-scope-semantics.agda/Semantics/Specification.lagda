@@ -86,7 +86,7 @@ Evaluation' 𝓒 = ∀ {Γ} → (Γ ─Comp) 𝓒 Γ
 %<*fundamental>
 \begin{AgdaSuppressSpace}
 \begin{code}
-module Fundamental (𝓢 : Semantics 𝓥 𝓒) where
+module _ (𝓢 : Semantics 𝓥 𝓒) where
   open Semantics 𝓢
 
 \end{code}
@@ -128,6 +128,3 @@ module Fundamental (𝓢 : Semantics 𝓥 𝓒) where
 %</semantics-ifte>
 \end{AgdaSuppressSpace}
 %</fundamental>
-\begin{code}
-eval = Fundamental.semantics
-\end{code}

@@ -167,7 +167,7 @@ print : ∀ σ → Term σ [] → String
 print σ t = proj₁ (getW printer names) where
 
   printer : Printer σ []
-  printer = Fundamental.lemma Printing ε t
+  printer = semantics Printing ε t
 \end{code}
 %</printclosed>
 %<*test>

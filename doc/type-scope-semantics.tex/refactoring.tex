@@ -236,7 +236,7 @@ we need to study a well known instance
 of the generic notion of environments introduced in
 Section~\ref{sec:genenvironment}: the category of thinnings.
 
-\subsection{The Category of Thinnings}
+\subsection{Thinnings: A Special Case of Environments}
 \label{sec:categoryrenamings}
 
 A key instance of environments playing a predominant role in this paper is the
@@ -249,7 +249,7 @@ of type \AB{σ} in \AB{Γ} to one of the same type in \AB{Δ}.
 
 \begin{figure}[h]
 \ExecuteMetaData[shared/Data/Environment.tex]{thinning}
-\caption{Thinnings: A Special Case of Environments\label{fig:thinnings}}
+\caption{Definition of Thinnings\label{fig:thinnings}}
 \end{figure}
 
 Writing non-injective or non-order preserving renamings would take
@@ -257,15 +257,28 @@ perverse effort given that we only implement generic interpretations.
 In practice, although the type of thinnings is more generous, we
 only introduce weakenings (skipping variables at the beginning of
 the context) that become thinnings (skipping variables at arbitrary
-points in the context) when we push them under binders. The extra
-flexibility will not get in our way, and permits a representation
-as a function space which grants us monoid laws ``for free'' as
-per Jeffrey's observation (\citeyear{jeffrey2011assoc}).
+points in the context) when we push them under binders.
+
+The extra flexibility will not get in our way, and permits a
+representation as a function space which grants us monoid laws
+``for free'' as per Jeffrey's observation (\citeyear{jeffrey2011assoc}).
+
+\subsubsection{The Category of Thinnings}
+\label{sec:categorythinnings}
 
 These simple observations allow us to prove that thinnings form a
-category which, in turn, lets us provide the user with the constructors
-Altenkirch, Hofmann and Streicher's ``Category of
-Weakening''~(\citeyear{altenkirch1995categorical}) is based on.
+category (cf. \cref{def:category}): objects are scopes and morphisms
+between them are thinnings; the \AF{identity} thinning is essentially
+the identity function on variables; and composition is given by
+\AF{select} in the special case where it is fed two thinnings.
+Both are defined in \cref{fig:extendth}.
+
+Jeffrey's observation mentioned above gives us that composition is
+associative and that the identity thinning acts as a neutral
+element for it. We can provide the user with additional useful
+combinators such as the ones Altenkirch, Hofmann and Streicher's
+``Category of Weakening''~(\citeyear{altenkirch1995categorical})
+is based on such as \AF{extend} defined in \cref{fig:extendth}.
 
 \begin{figure}[h]
 \begin{minipage}{0.5\textwidth}
@@ -277,6 +290,8 @@ Weakening''~(\citeyear{altenkirch1995categorical}) is based on.
 \ExecuteMetaData[shared/Data/Environment.tex]{select}
 \caption{Examples of Thinning Combinators\label{fig:extendth}}
 \end{figure}
+
+\subsubsection{The \AF{□} comonad}
 
 The \AF{□} combinator turns any (\AD{List} \AB{I})-indexed Set into
 one that can absorb thinnings. This is accomplished by abstracting
@@ -520,13 +535,20 @@ or a \AIC{`one}. It is therefore absolutely possible to define renaming
 or substitution using this approach. We can now port McBride's definitions
 to our framework.
 
+\begin{remark}
+Note that even though we are re-casting the following operations in
+categorical terms, we will so far only provide the computational parts
+of the definitions. Proving that the expected laws hold will be possible
+once we have introduced our proof framework in \cref{sec:fusionrel}.
+\end{remark}
 
-\subsection{Functoriality, also known as Renaming}
+\subsection{Renaming i.e. Functor structure}
 
 Our first example of a \AR{Syntactic} operation works with variables as
 environment values. We have already defined thinning earlier (see
 \cref{sec:categoryrenamings}) and we can turn a variable into a term by using
-the \AIC{`var} constructor. The type of \AF{sem} specialised to this
+the \AIC{`var} constructor. As demonstrated in \cref{fig:synren},
+the type of \AF{semantics} specialised to this
 semantics is then precisely the proof that terms are thinnable.
 
 \begin{figure}[h]
@@ -538,11 +560,19 @@ semantics is then precisely the proof that terms are thinnable.
 \caption{Thinning as a \AR{Syntactic} Instance\label{fig:synren}}
 \end{figure}
 
-\subsection{Simultaneous Substitution}
+\AD{Term} is a functor between the category of thinnings
+(cf. \cref{sec:categorythinnings}) and the category of indexed sets and
+functions (cf. \cref{example:familiescat}). The type constructor
+gives us the action on objects and renaming, by turning any
+{(\AF{Thinning} \AB{Γ} \AB{Δ})} into a function from
+{(\AD{Term} \AB{σ} \AB{Γ})} to {(\AD{Term} \AB{σ} \AB{Δ})}, gives
+its action on morphisms.
+
+\subsection{Simultaneous Substitution i.e. Monad Structure}
 
 Our second example of a semantics is another spin on the syntactic model:
 environment values are now terms. We get thinning for terms from the
-previous example. Again, specialising the type of \AF{sem}
+previous example. Again, specialising the type of \AF{semantics}
 reveals that it delivers precisely the simultaneous substitution.
 
 \begin{figure}[h]
@@ -554,32 +584,46 @@ reveals that it delivers precisely the simultaneous substitution.
 \caption{Parallel Substitution as a \AR{Syntactic} Instance\label{fig:synsub}}
 \end{figure}
 
+This gives us the Kleisli extension construction necessary to prove
+that \AD{Term} is a relative monad with respect to the \AD{Var}
+functor. The unit is trivially the \AIC{`var} constructor.
+
 \section{Printing with Names}
 \label{prettyprint}
 
+As a warmup exercise, let us a look at a relatively simple semantics.
 Before considering the various model constructions involved in defining
-normalisation functions deciding different equational theories, let us
-make a detour to a perhaps slightly more surprising example of a
-\AF{Semantics}: printing with names. A user-facing project would naturally
-avoid directly building a \AD{String} and rather construct an inhabitant of
-a more sophisticated datatype in order to generate a prettier output
+normalisation functions deciding different equational theories, we will
+look at what an \emph{actual} semantics looks like by considering printing
+with names.
+
+A user-facing project would naturally avoid directly building a \AD{String}
+and rather construct an inhabitant of a more sophisticated datatype in order
+to generate a prettier output
 (\cite{hughes1995design,wadler2003prettier,Bernardy:2017:PBG:3136534.3110250}).
 But we stick to the simpler setup as \emph{pretty} printing is not our
 focus here.
 
-This example is interesting for two reasons. Firstly, the distinction between
-values and computations is once more instrumental: we get to give the procedure
+Our goal is to generate a string representation of the input term. As such,
+it should not be surprising that the object language (i.e. the type- and scope-
+families for values and computation) will not do anything involved with their
+type index. However this example is still interesting for two reasons.
+
+Firstly, the distinction between values and computations is once more instrumental:
+we get to give the procedure
 a precise type guiding our implementation. The environment carries \emph{names}
 for the variables currently in scope while the computations thread a name-supply
 to be used to generate fresh names for bound variables. If the values in the
 environment had to be computations too, we would not root out some faulty
-implementations e.g a program picking a new name each time a variable is mentioned.
-%
+implementations e.g a program picking a new name each time the same variable
+is mentioned.
+
 Secondly, the fact that the model's computation type is a monad and that this
 poses no problem whatsoever in this framework means it is appropriate for
 handling languages with effects (\cite{moggi1991notions}), or effectful
-semantics e.g. logging the various function calls. Here is the full definition
-of the printer.
+semantics e.g. logging the various function calls.
+
+The full definition of the printer follows.
 
 In the implementation, we define \AF{Name} and \AF{Printer} using a \AR{Wrap}per
 with a type and a context as phantom types in order to help Agda's inference
@@ -608,6 +652,15 @@ essentially a stream of distinct strings.
 \caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
 \end{figure}
 
+The monad \AF{Fresh} allows us to generate fresh names for newly-bound
+variables. This is demonstrated by the function \AF{fresh} defined in
+\cref{fig:freshname}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{fresh}
+\caption{Fresh Name Generation\label{fig:freshname}}
+\end{figure}
+
 We define the printing semantics by collecting intermediate definitions in
 a record. For this semantics' notion of values, the scope and type indices
 are phantom types. As a consequence thinning for \AF{Name}s (the field
@@ -621,17 +674,17 @@ We are now going to look in details at the more interesting cases.
 \end{figure}
 
 %
-The variable case (\ARF{var}) is a bit more interesting: after looking up a
+The variable case (\ARF{var}) is interesting: after looking up a
 variable's \AF{Name} in the environment, we use \AF{return} to produce the
 trivial \AF{Printer} constantly returning that name.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printvar}
 
 As often, the case for λ-abstraction (\ARF{lam}) is the most interesting one.
-We first use \AF{fresh} to generate a \AF{Name}, \AB{x}, for the newly-bound
-variable, then run the printer for the body, \AB{mb}, in the environment
-extended with that fresh name and finally build a string combining the name
-and the body together.
+We first use \AF{fresh} defined in \cref{fig:freshname} to generate a \AF{Name},
+\AB{x}, for the newly-bound variable, then run the printer for the body, \AB{mb},
+in the environment extended with that fresh name and finally build a string
+combining the name and the body together.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printlam}
 
@@ -666,12 +719,14 @@ Here we are satisfied with a simple \AF{print} function for closed terms.
 \caption{Printer\label{fig:printer}}
 \end{figure}
 
-We can observe \AF{print}'s behaviour by writing a test; we state it as a
+We can observe \AF{print}'s behaviour by writing a test
+(cf. \cref{feature:placeholder}); we state it as a
 propositional equality and prove it using \AIC{refl}, forcing the typechecker
-to check that both expressions indeed compute to the same normal form. Here
-we display the identity function.
+to check that both expressions indeed compute to the same normal form.
 
-\begin{figure}[h]
+\begin{example}[Printing a Term]
+\label{fig:printtest}
+Here we display the identity function.
+
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{test}
-\caption{Printing an Open Term\label{fig:printtest}}
-\end{figure}
+\end{example}

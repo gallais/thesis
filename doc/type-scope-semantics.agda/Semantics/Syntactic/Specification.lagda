@@ -6,7 +6,7 @@ open import Syntax.Type
 open import Syntax.Calculus
 open import Data.Var
 open import Data.Environment
-open import Semantics.Specification as Semantics hiding (module Fundamental)
+open import Semantics.Specification as Semantics
 open import Relation.Unary
 
 private
@@ -31,7 +31,7 @@ record Syntactic (𝓣 : Type ─Scoped) : Set where
 \end{code}
 %<*syntacticsem>
 \begin{code}
-module Fundamental (𝓢 : Syntactic 𝓣) where
+module _ (𝓢 : Syntactic 𝓣) where
 
   open Syntactic 𝓢
 
