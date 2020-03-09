@@ -4,22 +4,53 @@
 Normalisation by Evaluation (NBE) is a technique leveraging the computational
 power of a host language in order to normalise expressions of a deeply
 embedded one (\cite{berger1991inverse,berger1993program,CoqDybSK,coquand2002formalised}).
-The process is based on a model construction describing a family of
-types by induction on its \AF{Type} index. Two
+A classic evaluation function manipulates a term in a purely syntactic manner,
+firing redexes one after the other until none is left. In comparison,
+normalisation by evaluation is a semantic technique that translates a term
+into a program in the host language, relying on the host language's evaluation
+machinery to produce a value. The challenging aspect of this technique is twofold.
+First, we need to pick a translation that retains enough information that we
+may extract a normal form from the returned value. Second, we need to make sure
+that our leveraging of the host language's evaluation machinery does decide the
+equation theory we are interested in. In this chapter, we will consider different
+equational theories and as a consequence different translations.
+
+The normalisation by evaluation process is based on a model construction
+inspired by the logical predicates of normalisation proofs. It is essentially
+the computational part of such proofs. Such a construction starts by describing
+a family of types \AB{Model} by induction on its \AF{Type} index. Two
 procedures are then defined: the first (\AF{eval}) constructs an element
-of \AB{𝓒} \AB{σ} \AB{Γ} provided a well typed term of the corresponding
-\AD{Term} \AB{σ} \AB{Γ} type whilst the second (\AF{reify}) extracts, in
-a type-directed manner, normal forms \AD{Nf} \AB{σ} \AB{Γ} from elements
-of the model \AB{𝓒} \AB{σ} \AB{Γ}. NBE composes the two procedures. The
-definition of this \AF{eval} function is a natural candidate for our
-\AF{Semantics} framework. NBE is always defined \emph{for} a
-given equational theory; we start by recalling the various
+of (\AB{Model} \AB{σ} \AB{Γ}) provided a well typed term of the corresponding
+(\AD{Term} \AB{σ} \AB{Γ}) type whilst the second (\AF{reify}) extracts, in
+a type-directed manner, normal forms (\AD{Nf} \AB{σ} \AB{Γ}) from elements
+of the model (\AB{Model} \AB{σ} \AB{Γ}). NBE composes the two procedures.
+
+
+The definition of this \AF{eval} function is a natural candidate for our
+\AF{Semantics} framework. We will see in this chapter that the various variations
+on normalisation by evaluation that we will consider can all be described as
+instances of the following \AR{NBE} interface: a \AR{Semantics} working on the
+\AB{Model}, an embedding of variables into model values and a reification function
+from model values to normal forms.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/Specification.tex]{recnbe}
+\caption{\AR{NBE} interface}\label{fig:nbeinterface}
+\end{figure}
+
+
+
+NBE is always defined \emph{for} a given equational
+theory; we start by recalling the various
 rules a theory may satisfy.
+
+
 
 \subsection{Reduction Rules}
 
-Thanks to \AF{Renaming} and \AF{Substitution} respectively, we can formally
-define η-expansion for functions and β-reduction.
+Thanks to \AF{Renaming} (cf. \cref{fig:synren}) and \AF{Substitution}
+(cf. \cref{fig:synsub}) respectively, we can formally define η-expansion
+for functions and β-reduction.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{eta}

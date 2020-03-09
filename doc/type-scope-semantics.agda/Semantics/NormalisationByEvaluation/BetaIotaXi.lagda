@@ -17,7 +17,8 @@ R^βιξ _ = ⊤
 
 open import Syntax.Normal R^βιξ
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification hiding (eval)
+open import Semantics.Specification
+open import Semantics.NormalisationByEvaluation.Specification
 
 private
 
@@ -108,10 +109,11 @@ Eval .ifte  = IFTE
 %</eval>
 %<*norm>
 \begin{code}
-eval : Term σ Γ → Model σ Γ
-eval = Fundamental.lemma Eval (pack (reflect ∘ `var))
-
-norm : Term σ Γ → Nf σ Γ
-norm = reify _ ∘ eval
+nbe : NBE Model Nf
+nbe = record
+  { Sem   = Eval
+  ; embed = reflect ∘ `var
+  ; reify = reify _
+  }
 \end{code}
 %</norm>

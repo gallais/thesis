@@ -16,7 +16,8 @@ open import Relation.Unary
 open import Function
 
 open import Syntax.WeakHead
-open import Semantics.Specification hiding (eval)
+open import Semantics.Specification
+open import Semantics.NormalisationByEvaluation.Specification
 
 private
 
@@ -112,10 +113,11 @@ Eval .ifte  = IFTE
 %</eval>
 %<*whnorm>
 \begin{code}
-eval : ∀[ Term σ ⇒ Model σ ]
-eval = Fundamental.lemma Eval (pack (reflect ∘ `var))
-
-whnorm : ∀[ Term σ ⇒ WHNF σ ]
-whnorm = reify ∘ eval
+nbe : NBE Model WHNF
+nbe = record
+  { Sem   = Eval
+  ; embed = reflect ∘ `var
+  ; reify = reify
+  }
 \end{code}
 %</whnorm>

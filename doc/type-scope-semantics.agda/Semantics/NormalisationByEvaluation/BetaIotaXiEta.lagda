@@ -5,7 +5,7 @@ module Semantics.NormalisationByEvaluation.BetaIotaXiEta where
 open import Data.Unit using (⊤)
 open import Data.List.Base using (List; []; _∷_)
 open import Data.Var
-open import Data.Environment hiding (Kripke)
+open import Data.Environment as Env hiding (Kripke; Thinning)
 open import Syntax.Type
 open import Syntax.Calculus
 open import Relation.Unary
@@ -16,7 +16,8 @@ data R^βιξη : Type → Set where
 
 open import Syntax.Normal R^βιξη public
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification hiding (eval)
+open import Semantics.Specification
+open import Semantics.NormalisationByEvaluation.Specification
 
 private
   variable
@@ -94,18 +95,35 @@ Eval .ifte  = IFTE
 %</eval>
 %<*norm>
 \begin{code}
-eval : Term σ Γ → Model σ Γ
-eval = Fundamental.lemma Eval (pack (reflect _ ∘ `var))
-
-norm : Term σ Γ → Nf σ Γ
-norm = reify _ ∘ eval
+nbe : NBE Model Nf
+nbe = record
+  { Sem   = Eval
+  ; embed = reflect _ ∘ `var
+  ; reify = reify _
+  }
 \end{code}
 %</norm>
 %<*exotic>
 \begin{code}
 exotic : ∀[ Model (`Bool `→ `Bool) ]
-exotic ρ `tt         = `ff
-exotic ρ `ff         = `tt
-exotic ρ (`neu _ _)  = `tt
+exotic {Γ} {_ ∷ `Bool ∷ Δ}  ρ b = `neu `Bool (`var (s z))
+exotic {Γ} {_}              ρ b = b
 \end{code}
 %</exotic>
+
+\begin{code}
+open import Relation.Binary.PropositionalEquality
+Thinning = Env.Thinning {I = Type}
+
+[]⊆[2] : Thinning [] (`Bool ∷ [])
+[]⊆[2] = extend
+
+2⇒2 : Type
+2⇒2 = `Bool `→ `Bool
+
+_ : th^Nf (reify 2⇒2 exotic) []⊆[2] ≡ `lam (`neu `Bool (`var z))
+_ = refl
+
+_ : reify 2⇒2 (th^Model 2⇒2 exotic []⊆[2]) ≡ `lam (`neu `Bool (`var (s z)))
+_ = refl
+\end{code}

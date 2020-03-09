@@ -24,6 +24,7 @@ AGDA_FILES:=\
   type-scope-semantics.agda/Semantics/Syntactic/Specification.lagda \
   type-scope-semantics.agda/Semantics/Syntactic/Instances.lagda \
   type-scope-semantics.agda/Semantics/Printing.lagda \
+  type-scope-semantics.agda/Semantics/NormalisationByEvaluation/Specification.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.lagda \
   type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.lagda \
