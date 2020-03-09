@@ -63,67 +63,78 @@ function with the reification procedure yields the normalisation procedure.
 \caption{Evaluation and normalisation functions derived from \AR{NBE}}\label{fig:nbeinterface}
 \end{figure}
 
-
-
 As we have explained earlier, NBE is always defined \emph{for} a given
 equational theory. We start by recalling the various rules a theory may
 satisfy.
 
 \subsection{Reduction Rules}
 
-Thanks to \AF{Renaming} (cf. \cref{fig:synren}) and \AF{Substitution}
-(cf. \cref{fig:synsub}) respectively, we can formally define η-expansion
-for functions and β-reduction.
+We characterise an equational theory by a set of reduction rules. The
+equational theory is obtained by taking the congruence closure of these
+reduction rules under all term constructors except for λ-abstraction.
+Indeed, we will consider systems with and without reductions under
+λ-abstractions and can only make this distinction if using the congruence
+rule for λ (usually called ξ) is made explicit.
 
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{eta}
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/Syntactic/Instances.tex]{betared}
-\caption{η-expansion and β-reduction in terms or \AF{th\textasciicircum{}Term} and \AF{sub}}
-\end{figure}
-
-The η-rules say that for some types, terms have a canonical form: functions will all
-be λ-headed whilst records will collect their fields -- here this makes all elements
-of \AIC{\unit{}} equal to \AIC{`one}.
+\paragraph{Computation rules} Our first set of rules describes the kind
+of computations we may expect. The β rule states that functions applied
+to their argument may fire. It is the main driver for actual computation,
+but the presence of an inductive data type and its eliminator means we
+have further redexes: the ι rules specify that if-then-else conditionals
+applied to concrete booleans may return the appropriate branch.
 
 \begin{figure}[h]
 \begin{mathpar}
-\inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ (\AB{σ} ~\AIC{`→}~ \AB{τ})~ \AB{Γ}
-  }{\AB{t} \leadsto{} \AF{eta}~\AB{t}
-  }{η_1}
-\and \inferrule{\AB{t} ~\AS{:}~ \AD{Term}~ \AIC{`Unit}~ \AB{Γ}
-  }{\AB{t} \leadsto{} \AIC{`one}
-  }{η_2}
-\and
-\inferrule{
-  }{\AIC{`app} ~(\AIC{`lam}~\AB{t})~ \AB{u} \leadsto \AB{t}~ \AF{⟨}~ \AB{u} ~\AF{/0⟩}
-  }{β}
+  \inferrule
+      { }
+      {(λx. t) u ↝ t [u / x]}
+      {β}
 \end{mathpar}
-\caption{βη Rules for our Calculus\label{fig:betaetarules}}
+\begin{mathpar}
+  \inferrule
+      { }
+      {\mathtt{if ~true~ then~} l \mathtt{~else~} r \leadsto l}
+      {ι_1}
+  \and
+  \inferrule
+      { }
+      {\mathtt{if~ false~ then~} l \mathtt{~else~} r \leadsto r}
+      {ι_2}
+\end{mathpar}
+\caption{Computation rules: β and ι reductions}\label{fig:betaiotarules}
 \end{figure}
 
-The β-rule is the main driver for actual computation,
-but the presence of an inductive data type (\AIC{`Bool}) and its eliminator
-(\AIC{`ifte}) means we have further redexes: whenever the
-boolean the eliminator branches on is in canonical form, we may apply
-a ι-rule. Finally, the ξ-rule lets us reduce under
-λ-abstractions --- the distinction between weak-head normalisation and
-strong normalisation.
+\paragraph{Canonicity rules} The η-rules say that for some types, terms
+have a canonical form: functions will all be λ-headed whilst records will
+collect their fields -- here this makes all elements of the unit type equal
+to \texttt{one}.
 
 \begin{figure}[h]
 \begin{mathpar}
-\inferrule{
-  }{\AIC{`ifte}~\AIC{`tt}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{l}
-  }{ι_1}
-\and
-\inferrule{
-  }{\AIC{`ifte}~\AIC{`ff}~\AB{l}~\AB{r} ~\leadsto{}~ \AB{r}
-  }{ι_2}
-\and
-\inferrule{\AB{t} ~\leadsto{}~ \AB{u}
-  }{\AIC{`lam}~ \AB{t} ~\leadsto{}~ \AIC{`lam}~\AB{u}
+\inferrule{Γ ⊢ t : σ → τ
+  }{t \leadsto{} λx.t\,x
+  }{η_1}
+\and \inferrule{Γ ⊢ t : \mathtt{Unit}
+  }{t \leadsto{} \mathtt{one}
+  }{η_2}
+\end{mathpar}
+\caption{Canonicity rules: η rules for function and unit types\label{fig:etarules}}
+\end{figure}
+
+\paragraph{Congruence rule} Congruence rules are necessary if we do not
+want to be limited to only computing whenever the root of the term happens
+to already be a reducible expression. By deciding which ones are included,
+we can however control the evaluation strategy of our calculus. We will
+study the impact of the ξ-rule lets us reduce under λ-abstractions --- the
+distinction between weak-head normalisation and strong normalisation.
+
+\begin{figure}[h]
+\begin{mathpar}
+\inferrule{t ~\leadsto{}~ u
+  }{λx.t ~\leadsto{}~ λx.u
   }{ξ}
 \end{mathpar}
-\caption{ιξ Rules for our Calculus\label{fig:iotaxirules}}
+\caption{Congruence rule: ξ for strong normalisation\label{fig:xirules}}
 \end{figure}
 
 Now that we have recalled all these rules, we can talk precisely about the
