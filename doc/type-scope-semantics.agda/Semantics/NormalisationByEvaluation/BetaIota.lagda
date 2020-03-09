@@ -115,9 +115,9 @@ Eval .ifte  = IFTE
 \begin{code}
 nbe : NBE Model WHNF
 nbe = record
-  { Sem   = Eval
-  ; embed = reflect ∘ `var
-  ; reify = reify
+  { Sem    = Eval
+  ; embed  = reflect ∘ `var
+  ; reify  = reify
   }
 \end{code}
 %</whnorm>

@@ -24,15 +24,22 @@ private
     σ τ : Type
     Γ : List Type
 
+module DISPLAYONLY where
 \end{code}
 %<*model>
+\begin{code}
+ Model : Type ─Scoped
+ Model `Unit     = const ⊤
+ Model `Bool     = Nf `Bool
+ Model (σ `→ τ)  = □ (Model σ ⇒ Model τ)
+\end{code}
+%</model>
 \begin{code}
 Model : Type ─Scoped
 Model `Unit     Γ = ⊤
 Model `Bool     Γ = Nf `Bool Γ
 Model (σ `→ τ)  Γ = □ (Model σ ⇒ Model τ) Γ
 \end{code}
-%</model>
 %<*thmodel>
 \begin{code}
 th^Model : ∀ σ → Thinnable (Model σ)
@@ -97,9 +104,9 @@ Eval .ifte  = IFTE
 \begin{code}
 nbe : NBE Model Nf
 nbe = record
-  { Sem   = Eval
-  ; embed = reflect _ ∘ `var
-  ; reify = reify _
+  { Sem    = Eval
+  ; embed  = reflect _ ∘ `var
+  ; reify  = reify _
   }
 \end{code}
 %</norm>

@@ -111,9 +111,9 @@ Eval .ifte  = IFTE
 \begin{code}
 nbe : NBE Model Nf
 nbe = record
-  { Sem   = Eval
-  ; embed = reflect ∘ `var
-  ; reify = reify _
+  { Sem    = Eval
+  ; embed  = reflect ∘ `var
+  ; reify  = reify _
   }
 \end{code}
 %</norm>
