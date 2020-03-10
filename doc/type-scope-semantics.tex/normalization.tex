@@ -63,6 +63,16 @@ function with the reification procedure yields the normalisation procedure.
 \caption{Evaluation and normalisation functions derived from \AR{NBE}}\label{fig:nbeinterface}
 \end{figure}
 
+During the course of this chapter, we will consider the action of \AF{nbe}
+over the following term (λb.λu. (λx.x) (\texttt{if~} b \texttt{~then~()~else~}u))
+of type (\texttt{`Bool `→ `Unit `→ `Unit}). In \cref{fig:nbetest} we can see how this
+test is implemented in our formalisation.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/Specification.tex]{test}
+\caption{Running example}\label{fig:nbetest}
+\end{figure}
+
 As we have explained earlier, NBE is always defined \emph{for} a given
 equational theory. We start by recalling the various rules a theory may
 satisfy.

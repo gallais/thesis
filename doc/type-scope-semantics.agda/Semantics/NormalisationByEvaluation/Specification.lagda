@@ -43,4 +43,10 @@ record NBE (Model : Type ─Scoped) (Nf : Type ─Scoped) : Set₁ where
   nbe = reify ∘ eval
 \end{code}
 %</nbe>
+%<*test>
 \begin{code}
+  test : Nf (`Bool `→ `Unit `→ `Unit) []
+  test = nbe (`lam (`lam (`app (`lam (`var z))
+                               (`ifte (`var (s z)) `one (`var z)))))
+\end{code}
+%</test>

@@ -10,6 +10,7 @@ open import Data.Environment hiding (Kripke)
 open import Syntax.Type
 open import Syntax.Calculus
 open import Relation.Unary
+open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 open import Function
 
 R^βιξ : Type → Set
@@ -117,3 +118,14 @@ nbe = record
   }
 \end{code}
 %</norm>
+
+\begin{code}
+open NBE using (test)
+\end{code}
+
+%<*test>
+\begin{code}
+_ : test nbe ≡ `lam (`lam (`neu _ (`ifte (`var (s z)) `one (`neu _ (`var z)))))
+_ = refl
+\end{code}
+%</test>
