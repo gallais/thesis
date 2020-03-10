@@ -1,0 +1,96 @@
+
+\section{Normalisation by Evaluation for βιξ}
+
+As seen above, the traditional typed model construction leads to an NBE
+procedure outputting βι-normal η-long terms. However actual proof systems
+rely on evaluation strategies that avoid applying η-rules
+as much as possible: unsurprisingly, it is a rather bad idea to η-expand proof
+terms which are already large when typechecking complex developments.
+
+In these systems, normal forms are neither η-long nor η-short: the η-rule is
+never deployed except when comparing a neutral and a constructor-headed term
+for equality. Instead of declaring
+them distinct, the algorithm does one step of η-expansion on the
+neutral term and compares their subterms structurally. The conversion test
+fails only when confronted with neutral terms with distinct head
+variables or normal forms with different head constructors.
+
+To reproduce this behaviour, NBE must be amended.
+It is possible to alter the model definition described earlier so that it
+avoids unnecessary η-expansions. We proceed by enriching the traditional
+model with extra syntactical artefacts in a manner reminiscent of Coquand
+and Dybjer's~(\citeyear{CoqDybSK}) approach to defining an NBE procedure for the SK combinator calculus. Their resorting to gluing
+terms to elements of the model was dictated by the sheer impossibility to write
+a sensible reification procedure but, in hindsight, it provides us with a
+powerful technique to build models internalizing alternative equational
+theories.
+
+This leads us to using a predicate \AB{Eta?} which holds for all types thus allowing
+us to embed all neutrals into normal forms, and to  mutually defining the model
+(\AF{Model}) together with the \emph{acting} model (\AF{Value}).
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{model}
+\caption{Model Definition for βιξ\label{nbestuckmodel}}
+\end{figure}
+
+These mutual definitions allow us to make a careful distinction between values
+arising from (non expanded) stuck terms and the ones which are constructor headed
+and have a computational behaviour associated to them. The values in the acting
+model are storing these behaviours be it either actual proofs of \AF{⊤}, actual
+\AIC{`Bool}eans or actual Agda functions depending on the type of the term. It is
+important to note that the functions in the acting model have the model as both
+domain and codomain: there is no reason to exclude the fact that either the argument
+or the body may or may not be stuck.
+
+We have once again only used families constant in their scope index, neutral forms or
+\AF{□}-closed families. All of these are \AF{Thinnable} hence \AF{Value} and \AF{Model}
+also are.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{thmodel}
+\caption{The \AF{Model} is \AF{Thinnable}}
+\end{figure}
+
+What used to be called reflection in the previous model is now trivial:
+stuck terms are indeed perfectly valid model values. Reification becomes
+quite straightforward too because no η-expansion is needed. When facing
+a stuck term, we simply embed it in the set of normal forms. Even though
+\AF{reify} may look like it is performing some η-expansions, it is not
+the case: all the values in the acting model are notionally obtained
+from constructor-headed terms.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reifyreflect}
+\caption{Reflect, Reify and Interpretation for Fresh Variables}
+\end{figure}
+
+Most combinators acting on this model follow a pattern similar to their
+counterpart's in the previous section. Semantic application is
+more interesting: in case the function is a stuck term, we grow its
+spine by reifying its argument; otherwise we have an Agda function ready
+to be applied.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{app}
+\caption{Semantical Counterpart of \AIC{`app}}
+\end{figure}
+
+When defining the semantical counterpart of \AIC{`ifte}, the value case is similar to
+that of the previous section: depending on the boolean value we pick either the left
+or the right branch which are precisely of the right type already. If the boolean
+evaluates to a stuck term, we once again reify the two branches and assemble a neutral
+term. However this time we do not need to η-expand it: it is a perfectly valid inhabitant
+of the \AF{Model} as is.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{ifte}
+\caption{Semantical Counterpart of \AIC{`ifte}}
+\end{figure}
+
+Finally, we have all the necessary components to show that evaluating
+the term whilst not η-expanding all stuck terms is a perfectly valid
+\AR{Semantics}. As usual, normalisation is defined by composing
+reification and evaluation on a diagonal environment made of placeholders.
+
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{norm}

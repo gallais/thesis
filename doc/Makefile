@@ -88,6 +88,9 @@ THESIS_DEPENDENCIES:=\
   latex/type-scope-semantics.tex/syntax.tex \
   latex/type-scope-semantics.tex/refactoring.tex \
   latex/type-scope-semantics.tex/normalization.tex \
+  latex/type-scope-semantics.tex/normalization/betaiotaxieta.tex \
+  latex/type-scope-semantics.tex/normalization/betaiotaxi.tex \
+  latex/type-scope-semantics.tex/normalization/betaiota.tex \
   latex/type-scope-semantics.tex/cps-translation.tex \
   latex/type-scope-semantics.tex/program-conclusion.tex \
   latex/type-scope-semantics.tex/simulation.tex \

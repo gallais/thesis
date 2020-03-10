@@ -1,7 +1,7 @@
 \begin{code}
 open import Syntax.Type
 
-module Syntax.Normal (Eta? : Type → Set) where
+module Syntax.Normal (NoEta : Type → Set) where
 
 open import Data.Environment
 open import Data.Relation
@@ -33,7 +33,7 @@ mutual
     `ifte  : ∀[ Ne `Bool ⇒ Nf σ ⇒ Nf σ ⇒ Ne σ ]
 
   data Nf : Type ─Scoped where
-    `neu     : Eta? σ → ∀[ Ne σ ⇒ Nf σ ]
+    `neu     : NoEta σ → ∀[ Ne σ ⇒ Nf σ ]
     `one     : ∀[ Nf `Unit ]
     `tt `ff  : ∀[ Nf `Bool ]
     `lam     : ∀[ (σ ∷_) ⊢ Nf τ ⇒ Nf (σ `→ τ) ]

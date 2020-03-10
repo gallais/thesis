@@ -1,0 +1,84 @@
+
+\section{Normalisation by Evaluation for βι}
+
+The decision to apply the η-rule lazily can be pushed even further: one may
+forgo using the ξ-rule too and simply perform weak-head normalisation. This
+drives computation only when absolutely necessary, e.g.
+when two terms compared for equality have matching head constructors
+and one needs to inspect these constructors' arguments to conclude.
+
+For that purpose, we introduce an inductive family describing terms in weak-head
+normal forms.
+
+\subsection{Weak-Head Normal Forms}
+
+A weak-head normal form (respectively a weak-head neutral form) is a term which has
+been evaluated just enough to reveal a head constructor (respectively to reach a
+stuck elimination). There are no additional constraints on the subterms: a λ-headed
+term is in weak-head normal form no matter the shape of its body. Similarly an
+application composed of a variable as the function and a term as the argument is in
+weak-head neutral form no matter what the argument looks like. This means in particular
+that unlike with \AD{Ne} and \AD{Nf} there is no mutual dependency between the definitions
+of \AD{WHNE} (defined first) and \AD{WHNF}.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Syntax/WeakHead.tex]{weakhead}
+\caption{Weak-Head Normal and Neutral Forms\label{fig:weakhead}}
+\end{figure}
+
+Naturally, it is possible to define the thinnings
+\AF{th\textasciicircum{}WHNE} and \AF{th\textasciicircum{}WHNF} as well as erasure
+functions \AF{erase\textasciicircum{}WHNE} and \AF{erase\textasciicircum{}WHNF}
+with codomain \AD{Term}. We omit their simple definitions here.
+
+\subsection{Model Construction}
+
+The model construction is much like the previous one except
+that source terms are now stored in the model too. This means that
+from an element of the model, one can pick either the reduced version
+of the input term (i.e. a stuck term or the term's computational
+content) or the original. We exploit this ability most
+notably in reification where once we have obtained either a
+head constructor or a head variable, no subterm needs to
+be evaluated.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{model}
+\caption{Model Definition for Computing Weak-Head Normal Forms\label{fig:betaiotamodel}}
+\end{figure}
+
+\AF{Thinnable} can be defined rather straightforwardly based on the template provided
+in the previous section: once more all the notions used in the model definition
+are \AF{Thinnable} themselves. Reflection and reification also follow the same recipe
+as in the previous section.
+
+
+The application and conditional branching rules are more
+interesting. One important difference with respect to the previous
+section is that we do not grow the spine of a stuck term using
+reified versions of its arguments but rather the corresponding
+\emph{source} term. Thus staying true to the idea that we only head
+reduce enough to expose either a constructor or a variable and let
+the other subterms untouched.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{app}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{ifte}
+\caption{Semantical Counterparts of \AIC{`app} and \AIC{`ifte}\label{fig:betaiotaappifte}}
+\end{figure}
+
+The semantical counterpart of \AIC{`lam} is also slightly trickier than before. Indeed, we
+need to recover the source term the value corresponds to. Luckily we know it has to be
+λ-headed and once we have introduced a fresh variable with \AIC{`lam}, we can project
+out the source term of the body evaluated using this fresh variable as a placeholder
+value.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIota.tex]{lam}
+\caption{Semantical Counterparts of \AIC{`lam}\label{fig:betaiotalam}}
+\end{figure}
+
+We can finally put together all of these semantic counterparts to
+obtain a \AR{Semantics} corresponding to weak-head normalisation.
+We omit the now self-evident definition of \AF{norm\textasciicircum{}βι} as the
+composition of evaluation and reification.
