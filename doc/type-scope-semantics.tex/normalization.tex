@@ -126,7 +126,7 @@ want to be limited to only computing whenever the root of the term happens
 to already be a reducible expression. By deciding which ones are included,
 we can however control the evaluation strategy of our calculus. We will
 study the impact of the ξ-rule lets us reduce under λ-abstractions --- the
-distinction between weak-head normalisation and strong normalisation.
+distinction between \emph{weak-head} normalisation and \emph{strong} normalisation.
 
 \begin{figure}[h]
 \begin{mathpar}
@@ -139,12 +139,17 @@ distinction between weak-head normalisation and strong normalisation.
 
 Now that we have recalled all these rules, we can talk precisely about the
 sort of equational theory decided by the model construction we choose to
-perform. We start with the usual definition of NBE
-which goes under λs and produces η-long βι-short normal forms.
+perform. The last piece of the puzzle we will need before writing our first
+evaluator is a notion of normal form.
 
 \subsection{Normal and Neutral Forms}
 
-We parametrise the mutually defined inductive families \AD{Ne} and \AD{Nf}
+The inductive family of normal forms characterises irreducible terms for a
+given set of reduction rules. It is mutually defined with the family of
+neutral terms that characterises stuck computations i.e. a variable with
+a spine of eliminators (here applications or if-then-else conditionals).
+
+We parametrise these mutually defined inductive families \AD{Ne} and \AD{Nf}
 by a predicate \AB{NoEta} constraining the types at which one may embed a neutral
 as a normal form. This constraint shows up in the type of \AIC{`neu}; it makes
 it possible to control whether the NBE should η-expands all terms at certain
@@ -163,6 +168,15 @@ too: our constructions so far have been syntax-directed and could
 surely be leveraged by a generic account of syntaxes with binding.
 We will tackle this problem in~\cref{a-universe}.
 
-\input{type-scope-semantics.tex/normalization/betaiotaxieta.tex}
+We start with a standard strong evaluator i.e. an evaluator implementing
+\emph{strong} normalisation in the sense that it goes under λ-abstractions.
+This kind of evaluator is used for instance in Coq
+(\cite{DBLP:conf/icfp/GregoireL02,DBLP:conf/cpp/BoespflugDG11})
+although the focus there is different: the host language (OCaml)  is not
+total, evaluation is untyped, and unsafe features are used to maximise
+the evaluator's performance.
+
 \input{type-scope-semantics.tex/normalization/betaiotaxi.tex}
+
+\input{type-scope-semantics.tex/normalization/betaiotaxieta.tex}
 \input{type-scope-semantics.tex/normalization/betaiota.tex}
