@@ -1,20 +1,64 @@
 \chapter{CPS Transformations}
 \label{cps-transformation}
 
-In their generic account of continuation passing style (CPS) transformations,
-Hatcliff and Danvy (\citeyear{hatcliff1994generic}) decompose both call by name
-and call by value CPS transformations in two phases. The first one, an
-embedding of the source language into Moggi's Meta Language
+A Continuation-Passing Style (CPS) transformation is an operation
+turning an existing program into one that takes an extra argument
+(the continuation) that is a reification of what is to be done
+once the program's computation is finished. This is a powerful
+technique sequentialising the process of evaluating a term and
+thus a common compilation pass for functional programming languages.
+
+In the rest of this introduction, we will write $⟦.⟧$ when talking
+about a translation functional. It takes a term and produces a terms
+that starts by binding a continuation. This continuation expects to
+be passed the value resulting from that term's evaluation.
+
+For instance, the translation of the constant program $3$ is as follows:
+{$⟦3⟧ = λk. k(3)$} where $k$ is the usual name given to the continuation.
+Indeed, $3$ already is a value and the only thing left to do is to invoke
+the continuation with it.
+
+A more complex expression such as $g(f(3,2),5)$ would need to be decomposed
+into simpler subexpressions thus clarifying the order in which it is to be
+evaluated. We could for instance write:
+{$⟦g(f(3,2),5)⟧ = λk. ⟦f⟧ (3,2,λv. ⟦g⟧ (v,5,k))$}.
+
+In the process of writing such a transformation, we have made an arbitrary
+choice: we have decided to first evaluate $f(3,2)$ and then evaluate $g$
+with the resulting value. But this is not the only valid transformation.
+When translating a function application $(f(t))$ we may also decide to
+evaluate the function and apply the result straight away without modifying
+the ambient continuation
+%
+(i.e. {$⟦f(t)⟧ = λk. ⟦f⟧ (λv_f. v_f(⟦t⟧,k))$})
+%
+or to evaluate the function, then the function's argument and continue by
+applying one to the other
+%
+(i.e. {$⟦f(t)⟧ = λk. ⟦f⟧ (λv_f. ⟦t⟧ (λv_t. v_f(v_t,k)))$}).
+
+All of these translations correspond to variants of the call-by-name
+and call-by-value evaluation strategies. In their generic account of
+continuation passing style transformations, Hatcliff and Danvy
+(\citeyear{hatcliff1994generic}) decompose both call by name and call
+by value CPS transformations in two phases. We will see that this
+effort can be refactored via our \AR{Semantics} framework.
+
+\subsection{A Common Framework: Moggi's Meta Language}
+
+The two phases introduced by Hatcliff and Danvy are as follows: the
+first one, embedding the source language into Moggi's Meta Language
 (\citeyear{moggi1991notions}),
 picks an evaluation strategy whilst the second one is a generic erasure
 from Moggi's ML back to the original language. Looking closely at the
 structure of the first pass, we can see that it is an instance of our
 Semantics framework.
 
-Let us start with the definition of Moggi's Meta Language (ML). Its types
-are fairly straightforward, we simply have an extra constructor \AIC{\#\_}
-for computations and the arrow has been turned into a \emph{computational}
-arrow meaning that its codomain is always considered to be a computational type.
+Let us start with the definition of Moggi's Meta Language (ML). Its
+types are fairly straightforward, we simply have an extra constructor
+\AIC{\#\_} for computations and the arrow has been turned into a
+\emph{computational} arrow meaning that its codomain is always considered
+to be a computational type.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Syntax/MoggiML/Type.tex]{ctype}
@@ -179,5 +223,5 @@ they differ. The formal treatment of the type translations underlines the
 fact that in both cases the translation of a function's domain is uniform.
 This remark opens the door to alternative definitions; we could for instance
 consider a mixed strategy which is strict in machine-representable types thus
-allowing an unboxed representation (\cite{10.1007/3540543961_30}) but lazy in
-every other type.
+allowing an unboxed representation (\cite{DBLP:conf/fpca/JonesL91}) but lazy
+in every other type.
