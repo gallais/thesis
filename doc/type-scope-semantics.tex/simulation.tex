@@ -282,46 +282,81 @@ have mapped the \AIC{`var} constructor.
 
 \section{The PER for βιξη-Values is Closed under Evaluation}
 
-Now that we are a bit more used to the simulation framework and simulation lemmas,
-we can look at a more complex example: the simulation lemma relating normalisation
-by evaluation's \AF{eval} function to itself. This may seem bureaucratic but it is
-crucial: the model definition uses the host language's function space which contains
-more functions than just the ones obtained by evaluating a simply-typed $λ$-term.
-A value at type {(\AIC{`Bool} \AIC{`→} \AIC{`Bool})} may for instance behave like
-boolean negation on canonical terms but be the constant \AIC{`tt} function on neutral
-value. It does not correspond to any term in the source language: any candidate term
-would allow us to write expressions not stable under substitution!
+Now that we are a bit more used to the simulation framework and simulation
+lemmas, we can look at a more complex example: the simulation lemma relating
+normalisation by evaluation's \AF{eval} function to itself.
 
-\begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{exotic}
-\caption{Exotic Value, Not Quite Equal to Negation\label{fig:nbeexotic}}
-\end{figure}
+This may seem bureaucratic but it is crucial: the model definition uses
+the host language's function space which contains more functions than
+just the ones obtained by evaluating a simply-typed $λ$-term. Some
+properties that may not be provable for arbitrary Agda programs can
+be proven to hold for the ones obtained by evaluation. In particular,
+functional extensionality is not provable in intensional type theory
+but we can absolutely prove that the programs we obtain by evaluating
+terms with a function type take extensionally equal inputs to
+extensionally equal outputs.
 
-Clearly, these exotic functions have undesirable behaviours and need to be ruled out
-if we want to be able to prove that normalisation has good properties. This is done
-by defining a Partial Equivalence Relation (PER) (\cite{mitchell1996foundations})
-on the model which is to say a relation which is symmetric and transitive but may
-not be reflexive for all elements in its domain. The elements equal to themselves will be
-guaranteed to be well behaved. We will show that given an environment of values
-PER-related to themselves, the evaluation of a $λ$-term produces a computation
-equal to itself too.
+This strong property will in particular imply that evaluation in
+environment consisting of \emph{extensionally} equal values will
+yield \emph{intensionally} equal normal forms as shown in
+\cref{fig:normequals}.
 
+%
+%% A value at type {(\AIC{`Bool} \AIC{`→} \AIC{`Bool})} may for instance
+%% inspect the extended context it is called in and behave differently
+%% depending on its content. The \AF{exotic} term we define behaves like
+%% the identity function \emph{except} if it is called in an extended
+%% environment whose second variable is of type \AIC{`Bool} in which case
+%% it returns it.
 
-We start by defining the PER for the model. It is constructed by induction on the type
-and ensures that terms which behave the same extensionally are declared equal. Values at
-base types are concrete data: either trivial for values of type \AIC{`Unit} or normal
-forms for values of type \AIC{`Bool}. They are considered equal when they are effectively
-syntactically the same, i.e. propositionally equal. Functions on the other hand are
-declared equal whenever equal inputs map to equal outputs.
+%% \begin{figure}[h]
+%% \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{exotic}
+%% \caption{Exotic value, not quite the identity\label{fig:nbeexotic}}
+%% \end{figure}
+
+%% This exotic term is not the result of evaluating a term in the source
+%% language and breaks a desirable property: the fact that we can commute
+%% thinning and reification. Indeed, thinning the \AF{exotic} value may
+%% lead to it being reified in a context that happens to have exactly the
+%% right form to trigger the special case as demonstrated by the two
+%% conflicting test cases in \cref{fig:nbeexotictest}
+%% (writing \AF{2⇒2} for the type of boolean functions).
+
+%% \begin{figure}[h]
+%% \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{exotictest}
+%% \caption{Thinning and Reification do not commute for \AF{exotic}\label{fig:nbeexotictest}}
+%% \end{figure}
+
+%% Clearly, these exotic functions have undesirable behaviours and need
+%% to be ruled out if we want to be able to prove that normalisation has
+%% good properties.
+
+This notion of extensional equality for values in the model is formalised
+by defining a Partial Equivalence Relation (PER)
+(\cite{mitchell1996foundations}) which is to say a
+relation which is symmetric and transitive but may not be reflexive for
+all elements in its domain. The elements equal to themselves will be
+guaranteed to be well behaved. We will show that given an environment
+of values PER-related to themselves, the evaluation of a $λ$-term
+produces a computation equal to itself too.
+
+We start by defining the PER for the model. It is constructed by
+induction on the type and ensures that terms which behave the same
+extensionally are declared equal. Values at base types are concrete
+data: either trivial for values of type \AIC{`Unit} or normal forms
+for values of type \AIC{`Bool}. They are considered equal when they
+are effectively syntactically the same, i.e. propositionally equal.
+Functions on the other hand are declared equal whenever equal inputs
+map to equal outputs.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{per}
 \caption{Partial Equivalence Relation for Model Values\label{fig:nbeper}}
 \end{figure}
 
-On top of being a PER (i.e. symmetric and transitive), we can prove by a simple case
-analysis on the type that this relation is also stable under thinning for \AF{Model}
-values defined in \cref{fig:thnbemodel}.
+On top of being a PER (i.e. symmetric and transitive), we can prove by a
+simple case analysis on the type that this relation is also stable under
+thinning for \AF{Model} values defined in \cref{fig:thnbemodel}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{thPER}
@@ -376,7 +411,7 @@ give us two equal terms.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{normR}
-\caption{Normalisation in \AF{PER}-related Environments Yields Equal Normal Forms}
+\caption{Normalisation in \AF{PER}-related Environments Yields Equal Normal Forms}\label{fig:normequals}
 \end{figure}
 
 We can now move on to the more complex example of a proof framework built generically

@@ -8,12 +8,14 @@ open import Data.Relation
 open import Syntax.Type
 open import Syntax.Calculus
 open import Syntax.Normal.Thinnable
-open import Semantics.Specification as Spec hiding (eval; module Fundamental)
-open import Semantics.Syntactic.Specification hiding (module Fundamental)
+open import Semantics.Specification as Spec
+open import Semantics.Syntactic.Specification
 open import Semantics.Syntactic.Instances
 
 open import Properties.Simulation.Specification
 open import Relation.Binary.PropositionalEquality.Extra
+
+open import Relation.Nullary
 
 open import Function
 open Simulation
@@ -51,7 +53,7 @@ module _ 𝓣 (Syn : Syntactic 𝓣) where
 \end{code}
 %<*synext>
 \begin{code}
-  syn-ext : All Eqᴿ Γ ρˡ ρʳ → (t : Term σ Γ) → eval 𝓢 ρˡ t ≡ eval 𝓢 ρʳ t
+  syn-ext : All Eqᴿ Γ ρˡ ρʳ → (t : Term σ Γ) → semantics 𝓢 ρˡ t ≡ semantics 𝓢 ρʳ t
   syn-ext = simulation Syn-ext
 \end{code}
 %</synext>
@@ -90,7 +92,7 @@ ren-as-sub t ρ = simulation RenSub^Sim (packᴿ (λ v → refl)) t
 %</renassub>
 
 \begin{code}
-open import Semantics.NormalisationByEvaluation.BetaIotaXiEta hiding (eval)
+open import Semantics.NormalisationByEvaluation.BetaIotaXiEta
 
 
 \end{code}
@@ -174,14 +176,14 @@ private
  variable
    ρˡ ρʳ : (Γ ─Env) Model Δ
 
-eval^Sim = Fundamental.lemma Eval^Sim
+eval^Sim = simulation Eval^Sim
 
-eval = Spec.eval Eval
+eval = Spec.semantics Eval
 module _ {σ} where
 \end{code}
 %<*normR>
 \begin{code}
  normᴿ : All PER Γ ρˡ ρʳ → ∀ t → reify σ (eval ρˡ t) ≡ reify σ (eval ρʳ t)
- normᴿ ρᴿ t = reifyᴿ σ (Fundamental.lemma Eval^Sim ρᴿ t)
+ normᴿ ρᴿ t = reifyᴿ σ (simulation Eval^Sim ρᴿ t)
 \end{code}
 %</normR>

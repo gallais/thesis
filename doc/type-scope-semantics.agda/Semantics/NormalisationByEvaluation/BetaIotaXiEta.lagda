@@ -125,25 +125,26 @@ _ = refl
 %</test>
 %<*exotic>
 \begin{code}
-exotic : ∀[ Model (`Bool `→ `Bool) ]
-exotic {Γ} {_ ∷ `Bool ∷ Δ}  ρ b = `neu `Bool (`var (s z))
-exotic {Γ} {_}              ρ b = b
+exotic : Model (`Bool `→ `Bool) []
+exotic {_ ∷ `Bool ∷ Δ}  ρ b = `neu `Bool (`var (s z))
+exotic {_}              ρ b = b
 \end{code}
 %</exotic>
 
 \begin{code}
 open import Relation.Binary.PropositionalEquality
-Thinning = Env.Thinning {I = Type}
-
-[]⊆[2] : Thinning [] (`Bool ∷ [])
-[]⊆[2] = extend
+private
+  Thinning = Env.Thinning {I = Type}
 
 2⇒2 : Type
 2⇒2 = `Bool `→ `Bool
-
-_ : th^Nf (reify 2⇒2 exotic) []⊆[2] ≡ `lam (`neu `Bool (`var z))
+\end{code}
+%<*exotictest>
+\begin{code}
+_ : th^Nf (reify 2⇒2 exotic) (bind `Bool) ≡ `lam (`neu `Bool (`var z))
 _ = refl
 
-_ : reify 2⇒2 (th^Model 2⇒2 exotic []⊆[2]) ≡ `lam (`neu `Bool (`var (s z)))
+_ : reify 2⇒2 (th^Model 2⇒2 exotic (bind `Bool)) ≡ `lam (`neu `Bool (`var (s z)))
 _ = refl
 \end{code}
+%</exotictest>
