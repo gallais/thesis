@@ -9,7 +9,7 @@ open import Data.List.Base using (List; []; _∷_)
 open import Data.Relation hiding (_∙ᴿ_)
 open import Syntax.Type
 open import Syntax.Calculus
-open import Semantics.Specification hiding (module Fundamental)
+open import Semantics.Specification
 open import Function renaming (_$′_ to _$_) using ()
 open import Relation.Unary
 
@@ -36,18 +36,19 @@ record Fusion
   module 𝓢ᴬ = Semantics 𝓢ᴬ
   module 𝓢ᴮ = Semantics 𝓢ᴮ
   module 𝓢ᴬᴮ = Semantics 𝓢ᴬᴮ
-  evalᴬ = Semantics.Specification.Fundamental.lemma 𝓢ᴬ
-  evalᴮ = Semantics.Specification.Fundamental.lemma 𝓢ᴮ
-  evalᴬᴮ = Semantics.Specification.Fundamental.lemma 𝓢ᴬᴮ
 
   field
 \end{code}
-%<*reifyvar0>
+%<*reify>
 \begin{code}
     reifyᴬ  : ∀[ 𝓒ᴬ σ ⇒ Term σ ]
+\end{code}
+%</reify>
+%<*var0>
+\begin{code}
     var0ᴬ   : ∀[ (σ ∷_) ⊢ 𝓥ᴬ σ ]
 \end{code}
-%</reifyvar0>
+%</var0>
 %<*thV>
 \begin{code}
     _∙ᴿ_    :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → rel 𝓥ᴿ σ vᴮ vᴬᴮ →
@@ -60,7 +61,10 @@ record Fusion
 \begin{code}
   𝓡 :  ∀ σ → (Γ ─Env) 𝓥ᴬ Δ → (Δ ─Env) 𝓥ᴮ Θ → (Γ ─Env) 𝓥ᴬᴮ Θ →
        Term σ Γ → Set
-  𝓡 σ ρᴬ ρᴮ ρᴬᴮ t = rel 𝓒ᴿ σ (evalᴮ ρᴮ (reifyᴬ (evalᴬ ρᴬ t))) (evalᴬᴮ ρᴬᴮ t)
+  𝓡 σ ρᴬ ρᴮ ρᴬᴮ t = let  vᴬ   = semantics 𝓢ᴬ ρᴬ t
+                         vᴮ   = semantics 𝓢ᴮ ρᴮ (reifyᴬ vᴬ)
+                         vᴬᴮ  = semantics 𝓢ᴬᴮ ρᴬᴮ t
+                     in rel 𝓒ᴿ σ vᴮ vᴬᴮ
 \end{code}
 %</crel>
 \begin{code}
@@ -73,9 +77,9 @@ record Fusion
 %</var>
 %<*base>
 \begin{code}
-    oneᴿ :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Unit  ρᴬ ρᴮ ρᴬᴮ `one
-    ttᴿ  :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Bool  ρᴬ ρᴮ ρᴬᴮ `tt
-    ffᴿ  :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Bool  ρᴬ ρᴮ ρᴬᴮ `ff
+    oneᴿ  :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Unit  ρᴬ ρᴮ ρᴬᴮ `one
+    ttᴿ   :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Bool  ρᴬ ρᴮ ρᴬᴮ `tt
+    ffᴿ   :  𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → 𝓡 `Bool  ρᴬ ρᴮ ρᴬᴮ `ff
 \end{code}
 %</base>
 %<*struct>
@@ -108,20 +112,35 @@ private
     𝓔ᴿ : ∀ {Γ Δ Θ} → (Γ ─Env) 𝓥ᴬ Δ → (Δ ─Env) 𝓥ᴮ Θ → (Γ ─Env) 𝓥ᴬᴮ Θ → Set
     𝓥ᴿ : Rel 𝓥ᴮ 𝓥ᴬᴮ
     𝓒ᴿ : Rel 𝓒ᴮ 𝓒ᴬᴮ
-\end{code}
-%<*fundamental>
-\begin{code}
-module Fundamental (𝓕 : Fusion 𝓢ᴬ 𝓢ᴮ 𝓢ᴬᴮ 𝓔ᴿ 𝓥ᴿ 𝓒ᴿ) where
+module _ (𝓕 : Fusion 𝓢ᴬ 𝓢ᴮ 𝓢ᴬᴮ 𝓔ᴿ 𝓥ᴿ 𝓒ᴿ) where
 
   open Fusion 𝓕
-
-  lemma : 𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → ∀ t → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t
-  lemma ρᴿ (`var v)       = varᴿ ρᴿ v
-  lemma ρᴿ (`app f t)     = appᴿ ρᴿ f t (lemma ρᴿ f) (lemma ρᴿ t)
-  lemma ρᴿ (`lam b)       = lamᴿ ρᴿ b $ λ ren vᴿ → lemma (th^𝓔ᴿ ρᴿ ren ∙ᴿ vᴿ) b
-  lemma ρᴿ `one           = oneᴿ ρᴿ
-  lemma ρᴿ `tt            = ttᴿ ρᴿ
-  lemma ρᴿ `ff            = ffᴿ ρᴿ
-  lemma ρᴿ (`ifte b l r)  = ifteᴿ ρᴿ b l r (lemma ρᴿ b) (lemma ρᴿ l) (lemma ρᴿ r)
 \end{code}
-%</fundamental>
+%<*fundamental:type>
+\begin{code}
+  fusion : 𝓔ᴿ ρᴬ ρᴮ ρᴬᴮ → ∀ t → 𝓡 σ ρᴬ ρᴮ ρᴬᴮ t
+\end{code}
+%</fundamental:type>
+%<*fundamental:var>
+\begin{code}
+  fusion ρᴿ (`var v)       = varᴿ ρᴿ v
+\end{code}
+%</fundamental:var>
+%<*fundamental:lam>
+\begin{code}
+  fusion ρᴿ (`lam b)       = lamᴿ ρᴿ b $ λ ren vᴿ → fusion (th^𝓔ᴿ ρᴿ ren ∙ᴿ vᴿ) b
+\end{code}
+%</fundamental:lam>
+%<*fundamental:base>
+\begin{code}
+  fusion ρᴿ `one           = oneᴿ ρᴿ
+  fusion ρᴿ `tt            = ttᴿ ρᴿ
+  fusion ρᴿ `ff            = ffᴿ ρᴿ
+\end{code}
+%</fundamental:base>
+%<*fundamental:struct>
+\begin{code}
+  fusion ρᴿ (`app f t)     = appᴿ ρᴿ f t (fusion ρᴿ f) (fusion ρᴿ t)
+  fusion ρᴿ (`ifte b l r)  = ifteᴿ ρᴿ b l r (fusion ρᴿ b) (fusion ρᴿ l) (fusion ρᴿ r)
+\end{code}
+%</fundamental:struct>
