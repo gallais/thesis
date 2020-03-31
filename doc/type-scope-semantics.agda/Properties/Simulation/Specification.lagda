@@ -9,7 +9,7 @@ open import Data.List.Base using (List; []; _∷_)
 open import Data.Relation
 open import Syntax.Type
 open import Syntax.Calculus
-open import Semantics.Specification hiding (module Fundamental)
+open import Semantics.Specification
 open import Function renaming (_$′_ to _$_) using ()
 
 private
@@ -31,13 +31,11 @@ record Simulation  (𝓢ᴬ : Semantics 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Semantics �
 \begin{code}
   module 𝓢ᴬ = Semantics 𝓢ᴬ
   module 𝓢ᴮ = Semantics 𝓢ᴮ
-  evalᴬ = Semantics.Specification.Fundamental.lemma 𝓢ᴬ
-  evalᴮ = Semantics.Specification.Fundamental.lemma 𝓢ᴮ
 \end{code}
 %<*crel>
 \begin{code}
-  𝓡 : ∀ {Γ Δ} σ → (Γ ─Env) 𝓥ᴬ Δ → (Γ ─Env) 𝓥ᴮ Δ → Term σ Γ → Set
-  𝓡 σ ρᴬ ρᴮ t = rel 𝓒ᴿ σ (evalᴬ ρᴬ t) (evalᴮ ρᴮ t)
+  𝓡 : ∀ σ → (Γ ─Env) 𝓥ᴬ Δ → (Γ ─Env) 𝓥ᴮ Δ → Term σ Γ → Set
+  𝓡 σ ρᴬ ρᴮ t = rel 𝓒ᴿ σ (semantics 𝓢ᴬ ρᴬ t) (semantics 𝓢ᴮ ρᴮ t)
 \end{code}
 %</crel>
 \begin{code}
@@ -97,24 +95,37 @@ private
     𝓥ᴿ : Rel 𝓥ᴬ 𝓥ᴮ
     𝓒ᴿ : Rel 𝓒ᴬ 𝓒ᴮ
 
-\end{code}
-%<*fundamental>
-\begin{code}
-module Fundamental (𝓢ᴿ : Simulation 𝓢ᴬ 𝓢ᴮ 𝓥ᴿ 𝓒ᴿ) where
+module _ (𝓢ᴿ : Simulation 𝓢ᴬ 𝓢ᴮ 𝓥ᴿ 𝓒ᴿ) where
 
-  open Simulation 𝓢ᴿ
-
-  lemma : All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ t → 𝓡 σ ρᴬ ρᴮ t
-  lemma ρᴿ (`var v)       = varᴿ ρᴿ v
-  lemma ρᴿ (`app f t)     = appᴿ ρᴿ f t (lemma ρᴿ f) (lemma ρᴿ t)
-  lemma ρᴿ (`lam b)       = lamᴿ ρᴿ b $ λ ren vᴿ →
-                            lemma ((th^𝓥ᴿ ren <$>ᴿ ρᴿ) ∙ᴿ vᴿ) b
-  lemma ρᴿ `one           = oneᴿ ρᴿ
-  lemma ρᴿ `tt            = ttᴿ ρᴿ
-  lemma ρᴿ `ff            = ffᴿ ρᴿ
-  lemma ρᴿ (`ifte b l r)  = ifteᴿ ρᴿ b l r (lemma ρᴿ b) (lemma ρᴿ l) (lemma ρᴿ r)
+ open Simulation 𝓢ᴿ
 \end{code}
-%</fundamental>
+%<*fundamental:type>
 \begin{code}
-simulation = Fundamental.lemma
+ simulation : All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ t → 𝓡 σ ρᴬ ρᴮ t
 \end{code}
+%</fundamental:type>
+%<*fundamental:var>
+\begin{code}
+ simulation ρᴿ (`var v)       = varᴿ ρᴿ v
+\end{code}
+%</fundamental:var>
+%<*fundamental:lam>
+\begin{code}
+ simulation ρᴿ (`lam b)       =  lamᴿ ρᴿ b $ λ ren vᴿ →
+                                 simulation ((th^𝓥ᴿ ren <$>ᴿ ρᴿ) ∙ᴿ vᴿ) b
+\end{code}
+%</fundamental:lam>
+%<*fundamental:base>
+\begin{code}
+ simulation ρᴿ `one           = oneᴿ ρᴿ
+ simulation ρᴿ `tt            = ttᴿ ρᴿ
+ simulation ρᴿ `ff            = ffᴿ ρᴿ
+\end{code}
+%</fundamental:base>
+%<*fundamental:struct>
+\begin{code}
+ simulation ρᴿ (`app f t)     = appᴿ ρᴿ f t (simulation ρᴿ f) (simulation ρᴿ t)
+ simulation ρᴿ (`ifte b l r)  =
+   ifteᴿ ρᴿ b l r (simulation ρᴿ b) (simulation ρᴿ l) (simulation ρᴿ r)
+\end{code}
+%</fundamental:struct>
