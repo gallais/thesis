@@ -15,6 +15,11 @@ variables or normal forms with different head constructors.
 This leads us to using a predicate \AB{NoEta} which holds for all types
 thus allowing us to embed all neutrals into normal forms.
 
+Now that this is established, we can focus on the model construction. As
+noted in the definition of the \AR{NBE} interface (cf. \cref{fig:nbeinterface}),
+the \AR{Semantics} underlying normalisation by evaluation will use the
+same type family for environment values and the computations in the model.
+
 \subsection{Model Construction}
 
 This equational theory can be decided with what happens to be the most
@@ -50,13 +55,12 @@ argument or the body may or may not be stuck.
 
 We can observe that we have only used families constant in their scope
 index, neutral forms or \AF{□}-closed families. All of these are
-\AF{Thinnable} hence \AF{Value} and \AF{Model} also are. Because the
-two families are defined mutually, so are the proofs that they are both
-thinnable.
+\AF{Thinnable} hence \AF{Value} and \AF{Model} also are. We give these
+proofs in \cref{fig:thbixmodel}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{thmodel}
-\caption{The \AF{Model} is \AF{Thinnable}}
+\caption{The \AF{Model} is \AF{Thinnable}}\label{fig:thbixmodel}
 \end{figure}
 
 \subsection{Reify and Reflect}
@@ -71,22 +75,35 @@ In this case we should return a stuck computation. By definition
 that means we ought to be able to take the eliminator's semantic
 arguments and turn them into syntactic objects i.e. to \emph{reify}
 them. For reasons that will become obvious in the definition of
-\AF{reify} in \cref{fig:bix:reifyreflect}, we will first need to
+\AF{reify} in \cref{fig:bix:reify}, we will first need to
 define \AF{reflect}, the function that reflects neutral terms as
 model values.
 
 By definition we can trivially embed neutral terms into the model
-using the first injection into the disjoin sum type.
-
-Reification is quite straightforward too: semantic unit value are
-turned into the trivial syntactic object of type \AIC{`Unit},
-semantic booleans are reified as their syntactic counterpart and
-semantic function give rise to lambdas, they then get applied to
-the variable thus introduced and the resulting term gets reified too.
+using the first injection into the disjoint sum type. From \AF{reflect}
+we can derive \AF{var0}, the semantic version of the first variable
+in scope that we will use to reify the body of a λ-abstraction.
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reifyreflect}
-\caption{Reflect, Reify and Interpretation for Fresh Variables}\label{fig:bix:reifyreflect}
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reflect}
+\caption{Reflect and Fresh Semantic Variables}\label{fig:bix:reflect}
+\end{figure}
+
+Reification is quite straightforward too as demonstrated in \cref{fig:bix:reify}.
+A \AF{Model} value is
+either a neutral term that can be trivially turned into a normal
+form or a \AF{Value}. Reification of \AF{Value}s proceeds by induction
+on their type. Unit values are turned into \AIC{`one}, the trivial
+syntactic object of type \AIC{`Unit}. Semantic booleans are reified
+as their syntactic counterpart. Finally semantic functions give rise
+to lambdas. In the context thus extended we may craft \AF{var0}, the
+semantic counterpart of the fresh variable, and apply the semantic
+function to it before reifying the resulting semantic body to one in
+normal form.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{reify}
+\caption{Reify}\label{fig:bix:reify}
 \end{figure}
 
 \subsection{A \AR{Semantics} Targetting our \AF{Model}}
@@ -127,10 +144,12 @@ neutral term.
 \end{figure}
 
 Finally, we have all the necessary components to show that evaluating
-the term whilst is a perfectly valid \AR{Semantics}. As showcased earlier,
-normalisation is obtained as a direct corollary of \AR{NBE} by the
-composition of reification and evaluation in an environment of placeholder
-values.
+a term in our \AF{Model} is a perfectly valid \AR{Semantics} (we call
+the corresponding \AF{Semantics} record \AF{Eval} but leave it out here).
+%
+As showcased earlier, normalisation is obtained as a direct corollary of
+\AR{NBE} by the composition of reification and evaluation in an environment
+of placeholder values.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXi.tex]{norm}
 

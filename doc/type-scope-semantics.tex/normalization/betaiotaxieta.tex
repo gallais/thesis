@@ -1,16 +1,34 @@
-
 \section{Normalisation by Evaluation for βιξη}
 \label{normbye}
 
-In the case of NBE, the environment values and the computations in the model
-will both use the same type family \AF{Model}, defined by induction on the
-\AD{Type} argument. The η-rules allow us to represent functions (respectively
-inhabitants of \AIC{`Unit}) in the source language as function spaces
-(respectively values of type \AR{⊤}). Evaluating a \AIC{`Bool} may however
-yield a stuck term so we can't expect the model to give us anything more than
-an open term in normal form.
+As we have just seen, we can leverage the host language's evaluation
+machinery to write a normaliser for our own embedded language. We opted
+for a normalisation procedure deciding the equational theory corresponding
+to βιξ rules. We can develop more ambitious model constructions that will
+extend the supported equational theory.
+%
+In this section we will focus on η-rules but it is possible to go even
+beyond and build models that decide equational theories incorporating
+for instance various functor and fusion laws. The interested reader can
+direct its attention to our previous formalising such a construction
+(\citeyear{DBLP:conf/icfp/AllaisMB13}).
 
-The model construction then follows the usual pattern pioneered by
+In order to decide βιξη rules, we are going to build the \AF{Model} by
+induction on its type argument. This time we do not need to distinguish
+neutral terms from terms that compute: each type may or may not have
+neutral forms depending on whether it has a set of accompanying η-rules.
+%
+Functions (respectively inhabitants of \AIC{`Unit}) in the source language
+will be represented as function spaces (respectively values of type \AR{⊤})
+no matter whether they are stuck or not. Evaluating a \AIC{`Bool} may however
+yield a stuck term so we cannot expect the model to give us anything more than
+an open term in normal form. Note that there are advanced constructions
+adding η-rules for sum types
+(\cite{DBLP:conf/tlca/Ghani95,DBLP:conf/flops/AltenkirchU04,DBLP:conf/tlca/Lindley07})
+but they are unwieldy and thus outside the scope of this thesis.
+
+
+The model construction then follows the established pattern pioneered by
 Berger~(\citeyear{berger1993program}) and formally analysed and thoroughly
 explained by Catarina Coquand~(\citeyear{coquand2002formalised}). We work
 by induction on the type and describe η-expanded values: all inhabitants
@@ -42,13 +60,14 @@ directly to the function, with the identity renaming. This corresponds to
 \caption{Semantic Counterpart of \AIC{`app}\label{fig:nbeapp}}
 \end{figure}
 
-Conditional branching however is more subtle: the boolean value \AIC{`if} branches on
-may be a neutral term in which case the whole elimination form is stuck. This forces
-us to define \AF{reify} and \AF{reflect} first. These functions, also known as quote
-and unquote respectively, give the interplay between neutral terms, model values and
-normal forms. \AF{reflect} performs a form of semantic η-expansion: all stuck \AIC{`Unit}
-terms are equated and all functions are λ-headed. It allows us to define \AF{var0}, the
-semantic counterpart of (\AIC{`var} \AIC{z}).
+Conditional branching however is more subtle: the boolean value \AIC{`ifte}
+branches on may be a neutral term in which case the whole elimination form
+is stuck. This forces us to define \AF{reify} and \AF{reflect} first.
+These functions, also known as quote and unquote respectively, give the
+interplay between neutral terms, model values and normal forms.
+\AF{reflect} performs a form of semantic η-expansion: all stuck \AIC{`Unit}
+terms are equated and all functions are λ-headed. It allows us to define
+\AF{var0}, the semantic counterpart of (\AIC{`var} \AIC{z}).
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{reifyreflect}
@@ -65,21 +84,35 @@ in the model.
 \caption{Semantic Counterpart of \AIC{`ifte}\label{fig:nbeifte}}
 \end{figure}
 
-We can then combine these components. The semantics of a λ-abstraction is simply the
-identity function: the structure of the functional case in the definition of the model
-matches precisely the shape expected in a \AF{Semantics}. Because the environment
-carries model values, the variable case is trivial.
+We can then combine these components. The semantics of a λ-abstraction is
+simply the identity function: the structure of the functional case in the
+definition of the model matches precisely the shape expected in a
+\AF{Semantics}. Because the environment carries model values, the
+variable case is trivial.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{eval}
 \caption{Evaluation is a \AR{Semantics}\label{fig:evalnbe}}
 \end{figure}
 
-We can define a normaliser by kickstarting the evaluation with an environment of
-placeholder values obtained by reflecting the term's free variables and then reifying
-the result.
+With these definitions in hand, we can instantiate the \AR{NBE} interface we
+introduced in \cref{fig:nbeinterface}. This gives us access to a normaliser
+by kickstarting the evaluation with an environment of placeholder values
+obtained by reflecting the term's free variables and then reifying the
+result.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{norm}
 \caption{Normalisation as Reification of an Evaluated Term\label{fig:normnbe}}
+\end{figure}
+
+We can now observe the effect of this normaliser implementing a stronger
+equational theory by running our \AF{test} defined \cref{fig:nbetest} and
+obtaining {(λb.λu. \texttt{one})}. In the previous section, the normaliser
+yielded a term still containing a stuck if-then-else conditional that has
+here been replaced with the only normal form of the unit type.
+
+\begin{figure}[h]
+\ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/BetaIotaXiEta.tex]{test}
+\caption{Running example: the βιξη case}\label{fig:betaiotaxiηtest}
 \end{figure}

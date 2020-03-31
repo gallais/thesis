@@ -57,14 +57,17 @@ th^Model σ (inj₂ val)  ρ = inj₂ (th^Value σ val ρ)
 \begin{code}
 
 \end{code}
-%<*reifyreflect>
+%<*reflect>
 \begin{code}
 reflect : ∀[ Ne σ ⇒ Model σ ]
 reflect = inj₁
 
 var0 : ∀[ (σ ∷_) ⊢ Model σ ]
 var0 = reflect (`var z)
-
+\end{code}
+%</reflect>
+%<*reify>
+\begin{code}
 mutual
 
   reify : ∀ σ → ∀[ Model σ ⇒ Nf σ ]
@@ -76,19 +79,25 @@ mutual
   reify^Value `Bool     b = if b then `tt else `ff
   reify^Value (σ `→ τ)  f = `lam (reify τ (f extend var0))
 \end{code}
-%</reifyreflect>
+%</reify>
+\begin{code}
+module _ {σ τ} where
+\end{code}
 %<*app>
 \begin{code}
-APP : ∀[ Model (σ `→ τ) ⇒ Model σ ⇒ Model τ ]
-APP (inj₁ f) t = inj₁ (`app f (reify _ t))
-APP (inj₂ f) t = extract f t
+ APP : ∀[ Model (σ `→ τ) ⇒ Model σ ⇒ Model τ ]
+ APP (inj₁ f) t = inj₁ (`app f (reify σ t))
+ APP (inj₂ f) t = extract f t
 \end{code}
 %</app>
+\begin{code}
+module _ {σ} where
+\end{code}
 %<*ifte>
 \begin{code}
-IFTE : ∀[ Model `Bool ⇒ Model σ ⇒ Model σ ⇒ Model σ ]
-IFTE (inj₁ b) l r = inj₁ (`ifte b (reify _ l) (reify _ r))
-IFTE (inj₂ b) l r = if b then l else r
+ IFTE : ∀[ Model `Bool ⇒ Model σ ⇒ Model σ ⇒ Model σ ]
+ IFTE (inj₁ b) l r = inj₁ (`ifte b (reify σ l) (reify σ r))
+ IFTE (inj₂ b) l r = if b then l else r
 \end{code}
 %</ifte>
 \begin{code}

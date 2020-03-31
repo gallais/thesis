@@ -19,6 +19,8 @@ open import Syntax.WeakHead
 open import Semantics.Specification
 open import Semantics.NormalisationByEvaluation.Specification
 
+open import Agda.Builtin.Equality
+
 private
 
   variable
@@ -77,8 +79,8 @@ mutual
 %<*app>
 \begin{code}
 APP : ∀[ Model (σ `→ τ) ⇒ Model σ ⇒ Model τ ]
-APP (f , inj₁ whne)  (t , _)  = (`app f t , inj₁ (`app whne t))
-APP (_ , inj₂ f)     t        = extract f t
+APP (f , inj₁ whne)  (t , _)    = (`app f t , inj₁ (`app whne t))
+APP (f , inj₂ fun)   T@(t , _)  = (`app f t , proj₂ (extract fun T))
 \end{code}
 %</app>
 %<*ifte>
@@ -121,3 +123,17 @@ nbe = record
   }
 \end{code}
 %</whnorm>
+
+
+\begin{code}
+open NBE using (test)
+\end{code}
+
+%<*test>
+\begin{code}
+_ : test nbe ≡ `lam (`lam (`app (`lam (`var z))
+                                (`ifte (`var (s z)) `one (`var z))))
+_ = refl
+\end{code}
+%</test>
+

@@ -19,6 +19,8 @@ open import Syntax.Normal.Thinnable
 open import Semantics.Specification
 open import Semantics.NormalisationByEvaluation.Specification
 
+open import Agda.Builtin.Equality
+
 private
   variable
     σ τ : Type
@@ -110,6 +112,17 @@ nbe = record
   }
 \end{code}
 %</norm>
+
+\begin{code}
+open NBE using (test)
+\end{code}
+
+%<*test>
+\begin{code}
+_ : test nbe ≡ `lam (`lam `one)
+_ = refl
+\end{code}
+%</test>
 %<*exotic>
 \begin{code}
 exotic : ∀[ Model (`Bool `→ `Bool) ]
