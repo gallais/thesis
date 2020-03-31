@@ -16,14 +16,27 @@ private
    A B : Set
 
 \end{code}
-%<*desc>
+%<*desc:type>
 \begin{code}
 data Desc (I J : Set) : Set₁ where
-  `σ : (A : Set) → (A → Desc I J) → Desc I J
+\end{code}
+%</desc:type>
+%<*desc:sigma>
+\begin{code}
+  `σ :  (A : Set) → (A → Desc I J) →
+        Desc I J
+\end{code}
+%</desc:sigma>
+%<*desc:rec>
+\begin{code}
   `X : J → Desc I J → Desc I J
+\end{code}
+%</desc:rec>
+%<*desc:stop>
+\begin{code}
   `∎ : I → Desc I J
 \end{code}
-%</desc>
+%</desc:stop>
 \begin{code}
 
 module _ {I J : Set} where
@@ -39,14 +52,26 @@ module _ {I J : Set} where
  _`+_ : Desc I J → Desc I J → Desc I J
  d `+ e = `σ Bool $ λ { true  → d ; false → e }
 \end{code}
-%<*interp>
+%<*interp:type>
 \begin{code}
  ⟦_⟧ : Desc I J → (J → Set) → (I → Set)
- ⟦ `σ A d  ⟧ X i = Σ[ a ∈ A ] (⟦ d a ⟧ X i)
+\end{code}
+%</interp:type>
+%<*interp:sigma>
+\begin{code}
+ ⟦ `σ A d  ⟧ X i = Σ A (λ a → ⟦ d a ⟧ X i)
+\end{code}
+%</interp:sigma>
+%<*interp:rec>
+\begin{code}
  ⟦ `X j d  ⟧ X i = X j × ⟦ d ⟧ X i
+\end{code}
+%</interp:rec>
+%<*interp:stop>
+\begin{code}
  ⟦ `∎ j    ⟧ X i = i ≡ j
 \end{code}
-%</interp>
+%</interp:stop>
 %<*fmap>
 \begin{code}
  fmap : (d : Desc I J) → ∀[ X ⇒ Y ] → ∀[ ⟦ d ⟧ X ⇒ ⟦ d ⟧ Y ]
@@ -61,14 +86,14 @@ private
     I : Set
     i : I
     s : Size
-    X : I → Set
+    X Y : I → Set
 
 module _ {I : Set} where
 \end{code}
 %<*mu>
 \begin{code}
- data μ (d : Desc I I) (s : Size) : I → Set where
-   `con : {s' : Size< s} → ⟦ d ⟧ (μ d s') i → μ d s i
+ data μ (d : Desc I I) : Size → I → Set where
+   `con : ⟦ d ⟧ (μ d s) i → μ d (↑ s) i
 \end{code}
 %</mu>
 %<*fold>
@@ -115,25 +140,58 @@ List A = μ (listD A) ∞ tt
 %</list>
 
 \begin{code}
-infixr 10 _∷_
+module List where
+ infixr 10 _∷_
 \end{code}
-%<*nil>
+%<*listnil>
 \begin{code}
-pattern []'  = (true , refl)
-pattern []   = `con []'
+ pattern []' = (true , refl)
+ pattern []  = `con []'
 \end{code}
-%</nil>
-%<*cons>
+%</listnil>
+%<*listcons>
 \begin{code}
-pattern _∷'_ x xs  = (false , x , xs , refl)
-pattern _∷_ x xs   = `con (x ∷' xs)
+ pattern _∷'_ x xs  = (false , x , xs , refl)
+ pattern _∷_ x xs   = `con (x ∷' xs)
 \end{code}
-%</cons>
+%</listcons>
+%<*examplelist>
+\begin{code}
+ example : List (List Bool)
+ example  = (false ∷ []) ∷ (true ∷ []) ∷ []
+\end{code}
+%</examplelist>
 
 \begin{code}
-example : List (List Bool)
-example  = (false ∷ []) ∷ (true ∷ []) ∷ []
+ pattern []' = (true , refl)
+ pattern _∷'_ x xs = (false , x , xs , refl)
 \end{code}
+%<*foldr>
+\begin{code}
+ foldr : (A → B → B) → B → List A → B
+ foldr c n = fold (listD _) $ λ where
+   []'          → n
+   (hd ∷' rec)  → c hd rec
+\end{code}
+%</foldr>
+%<*append>
+\begin{code}
+ _++_ : List A → List A → List A
+ xs ++ ys = foldr _∷_ ys xs
+\end{code}
+%</append>
+%<*flatten>
+\begin{code}
+ flatten : List (List A) → List A
+ flatten = foldr _++_ []
+\end{code}
+%</flatten>
+%<*test>
+\begin{code}
+ _ : flatten example ≡ false ∷ true ∷ []
+ _ = refl
+\end{code}
+%</test>
 %<*vecD>
 \begin{code}
 vecD : Set → Desc ℕ ℕ
@@ -147,20 +205,19 @@ Vec : Set → ℕ → Set
 Vec A = μ (vecD A) ∞
 
 \end{code}
-%<*foldr>
+
+%<*free>
 \begin{code}
-foldr : (A → B → B) → B → List A → B
-foldr c n = fold (listD _) $ λ where
-  []'          → n
-  (hd ∷' rec)  → c hd rec
+data Free (d : Desc I I) : Size → (I → Set) → (I → Set) where
+  pure  : ∀[ X                   ⇒ Free d (↑ s) X ]
+  node  : ∀[ ⟦ d ⟧ (Free d s X)  ⇒ Free d (↑ s) X ]
 \end{code}
-%</foldr>
+%</free>
+
+%<*kleisli>
 \begin{code}
-_++_ : {A : Set} → List A  → List A → List A
-_++_ = foldr (λ hd rec → hd ∷_ ∘ rec) id
-
-flatten : {A : Set} → List (List A) → List A
-flatten = foldr _++_ []
-
-test : flatten example ≡ false ∷ true ∷ []
-test = refl
+kleisli : ∀ d → ∀[ X ⇒ Free d ∞ Y ] → ∀[ Free d s X ⇒ Free d ∞ Y ]
+kleisli d f (pure x) = f x
+kleisli d f (node t) = node (fmap d (kleisli d f) t)
+\end{code}
+%</kleisli>

@@ -1,21 +1,32 @@
-\chapter{A Primer on the Universe of Data Types}\label{section:data}
+\chapter{A Primer on Universes of Data Types}\label{section:data}
 
-Chapman, Dagand, McBride and Morris (CDMM, \citeyear{Chapman:2010:GAL:1863543.1863547})
+Chapman, Dagand, McBride and Morris
+(CDMM, \citeyear{Chapman:2010:GAL:1863543.1863547})
 defined a universe of data types inspired by Dybjer and Setzer's
-finite axiomatisation of inductive-recursive definitions (\citeyear{Dybjer1999})
-and Benke, Dybjer and Jansson's universes for generic programs and proofs
+finite axiomatisation of inductive-recursive definitions (\citeyear{Dybjer1999}),
+Altenkirch and McBride's observation that ``generic programming is just
+programming'' within dependent types
+(\citeyear{DBLP:conf/ifip2-1/AltenkirchM02})
+Benke, Dybjer and Jansson's universes for generic programs and proofs
 (\citeyear{benke-ugpp}).
+%
 This explicit definition of \emph{codes} for data types empowers the
 user to write generic programs tackling \emph{all} of the data types
 one can obtain this way. In this section we recall the main aspects
 of this construction we are interested in to build up our generic
 representation of syntaxes with binding.
 
-\section{Descriptions and Their Meaning as Functors}
+\section{Datatypes as Fixpoints of Strictly Positive Functors}
 
-The first component of CDMM's universe's definition is an inductive type of
-\AD{Desc}riptions of strictly positive functors from $\Set{}^J$ to $\Set{}^I$.
-%
+The first component of CDMM's universe's definition is an inductive
+type of \AD{Desc}riptions of strictly positive functors and their
+fixpoints.
+
+\subsection{Descriptions and Their Meaning as Functors}
+\label{fig:datades}
+\label{fig:datadescmeaning}
+
+Our type of descriptions represents functors from $\Set{}^J$ to $\Set{}^I$.
 These functors correspond to \AB{I}-indexed containers of \AB{J}-indexed
 payloads. Keeping these index types distinct prevents mistaking one for the
 other when constructing the interpretation of descriptions. Later of course
@@ -23,43 +34,69 @@ we can use these containers as the nodes of recursive datastructures by
 interpreting some payloads sorts as requests for
 subnodes~(\cite{DBLP:journals/jfp/AltenkirchGHMM15}).
 
-The inductive type of descriptions has three constructors:
-\AIC{`σ} to store data (the rest of the description can depend upon
-this stored value),
-%
-\AIC{`X} to attach a recursive substructure indexed by $J$
-%
-and \AIC{`$\blacksquare$} to stop with a particular index value.
+We will interleave the definition of the type of description and the
+recursive function \AF{⟦\_⟧} assigning a meaning to them provided it
+is handed the meaning to attach to the substructures. Interpretation
+of descriptions gives rise to right-nested tuples terminated by equality
+constraints.
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc}
-\caption{Datatype Descriptions\label{fig:datades}}
-\end{figure}
+\noindent\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:type}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp:type}
+\end{minipage}
 
-The recursive function \AF{⟦\_⟧} makes the interpretation of the descriptions
-formal. Interpretation of descriptions give rise to right-nested tuples
-terminated by equality constraints.
+First, \AIC{`σ} stores data. This can be used to either attach a payload
+to a node in which case the rest of the description will be constant in
+the value stored, or offer a choice of possible descriptions computed
+from the stored value.
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp}
-\caption{Descriptions' meanings as Functors\label{fig:datadescmeaning}}
-\end{figure}
+\noindent\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:sigma}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp:sigma}
+\end{minipage}
+
+Then \AIC{`X} attaches a recursive substructure indexed by $J$.
+
+\noindent\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:rec}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp:rec}
+\end{minipage}
+
+Finally, \AIC{`$\blacksquare$} to stop with a particular index value.
+Its interpretation makes sure that the index we demanded corresponds
+to the one we were handed.
+
+\noindent\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:stop}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp:stop}
+\end{minipage}
+
+Note that our universe definition precludes higher-order branching
+\emph{by choice}: we are interested in terms and these are first-order
+objects.
 
 These constructors give the programmer the ability to build up the data
 types they are used to. For instance, the functor corresponding
 to lists of elements in $A$ stores a \AD{Bool}ean which stands for whether
 the current node is the empty list or not. Depending on its value, the
 rest of the description is either the ``stop'' token or a pair of an element
-in $A$ and a recursive substructure i.e. the tail of the list. The \AD{List} type
-is unindexed, we represent the lack of an index with the unit type \AD{$\top$}.
+in $A$ and a recursive substructure i.e. the tail of the list.
+The \AD{List} type is unindexed, we represent the lack of an index with
+the unit type \AD{$\top$}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listD}
-\caption{The Description of the base functor for \AD{List} \AB{A}}\label{figure:listD}
+\caption{The Description of the base functor for \AD{List} \AB{A}}
+\label{figure:listD}
 \end{figure}
 
-Indices can be used to enforce invariants. For example, the type ({\AD{Vec} \AB{A} \AB{n}})
-of length-indexed lists. It has the same structure as the definition of \AF{listD}.
+Indices can be used to enforce invariants. For example, the type
+({\AD{Vec} \AB{A} \AB{n}}) of length-indexed lists. It has the
+same structure as the definition of \AF{listD}.
 We start with a \AF{Bool}ean distinguishing the two constructors: either
 the empty list (in which case the branch's index is enforced to be $0$) or a
 non-empty one in which case we store a natural number \AB{n}, the head of type
@@ -70,6 +107,47 @@ non-empty one in which case we store a natural number \AB{n}, the head of type
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{vecD}
 \caption{The Description of the base functor for \AD{Vec} \AB{A} \AB{n}}\label{figure:vecD}
 \end{figure}
+
+\subsection{Datatypes as Least Fixpoints}
+
+All the functors obtained as meanings of \AD{Desc}riptions are strictly
+positive. So we can build the least fixpoint of the ones that are
+endofunctors i.e. the ones for which \AB{I} equals \AB{J}. This fixpoint
+is called \AD{μ} and we provide its definition in \cref{figure:datamu}.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{mu}
+\caption{Least Fixpoint of an Endofunctor}\label{figure:datamu}
+\end{figure}
+
+Equipped with this fixpoint operator, we can go back to our examples
+redefining lists and vectors as instances of this framework. We can
+see in Figure~\ref{fig:listpat} that we can recover the types we are
+used to thanks to this least fixpoint (we only show the list example).
+%
+Pattern synonyms let us hide away the encoding: users can use them
+to pattern-match on lists and Agda conveniently resugars them when
+displaying a goal.
+
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listcons}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{list}
+\end{minipage}
+
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listnil}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{examplelist}
+\end{minipage}
+\caption{List Type, Patterns and Example}\label{figure:listpat}
+\end{figure}
+
+Now that we have the ability to represent the data we are interested it,
+we are only missing the ability to write programs manipulating it.
+
+\section{Generic Programming over Datatypes}
 
 The payoff for encoding our datatypes as descriptions is that we can
 define generic programs for whole classes of data types. The decoding
@@ -85,63 +163,88 @@ of a description.
 \caption{Action on Morphisms of the Functor corresponding to a \AF{Desc}ription\label{fig:fmapD}}
 \end{figure}
 
-\section{Datatypes as Least Fixpoints}
-
-All the functors obtained as meanings of \AD{Desc}riptions are strictly positive.
-So we can build the least fixpoint of the ones that are endofunctors i.e. the ones
-for which \AB{I} equals \AB{J}. This fixpoint is called \AD{μ} and its iterator is
-given by the definition of \AF{fold} \AB{d}. In \cref{figure:datamu} the
-\AD{Size} (\cite{DBLP:journals/corr/abs-1012-4896}) index added to the inductive
-definition of \AD{μ} plays a crucial role in getting the termination checker to
-see that \AF{fold} is a total function, just like sizes played a crucial role in
-proving that \AF{map\textasciicircum{}Rose} was total in~\cref{sec:sizetermination}.
+Once we take the fixpoint of such functors, we expect to be able to define
+an iterator. It is given by the definition of \AF{fold} \AB{d}, our second
+generic program over datatypes. In \cref{figure:datamu}, we skipped over
+the \AD{Size} (\cite{DBLP:journals/corr/abs-1012-4896}) index added to the
+inductive definition of \AD{μ}. It plays a crucial role in getting the
+termination checker to see that \AF{fold} is a total function, just like
+sizes played a crucial role in proving that \AF{map\textasciicircum{}Rose}
+was total in~\cref{sec:sizetermination}.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{mu}
 \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{fold}
-\caption{Least Fixpoint of an Endofunctor and Corresponding Generic Fold}\label{figure:datamu}
+\caption{Eliminator for the Least Fixpoint}\label{figure:datafold}
 \end{figure}
 
-We can see in Figure~\ref{fig:listpat} that we can recover the types we are
-used to thanks to this least fixpoint. Pattern synonyms let us hide away
-the encoding: users can use them to pattern-match on lists and Agda
-conveniently resugars them when displaying a goal.
-
-\begin{figure}[h]
-\begin{center}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{list}
-\end{center}
-
-\begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{nil}
-\end{minipage}
-\begin{minipage}[t]{0.45\textwidth}
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{cons}
-\end{minipage}
-\caption{The list type and its usual constructors\label{fig:listpat}}
-\end{figure}
-
-Finally, Figure~\ref{fig:listfold} demonstrates that we can get our
-hands on the types' eliminators by instantiating the generic \AF{fold}.
+Finally, \cref{fig:listfold} demonstrates that we can get our hands
+on the types' eliminators we are used to by instantiating the generic
+\AF{fold} we have just defined.
 
 \begin{figure}
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{foldr}
-\caption{The eliminator for \AD{List}\label{fig:listfold}}
+  \caption{The Eliminator for \AD{List}\label{fig:listfold}}
 \end{figure}
 
-The CDMM approach therefore allows us to generically define iteration principles
-for all data types that can be described. These are exactly the features we desire
-for a universe of syntaxes with binding, so in the next section we will see how
-to extend CDMM's approach to include binding.
+We can readily use this eliminator to define e.g. append, and then
+flatten for lists and check that it behaves as we expect by running
+it on the example introduced in \cref{figure:listpat}.
 
-The functor underlying any well scoped and sorted syntax can be coded as some
-{\AD{Desc} (I \AR{$\times$} \AD{List} I) (I \AR{$\times$} \AD{List} I)}, with the
-free monad construction from CDMM uniformly adding the variable case. Whilst a
-good start, \AD{Desc} treats its index types as unstructured, so this construction
-is blind to what makes the {\AD{List} I} index a \emph{scope}. The resulting
-`bind' operator demands a function which maps variables in \emph{any} sort and
-scope to terms in the \emph{same} sort and scope. However, the behaviour we need
-is to preserve sort while mapping between specific source and target scopes which
-may differ. We need to account for the fact that scopes change only by extension,
-and hence that our specifically scoped operations can be pushed under binders by
-weakening.
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{append}
+  \end{minipage}\begin{minipage}{0.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{flatten}
+  \end{minipage}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{test}
+\caption{Applications\label{fig:appendflatten}}
+\end{figure}
+
+The CDMM approach therefore allows us to generically define iteration
+principles for all data types that can be described. These are exactly
+the features we desire for a universe of syntaxes with binding, so in
+the next section we are going to see whether we could use CDMM's approach
+to represent abstract syntax trees equipped with a notion of binding.
+
+\section{A Free Monad Construction}
+
+The natural candidate to represent trees with binding and thus variables
+is to take not the least fixpoint of the strictly positive functor but
+rather the corresponding free monad. It can be easily defined by reusing
+the interpretation function, adding a special case corresponding to the
+notion of variable we may want to use.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{free}
+  \caption{Free Indexed Monad of a Description\label{fig:datafreemonad}}
+\end{figure}
+
+The \AIC{pure} constructor already gives us a unit for the free monad,
+all we have left to do is to define the Kleisli extension of a morphism.
+The definition goes by analysis over the term in the free monad. The
+\AIC{pure} case is trivial and, once again, the \AIC{node} case
+essentially amounts to using \AF{fmap} to recursively call \AF{kleisli}
+on all of the subterms of a \AIC{node}.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{kleisli}
+  \caption{Free Indexed Monad of a Description\label{fig:datafreemonad}}
+\end{figure}
+
+This gives us a notion of trees with variables in them and a substitution
+operation replacing these variables with entire subtrees.
+%
+The functor underlying any well scoped and sorted syntax can be coded as
+some {\AD{Desc} (I \AR{$\times$} \AD{List} I) (I \AR{$\times$} \AD{List} I)},
+with the free monad construction from CDMM uniformly adding the variable
+case. Whilst a good start, \AD{Desc} treats its index types as unstructured,
+so this construction is blind to what makes the {\AD{List} I} index a
+\emph{scope}. The resulting `bind' operator demands a function which maps
+variables in \emph{any} sort and scope to terms in the \emph{same} sort
+and scope. However, the behaviour we need is to preserve sort while mapping
+between specific source and target scopes which may differ. We need to
+account for the fact that scopes change only by extension, and hence that our
+specifically scoped operations can be pushed under binders by weakening.
+
+We will see in the next chapter how to modify CDMM's universe construction
+to account for variable binding and finally obtain a scope-aware universe.

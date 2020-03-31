@@ -1,57 +1,88 @@
-\chapter{Plea For a Universe of Syntaxes with Binding}
+\chapter{A Plea For a Universe of Syntaxes with Binding}
 
-Now that we have a way to structure our traversals and proofs about them, we can
-tackle a practical example. Let us look at the formalisation of an apparently
-straightforward program transformation: the inlining of let-bound variables by
-substitution and the proof of a simple correctness lemma. We have two languages:
-the source (\AD{S}), which has let-bindings, and the target (\AD{T}), which only
-differs in that it does not. We want to write a function elaborating source term
-into target ones and then prove that each reduction step on the source term can
-be simulated by zero or more reduction steps on its elaboration.
+Now that we have a way to structure our traversals and proofs about them,
+we can tackle a practical example. Let us look at the formalisation of an
+apparently straightforward program transformation: the inlining of let-bound
+variables by substitution and the proof of a simple correctness lemma.
 
-Breaking the task down, we need to start by defining the two languages. We already
-now how to do this from \cref{sec:scopedtypedterms}. The only downside is that we
-need to write down the same constructor types twice for \AIC{`var}, \AIC{`lam},
-and \AIC{`app}.
+In this exercise we have two languages: the source (\AD{S}), which has
+let-bindings, and the target (\AD{T}), which only differs in that it does
+not. We want to write a function elaborating source terms into target ones
+and then prove that each reduction step on the source term can be simulated
+by zero or more reduction steps on its elaboration.
+
+Breaking the task down, we need to start by defining the two languages.
+We already know how to do this from \cref{sec:scopedtypedterms}. In a
+textbook such as Pierce's (\citeyear{DBLP:books/daglib/0005958}) we
+would simply start by defining \AD{T} and then state that \AD{S} is
+\AD{T} extended with let bindings.
+
+\[\begin{array}{lcl}
+$<T>$ & ∷= & x ~∣~ $<T>$ $<T>$ ~∣~ λx.$<T>$ \\
+$<S>$ & ∷= & ⋯ ~|~ \mathtt{let}~ x ~=~ $<S>$ ~\mathtt{in}~ $<S>$ \\
+\end{array}
+\]
+
+When formalising this definition however we need to write down the same
+constructor types twice for \AIC{`var}, \AIC{`lam}, and \AIC{`app} as
+demonstrated in \cref{fig:sourcetarget}.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{source}
-\ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{target}
-\caption{Source and Target Languages}
+  \begin{minipage}[t]{0.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{source}
+  \end{minipage}\begin{minipage}[t]{0.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{target}
+  \end{minipage}
+  \caption{Source and Target Languages}\label{fig:sourcetarget}
 \end{figure}
 
-Ignoring for now the \AR{Semantics} framework, we jump straight to defining the
-program transformation we are interested in. We notice immediately that we need
-to prove \AD{T} to be \AF{Thinnable} first so that we may push the environment
-of inlined terms under binders. We also notice that the only interesting case
-is the one dealing with \AIC{`let}: all the other ones are purely structural.
+Ignoring for now the \AR{Semantics} framework, we jump straight to
+defining the program transformation we are interested in. Given an
+environment of target terms, it will elaborate a source term into a
+target one.
+
+Informally, we could state that it proceeds by a simple case distinction.
+On the one hand all the constructors that exist in both languages should
+be mapped to their immediate counterpart and their subterms recursively
+simplified. And on the other a let-binding should be elaborated away by
+elaborating the let-bound expression first, putting the result into the
+evaluation environment and returning the result of elaborating the body
+in the thus extended environment.
+
+In practice however things are more complex. We notice immediately that
+we need to prove \AD{T} to be \AF{Thinnable} first so that we may push
+the environment of inlined terms under binders. And even though our informal
+description highlighted that all cases but one are purely structural, we
+still need to painstakingly go through them one by one.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{unlet}
 \caption{Let-Inlining Traversal}
 \end{figure}
 
-We now want to state our correctness lemma: each reduction step on a source term
-can be simulated by zero or more reduction steps on its elaboration. We need to
-define an operational semantics for each language. We only show the one for \AD{S}
-in \cref{fig:opersem}: the one for \AD{T} is exactly the same minus the
-\AIC{`let}-related rules. We immediately notice that to write down the type of
-\AIC{β} we need to define substitution (and thus renaming) for each of the languages.
+We now want to state our correctness lemma: each reduction step on a source
+term can be simulated by zero or more reduction steps on its elaboration.
+We need to define an operational semantics for each language. We only show
+the one for \AD{S} in \cref{fig:opersem}: the one for \AD{T} is exactly the
+same minus the \AIC{`let}-related rules. We immediately notice that to write
+down the type of \AIC{β} we need to define substitution (and thus renaming)
+for each of the languages.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Motivation/Problem/Naive.tex]{redS}
 \caption{Operational Semantics for the Source Language\label{fig:opersem}}
 \end{figure}
 
-In the course of simply stating our problem, we have already had to define two
-eerily similar languages, spell out all the purely structural cases when defining
-the transformation we are interested in and implement four auxiliary traversals
-which are essentially the same.
+In the course of simply stating our problem, we have already had to define
+two eerily similar languages, spell out all the purely structural cases
+when defining the transformation we are interested in and implement four
+auxiliary traversals which are essentially the same.
 
-In the course of proving the correctness lemma (which we abstain from doing here),
-we discover that we need to prove eight lemmas about the interactions of renaming,
-substitution, and let-inlining. They are all remarkably similar, but must be stated
-and proved separately (e.g, as in \cite{benton2012strongly}).
+In the course of proving the correctness lemma (which we abstain from
+doing here), we discover that we need to prove eight lemmas about the
+interactions of renaming, substitution, and let-inlining. They are all
+remarkably similar, but must be stated and proved separately (e.g, as
+in \cite{benton2012strongly}).
 
 Even after doing all of this work, we have only a result for a single pair of
 source and target languages. If you were to change our languages \AD{S} or
@@ -67,6 +98,7 @@ tightly coupled to the definition of the language. So much so that we should
 in fact be able to \emph{derive} them directly from the definition of the
 language.
 
-This is what we set out to do in this part and in particular in \cref{section:letbinding}
-where we define a \emph{generic} notion of let-binding to extend any language
-with together with the corresponding generic let-inlining transformation.
+This is what we set out to do in this part and in particular in
+\cref{section:letbinding} where we define a \emph{generic} notion of
+let-binding to extend any language with together with the corresponding
+generic let-inlining transformation.
