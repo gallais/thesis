@@ -19,6 +19,45 @@ private
 -- Nota Bene: there are TWO proofs of Γ ⊢ `Bool corresponding
 -- to true and false respectively.
 
+module DISPLAYONLY where
+
+\end{code}
+%<*termcompact>
+%<*termcompact:decl>
+\begin{code}
+ data Term : Type ─Scoped where
+\end{code}
+%</termcompact:decl>
+\begin{code}
+   `var     : ∀[ Var σ ⇒  Term σ ]
+\end{code}
+%<*termcompact:lam>
+\begin{code}
+   `lam     : ∀[  (σ ∷_) ⊢ Term τ
+            ⇒     Term (σ `→ τ) ]
+\end{code}
+%</termcompact:lam>
+%<*termcompact:base>
+\begin{code}
+   `one     : ∀[ Term `Unit ]
+
+   `tt      : ∀[ Term `Bool ]
+
+   `ff      : ∀[ Term `Bool ]
+\end{code}
+%</termcompact:base>
+%<*termcompact:struct>
+\begin{code}
+   `app     : ∀[  Term (σ `→ τ)
+            ⇒     Term σ
+            ⇒     Term τ ]
+   `ifte    : ∀[  Term `Bool
+            ⇒     Term σ ⇒ Term σ
+            ⇒     Term σ ]
+\end{code}
+%</termcompact:struct>
+
+
 \end{code}
 %<*term>
 \begin{code}

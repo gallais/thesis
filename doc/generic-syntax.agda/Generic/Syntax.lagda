@@ -18,14 +18,26 @@ open import Data.Environment as E hiding (sequenceA; uncurry)
 -- Descriptions and their Interpretation
 
 \end{code}
-%<*desc>
+%<*desc:type>
 \begin{code}
 data Desc (I : Set) : Set₁ where
+\end{code}
+%</desc:type>
+%<*desc:sigma>
+\begin{code}
   `σ : (A : Set) → (A → Desc I)  → Desc I
+\end{code}
+%</desc:sigma>
+%<*desc:rec>
+\begin{code}
   `X : List I → I → Desc I       → Desc I
+\end{code}
+%</desc:rec>
+%<*desc:stop>
+\begin{code}
   `∎ : I                         → Desc I
 \end{code}
-%</desc>
+%</desc:stop>
 \begin{code}
 reindex : {I J : Set} → (I → J) → Desc I → Desc J
 reindex f (`σ A d)   = `σ A λ a → reindex f (d a)
@@ -40,14 +52,26 @@ private
     s : Size
     X Y : List I → I ─Scoped
 \end{code}
-%<*interp>
+%<*interp:type>
 \begin{code}
 ⟦_⟧ : Desc I → (List I → I ─Scoped) → I ─Scoped
-⟦ `σ A d    ⟧ X i Γ = Σ[ a ∈ A ] (⟦ d a ⟧ X i Γ)
+\end{code}
+%</interp:type>
+%<*interp:sigma>
+\begin{code}
+⟦ `σ A d    ⟧ X i Γ = Σ A (λ a → ⟦ d a ⟧ X i Γ)
+\end{code}
+%</interp:sigma>
+%<*interp:rec>
+\begin{code}
 ⟦ `X Δ j d  ⟧ X i Γ = X Δ j Γ × ⟦ d ⟧ X i Γ
+\end{code}
+%</interp:rec>
+%<*interp:stop>
+\begin{code}
 ⟦ `∎ j      ⟧ X i Γ = i ≡ j
 \end{code}
-%</interp>
+%</interp:stop>
 \begin{code}
 -- Syntaxes: Free Relative Monad of a Description's Interpretation
 
@@ -169,9 +193,9 @@ module _ {I : Set} {X Y : List I → I ─Scoped} {Γ Δ} {i} where
 %<*fmap>
 \begin{code}
  fmap :  (d : Desc I) → (∀ Θ i → X Θ i Γ → Y Θ i Δ) → ⟦ d ⟧ X i Γ → ⟦ d ⟧ Y i Δ
- fmap (`σ A d)    f = Prod.map₂ (fmap (d _) f)
- fmap (`X Δ j d)  f = Prod.map (f Δ j) (fmap d f)
- fmap (`∎ i)      f = id
+ fmap (`σ A d)    f (a , t)  = a , fmap (d a) f t
+ fmap (`X Δ j d)  f (x , t)  = f Δ j x , fmap d f t
+ fmap (`∎ i)      f eq       = eq
 \end{code}
 %</fmap>
 \begin{code}

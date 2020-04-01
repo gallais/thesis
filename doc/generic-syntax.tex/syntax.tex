@@ -1,66 +1,107 @@
-\chapter{A Universe of Scope Safe and Well Kinded Syntaxes}\label{chapter:universe}
+\chapter{A Universe of Scope Safe and Well Kinded Syntaxes}
+\label{chapter:universe}
 
+Our universe of scope safe and well kinded syntaxes follows the same
+principle as CDMM's universe of datatypes, except that we are not
+building endofunctors on \AS{Setᴵ} any more but rather on
+{\AB{I} \AF{─Scoped}} (defined in \cref{fig:scoped}).
 
-Our universe of scope safe and well kinded syntaxes follows the same principle
-as CDMM's universe of datatypes, except that we are not building endofunctors on
-\AS{Setᴵ} any more but rather on {\AB{I} \AF{─Scoped}}. We now think of the index
-type \AB{I} as the sorts used to distinguish terms in our embedded language.
-The \AIC{`$\sigma$} and \AIC{`∎} constructors are as in the CDMM \AD{Desc} type,
-and are used to represent data and index constraints respectively.
+We now think of the index type \AB{I} as the sorts used to distinguish
+terms in our embedded language. The \AIC{`$\sigma$} and \AIC{`∎}
+constructors are as in the CDMM \AD{Desc} type, and are used to represent
+data and index constraints respectively.
 
 \section{Descriptions and Their Meaning as Functors}
 
-What distinguishes this new universe \AD{Desc} from that of
-Section~\ref{section:data} is that the \AIC{`X} constructor is now
-augmented with an additional {\AD{List} \AB{I}} argument that describes
-the new binders that are brought into scope at this recursive
-position. This list of the kinds of the newly-bound variables will
-play a crucial role when defining the description's semantics as a
-binding structure in
+Following our approach in the previous chapter, we are going to interleave
+the definition of the indexed datatype of descriptions and the meaning
+function \AF{⟦\_⟧} associated to it. They are essentially identical to
+their counterparts defining a universe of datatype in \cref{section:data}
+except for two aspects.
+
+First, the constructor marking the presence of a recursive substructure
+will take an extra {(\AD{List} \AB{I})} argument specifying the sorts of
+the newly-bound variables that will be present in the subterm.
+
+Second, the type of the meaning function is more complex. It does not
+translate descriptions into an endofunctor on {(\AB{I} \AF{─Scoped})};
+it is more general than that. The function takes an \AB{X} of type
+{\AD{List} \AB{I} → \AB{I} \AD{─Scoped}} to interpret demand for
+recursive substructures. This first list argument corresponds to the
+newly-bound variables that will be present in the subterm and having
+it as a separate argument will play a crucial role when defining the
+description's semantics as a binding structure in
 \cref{figure:syntaxmeaning,figure:debruijnscope,figure:freemonad}.
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc}
-\caption{Syntax Descriptions\label{fig:Desc}}
-\end{figure}
+Without further ado, let us look at the definition. The declaration
+of both the universe of descriptions and the meaning function associated
+to them first.
 
-The meaning function \AF{⟦\_⟧} we associate to a description follows closely
-its CDMM equivalent. It only departs from it in the \AIC{`X} case and the fact
-it is not an endofunctor on \AB{I} \AF{─Scoped}; it is more general than that.
-The function takes an \AB{X} of type
-{\AD{List} \AB{I} $\rightarrow$ \AB{I} \AD{─Scoped}}
-to interpret {\AIC{`X} \AB{Δ} \AB{j}} (i.e. substructures of sort \AB{j} with
-newly-bound variables in \AB{Δ}) in an ambient scope \AB{Γ} as
-{\AB{X} \AB{Δ} \AB{j} \AB{Γ}}.
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc:type}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp:type}
+\end{AgdaSuppressSpace}
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp}
-\caption{Descriptions' Meanings}\label{figure:syntaxmeaning}
-\end{figure}
+The \AIC{`σ} is exactly identical to that of the universe of data. It
+also serves the same purpose: either provide the ability to store a
+payload, or a tag upon which the shape of the rest of the description
+will depend.
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc:sigma}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp:sigma}
+\end{AgdaSuppressSpace}
+
+The case of interest is the one for recursive substructures. As explained
+above, it packs an extra argument specifying the number and sorts of the
+newly-bound variables. For a λ-abstraction, this list would be a singleton,
+meaning that a single extra variable is in scope in the body of the lambda;
+for both of the arguments of an application node the list would be empty.
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc:rec}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp:rec}
+\end{AgdaSuppressSpace}
+
+Finally, the stop case is identical to that of the universe of data.
+And its role is the same: to enforce that the branch selected by the
+user has the sort that was demanded.
+
+\begin{AgdaSuppressSpace}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{desc:stop}
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{interp:stop}
+\end{AgdaSuppressSpace}
 
 The astute reader may have noticed that \AF{⟦\_⟧} is uniform in $X$
-and $\Gamma$; however refactoring \AF{⟦\_⟧} to use the partially
-applied $X\,\_\,\_\,\Gamma$ following this observation would lead to
+and Γ; however refactoring \AF{⟦\_⟧} to use the partially applied
+$X\,\_\,\_\,\Gamma$ following this observation would lead to
 a definition harder to use with the combinators for indexed sets
-described in \cref{sec:indexed-combinators}
-which make our types much more readable.
+described in \cref{sec:indexed-combinators} which make our types
+much more readable.
 
-If we pre-compose the meaning function \AF{⟦\_⟧} with a notion of
-`de Bruijn scopes' (denoted \AF{Scope} here) which turns any
+
+\subsection{A Syntactic Meaning: De Bruijn Scopes}
+
+If we pre-compose (using \AF{\_⊢\_} defined in \cref{sec:indexed-combinators})
+the meaning function \AF{⟦\_⟧} with a notion of
+`de Bruijn scopes' (denoted \AF{Scope} here) that turns any
 {(\AB{I} \AF{─Scoped})} family into a function
-of type \AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped} by appending the two
+of type {(\AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped})} by appending the two
 \AD{List} indices, we recover a meaning function producing an endofunctor on
-\AB{I} \AF{─Scoped}.
+\AB{I} \AF{─Scoped}. It corresponds to the syntactic interpretation of
+the description we expect when building terms: the newly-bound variables
+are simply used to extend the ambient context.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{scope}
 \caption{De Bruijn Scopes}\label{figure:debruijnscope}
 \end{figure}
 
-So far we have only shown the action of the functor on objects; its action on
-morphisms is given by a function \AF{fmap} defined by induction over the
-description just like in Section~\ref{section:data}. We give \AF{fmap} the most
-general type we can, the action of functors is then a specialized version of it.
+So far we have only shown the action of the functor on objects; its action
+on morphisms is given by a function \AF{fmap} defined by induction over the
+description just like in Section~\ref{section:data}. We give \AF{fmap} the
+most general type we can, the action of functors is then a specialized
+version of it.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{fmap}
@@ -92,11 +133,12 @@ in concrete examples, we name this notion.
 \caption{Type of Closed Terms\label{fig:closedtm}}
 \end{figure}
 
-\subsection{Examples of Syntaxes With Binding}
+\subsection{Three Small Examples of Syntaxes With Binding}
 
-Coming back to our original example, we now have the ability to give a
-code for the intrinsically typed STλC. We add two other examples to show
-the whole spectrum of syntaxes.
+Rather than immediately coming back to our original example which has quite
+a few constructors, we are going to give codes for 3 variations on the
+λ-calculus to show the whole spectrum of syntaxes: untyped, well sorted,
+and well typed by construction.
 %
 We start with the simplest example to lay down the foundations: the well
 scoped untyped λ-calculus.
@@ -113,8 +155,9 @@ construction so we only have to describe the other constructors.
 can thus be modelled using descriptions whose kind parameter is the unit type
 (\AR{⊤}).
 %
-We take the disjoint sum of the respective descriptions for the application and
-λ-abstraction constructors by using the classic construction in type theory: a
+We take the disjoint sum of the respective descriptions for the application
+and λ-abstraction constructors by using the classic construction in type
+theory we have already deployed once for lists and once for vectors: a
 dependent pair of a \AF{Bool} picking one of the two branches and a second
 component whose type is either that of application or λ-abstraction depending
 on that boolean.
@@ -122,16 +165,17 @@ on that boolean.
 Application has two substructures (\AIC{`X}) which do not bind any extra
 argument and λ-abstraction has exactly one substructure with precisely
 one extra bound variable. Both constructors' descriptions end with
-(\AIC{`∎} \AIC{tt}), the only inhabitant of the trivial kind.
+(\AIC{`∎} \AIC{tt}), the only inhabitant of the trivial sort.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
-\caption{\AF{Desc}ription of The Untyped Lambda Calculus\label{fig:desculc}\label{fig:descUTLC}}
+\caption{\AF{Desc}ription of The Untyped Lambda Calculus
+\label{fig:desculc}\label{fig:descUTLC}}
 \end{figure}
 
-\paragraph{Bidirectional STLC}\label{par:bidirectional} Our second example is a
-bidirectional~\cite{pierce2000local} language hence the introduction of a
-notion of \AD{Mode}: each term is either part of the \AIC{Infer} or
+\paragraph{Bidirectional STLC}\label{par:bidirectional} Our second example
+is a bidirectional (\cite{pierce2000local}) language hence the introduction
+of a notion of \AD{Mode}: each term is either part of the \AIC{Infer} or
 \AIC{Check} fraction of the language. This language has four constructors
 which we list in the ad-hoc \AD{`Bidi} type of constructor tags, its
 decoding \AD{Bidi} is defined by a pattern-matching λ-expression in Agda.
@@ -139,26 +183,25 @@ Application and λ-abstraction behave as expected, with the important
 observation that λ-abstraction binds an \AIC{Infer}rable term. The two
 remaining constructors correspond to changes of direction: one can freely
 \AIC{Emb}bed inferrable terms as checkable ones whereas we require a type
-annotation when forming a \AIC{Cut} (we reuse the notion of \AD{Type} introduced
-in Figure~\ref{fig:intrinsic-stlc}).
+annotation when forming a \AIC{Cut}.
 
 \begin{figure}[h]
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.35\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{tagmode}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.5\textwidth}
+\end{minipage}
+\begin{minipage}[t]{0.65\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{desc}
 \end{minipage}
   \caption{Description for the bidirectional STLC\label{fig:descBidiSTLC}}
 \end{figure}
 
 \paragraph{Intrinsically typed STLC}\label{par:intrinsicSTLC}
-In the typed case (for the same notion of \AD{Type} defined in
-Figure~\ref{fig:intrinsic-stlc}), we are back to two
+In the typed case, we are back to two
 constructors: the terms are fully annotated and therefore it is not necessary
 to distinguish between \AD{Mode}s anymore. We need our tags to carry extra
 information about the types involved so we use once more and ad-hoc datatype
-\AD{`STLC}, and define its decoding \AD{STLC} by a pattern-matching λ-expression.
+\AD{`STLC}, and define its decoding \AD{STLC} by a pattern-matching
+λ-expression.
 
 Application has two substructures none of which bind extra variables. The first
 has a function type and the second the type of its domain. The overall type of
@@ -189,8 +232,10 @@ for pattern synonyms. We only include examples of pattern synonyms
 for the two extreme examples, the definition for \AF{Bidi} are similar.
 
 \begin{figure}[h]
+  \begin{AgdaSuppressSpace}
   \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{patterns}
   \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{patterns}
+  \end{AgdaSuppressSpace}
   \caption{Respective Pattern Synonyms for \AF{UTLC} and \AF{STLC}%
     \label{fig:patsLC}}
 \end{figure}
@@ -214,29 +259,106 @@ the change of direction from \AIC{Check} to \AIC{Infer}.
 \caption{Identity function in all three languages}\label{fig:identity}
 \end{figure}
 
-\section{Common Combinators and Their Properties}\label{desccomb}
+\subsection{Porting our Earlier Running Example}
+
+To contrast and compare the two approaches, let us write down side by side
+the original definition of the intrinsincally typed STLC we introduced in
+\cref{fig:term} and its encoding as a description.
+
+We are going to take this definition apart, considering the different
+classes of constructors that it introduces and how to adequatly represent
+them using our universe of description. Our representation will once more
+rely on a type \AD{`Term} of tags listing the available term constructors
+together with a description \AD{Term} using a dependent pair to offer users
+the ability to pick the constructor of their choosing. That is to say that
+we are considering the following three definitions.
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:decl}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{tag:decl}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{term:decl}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+The most basic of constructors are the one with no subterms. The tag
+associated to them is a simple constructor and their decoding just
+uses the stop description constructor (\AIC{`∎}) to enforce that
+their return type matches the one specified in the original definition.
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:base}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{tag:base}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{term:base}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+Next we have the constructors that have subterms in which no extra variable
+is bound. Their encoding will use the constructor for recursive substructures
+and apply it to the empty list to reflect that fact. Additionally, both
+\AIC{`app} and \AIC{`ifte} store some additional information: the type of
+the subterms at hand. We will push this information into the tags just like
+we did in the previous section. We once more use the stop constructor to
+enforce that the constructors' respective return types are faithfully
+reproduced.
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:struct}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{tag:struct}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{term:struct}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+Finally, we have the λ-abstraction constructor. Its body is defined in
+a context extended with exactly one newly-bound variable whose type is
+the domain of the overall term's function type. This is modelled by
+applying the constructor for recursive substructure to a singleton list.
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:lam}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{tag:lam}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{term:lam}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+This concludes the translation. It clearly is a very mechanical process
+and thus could be automated using reflection. Such automation is however
+outside the scope of this thesis.
+
+\section{Common Combinators and Their Properties}
+\label{desccomb}
 
 In order to avoid repeatedly re-encoding the same logic, we introduce
-combinators demonstrating that descriptions are closed under finite
-sums and finite products of recursive positions.
-
-\subsection{Closure under Disjoint Union}
+a combinator demonstrating that descriptions are closed under finite
+sums.
 
 As we wrote, the construction used in \cref{fig:desculc} to define the
 syntax for the untyped λ-calculus is classic. It is actually the third
 time (the first and second times being the definition of \AF{listD} and
 \AF{vecD} in \cref{figure:listD,figure:vecD}) that we use a \AF{Bool}
-to distinguish between two constructors.
+to distinguish between two constructors. We define once and for all
+the disjoint union of two descriptions thanks to the \AF{\_`+\_} combinator
+in \cref{figure:descsum}.
 
-We define once and for all the disjoint union of two descriptions thanks
-to the \AF{\_`+\_} combinator. It comes together with an appropriate
-eliminator \AF{case} which, given two continuations, picks the one
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{descsum}
+  \caption{Descriptions are Closed Under Disjoint Sums\label{figure:descsum}}
+\end{figure}
+
+It comes together with an appropriate eliminator \AF{case} defined in
+\cref{figure:descsumelim} which, given two continuations, picks the one
 corresponding to the chosen branch.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{descsum}
 \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{case}
-\caption{Descriptions are Closed Under Disjoint Sums\label{figure:descsum}}
+\caption{Eliminator for \AF{\_`+\_}\label{figure:descsumelim}}
 \end{figure}
 
 A concrete use case for the disjoint union combinator and its eliminator
@@ -244,34 +366,34 @@ will be given in \cref{section:letbinding} where we explain how to seamlessly
 enrich any existing syntax with let-bindings and how to use the \AR{Semantics}
 framework to elaborate them away.
 
-\subsection{Closure Under Finite Product of Recursive Positions}
+%% \subsection{Closure Under Finite Product of Recursive Positions}
 
-Closure under product does not hold in general. Indeed, the equality constraints
-introduced by the two end tokens of two descriptions may be incompatible. So far,
-a limited form of closure (closure under finite product of recursive positions)
-has been sufficient for all of our use cases. Provided a list of pairs of context
-extensions and kinds, we can add to an existing description that many recursive
-substructures.
+%% Closure under product does not hold in general. Indeed, the equality constraints
+%% introduced by the two end tokens of two descriptions may be incompatible. So far,
+%% a limited form of closure (closure under finite product of recursive positions)
+%% has been sufficient for all of our use cases. Provided a list of pairs of context
+%% extensions and kinds, we can add to an existing description that many recursive
+%% substructures.
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{xs}
-\caption{Descriptions are Closed Under Finite Product of Recursive Positions\label{figure:descprod}}
-\end{figure}
+%% \begin{figure}[h]
+%% \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{xs}
+%% \caption{Descriptions are Closed Under Finite Product of Recursive Positions\label{figure:descprod}}
+%% \end{figure}
 
-As with coproducts, we can define an appropriate eliminator. The function \AF{unXs}
-takes a value in the encoding and extracts its constituents ({\AD{All} \AB{P} \AB{xs}}
-is defined in Agda's standard library and makes sure that the predicate \AB{P} holds
-true of all the elements in the list \AB{xs}).
+%% As with coproducts, we can define an appropriate eliminator. The function \AF{unXs}
+%% takes a value in the encoding and extracts its constituents ({\AD{All} \AB{P} \AB{xs}}
+%% is defined in Agda's standard library and makes sure that the predicate \AB{P} holds
+%% true of all the elements in the list \AB{xs}).
 
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{unxs}
-\caption{Breaking Down a Finite Product of Recursive Positions\label{figure:descprodelim}}
-\end{figure}
+%% \begin{figure}[h]
+%% \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{unxs}
+%% \caption{Breaking Down a Finite Product of Recursive Positions\label{figure:descprodelim}}
+%% \end{figure}
 
-We will see in \cref{section:letbinding} how to define let-bindings as a generic
-language extension and their inlining as a generic semantics over the extended
-syntax and into the base one. Closure under a finite product of recursive positions
-demonstrates that we could extend this construction to parallel (or even mutually-recursive)
-let-bindings where the number and the types of the bound expressions can be arbitrary.
-We will not go into the details of this construction as it is essentially a combination
-of \AF{Xs}, \AF{unXs} and the techniques used when defining single let-bindings.
+%% We will see in \cref{section:letbinding} how to define let-bindings as a generic
+%% language extension and their inlining as a generic semantics over the extended
+%% syntax and into the base one. Closure under a finite product of recursive positions
+%% demonstrates that we could extend this construction to parallel (or even mutually-recursive)
+%% let-bindings where the number and the types of the bound expressions can be arbitrary.
+%% We will not go into the details of this construction as it is essentially a combination
+%% of \AF{Xs}, \AF{unXs} and the techniques used when defining single let-bindings.
