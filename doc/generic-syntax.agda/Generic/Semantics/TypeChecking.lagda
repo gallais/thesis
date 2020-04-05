@@ -12,7 +12,7 @@ open import Data.Maybe using (Maybe; nothing; just)
 import Data.Maybe.Categorical as MC
 
 open import Data.Var hiding (_<$>_)
-open import Data.Environment hiding (_<$>_ ; _>>_)
+open import Data.Environment hiding (_<$>_)
 open import Generic.Syntax
 open import Generic.Syntax.Bidirectional; open PATTERNS
 open import Generic.Semantics
@@ -55,19 +55,19 @@ private
 \begin{code}
 Type- : Mode → Set
 Type- Check  = Type →  Maybe ⊤
-Type- Infer  =         Maybe Type
+Type- Synth  =         Maybe Type
 \end{code}
 %</typemode>
 %<*varmode>
 \begin{code}
 data Var- : Mode → Set where
-  `var : Type → Var- Infer
+  `var : Type → Var- Synth
 \end{code}
 %</varmode>
 
 %<*app>
 \begin{code}
-app : Type- Infer → Type- Check → Type- Infer
+app : Type- Synth → Type- Check → Type- Synth
 app f t = do
   arr      ← f
   (σ , τ)  ← isArrow arr
@@ -76,13 +76,13 @@ app f t = do
 %</app>
 %<*cut>
 \begin{code}
-cut : Type → Type- Check → Type- Infer
+cut : Type → Type- Check → Type- Synth
 cut σ t = σ <$ t σ
 \end{code}
 %</cut>
 %<*emb>
 \begin{code}
-emb : Type- Infer → Type- Check
+emb : Type- Synth → Type- Check
 emb t σ = do
   τ ← t
   σ =? τ
@@ -90,10 +90,10 @@ emb t σ = do
 %</emb>
 %<*lam>
 \begin{code}
-lam : Kripke (const ∘ Var-) (const ∘ Type-) (Infer ∷ []) Check Γ → Type- Check
+lam : Kripke (const ∘ Var-) (const ∘ Type-) (Synth ∷ []) Check Γ → Type- Check
 lam b arr = do
   (σ , τ) ← isArrow arr
-  b (bind Infer) (ε ∙ `var σ) τ
+  b (bind Synth) (ε ∙ `var σ) τ
 \end{code}
 %</lam>
 
@@ -112,7 +112,7 @@ Semantics.alg   Typecheck = λ where
 
 %<*type->
 \begin{code}
-type- : ∀ p → TM Bidi p → Type- p
+type- : ∀ mode → TM Bidi mode → Type- mode
 type- p = Semantics.closed Typecheck
 \end{code}
 %</type->
@@ -124,7 +124,7 @@ module _ where
 \end{code}
 %<*example>
 \begin{code}
-  _ : type- Infer (`app (`cut (β `→ β) id^B) id^B) ≡ just β
+  _ : type- Synth (`app (`cut (β `→ β) id^B) id^B) ≡ just β
   _ = refl
 \end{code}
 %</example>

@@ -175,12 +175,15 @@ one extra bound variable. Both constructors' descriptions end with
 
 \paragraph{Bidirectional STLC}\label{par:bidirectional} Our second example
 is a bidirectional (\cite{pierce2000local}) language hence the introduction
-of a notion of \AD{Mode}: each term is either part of the \AIC{Infer} or
-\AIC{Check} fraction of the language. This language has four constructors
+of a notion of \AD{Mode}. Each term is either part of the \AIC{Synth} (the
+terms whose type can be synthesised) or \AIC{Check} (the terms whose type
+can be checked) fraction of the language.
+%
+This language has four constructors
 which we list in the ad-hoc \AD{`Bidi} type of constructor tags, its
 decoding \AD{Bidi} is defined by a pattern-matching λ-expression in Agda.
 Application and λ-abstraction behave as expected, with the important
-observation that λ-abstraction binds an \AIC{Infer}rable term. The two
+observation that λ-abstraction binds a \AIC{Synth}esisable term. The two
 remaining constructors correspond to changes of direction: one can freely
 \AIC{Emb}bed inferrable terms as checkable ones whereas we require a type
 annotation when forming a \AIC{Cut}.
@@ -244,7 +247,7 @@ As a usage example of these pattern synonyms, we define the identity
 function in all three languages in Figure~\ref{fig:identity}, using the
 same caret-based naming convention we introduced earlier. The code
 is virtually the same except for \AF{Bidi} which explicitly records
-the change of direction from \AIC{Check} to \AIC{Infer}.
+the change of direction from \AIC{Check} to \AIC{Synth}.
 
 \begin{figure}[h]
 \begin{minipage}{0.25\textwidth}

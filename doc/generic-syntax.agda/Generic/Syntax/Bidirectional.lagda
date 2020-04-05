@@ -24,7 +24,7 @@ data Type : Set where
 %<*tagmode>
 \begin{code}
 data Mode : Set where
-  Check Infer : Mode
+  Check Synth : Mode
 
 data `Bidi : Set where
   App Lam Emb : `Bidi
@@ -48,10 +48,10 @@ private
 \begin{code}
 Bidi : Desc Mode
 Bidi  =  `σ `Bidi $ λ where
-  App      → `X [] Infer (`X [] Check (`∎ Infer))
-  Lam      → `X (Infer ∷ []) Check (`∎ Check)
-  (Cut σ)  → `X [] Check (`∎ Infer)
-  Emb      → `X [] Infer (`∎ Check)
+  App      → `X [] Synth (`X [] Check (`∎ Synth))
+  Lam      → `X (Synth ∷ []) Check (`∎ Check)
+  (Cut σ)  → `X [] Check (`∎ Synth)
+  Emb      → `X [] Synth (`∎ Check)
 \end{code}
 %</desc>
 \begin{code}
