@@ -1,13 +1,89 @@
-\chapter{Generic Scope Safe and Well Kinded Programs for Syntaxes}\label{chapter:generic-semantics}
+\chapter{Generic Scope Safe and Well Kinded Programs for Syntaxes}
+\label{chapter:generic-semantics}
 
-The set of constraints we called a \AR{Semantics} in
-\cref{section:generic-semantics} for the specific example of the
-simply typed λ-calculus could be divided in two groups: the one
-arising from the fact that we need to be able to push environment
-values under binders and the ones in one-to-one correspondence
-with constructors for the language.
+The constraints forming what we called a \AR{Semantics} in
+\cref{section:generic-semantics} have a shape determined by the
+specific language at hand: the simply typed λ-calculus.
+%
+These constraints could be divided in two groups: that arising
+from our need to push environment values under binders and those
+in one-to-one correspondence with constructors of the language.
 
-Based on this observation, we can define a generic notion of semantics
+By carefully studying the way in which the language-specific
+constraints are built, we ought to be able to define a
+language-agnostic notion of \AR{Semantics} valid for all of
+the syntaxes with binding our universe of descriptions can
+accomodate.
+
+\subsection{Dissecting the Components of A Semantics}
+
+Recall that the language we used as our running example was the
+simply-typed λ-calculus with a unit and boolean type.
+%
+The language constructs with the simplest associated \AR{Semantics}
+constraints were the constructors for constants in the language. We
+recall both the type of the constructors and that of their semantical
+counterparts below.
+
+\noindent\begin{minipage}{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:base}
+\end{minipage}\begin{minipage}{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+    \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{one}
+    \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{bool}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+From this observation, we can derive our first observation:
+constants in the language are interpreted as constants in
+the model. Their type is the same except that \AD{Term} has
+been replaced by the notion of computation \AB{𝓒} the model
+at hand is using.
+%
+Next come the language constructs that do have subterms but are not
+binding any additional variables. We have two such examples: application
+and boolean conditionals. We recall their types as well as that of their
+semantical counterparts below.
+
+\noindent\begin{minipage}{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:struct}
+\end{minipage}\begin{minipage}{0.6\textwidth}
+  \begin{AgdaSuppressSpace}
+    \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{app}
+    \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{ifte}
+  \end{AgdaSuppressSpace}
+\end{minipage}
+
+These type tell us that the counterparts for recursive
+substructures living in the same ambient environment as
+the overall term should be computations of the appropriate
+type.
+%
+Finally comes the constraint attached to the λ-abstraction,
+showing what the semantical counterpart to a binder should be.
+
+\noindent\begin{minipage}{0.4\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:lam}
+\end{minipage}\begin{minipage}{0.6\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
+\end{minipage}
+
+These types tell us that the semantical counterpart for inductive
+substructures with newly-bound variables are Kripke function spaces
+whose domain ensures a model-specific value \AB{𝓥} of the appropriate
+type is provided for each newly-bound variable and whose codomain is
+a computation.
+
+This tight coupling between the definition of the calculus and the
+structure of the \AR{Semantics} constraints tells us we will be able
+to define a generic version of this notion. The fact that these
+constraints have the same shape as their associated constructor
+suggests we ought to be able to reuse our interpretation function
+\AF{⟦\_⟧} to compute them.
+
+\subsection{Defining a Generic Notion of Semantics}
+
+Based on these observations, we can define a generic notion of semantics
 for all syntax descriptions. It is once more parametrised by two
 {(\AB{I}\AF{─Scoped})} families \AB{𝓥} and \AB{𝓒} corresponding
 respectively to values associated to bound variables and computations
@@ -19,7 +95,7 @@ delivered by evaluating terms.
 }
 
 These two families have to abide by three constraints. First, values
-should be thinnable so that we can push the evaluation environment
+should be thinnable so that we may push the evaluation environment
 under binders.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{thv}
@@ -34,28 +110,45 @@ Third, we have a constraint similar to the one needed to define \AF{fold} in
 \cref{section:data} (\cref{figure:datamu}). We should have an algebra taking
 a term whose substructures have already been evaluated and returning a
 computation for the overall term.
+%
+We will need a notion {(\AF{Kripke} \AB{𝓥} \AB{𝓒})} describing how
+the substructures have been evaluated. We will look at this definition
+shortly; the important thing to have in mind is that it should behave
+sensibly both for substructures with and without newly-bound variables.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{alg}
 
-To make formal this idea of ``hav[ing] already been evaluated'' we crucially use
-the fact that the meaning of a description is defined in terms of a function
-interpreting substructures which has the type (\AF{List} \AB{I} \AS{→} \AB{I}\AF{─Scoped}),
-i.e. that gets access to the current scope but also the exact list of the newly
-bound variables' kinds.
+To make formal this idea of ``hav[ing] already been evaluated'' we
+crucially use the fact that the meaning of a description is defined
+in terms of a function interpreting substructures which has the type
+(\AF{List} \AB{I} \AS{→} \AB{I}\AF{─Scoped}), i.e. that gets access
+to the current scope but also the exact list of the newly bound
+variables' kinds.
 
-We define a function \AF{Kripke} by case analysis on the number of newly bound
-variables. It is essentially a subcomputation waiting for a value associated to
-each one of the fresh variables. If it's $0$ we expect the substructure to be a
-computation corresponding to the result of the evaluation function's recursive
-call; but if there are newly bound variables then we expect to have a function
-space. In any context extension, it will take an environment of values for the
-newly-bound variables and produce a computation corresponding to the evaluation
+We define \AF{Kripke} by case analysis on the number of newly bound
+variables. It is essentially a subcomputation waiting for a value
+associated to each one of the fresh variables. If it's $0$ we expect
+the substructure to be a computation corresponding to the result of
+the evaluation function's recursive call; but if there are newly bound
+variables then we expect to have a function space. In any context
+extension, it will take an environment of values for the newly-bound
+variables and produce a computation corresponding to the evaluation
 of the body of the binder.
 
 {
 \ExecuteMetaData[shared/Data/Environment.tex]{kripke}
 \label{defn:Kripke}
 }
+
+It is worth noting that we could do away with the special case for
+subterms with no newly-bound variables and give a uniform definition
+of \AF{Kripke}. Indeed when evaluating a term we can always absorb
+thinnings by mapping them over the environment of values thanks to
+\ARF{th\textasciicircum{}𝓥}.
+%
+However this special case is truer to the observations we made earlier
+and gives user a definition that is easier to use.
+
 
 %The name \AF{Kripke} comes from the connection with the interpretation of
 %implication in Kripke models where if something holds in one world, it holds
@@ -101,8 +194,9 @@ The auxiliary lemma \AF{body} distinguishes two cases. If no new variable has
 been bound in the recursive substructure, it is a matter of calling \AF{semantics}
 recursively. Otherwise we are provided with a \AF{Thinning}, some additional
 values and evaluate the substructure in the thinned and extended evaluation
-environment thanks to a auxiliary function \AF{\_>>\_} which given two
-environments {(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Θ}} and {(\AB{Δ} \AR{─Env}) \AB{𝓥} \AB{Θ}}
+environment thanks to a auxiliary function \AF{\_++\textasciicircum{}Env\_}
+that given two environments
+{(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Θ}} and {(\AB{Δ} \AR{─Env}) \AB{𝓥} \AB{Θ}}
 produces an environment {((\AB{Γ} \AF{++} \AB{Δ}) \AR{─Env}) \AB{𝓥} \AB{Θ})}.
 
 \begin{figure}[h]

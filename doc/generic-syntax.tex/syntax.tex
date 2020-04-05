@@ -273,9 +273,9 @@ together with a description \AD{Term} using a dependent pair to offer users
 the ability to pick the constructor of their choosing. That is to say that
 we are considering the following three definitions.
 
-\noindent\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.5\textwidth}
     \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:decl}
-\end{minipage}\begin{minipage}[t]{0.6\textwidth}
+\end{minipage}\begin{minipage}[t]{0.5\textwidth}
   \begin{AgdaSuppressSpace}
   \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{tag:decl}
   \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Extended.tex]{term:decl}
@@ -329,7 +329,8 @@ applying the constructor for recursive substructure to a singleton list.
 \end{minipage}
 
 This concludes the translation. It clearly is a very mechanical process
-and thus could be automated using reflection. Such automation is however
+and thus could be automated using reflection
+(\cite{DBLP:conf/ifl/WaltS12,thesis:christiansen}). Such automation is however
 outside the scope of this thesis.
 
 \section{Common Combinators and Their Properties}
