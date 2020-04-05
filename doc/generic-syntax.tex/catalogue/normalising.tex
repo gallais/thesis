@@ -14,11 +14,12 @@ normalisation by evaluation suggests we ought to manage to
 give an unsafe generic framework for normalisation by evaluation.
 By temporarily \textbf{disabling Agda's positivity checker},
 we can define a generic reflexive domain \AD{Dm}
-(cf. Figure~\ref{fig:reflexivedomain}) in which to
+(cf. \cref{fig:reflexivedomain}) in which to
 interpret our syntaxes. It has three constructors corresponding
 respectively to a free variable, a constructor's counterpart where
 scopes have become \AF{Kripke} functional spaces on \AD{Dm} and
-an error token because the evaluation of untyped programs may go wrong.
+an error token because the evaluation of untyped programs may go wrong
+(a user may for instance try to add a function and a number).
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/NbyE.tex]{domain}
@@ -28,7 +29,9 @@ an error token because the evaluation of untyped programs may go wrong.
 This datatype definition is utterly unsafe. The more conservative
 user will happily restrict themselves to particular syntaxes where
 the typed settings allows for domain to be defined as a logical
-predicate or opt instead for a step-indexed approach.
+predicate or opt instead for a step-indexed approach. We did develop
+a step-indexed model construction but it was unusable: we could not
+get Agda to normalise even the simplest of terms.
 
 But this domain does make it possible to define a generic \AF{nbe}
 semantics which, given a term, produces a value in the reflexive
