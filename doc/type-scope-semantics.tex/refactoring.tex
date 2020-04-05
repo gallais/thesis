@@ -62,7 +62,7 @@ that there can never be a value of type ({\AD{Var} \AB{σ} \AIC{[]}}).
 \end{figure}
 
 The environment extension definition proceeds by pattern-matching on the
-variable: if it \AIC{z} then we return the newly-added value, otherwise we are
+variable: if it \AIC{z} then we return the newly added value, otherwise we are
 referring to a value in the original environment and can simply look it up.
 
 \begin{figure}[h]
@@ -200,7 +200,7 @@ the same general structure. The variable case is nothing more than a
 lookup in the environment; the application case is defined by combining
 the results of two structural calls; and the lambda case corresponds to
 the evaluation of the lambda's body in an extended context provided that
-we can get a value for the newly-bound variable. Ignoring for now the
+we can get a value for the newly bound variable. Ignoring for now the
 definitions of \AF{APP} and \AF{LAM}, we can see the similarities
 in~\cref{nbe}.
 
@@ -652,7 +652,7 @@ essentially a stream of distinct strings.
 \caption{Names and Printer for the Printing Semantics\label{fig:semprint}}
 \end{figure}
 
-The monad \AF{Fresh} allows us to generate fresh names for newly-bound
+The monad \AF{Fresh} allows us to generate fresh names for newly bound
 variables. This is demonstrated by the function \AF{fresh} defined in
 \cref{fig:freshname}.
 
@@ -682,7 +682,7 @@ trivial \AF{Printer} constantly returning that name.
 
 As often, the case for λ-abstraction (\ARF{lam}) is the most interesting one.
 We first use \AF{fresh} defined in \cref{fig:freshname} to generate a \AF{Name},
-\AB{x}, for the newly-bound variable, then run the printer for the body, \AB{mb},
+\AB{x}, for the newly bound variable, then run the printer for the body, \AB{mb},
 in the environment extended with that fresh name and finally build a string
 combining the name and the body together.
 

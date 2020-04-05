@@ -36,16 +36,16 @@ The structure of \AR{Semantics} would suggest giving our users an interface
 where sub-structures are interpreted as \AF{Kripke} function spaces expecting
 fresh names for the fresh variables and returning a printer i.e. a monadic
 computation returning a \AD{String}. However we can do better: we can
-preemptively generate a set of fresh names for the newly-bound variables and
+preemptively generate a set of fresh names for the newly bound variables and
 hand them to the user together with the result of printing the body with
 these names. As usual we have a special case for the substructures without
-any newly-bound variable. Note that the specific target context of the
+any newly bound variable. Note that the specific target context of the
 environment of \AF{Name}s is only picked for convenience as \AF{Name}
 ignores the scope: ({\AB{Δ} \AF{++} \AB{Γ}}) is what \AF{freshˡ} gives us.
 %
 In other words: \AF{Pieces} states that a subterm has already been printed
 if we have a string representation of it together with an environment of
-\AR{Name}s we have attached to the newly-bound variables this structure
+\AR{Name}s we have attached to the newly bound variables this structure
 contains.
 %
 \begin{agdasnippet}
@@ -81,7 +81,7 @@ the type we expect.
 
 Otherwise we proceed in a manner reminiscent of the pure reification function
 defined in Figure~\ref{fig:genericreify}. We start by generating an environment
-of names for the newly-bound variables by using the fact that \AF{Fresh} composed
+of names for the newly bound variables by using the fact that \AF{Fresh} composed
 with \AF{Name} is \AR{VarLike} together with the fact that environments are
 Traversable~\cite{mcbride_paterson_2008}, %%%
 and thus admit the standard Haskell-like \AF{mapA} and \AF{sequenceA}

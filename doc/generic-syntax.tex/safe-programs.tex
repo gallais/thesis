@@ -69,9 +69,9 @@ showing what the semantical counterpart to a binder should be.
 \end{minipage}
 
 These types tell us that the semantical counterpart for inductive
-substructures with newly-bound variables are Kripke function spaces
+substructures with newly bound variables are Kripke function spaces
 whose domain ensures a model-specific value \AB{𝓥} of the appropriate
-type is provided for each newly-bound variable and whose codomain is
+type is provided for each newly bound variable and whose codomain is
 a computation.
 
 This tight coupling between the definition of the calculus and the
@@ -114,7 +114,7 @@ computation for the overall term.
 We will need a notion {(\AF{Kripke} \AB{𝓥} \AB{𝓒})} describing how
 the substructures have been evaluated. We will look at this definition
 shortly; the important thing to have in mind is that it should behave
-sensibly both for substructures with and without newly-bound variables.
+sensibly both for substructures with and without newly bound variables.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{alg}
 
@@ -131,7 +131,7 @@ associated to each one of the fresh variables. If it's $0$ we expect
 the substructure to be a computation corresponding to the result of
 the evaluation function's recursive call; but if there are newly bound
 variables then we expect to have a function space. In any context
-extension, it will take an environment of values for the newly-bound
+extension, it will take an environment of values for the newly bound
 variables and produce a computation corresponding to the evaluation
 of the body of the binder.
 
@@ -141,7 +141,7 @@ of the body of the binder.
 }
 
 It is worth noting that we could do away with the special case for
-subterms with no newly-bound variables and give a uniform definition
+subterms with no newly bound variables and give a uniform definition
 of \AF{Kripke}. Indeed when evaluating a term we can always absorb
 thinnings by mapping them over the environment of values thanks to
 \ARF{th\textasciicircum{}𝓥}.

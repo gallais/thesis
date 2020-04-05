@@ -21,14 +21,14 @@ except for two aspects.
 
 First, the constructor marking the presence of a recursive substructure
 will take an extra {(\AD{List} \AB{I})} argument specifying the sorts of
-the newly-bound variables that will be present in the subterm.
+the newly bound variables that will be present in the subterm.
 
 Second, the type of the meaning function is more complex. It does not
 translate descriptions into an endofunctor on {(\AB{I} \AF{─Scoped})};
 it is more general than that. The function takes an \AB{X} of type
 {\AD{List} \AB{I} → \AB{I} \AD{─Scoped}} to interpret demand for
 recursive substructures. This first list argument corresponds to the
-newly-bound variables that will be present in the subterm and having
+newly bound variables that will be present in the subterm and having
 it as a separate argument will play a crucial role when defining the
 description's semantics as a binding structure in
 \cref{figure:syntaxmeaning,figure:debruijnscope,figure:freemonad}.
@@ -54,7 +54,7 @@ will depend.
 
 The case of interest is the one for recursive substructures. As explained
 above, it packs an extra argument specifying the number and sorts of the
-newly-bound variables. For a λ-abstraction, this list would be a singleton,
+newly bound variables. For a λ-abstraction, this list would be a singleton,
 meaning that a single extra variable is in scope in the body of the lambda;
 for both of the arguments of an application node the list would be empty.
 
@@ -89,7 +89,7 @@ the meaning function \AF{⟦\_⟧} with a notion of
 of type {(\AD{List} \AB{I} \AS{→} \AB{I} \AF{─Scoped})} by appending the two
 \AD{List} indices, we recover a meaning function producing an endofunctor on
 \AB{I} \AF{─Scoped}. It corresponds to the syntactic interpretation of
-the description we expect when building terms: the newly-bound variables
+the description we expect when building terms: the newly bound variables
 are simply used to extend the ambient context.
 
 \begin{figure}[h]
@@ -208,7 +208,7 @@ has a function type and the second the type of its domain. The overall type of
 the branch is enforced to be that of the function's codomain by the \AIC{`∎}
 constructor.
 
-λ-abstraction has exactly one substructure of type \AB{τ} with a newly-bound
+λ-abstraction has exactly one substructure of type \AB{τ} with a newly bound
 variable of type \AB{σ}. The overall type of the branch is once more enforced
 by \AIC{`∎}: it is (\AB{σ} \AIC{`→} \AB{τ}).
 
@@ -315,7 +315,7 @@ reproduced.
 \end{minipage}
 
 Finally, we have the λ-abstraction constructor. Its body is defined in
-a context extended with exactly one newly-bound variable whose type is
+a context extended with exactly one newly bound variable whose type is
 the domain of the overall term's function type. This is modelled by
 applying the constructor for recursive substructure to a singleton list.
 
