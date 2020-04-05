@@ -25,9 +25,9 @@ constraints were the constructors for constants in the language. We
 recall both the type of the constructors and that of their semantical
 counterparts below.
 
-\noindent\begin{minipage}{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:base}
-\end{minipage}\begin{minipage}{0.6\textwidth}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
   \begin{AgdaSuppressSpace}
     \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{one}
     \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{bool}
@@ -45,9 +45,9 @@ binding any additional variables. We have two such examples: application
 and boolean conditionals. We recall their types as well as that of their
 semantical counterparts below.
 
-\noindent\begin{minipage}{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:struct}
-\end{minipage}\begin{minipage}{0.6\textwidth}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
   \begin{AgdaSuppressSpace}
     \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{app}
     \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{ifte}
@@ -62,9 +62,9 @@ type.
 Finally comes the constraint attached to the λ-abstraction,
 showing what the semantical counterpart to a binder should be.
 
-\noindent\begin{minipage}{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:lam}
-\end{minipage}\begin{minipage}{0.6\textwidth}
+\end{minipage}\begin{minipage}[t]{0.6\textwidth}
   \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
 \end{minipage}
 
@@ -223,20 +223,27 @@ empty environment.
 \caption{Special Case: Fundamental Lemma of \AR{Semantics} for Closed Terms\label{fig:closedsem}}
 \end{figure}
 
-\section{Our First Generic Programs: Renaming and Substitution}\label{section:renandsub}
+\section{Our First Generic Programs: Renaming and Substitution}
+\label{section:renandsub}
 
-Similarly to \cref{sec:syntactic} renaming and substitutions can be defined generically
-for all syntax descriptions.
+Similarly to \cref{sec:syntactic} renaming and substitutions can
+be defined generically for all syntax descriptions.
 
-\paragraph{Renaming} is a semantics with \AF{Var} as values and \AD{Tm} as computations.
-The first two constraints on \AF{Var} described earlier are trivially satisfied. Observing
-that renaming strictly respects the structure of the term it goes through, it makes
-sense for the algebra to be implemented using \AF{fmap}. When dealing with the body
-of a binder, we `reify' the \AF{Kripke} function by evaluating it in an extended
-context and feeding it placeholder values corresponding to the extra variables
-introduced by that context. This is reminiscent both of what we did in
-\cref{sec:syntactic} and the definition of reification in the setting of normalisation
-by evaluation (see e.g. Coquand's work~\citeyear{coquand2002formalised}).
+\paragraph{Renaming} is a semantics with \AF{Var} as values and \AD{Tm}
+as computations. The first two constraints on \AF{Var} described earlier
+are trivially satisfied, we reuse the proof \AF{th\textasciicircum{}}
+introduced in \cref{fig:thinVarEnv}.
+%
+Observing that renaming strictly respects the structure of the term it goes
+through, it makes sense for the algebra to be implemented using \AF{fmap}.
+When dealing with the body of a binder, we `reify' the \AF{Kripke} function
+by evaluating it in an extended context and feeding it placeholder values
+corresponding to the extra variables introduced by that context. This is
+reminiscent both of what we did in \cref{sec:syntactic} and the definition
+of reification in the setting of normalisation by evaluation (see e.g.
+Coquand's work~\citeyear{coquand2002formalised}). Reification can be defined
+generically for var-like values (\AF{vl\textasciicircum{}} is the proof that
+variables are var-like); we will make this formal in \cref{fig:VarLike}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Syntactic.tex]{renaming}
@@ -265,8 +272,11 @@ substitution as a corollary of the fundamental lemma of \AR{Semantics}.
 \end{figure}
 
 \paragraph{The reification process} mentioned in the definition of renaming
-and substitution can be implemented generically for \semrec{} families
-which have \AR{VarLike} values, i.e.  values which are thinnable and
+and substitution can be implemented generically for the \semrec{} families
+satisfying a set of conditions.
+%
+We introduce in \cref{fig:VarLike} the \AR{VarLike} set of constraints
+to characterise these families. It captures values that are thinnable and
 such that we can craft placeholder values in non-empty contexts. It is
 almost immediate that both \AD{Var} and \AD{Tm} are \AR{VarLike} (with
 proofs \AF{vl\textasciicircum{}Var} and \AF{vl\textasciicircum{}Tm},

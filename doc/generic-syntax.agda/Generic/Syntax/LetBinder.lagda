@@ -27,7 +27,7 @@ module _ {I : Set} where
 %<*letcode>
 \begin{code}
   Let : Desc I
-  Let = `σ (I × I) $ uncurry $ λ σ τ →
+  Let = `σ (I × I) $ λ (σ , τ) →
         `X [] σ (`X (σ ∷ []) τ (`∎ τ))
 \end{code}
 %</letcode>
