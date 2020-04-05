@@ -8,15 +8,35 @@ expression's type and a well scoped and well typed term of that
 type. We use \AF{STLC} (defined in Section~\ref{par:intrinsicSTLC}) as
 our internal language.
 
-Before we can jump right in, we need to set the stage: a \AR{Semantics} for a
-\AF{Bidi} term will involve ({\AD{Mode} \AF{─Scoped}}) notions of values and
-computations but an \AF{STLC} term is ({\AD{Type} \AF{─Scoped}}). We first
-introduce a \AF{Typing} associating types to each of the modes in scope,
-together with an erasure function \AF{⌞\_⌟} extracting the context of types
-implicitly defined by such a \AF{Typing}.
+Let us start with a simple example reusing the different definitions of
+the identity function we introduced in \cref{fig:identity}
+(\AF{id\textasciicircum{}B} for the identity in our little bidirectional
+language and \AF{id\textasciicircum{}S} for the well scoped and typed one
+in STLC). We want a function that will typecheck \AF{id\textasciicircum{}B}
+against the candidate (\AIC{α `→ α}), succeeds and returns the
+fully annotated \AF{id\textasciicircum{}S}.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{idexample}
+\caption{Example Use of our Elaborator}
+\end{figure}
+
+Before we can jump right in, we need to set the stage: a \AR{Semantics} for
+a \AF{Bidi} term will involve ({\AD{Mode} \AF{─Scoped}}) notions of values
+and computations but an \AF{STLC} term is ({\AD{Type} \AF{─Scoped}}).
+%
+We first introduce a \AF{Typing} associating types to each of the modes in
+scope, together with an erasure function \AF{⌞\_⌟} extracting the context
+of types implicitly defined by such a \AF{Typing}.
 %
 We will systematically distinguish contexts of modes (typically named \AB{ms})
-and their associated typings (typically named \AB{Γ}).
+and their associated typings (typically named \AB{Γ}). Note that we assume
+that our contexts of modes only contain \AIC{Synth} variables; but we cannot
+enforce it here: our framework forces us to have the same sorts for terms
+and variables. Relaxing this constraint is an interesting avenue for further
+work. In the meantime, we work within these parameters and only enforce this
+constraint when defining our \AR{Semantics} thus making it impossible to
+evaluate invalid terms.
 
 \begin{figure}[h]
 \begin{minipage}[t]{0.4\textwidth}
@@ -39,25 +59,28 @@ context of modes, we should get a value of type
 \caption{Elaboration of a Scoped Family}
 \end{figure}
 
-Our first example of an elaboration process is our notion of environment values.
-To each variable in scope of mode \AIC{Infer} we associate an elaboration function
-targeting \AD{Var}. In other words: our values are all in scope i.e. provided any
-typing of the scope of modes, we can assuredly return a type together with a
-variable of that type.
+Our first example of an elaboration process is our notion of environment
+values. To each variable in scope of mode \AIC{Synth} we associate an
+elaboration function targeting \AD{Var}. In other words: our values are
+all in scope i.e. provided any typing of the scope of modes, we can
+assuredly return a type together with a variable of that type. Note that
+here we do enforce that variables only have a meaning if they have been
+rightly marked as \AIC{Synth}esisable.
 
 \begin{figure}[h!]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{varmode}
 \caption{Values as Elaboration Functions for Variables\label{fig:elabvalues}}
 \end{figure}
 
-We can for instance prove that we have such an inference function for a newly bound
-variable of mode \AIC{Infer}: given that the context has been extended with a variable
-of mode \AIC{Infer}, the \AF{Typing} must also have been extended with a type \AB{σ}.
-We can return that type paired with the variable \AIC{z}.
+We can for instance prove that we have such an inference function for a
+newly bound variable of mode \AIC{Synth}: given that the context has been
+extended with a variable of mode \AIC{Synth}, the \AF{Typing} must also
+have been extended with a type \AB{σ}. We can return that type paired with
+the variable \AIC{z}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{var0}
-\caption{Inference Function for the 0-th Variable\label{fig:elabvar0}}
+\caption{Synthesis Function for the 0-th Variable\label{fig:elabvar0}}
 \end{figure}
 
 The computations are a bit more tricky. On the one hand, if we are in
@@ -126,20 +149,20 @@ with the internal function applied to the internal argument.
 \paragraph{λ-abstraction} For the λ-abstraction case, we start by
 checking that the type candidate \AB{arr} is an \AD{Arrow}. We can
 then elaborate the body \AB{b} of the lambda in a context of modes extended
-with one \AIC{Infer} variable, and the corresponding \AF{Typing} extended
+with one \AIC{Synth} variable, and the corresponding \AF{Typing} extended
 with the function's domain. From this we get
 an internal term \AB{B} corresponding to the body of the λ-abstraction and
 conclude by returning it wrapped in a \AIC{`lam} constructor.
 \begin{agdasnippet}
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{lam}
 \end{agdasnippet}
-\paragraph{Cut: A \AD{Check} in an \AD{Infer} position} For cut, we start by
+\paragraph{Cut: A \AD{Check} in an \AD{Synth} position} For cut, we start by
 elaborating the term with the type annotation provided and return them paired
 together.
 \begin{agdasnippet}
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{cut}
 \end{agdasnippet}
-\paragraph{Embedding of \AD{Infer} into \AD{Check}} For the change of direction
+\paragraph{Embedding of \AD{Synth} into \AD{Check}} For the change of direction
 \AIC{Emb} we not only want to check that the inferred type and the type candidate
 are equal: we need to cast the internal term labelled with the inferred type to
 match the type candidate. Luckily, Agda's dependent \AK{do}-notation make our
@@ -175,7 +198,7 @@ definitions in Figure~\ref{fig:typedelaboration}.
 \begin{minipage}{0.45\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{type-}
 \end{minipage}
-\caption{Evidence-producing Type (Checking / Inference) Function}
+\caption{Evidence-producing Type (Checking / Synthesis) Function}
 \label{fig:typedelaboration}
 \end{figure}
 

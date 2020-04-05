@@ -64,7 +64,7 @@ Elab- Infer  ms = ∀ Γ → Maybe (Σ[ σ ∈ Type ] Elab (Tm STLC ∞) σ ms �
 %<*varmode>
 \begin{code}
 data Var- : Mode ─Scoped where
-  `var : (infer : ∀ Γ → Σ[ σ ∈ Type ] Elab Var σ ms Γ) → Var- Infer ms
+  `var : (infer : ∀ Γ → Σ[ σ ∈ Type ] Elab Var σ ms Γ) → Var- Synth ms
 \end{code}
 %</varmode>
 \begin{code}
@@ -125,7 +125,7 @@ isArrow _         = nothing
 %</arrowview>
 %<*app>
 \begin{code}
-app : ∀[ Elab- Infer ⇒ Elab- Check ⇒ Elab- Infer ]
+app : ∀[ Elab- Synth ⇒ Elab- Check ⇒ Elab- Synth ]
 app f t Γ = do
   (arr , F)  ← f Γ
   (σ `→ τ)   ← isArrow arr
@@ -135,22 +135,22 @@ app f t Γ = do
 %</app>
 %<*var0>
 \begin{code}
-var₀ : Var- Infer (Infer ∷ ms)
+var₀ : Var- Synth (Synth ∷ ms)
 var₀ = `var λ where (σ ∷ _) → (σ , z)
 \end{code}
 %</var0>
 %<*lam>
 \begin{code}
-lam : ∀[ Kripke Var- Elab- (Infer ∷ []) Check ⇒ Elab- Check ]
+lam : ∀[ Kripke Var- Elab- (Synth ∷ []) Check ⇒ Elab- Check ]
 lam b Γ arr = do
   (σ `→ τ)  ← isArrow arr
-  B         ← b (bind Infer) (ε ∙ var₀) (σ ∷ Γ) τ
+  B         ← b (bind Synth) (ε ∙ var₀) (σ ∷ Γ) τ
   return (`lam B)
 \end{code}
 %</lam>
 %<*emb>
 \begin{code}
-emb : ∀[ Elab- Infer ⇒ Elab- Check ]
+emb : ∀[ Elab- Synth ⇒ Elab- Check ]
 emb t Γ σ = do
   (τ , T)  ← t Γ
   refl     ← σ =? τ
@@ -159,7 +159,7 @@ emb t Γ σ = do
 %</emb>
 %<*cut>
 \begin{code}
-cut : Type → ∀[ Elab- Check ⇒ Elab- Infer ]
+cut : Type → ∀[ Elab- Check ⇒ Elab- Synth ]
 cut σ t Γ = (σ ,_) <$> t Γ σ
 \end{code}
 %</cut>
@@ -167,7 +167,8 @@ cut σ t Γ = (σ ,_) <$> t Γ σ
 \begin{code}
 Elaborate : Semantics Bidi Var- Elab-
 Elaborate .th^𝓥  = th^Var-
-Elaborate .var   = λ where (`var infer) Γ → just (map₂ `var (infer Γ))
+Elaborate .var   =  λ where (`var infer) Γ → let (σ , v) = infer Γ in
+                                             just (σ , `var v)
 Elaborate .alg   = λ where
   (`app' f t)  → app f t
   (`lam' b)    → lam b
@@ -185,7 +186,7 @@ Elaborate .alg   = λ where
 \begin{code}
 Type- : Mode → Set
 Type- Check  = ∀ σ → Maybe (TM STLC σ)
-Type- Infer  = Maybe (∃ λ σ → TM STLC σ)
+Type- Synth  = Maybe (∃ λ σ → TM STLC σ)
 \end{code}
 %</typemode>
 
@@ -193,7 +194,7 @@ Type- Infer  = Maybe (∃ λ σ → TM STLC σ)
 \begin{code}
 type- : ∀ p → TM Bidi p → Type- p
 type- Check  t = closed Elaborate t []
-type- Infer  t = closed Elaborate t []
+type- Synth  t = closed Elaborate t []
 \end{code}
 %</type->
 
@@ -208,8 +209,15 @@ module _ where
 \end{code}
 %<*example>
 \begin{code}
-  _ :  type- Infer  ( B.`app (B.`cut (β `→ β)  id^B)  id^B)
+  _ :  type- Synth  ( B.`app (B.`cut (β `→ β)  id^B)  id^B)
     ≡  just (β      , S.`app                   id^S   id^S)
   _ = refl
 \end{code}
 %</example>
+
+%<*idexample>
+\begin{code}
+_ : type- Check id^B (α `→ α) ≡ just id^S
+_ = refl
+\end{code}
+%</idexample>
