@@ -8,7 +8,7 @@ open import Data.Product using (_×_; _,_; proj₂)
 open import Data.Relation as Rel hiding (_∙ᴿ_)
 open import Syntax.Type
 open import Syntax.Calculus
-open import Semantics.Specification as Semantics hiding (eval; module Fundamental)
+open import Semantics.Specification as Semantics
 open import Semantics.Syntactic.Instances
 open import Function renaming (_$′_ to _$_) using (id)
 open import Relation.Unary
@@ -16,10 +16,10 @@ open import Relation.Unary
 open import Relation.Binary.PropositionalEquality.Extra
 open import Properties.Simulation.Instances
   using (PER; refl^PER; sym^PER; trans^PER; th^PER; reflectᴿ; reifyᴿ; eval^Sim)
-open import Semantics.NormalisationByEvaluation.BetaIotaXiEta hiding (eval)
+open import Semantics.NormalisationByEvaluation.BetaIotaXiEta
 open import Properties.Fusion.Specification
 
-eval = Semantics.Fundamental.lemma Eval
+eval = Semantics.semantics Eval
 
 module RenFusion where
 
@@ -94,7 +94,7 @@ module RenFusion where
 \begin{code}
  reneval :  (th : Thinning Γ Δ) (ρ : (Δ ─Env) Model Θ) → All PER Δ ρ ρ →
             ∀ t → rel PER σ (eval ρ (th^Term t th)) (eval (select th ρ) t)
- reneval th ρ ρᴿ t = Fundamental.lemma RenEval (selectᴿ th ρᴿ) t
+ reneval th ρ ρᴿ t = fusion RenEval (selectᴿ th ρᴿ) t
 \end{code}
 %</renevalfun>
 \begin{code}

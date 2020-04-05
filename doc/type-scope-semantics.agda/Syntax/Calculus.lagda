@@ -42,7 +42,6 @@ module DISPLAYONLY where
    `one     : ∀[ Term `Unit ]
 
    `tt      : ∀[ Term `Bool ]
-
    `ff      : ∀[ Term `Bool ]
 \end{code}
 %</termcompact:base>

@@ -65,7 +65,7 @@ reify vl^𝓥 Δ@(_ ∷ _)  i b = b (freshʳ vl^Var Δ) (freshˡ vl^𝓥 _)
 module _ (vl^𝓥 : VarLike 𝓥) where
 
   lift : ∀ Θ → (Γ ─Env) 𝓥 Δ → ((Θ ++ Γ) ─Env) 𝓥 (Θ ++ Δ)
-  lift Θ ρ = freshˡ vl^𝓥 _ >> th^Env (th^𝓥 vl^𝓥) ρ (freshʳ vl^Var Θ)
+  lift Θ ρ = freshˡ vl^𝓥 _ ++^Env th^Env (th^𝓥 vl^𝓥) ρ (freshʳ vl^Var Θ)
 
   extend-is-fresh : All Eqᴿ Γ extend (freshʳ vl^Var (σ ∷ []))
   lookupᴿ extend-is-fresh k = cong s (sym (lookup-base^Var k))
@@ -73,12 +73,12 @@ module _ (vl^𝓥 : VarLike 𝓥) where
 module _ {I : Set} {𝓥 : I ─Scoped} where
  open ≡-Reasoning
 
- freshʳ->> : (Δ : List I) {Γ Θ : List I}
+ freshʳ-++^Env : (Δ : List I) {Γ Θ : List I}
              (ρ₁ : (Δ ─Env) 𝓥 Θ) (ρ₂ : (Γ ─Env) 𝓥 Θ) {i : I} (v : Var i Γ) →
-             lookup (ρ₁ >> ρ₂) (lookup (freshʳ vl^Var Δ) v) ≡ lookup ρ₂ v
- freshʳ->> Δ ρ₁ ρ₂ v = begin
-   lookup (ρ₁ >> ρ₂) (lookup (freshʳ vl^Var Δ) v)
-     ≡⟨ injectʳ->> ρ₁ ρ₂ (lookup (base vl^Var) v) ⟩
+             lookup (ρ₁ ++^Env ρ₂) (lookup (freshʳ vl^Var Δ) v) ≡ lookup ρ₂ v
+ freshʳ-++^Env Δ ρ₁ ρ₂ v = begin
+   lookup (ρ₁ ++^Env ρ₂) (lookup (freshʳ vl^Var Δ) v)
+     ≡⟨ injectʳ-++^Env ρ₁ ρ₂ (lookup (base vl^Var) v) ⟩
    lookup ρ₂ (lookup (base vl^Var) v)
      ≡⟨ cong (lookup ρ₂) (lookup-base^Var v) ⟩
    lookup ρ₂ v

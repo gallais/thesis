@@ -76,18 +76,18 @@ split-injectʳ : (Δ : List I) (v : Var σ Γ) → split Δ (injectʳ Δ v) ≡ 
 split-injectʳ []      v                           = refl
 split-injectʳ (_ ∷ Δ) v rewrite split-injectʳ Δ v = refl
 
-_>>_ : (Γ ─Env) 𝓥 Θ → (Δ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
-lookup (_>>_ {Γ = Γ} ρ₁ ρ₂) k with split Γ k
+_++^Env_ : (Γ ─Env) 𝓥 Θ → (Δ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
+lookup (_++^Env_ {Γ = Γ} ρ₁ ρ₂) k with split Γ k
 ... | inj₁ k₁ = lookup ρ₁ k₁
 ... | inj₂ k₂ = lookup ρ₂ k₂
 
-injectˡ->> : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Γ) →
-             lookup (ρ₁ >> ρ₂) (injectˡ Δ v) ≡ lookup ρ₁ v
-injectˡ->> {Δ = Δ} ρ₁ ρ₂ v rewrite split-injectˡ Δ v = refl
+injectˡ-++^Env : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Γ) →
+             lookup (ρ₁ ++^Env ρ₂) (injectˡ Δ v) ≡ lookup ρ₁ v
+injectˡ-++^Env {Δ = Δ} ρ₁ ρ₂ v rewrite split-injectˡ Δ v = refl
 
-injectʳ->> : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Δ) →
-             lookup (ρ₁ >> ρ₂) (injectʳ Γ v) ≡ lookup ρ₂ v
-injectʳ->> {Γ = Γ} ρ₁ ρ₂ v rewrite split-injectʳ Γ v = refl
+injectʳ-++^Env : ∀ (ρ₁ : (Γ ─Env) 𝓥 Θ) (ρ₂ : (Δ ─Env) 𝓥 Θ) (v : Var i Δ) →
+             lookup (ρ₁ ++^Env ρ₂) (injectʳ Γ v) ≡ lookup ρ₂ v
+injectʳ-++^Env {Γ = Γ} ρ₁ ρ₂ v rewrite split-injectʳ Γ v = refl
 
 infixl 10 _∙_
 \end{code}
@@ -124,7 +124,7 @@ lookup extend v = s v
 bind : ∀ σ → Thinning Γ (σ ∷ Γ)
 bind _ = extend
 
--- Like the flipped version of _>>_ but it computes. Which is convenient when
+-- Like the flipped version of _++^Env_ but it computes. Which is convenient when
 -- dealing with concrete Γs (cf. βred)
 _<+>_ : (Δ ─Env) 𝓥 Θ → (Γ ─Env) 𝓥 Θ → (Γ ++ Δ ─Env) 𝓥 Θ
 _<+>_ {Γ = []}    ρ₁ ρ₂ = ρ₁

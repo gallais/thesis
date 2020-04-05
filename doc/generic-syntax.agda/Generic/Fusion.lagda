@@ -11,7 +11,7 @@ open import Function renaming (_∘′_ to _∘_) hiding (_∘_)
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
 open import Relation.Unary
-open import Data.Relation hiding (_>>ᴿ_)
+open import Data.Relation hiding (_++^Envᴿ_)
 open import Data.Var.Varlike
 open import Data.Environment
 
@@ -70,9 +70,9 @@ record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Se
 \end{code}
 %<*appendR>
 \begin{code}
-    _>>ᴿ_  :  𝓔ᴿ Γ Δ ρᴬ ρᴮ ρᴬᴮ → All 𝓥ᴿ Θ vsᴮ vsᴬᴮ →
-              let id>>ρᴬ = freshˡ vl^𝓥ᴬ Δ >> th^Env 𝓢ᴬ.th^𝓥 ρᴬ (freshʳ vl^Var Θ)
-              in 𝓔ᴿ (Θ ++ Γ) (Θ ++ Δ) id>>ρᴬ (vsᴮ >> ρᴮ) (vsᴬᴮ >> ρᴬᴮ)
+    _++^Envᴿ_  :  𝓔ᴿ Γ Δ ρᴬ ρᴮ ρᴬᴮ → All 𝓥ᴿ Θ vsᴮ vsᴬᴮ →
+              let id++^Envρᴬ = freshˡ vl^𝓥ᴬ Δ ++^Env th^Env 𝓢ᴬ.th^𝓥 ρᴬ (freshʳ vl^Var Θ)
+              in 𝓔ᴿ (Θ ++ Γ) (Θ ++ Δ) id++^Envρᴬ (vsᴮ ++^Env ρᴮ) (vsᴬᴮ ++^Env ρᴬᴮ)
 \end{code}
 %</appendR>
 %<*thV>
@@ -131,6 +131,6 @@ record Fusion (d : Desc I) (𝓢ᴬ : Semantics d 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Se
 %<*bodycode>
 \begin{code}
   body ρᴿ []       i b = fusion ρᴿ b
-  body ρᴿ (σ ∷ Δ)  i b = λ ρ vsᴿ → fusion (th^𝓔ᴿ ρᴿ ρ >>ᴿ vsᴿ) b
+  body ρᴿ (σ ∷ Δ)  i b = λ ρ vsᴿ → fusion (th^𝓔ᴿ ρᴿ ρ ++^Envᴿ vsᴿ) b
 \end{code}
 %</bodycode>

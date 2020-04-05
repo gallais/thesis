@@ -7,7 +7,7 @@ open import Data.List.Base using (List; []; _∷_)
 open import Data.Var
 open import Data.Environment as Env hiding (Kripke; Thinning)
 open import Syntax.Type
-open import Syntax.Calculus
+open import Syntax.Calculus hiding (module DISPLAYONLY)
 open import Relation.Unary
 open import Function
 

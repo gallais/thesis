@@ -13,7 +13,7 @@ open import Data.Maybe.Categorical as MC
 
 open import Relation.Unary
 open import Data.Var hiding (_<$>_)
-open import Data.Environment hiding (_<$>_ ; _>>_)
+open import Data.Environment hiding (_<$>_)
 open import Generic.Syntax
 open import Generic.Semantics
 

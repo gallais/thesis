@@ -57,7 +57,7 @@ module _ {I : Set} (d : Desc I) where
      ren σ (ren ρ₂ (lookup ρ₁ k))    ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k) ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fusion._>>ᴿ_  SubRen {ρᴬ = ρ₁} = subBodyEnv Ren Ren² (λ σ t → refl) ρ₁
+ Fusion._++^Envᴿ_  SubRen {ρᴬ = ρ₁} = subBodyEnv Ren Ren² (λ σ t → refl) ρ₁
  Fusion.varᴿ   SubRen = λ ρᴿ v → lookupᴿ ρᴿ v
  Fusion.algᴿ   SubRen {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
    let v₁ = fmap d (Semantics.body Sub ρ₁) b
@@ -89,7 +89,7 @@ module _ {I : Set} (d : Desc I) where
      ren σ (sub ρ₂ (lookup ρ₁ k))     ≡⟨ cong (ren σ) (lookupᴿ ρᴿ k)   ⟩
      ren σ (lookup ρ₃ k)
    ∎
- Fusion._>>ᴿ_ Sub² {ρᴬ = ρ₁} = subBodyEnv Sub RenSub (λ σ t → refl) ρ₁
+ Fusion._++^Envᴿ_ Sub² {ρᴬ = ρ₁} = subBodyEnv Sub RenSub (λ σ t → refl) ρ₁
  Fusion.varᴿ Sub² = λ ρᴿ v → lookupᴿ ρᴿ v
  Fusion.algᴿ Sub² {ρᴬ = ρ₁} {ρᴮ = ρ₂} {ρᴬᴮ = ρ₃} ρᴿ b = λ zipped → cong `con $
    let v₁ = fmap d (Semantics.body Sub ρ₁) b

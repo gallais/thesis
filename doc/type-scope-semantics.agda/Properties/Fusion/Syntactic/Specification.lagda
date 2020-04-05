@@ -9,10 +9,10 @@ open import Data.List.Base using (List; []; _∷_)
 open import Data.Relation hiding (_∙ᴿ_)
 open import Syntax.Type
 open import Syntax.Calculus
-open import Semantics.Specification hiding (module Fundamental)
-open import Semantics.Syntactic.Specification as SynSpec hiding (module Fundamental)
+open import Semantics.Specification
+open import Semantics.Syntactic.Specification as SynSpec
 open import Function renaming (_$′_ to _$_) using (id)
-open import Properties.Fusion.Specification hiding (module Fundamental)
+open import Properties.Fusion.Specification
 open import Relation.Unary
 open import Relation.Binary.PropositionalEquality.Extra
 
@@ -38,9 +38,9 @@ record SynFusion
   module Synᴬ = Syntactic Synᴬ
   module Synᴮ = Syntactic Synᴮ
   module Synᴬᴮ = Syntactic Synᴬᴮ
-  evalᴬ = Semantics.Specification.Fundamental.lemma (SynSpec.Fundamental.lemma Synᴬ)
-  evalᴮ = Semantics.Specification.Fundamental.lemma (SynSpec.Fundamental.lemma Synᴮ)
-  evalᴬᴮ = Semantics.Specification.Fundamental.lemma (SynSpec.Fundamental.lemma Synᴬᴮ)
+  evalᴬ = Semantics.Specification.semantics (SynSpec.syntactic Synᴬ)
+  evalᴮ = Semantics.Specification.semantics (SynSpec.syntactic Synᴮ)
+  evalᴬᴮ = Semantics.Specification.semantics (SynSpec.syntactic Synᴬᴮ)
 \end{code}
 %<*crel>
 \begin{code}
@@ -80,7 +80,7 @@ private
     𝓔ᴿ : ∀ {Γ Δ Θ} → (Γ ─Env) 𝓣ᴬ Δ → (Δ ─Env) 𝓣ᴮ Θ → (Γ ─Env) 𝓣ᴬᴮ Θ → Set
     𝓣ᴿ : Rel 𝓣ᴮ 𝓣ᴬᴮ
 
-fromSyn = SynSpec.Fundamental.lemma
+fromSyn = SynSpec.syntactic
 
 \end{code}
 %<*fundamental>

@@ -109,6 +109,6 @@ record Simulation (d : Desc I)
   sim ρᴿ (`con t) = algᴿ t ρᴿ (liftᴿ d (body ρᴿ) t)
 
   body ρᴿ []       i t = sim ρᴿ t
-  body ρᴿ (_ ∷ _)  i t = λ σ vsᴿ → sim (vsᴿ >>ᴿ (thᴿ σ <$>ᴿ ρᴿ)) t
+  body ρᴿ (_ ∷ _)  i t = λ σ vsᴿ → sim (vsᴿ ++^Envᴿ (thᴿ σ <$>ᴿ ρᴿ)) t
 \end{code}
 %</simbody>

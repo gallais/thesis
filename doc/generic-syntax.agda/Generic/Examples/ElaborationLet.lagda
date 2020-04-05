@@ -74,7 +74,7 @@ module _ {I : Set} {d : Desc I} where
  Fusion.reifyᴬ RenUnLet = λ σ t → t
  Fusion.vl^𝓥ᴬ RenUnLet = vl^Var
  Fusion.th^𝓔ᴿ   RenUnLet = λ ρᴿ σ → packᴿ (cong (ren σ) ∘ lookupᴿ ρᴿ)
- Fusion._>>ᴿ_   RenUnLet = thBodyEnv
+ Fusion._++^Envᴿ_   RenUnLet = thBodyEnv
  Fusion.varᴿ  RenUnLet = λ ρᴿ → lookupᴿ ρᴿ
  Fusion.algᴿ RenUnLet ρᴿ (false , (_ , e , t , refl)) (refl , refl , eq^e , eq^t , _)
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
@@ -129,7 +129,7 @@ module _ {I : Set} {d : Desc I} where
   ρ₁₁ = th^Env th^Var (base vl^Var) (pack (injectˡ Θ))
   ρ₁₂ = th^Env th^Var ρ₂ (th^Env th^Var (base vl^Var) (pack (injectʳ Ξ)))
 
-  ρ₁₃ = pack (injectˡ Θ {Ξ}) >> th^Env th^Var ρ₂ (pack (injectʳ Ξ))
+  ρ₁₃ = pack (injectˡ Θ {Ξ}) ++^Env th^Env th^Var ρ₂ (pack (injectʳ Ξ))
 
   eq₁₁ᴿ : All Eqᴿ _ ρ₁₁ (pack (injectˡ Θ))
   lookupᴿ eq₁₁ᴿ k = cong (injectˡ Θ) (lookup-base^Var k)
@@ -137,19 +137,19 @@ module _ {I : Set} {d : Desc I} where
   eq₁₂ᴿ : All Eqᴿ _ ρ₁₂ (th^Env th^Var ρ₂ (pack (injectʳ Ξ)))
   lookupᴿ eq₁₂ᴿ k = cong (injectʳ Ξ) (lookup-base^Var (lookup ρ₂ k))
 
-  eq₁ᴿ : All Eqᴿ _ (ρ₁₁ >> ρ₁₂) ρ₁₃
-  eq₁ᴿ = eq₁₁ᴿ >>ᴿ eq₁₂ᴿ
+  eq₁ᴿ : All Eqᴿ _ (ρ₁₁ ++^Env ρ₁₂) ρ₁₃
+  eq₁ᴿ = eq₁₁ᴿ ++^Envᴿ eq₁₂ᴿ
 
 
-  ρ′ᴿ : All Eqᴿ _ (ren (freshˡ vl^Var Θ >> th^Env th^Var ρ₂ (freshʳ vl^Var Ξ))
-                    <$> (freshˡ vl^Tm Δ >> th^Env th^Tm  ρ₁ (freshʳ vl^Var Ξ)))
-                  (freshˡ vl^Tm Θ >> th^Env th^Tm ρ₃ (freshʳ vl^Var Ξ))
+  ρ′ᴿ : All Eqᴿ _ (ren (freshˡ vl^Var Θ ++^Env th^Env th^Var ρ₂ (freshʳ vl^Var Ξ))
+                    <$> (freshˡ vl^Tm Δ ++^Env th^Env th^Tm  ρ₁ (freshʳ vl^Var Ξ)))
+                  (freshˡ vl^Tm Θ ++^Env th^Env th^Tm ρ₃ (freshʳ vl^Var Ξ))
   lookupᴿ ρ′ᴿ k with split Ξ k
   ... | inj₁ kˡ = begin
-    ren (ρ₁₁ >> ρ₁₂) (ren (pack (injectˡ Δ)) (lookup (base vl^Tm) kˡ))
-      ≡⟨ cong (ren (ρ₁₁ >> ρ₁₂) ∘ ren (pack (injectˡ Δ))) (lookup-base^Tm kˡ) ⟩
-    `var (lookup (ρ₁₁ >> ρ₁₂) (injectˡ Δ kˡ))
-      ≡⟨ cong `var (injectˡ->> ρ₁₁ ρ₁₂ kˡ) ⟩
+    ren (ρ₁₁ ++^Env ρ₁₂) (ren (pack (injectˡ Δ)) (lookup (base vl^Tm) kˡ))
+      ≡⟨ cong (ren (ρ₁₁ ++^Env ρ₁₂) ∘ ren (pack (injectˡ Δ))) (lookup-base^Tm kˡ) ⟩
+    `var (lookup (ρ₁₁ ++^Env ρ₁₂) (injectˡ Δ kˡ))
+      ≡⟨ cong `var (injectˡ-++^Env ρ₁₁ ρ₁₂ kˡ) ⟩
     `var (lookup ρ₁₁ kˡ)
       ≡⟨ cong `var (lookupᴿ eq₁₁ᴿ kˡ) ⟩
     `var (injectˡ Θ kˡ)
@@ -157,7 +157,7 @@ module _ {I : Set} {d : Desc I} where
     ren (pack (injectˡ Θ)) (lookup (base vl^Tm) kˡ)
       ∎
   ... | inj₂ kʳ = begin
-    ren (ρ₁₁ >> ρ₁₂) (ren ρ₂₁ (lookup ρ₁ kʳ))
+    ren (ρ₁₁ ++^Env ρ₁₂) (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ Simulation.sim RenExt eq₁ᴿ (ren ρ₂₁ (lookup ρ₁ kʳ)) ⟩
     ren ρ₁₃ (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ cong (ren ρ₁₃) (Simulation.sim RenExt eq₂ᴿ  (lookup ρ₁ kʳ)) ⟩
@@ -195,7 +195,7 @@ module _ {I : Set} {d : Desc I} where
      ≡⟨ cong (ren σ) (lookupᴿ ρᴿ v) ⟩
    ren σ (lookup ρ₃ v)
     ∎
- Fusion._>>ᴿ_   SubUnLet {ρᴬ = ρ₁} = subBodyEnv UnLet RenUnLet (λ σ t → refl) ρ₁
+ Fusion._++^Envᴿ_   SubUnLet {ρᴬ = ρ₁} = subBodyEnv UnLet RenUnLet (λ σ t → refl) ρ₁
  Fusion.varᴿ  SubUnLet = λ ρᴿ → lookupᴿ ρᴿ
  Fusion.algᴿ  SubUnLet ρᴿ (false , (_ , e , t , refl)) (refl , refl , eq^e , eq^t , _)
    = eq^t (pack id) (εᴿ ∙ᴿ eq^e)
@@ -249,7 +249,7 @@ module _ {I : Set} {d : Desc I} where
   ρ₁₁ = th^Env th^Tm (base vl^Tm) (pack (injectˡ Θ))
   ρ₁₂ = th^Env th^Tm ρ₂ (th^Env th^Var (base vl^Var) (pack (injectʳ Ξ)))
 
-  ρ₁₃ = pack (`var ∘ injectˡ Θ {Ξ}) >> th^Env th^Tm ρ₂ (pack (injectʳ Ξ))
+  ρ₁₃ = pack (`var ∘ injectˡ Θ {Ξ}) ++^Env th^Env th^Tm ρ₂ (pack (injectʳ Ξ))
 
   eq₁₁ᴿ : All Eqᴿ _ ρ₁₁ (pack (`var ∘ injectˡ Θ))
   lookupᴿ eq₁₁ᴿ k = cong (ren (pack (injectˡ Θ))) (lookup-base^Tm k)
@@ -258,20 +258,20 @@ module _ {I : Set} {d : Desc I} where
   lookupᴿ eq₁₂ᴿ k =
     Simulation.sim RenExt (packᴿ (cong (injectʳ Ξ) ∘ lookup-base^Var)) (lookup ρ₂ k)
 
-  eq₁ᴿ : All Eqᴿ _ (ρ₁₁ >> ρ₁₂) ρ₁₃
-  eq₁ᴿ = eq₁₁ᴿ >>ᴿ eq₁₂ᴿ
+  eq₁ᴿ : All Eqᴿ _ (ρ₁₁ ++^Env ρ₁₂) ρ₁₃
+  eq₁ᴿ = eq₁₁ᴿ ++^Envᴿ eq₁₂ᴿ
 
   ρ₂₁ = th^Env th^Var (base vl^Var) (pack (injectʳ Ξ))
 
-  ρ′ᴿ : All Eqᴿ _ (sub (freshˡ vl^Tm Θ >> th^Env th^Tm ρ₂ (freshʳ vl^Var Ξ))
-                    <$> (freshˡ vl^Tm Δ >> th^Env th^Tm  ρ₁ (freshʳ vl^Var Ξ)))
-                  (freshˡ vl^Tm Θ >> th^Env th^Tm ρ₃ (freshʳ vl^Var Ξ))
+  ρ′ᴿ : All Eqᴿ _ (sub (freshˡ vl^Tm Θ ++^Env th^Env th^Tm ρ₂ (freshʳ vl^Var Ξ))
+                    <$> (freshˡ vl^Tm Δ ++^Env th^Env th^Tm  ρ₁ (freshʳ vl^Var Ξ)))
+                  (freshˡ vl^Tm Θ ++^Env th^Env th^Tm ρ₃ (freshʳ vl^Var Ξ))
   lookupᴿ ρ′ᴿ k with split Ξ k
   ... | inj₁ kˡ = begin
-    sub (ρ₁₁ >> ρ₁₂) (ren (pack (injectˡ Δ))(lookup (base vl^Tm) kˡ))
-      ≡⟨ cong (sub (ρ₁₁ >> ρ₁₂) ∘ ren (pack (injectˡ Δ))) (lookup-base^Tm kˡ) ⟩
-    lookup (ρ₁₁ >> ρ₁₂) (injectˡ Δ kˡ)
-      ≡⟨ injectˡ->> ρ₁₁ ρ₁₂ kˡ ⟩
+    sub (ρ₁₁ ++^Env ρ₁₂) (ren (pack (injectˡ Δ))(lookup (base vl^Tm) kˡ))
+      ≡⟨ cong (sub (ρ₁₁ ++^Env ρ₁₂) ∘ ren (pack (injectˡ Δ))) (lookup-base^Tm kˡ) ⟩
+    lookup (ρ₁₁ ++^Env ρ₁₂) (injectˡ Δ kˡ)
+      ≡⟨ injectˡ-++^Env ρ₁₁ ρ₁₂ kˡ ⟩
     ren (pack (injectˡ Θ)) (lookup (base vl^Tm) kˡ)
       ≡⟨ cong (ren (pack (injectˡ Θ))) (lookup-base^Tm kˡ) ⟩
     `var (injectˡ Θ kˡ)
@@ -279,7 +279,7 @@ module _ {I : Set} {d : Desc I} where
     ren (pack (injectˡ Θ)) (lookup (base vl^Tm) kˡ)
       ∎
   ... | inj₂ kʳ = begin
-    sub (ρ₁₁ >> ρ₁₂) (ren ρ₂₁ (lookup ρ₁ kʳ))
+    sub (ρ₁₁ ++^Env ρ₁₂) (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ Simulation.sim SubExt eq₁ᴿ (ren ρ₂₁ (lookup ρ₁ kʳ)) ⟩
     sub ρ₁₃ (ren ρ₂₁ (lookup ρ₁ kʳ))
       ≡⟨ cong (sub ρ₁₃) (Simulation.sim RenExt eq₂ᴿ  (lookup ρ₁ kʳ)) ⟩

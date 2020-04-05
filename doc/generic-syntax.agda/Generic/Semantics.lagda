@@ -82,7 +82,7 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 %<*bodyproof>
 \begin{code}
  body ρ []       i t = semantics ρ t
- body ρ (_ ∷ _)  i t = λ σ vs → semantics (vs >> th^Env th^𝓥 ρ σ) t
+ body ρ (_ ∷ _)  i t = λ σ vs → semantics (vs ++^Env th^Env th^𝓥 ρ σ) t
 \end{code}
 %</bodyproof>
 \begin{code}

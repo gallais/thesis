@@ -46,7 +46,7 @@ private
 \begin{code}
 renren : (t : Term σ Γ) → ren ρ₂ (ren ρ₁ t) ≡ ren (select ρ₁ ρ₂) t
 renren =  let fus = Syntactic.Fundamental.lemma RenRen
-          in Fusion.Fundamental.lemma fus reflᴿ
+          in Fusion.fusion fus reflᴿ
 \end{code}
 %</renren>
 %<*rensubfus>
@@ -66,7 +66,7 @@ RenSub .zroᴿ   = refl
 \begin{code}
 rensub : (t : Term σ Γ) → sub ρ₂ (ren ρ₁ t) ≡ sub (select ρ₁ ρ₂) t
 rensub =  let fus = Syntactic.Fundamental.lemma RenSub
-          in Fusion.Fundamental.lemma fus reflᴿ
+          in Fusion.fusion fus reflᴿ
 \end{code}
 %</rensub>
 %<*subrenfus>
@@ -100,7 +100,7 @@ SubRen .zroᴿ   = refl
 \begin{code}
 subren : (t : Term σ Γ) → ren ρ₂ (sub ρ₁ t) ≡ sub (ren ρ₂ <$> ρ₁) t
 subren =  let fus = Syntactic.Fundamental.lemma SubRen
-          in Fusion.Fundamental.lemma fus reflᴿ
+          in Fusion.fusion fus reflᴿ
 \end{code}
 %</subren>
 %<*subsubfus>
@@ -134,6 +134,6 @@ SubSub .zroᴿ   = refl
 \begin{code}
 subsub : (t : Term σ Γ) → sub ρ₁ (sub ρ₂ t) ≡ sub (sub ρ₁ <$> ρ₂) t
 subsub =  let fus = Syntactic.Fundamental.lemma SubSub
-          in Fusion.Fundamental.lemma fus reflᴿ
+          in Fusion.fusion fus reflᴿ
 \end{code}
 %</subsub>
