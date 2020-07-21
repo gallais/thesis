@@ -1,5 +1,5 @@
 THESIS=thesis
-AGDA=agda
+AGDA?=agda
 
 all: latex/$(THESIS).pdf
 
