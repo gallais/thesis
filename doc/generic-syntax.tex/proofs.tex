@@ -42,12 +42,19 @@ transitive) so is {(\AF{⟦} \AB{d} \AF{⟧ᴿ} \AB{R})}.\label{lem:zipstable}
 It is defined by induction on the description and case analysis on the two
 layers which are meant to be equal:
 \begin{itemize}
-  \item In the stop token case \AIC{`∎} \AB{i}, the two layers are considered to
-    be trivially equal (i.e. the constraint generated is the unit type)
-  \item When facing a recursive position {\AIC{`X} \AB{$\Delta$} \AB{j} \AB{d}}, we
-    demand that the two substructures are related by {\AB{R} \AB{$\Delta$} \AB{j}}
+\item In the stop token case {(\AIC{`∎} \AB{i})}, the two layers are two proofs
+    that the branche's respective indices match the specified one. We consider
+    these two proofs to be trivially equal (i.e. the constraint generated is the
+    unit type).
+    %
+    This would not hold true in Homotopy Type Theory~\cite{hottbook}
+    but if we were to generalise the work to that setting, we could either explicitly
+    restrict our setup to language whose indices are equipped with a decidable equality
+    or insist on studying the ways in which these proofs can be equal.
+  \item When facing a recursive position {(\AIC{`X} \AB{Δ} \AB{j} \AB{d})}, we
+    demand that the two substructures are related by {\AB{R} \AB{Δ} \AB{j}}
     and that the rest of the layers are related by (\AF{⟦} \AB{d} \AF{⟧ᴿ} \AB{R})
-  \item Two nodes of type {\AIC{`$\sigma$} \AB{A} \AB{d}} will
+  \item Two nodes of type {(\AIC{`σ} \AB{A} \AB{d})} will
     be related if they both carry the same payload \AB{a} of type \AB{A} and if
     the rest of the layers are related by (\AF{⟦} \AB{d} \AB{a} \AF{⟧ᴿ} \AB{R})
 \end{itemize}
@@ -67,4 +74,3 @@ on more advanced use-cases.
 
 \input{generic-syntax.tex/proofs/simulation.tex}
 \input{generic-syntax.tex/proofs/fusion.tex}
-
