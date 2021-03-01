@@ -122,7 +122,7 @@ is called \AD{μ} and we provide its definition in \cref{figure:datamu}.
 
 Equipped with this fixpoint operator, we can go back to our examples
 redefining lists and vectors as instances of this framework. We can
-see in Figure~\ref{fig:listpat} that we can recover the types we are
+see in Figure~\ref{figure:listpat} that we can recover the types we are
 used to thanks to this least fixpoint (we only show the list example).
 %
 Pattern synonyms let us hide away the encoding: users can use them
@@ -228,7 +228,7 @@ on all of the subterms of a \AIC{node}.
 
 \begin{figure}[h]
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{kleisli}
-  \caption{Free Indexed Monad of a Description\label{fig:datafreemonad}}
+  \caption{Kleisli extension of a morphism with respect to \AD{Free}~\AB{d}\label{fig:datakleisli}}
 \end{figure}
 
 This gives us a notion of trees with variables in them and a substitution

@@ -29,7 +29,7 @@ names for the bound variables.
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Printing.tex]{display}
 \end{agdasnippet}
 %
-Reusing the notion of \AR{Name} introduced in Section~\ref{section:printing},
+Reusing the notion of \AR{Name} introduced in Section~\ref{prettyprint},
 we can make \AF{Pieces} formal.
 %
 The structure of \AR{Semantics} would suggest giving our users an interface
@@ -56,7 +56,7 @@ The key observation that will help us define a generic printer is that
 \AF{Fresh} composed with \AR{Name} is \AR{VarLike}. Indeed, as the
 composition of a functor and a trivially thinnable \AR{Wrap}per,
 \AF{Fresh} is \AF{Thinnable}, and \AF{fresh} (defined in
-Figure~\ref{fig:fresh}) is the proof that we can generate
+Figure~\ref{fig:freshname}) is the proof that we can generate
 placeholder values thanks to the name supply.
 
 \begin{agdasnippet}
@@ -80,7 +80,7 @@ the type we expect.
 \end{agdasnippet}
 
 Otherwise we proceed in a manner reminiscent of the pure reification function
-defined in Figure~\ref{fig:genericreify}. We start by generating an environment
+defined in Figure~\ref{fig:kripkereify}. We start by generating an environment
 of names for the newly bound variables by using the fact that \AF{Fresh} composed
 with \AF{Name} is \AR{VarLike} together with the fact that environments are
 Traversable~\cite{mcbride_paterson_2008}, %%%
