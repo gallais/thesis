@@ -120,13 +120,13 @@ type-and-scope preserving traversal; and we provide proof frameworks
 to either demonstrate that two traversals are in simulation or that they can be
 fused together into a third one.
 
-The first part of this work focuses on the simply-typed lambda calculus. We
-identify a large catalogue of traversals which can be refactored into a common
+The first and second parts of this work focus on the simply-typed lambda calculus.
+We identify a large catalogue of traversals which can be refactored into a common
 scope aware fold-like function. Once this shared structure has been made
 visible, we can design proof frameworks allowing us to show that some traversals
 are related.
 
-The second part builds on the observation that the shape of the constraints we
+The third part builds on the observation that the shape of the constraints we
 see both in the definition of the generic traversal and the proof frameworks
 are in direct correspondence with the language's constructors. This pushes us
 to define a description language for syntaxes with binding and to \emph{compute}
@@ -150,21 +150,55 @@ originated from the work on a third paper ``New equations for neutral terms''
 substitution and the model construction in normalisation by evaluation.
 
 The first consequent application of this work is our solution to the
-POPLMark Reloaded challenge currently under review for publication
+POPLMark Reloaded challenge
 (\cite{poplmarkreloaded, poplmark2}) for which we formalised a proof of
 strong normalisation for the simply-typed lambda-calculus (and its extension
-with sum types).
-
+with sum types, and primitive recursion for the natural numbers).
 
 
 \section{Plan}
 
-This work is fully formalised in Agda so we provide an introduction
-to the language and the conventions we adopted in Section~\ref{introduction-agda}.
-We also use categorical terms to concisely describe some of the
-properties of our constructions so the reader is provided with an
-introduction to category theory in Section~\ref{introduction-category}.
+The work in this thesis brings together many strands of research so we provide
+introductory chapters for the less common topics.
 
+\subsection{Introductory Material}
 
+We use categorical terms whenever it is convenient to concisely describe some
+of the key properties of our constructions. So we provide the reader with an
+\textbf{introduction to category theory in Section~\ref{introduction-category}}.
+A reader familiar with Peirce's `Basic category theory for computer scientists'
+may skip this section except perhaps for the definition of relative monads
+in Section~\ref{sec:relativemonad}.
 
-\todo{TODO}
+% The internal language of this thesis is very much type theory. So we provide a
+% short introduction in Section~\cref{}.
+
+All of the content of this thesis has been fully formalised in Agda
+(the code snippets have all been checked and typeset by Agda itself)
+so we provide an \textbf{introduction to Agda and the conventions we
+adopted in Section~\ref{introduction-agda}}.
+
+Our work on generic programming with syntaxes with binding is heavily influenced
+by prior results on generic programming for (indexed) inductive types. We offer
+a \textbf{primer on data-generic programming in Section~\ref{section:data}}.
+
+\subsection{Contributions}
+
+\paragraph{Part I} is dedicated to the study of a \scopeandtypesafe{}
+representation of the simply typed lambda calculus with one sum type
+(the booleans) and one product type (the unit type).
+%
+Starting from the inductive family used to represent terms in the language,
+we study various invariant-respecting traversals and notice that they all
+share the same structure. This leads us to see how they can all be unified
+as instances of a single generic traversal.
+
+\paragraph{Part II} identifies the constraints under which one can relate
+different instances of the generic traversal. This yields simulation and
+fusion lemmas for the generic traversal that can be immediately deployed
+to obtain classic meta-theoretical results as direct corollaries.
+
+\paragraph{Part III} builds on parts I and II and data-generic programming
+to introduce syntax-generic programming and proving. It provides the user
+with a whole universe of syntaxes with binding, their invariant-respecting
+traversals, and proofs about these traversals.
