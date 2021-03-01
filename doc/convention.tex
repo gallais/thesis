@@ -1,0 +1,141 @@
+\declaretheorem[
+  name=Convention,
+]{thmconvene}
+
+\ExplSyntaxOn
+\NewDocumentEnvironment{convention}{o}
+ {
+  \int_gincr:N \g_thesis_convention_int
+  \IfNoValueTF{#1}
+   {
+    \thesis_restatable:x { \int_to_Alph:n { \g_thesis_convention_int } }
+   }
+   {
+    \thesis_restatable:nx { #1 } { \int_to_Alph:n { \g_thesis_convention_int } }
+   }
+ }
+ {
+  \endrestatable
+  \seq_gput_right:Nx \g_thesis_convention_seq
+   {
+    convene \int_to_Alph:n { \g_thesis_convention_int }
+   }
+ }
+
+\NewDocumentCommand{\allconventions}{}
+ {
+  \seq_map_inline:Nn \g_thesis_convention_seq
+   {
+    \use:c { ##1 } *
+   }
+ }
+
+\int_new:N \g_thesis_convention_int
+\seq_new:N \g_thesis_convention_seq
+
+\cs_new_protected:Npn \thesis_restatable:n #1
+ {
+  \restatable{thmconvene}{convene#1}
+ }
+\cs_generate_variant:Nn \thesis_restatable:n { x }
+\cs_new_protected:Npn \thesis_restatable:nn #1 #2
+ {
+  \restatable[#1]{thmconvene}{convene#2}
+ }
+\cs_generate_variant:Nn \thesis_restatable:nn { nx }
+\ExplSyntaxOff
+
+\declaretheorem[
+  name=Feature,
+]{thmfeaturing}
+
+\ExplSyntaxOn
+\NewDocumentEnvironment{feature}{o}
+ {
+  \int_gincr:N \g_thesisb_feature_int
+  \IfNoValueTF{#1}
+   {
+    \thesisb_restatable:x { \int_to_Alph:n { \g_thesisb_feature_int } }
+   }
+   {
+    \thesisb_restatable:nx { #1 } { \int_to_Alph:n { \g_thesisb_feature_int } }
+   }
+ }
+ {
+  \endrestatable
+  \seq_gput_right:Nx \g_thesisb_feature_seq
+   {
+    featuring \int_to_Alph:n { \g_thesisb_feature_int }
+   }
+ }
+
+\NewDocumentCommand{\allfeatures}{}
+ {
+  \seq_map_inline:Nn \g_thesisb_feature_seq
+   {
+    \use:c { ##1 } *
+   }
+ }
+
+\int_new:N \g_thesisb_feature_int
+\seq_new:N \g_thesisb_feature_seq
+
+\cs_new_protected:Npn \thesisb_restatable:n #1
+ {
+  \restatable{thmfeaturing}{featuring#1}
+ }
+\cs_generate_variant:Nn \thesisb_restatable:n { x }
+\cs_new_protected:Npn \thesisb_restatable:nn #1 #2
+ {
+  \restatable[#1]{thmfeaturing}{featuring#2}
+ }
+\cs_generate_variant:Nn \thesisb_restatable:nn { nx }
+\ExplSyntaxOff
+
+
+\declaretheorem[
+  name=Technique,
+]{thmtechnique}
+
+\ExplSyntaxOn
+\NewDocumentEnvironment{technique}{o}
+ {
+  \int_gincr:N \g_thesisc_technique_int
+  \IfNoValueTF{#1}
+   {
+    \thesisc_restatable:x { \int_to_Alph:n { \g_thesisc_technique_int } }
+   }
+   {
+    \thesisc_restatable:nx { #1 } { \int_to_Alph:n { \g_thesisc_technique_int } }
+   }
+ }
+ {
+  \endrestatable
+  \seq_gput_right:Nx \g_thesisc_technique_seq
+   {
+    technique \int_to_Alph:n { \g_thesisc_technique_int }
+   }
+ }
+
+\NewDocumentCommand{\alltechniques}{}
+ {
+  \seq_map_inline:Nn \g_thesisc_technique_seq
+   {
+    \use:c { ##1 } *
+   }
+ }
+
+\int_new:N \g_thesisc_technique_int
+\seq_new:N \g_thesisc_technique_seq
+
+\cs_new_protected:Npn \thesisc_restatable:n #1
+ {
+  \restatable{thmtechnique}{technique#1}
+ }
+\cs_generate_variant:Nn \thesisc_restatable:n { x }
+\cs_new_protected:Npn \thesisc_restatable:nn #1 #2
+ {
+  \restatable[#1]{thmtechnique}{technique#2}
+ }
+\cs_generate_variant:Nn \thesisc_restatable:nn { nx }
+\ExplSyntaxOff

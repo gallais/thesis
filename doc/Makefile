@@ -76,6 +76,7 @@ AGDA_OUTPUT_PROCESSED:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
 
 THESIS_DEPENDENCIES:=\
   latex/$(THESIS).tex \
+  latex/convention.tex \
   latex/agda.sty \
   latex/unicode.tex \
   latex/commands.tex \
@@ -149,6 +150,10 @@ latex/$(THESIS).tex: $(THESIS).tex
 	cp $< $@
 
 latex/cover.tex: cover.tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/convention.tex: convention.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
