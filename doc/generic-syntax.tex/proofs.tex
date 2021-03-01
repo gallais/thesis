@@ -24,15 +24,15 @@ given by \AB{𝓒ᴿ}. We can define
 \AF{Kripkeᴿ} relating Kripke functions of type
 {(\AF{Kripke} \AB{𝓥ᴬ} \AB{𝓒ᴬ})} and {(\AF{Kripke} \AB{𝓥ᴮ} \AB{𝓒ᴮ})}
 respectively by stating that they send related inputs
-to related outputs. We use the relation transformer \AF{All} defined
-in the previous paragraph.
+to related outputs. In this definition we use the relation transformer for
+environment called \AF{All} and introduced in \cref{defn:Env-rel}.
 
 \begin{figure}[h]
  \ExecuteMetaData[shared/Data/Var/Varlike.tex]{kripkeR}
 \caption{Relational Kripke Function Spaces: From Related Inputs to Related Outputs\label{fig:Kripke-rel}}
 \end{figure}
 
-\paragraph{Desc relator}
+\paragraph{Desc relator}\label{def:zipd}
 The relator (\AF{⟦} \AB{d} \AF{⟧ᴿ}) is a relation transformer which characterises
 structurally equal layers such that their substructures are themselves related
 by the relation it is passed as an argument. It inherits a lot of its relational
@@ -43,11 +43,11 @@ It is defined by induction on the description and case analysis on the two
 layers which are meant to be equal:
 \begin{itemize}
 \item In the stop token case {(\AIC{`∎} \AB{i})}, the two layers are two proofs
-    that the branche's respective indices match the specified one. We consider
+    that the branches' respective indices match the specified one. We consider
     these two proofs to be trivially equal (i.e. the constraint generated is the
     unit type).
     %
-    This would not hold true in Homotopy Type Theory~\cite{hottbook}
+    This would not hold true in Homotopy Type Theory~(\cite{hottbook})
     but if we were to generalise the work to that setting, we could either explicitly
     restrict our setup to language whose indices are equipped with a decidable equality
     or insist on studying the ways in which these proofs can be equal.

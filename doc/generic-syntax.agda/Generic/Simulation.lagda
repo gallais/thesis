@@ -99,9 +99,13 @@ record Simulation (d : Desc I)
 \end{code}
 %</algR>
 %<*simbody>
+%<*simtype>
 \begin{code}
   sim   :  All 𝓥ᴿ Γ ρᴬ ρᴮ → (t : Tm d s σ Γ) →
            rel 𝓒ᴿ σ (𝓢ᴬ.semantics ρᴬ t) (𝓢ᴮ.semantics ρᴮ t)
+\end{code}
+%</simtype>
+\begin{code}
   body  :  All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ Δ j → (t : Scope (Tm d s) Δ j Γ) →
            Kripkeᴿ 𝓥ᴿ 𝓒ᴿ Δ j (𝓢ᴬ.body ρᴬ Δ j t) (𝓢ᴮ.body ρᴮ Δ j t)
 

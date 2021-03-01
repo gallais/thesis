@@ -61,14 +61,16 @@ an (\AB{I}\AF{─Scoped}) family \AB{T} and itself.
 \begin{minipage}[t]{0.25\textwidth}
   \ExecuteMetaData[shared/Data/Relation.tex]{eqR}
 \end{minipage}
-\caption{Relation Between \AB{I}\AF{─Scoped} Families and Equality Example\label{ex:fam-eq}}
+\caption{Relation Between \AB{I}\AF{─Scoped}~Families and Equality Example\label{ex:fam-eq}}
 \label{fig:reldef}
 \end{figure}
 
 Once we know what relations are, we are going to have to lift relations on values
 and computations to relations on environments, \AF{Kripke} function spaces or
-on \AB{d}-shaped terms whose subterms have been evaluated already.
+on \AB{d}-shaped terms whose subterms have been evaluated already. These relation
+transformers will be instances of what Kawahara calls `relators'.
 This is what the rest of this section focuses on.
+
 
 \paragraph{Environment relator}
 Provided a relation \AB{𝓥ᴿ} for notions of values \AB{𝓥ᴬ} and \AB{𝓥ᴮ}, by
@@ -222,7 +224,7 @@ either by reflexivity or by using congruence to combine various hypotheses.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{syn-ext}
-\caption{\AR{Syntactic}~ Traversals are in \AR{Simulation}~ with Themselves\label{fig:synselfsim}}
+\caption{\AR{Syntactic}~Traversals are in \AR{Simulation}~ with Themselves\label{fig:synselfsim}}
 \end{figure}
 
 Because the \AR{Simulation} statement is not necessarily extremely illuminating, we spell
@@ -231,7 +233,7 @@ agree on each variable, evaluating a term with either of them produces equal res
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{synext}
-\caption{\AR{Syntactic}~ Traversals are Extensional\label{fig:synextensional}}
+\caption{\AR{Syntactic}~Traversals are Extensional\label{fig:synextensional}}
 \end{figure}
 
 This may look like a trivial result however we have found multiple use cases
@@ -268,7 +270,7 @@ are related by \AF{Eqᴿ}. Once again we proceed by reflexivity and congruence.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{renissub}
-\caption{\AF{Renaming}~ is in \AR{Simulation}~ with \AF{Substitution}\label{fig:renissub}}
+\caption{\AF{Renaming}~is in \AR{Simulation}~with \AF{Substitution}\label{fig:renissub}}
 \end{figure}
 
 Rather than showing one more time the type of the corollary, we show a specialized
@@ -360,7 +362,7 @@ thinning for \AF{Model} values defined in \cref{fig:thnbemodel}.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Instances.tex]{thPER}
-\caption{Stability of the \AF{PER}~ under \AF{Thinning}\label{fig:nbeperth}}
+\caption{Stability of the \AF{PER}~under \AF{Thinning}\label{fig:nbeperth}}
 \end{figure}
 
 The interplay of reflect and reify with this notion of equality has to be described

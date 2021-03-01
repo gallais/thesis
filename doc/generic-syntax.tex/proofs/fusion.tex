@@ -1,19 +1,25 @@
 \section{Fusion Lemma}\label{section:fusion}
 
-Results that can be reformulated as the ability to fuse two traversals
-obtained as \AR{Semantics} into one abound. When claiming that \AF{Tm} is
+There are abundant result that can be reformulated as the ability to fuse
+two traversals obtained as \AR{Semantics} into one.
+%
+When claiming that \AF{Tm} is
 a Functor, we have to prove that two successive renamings can be fused into
-a single renaming where the \AF{Thinning}s have been composed. Similarly,
+a single renaming where the \AF{Thinning}s have been composed.
+%
+Similarly,
 demonstrating that \AF{Tm} is a relative Monad (\cite{JFR4389}) implies proving
 that two consecutive substitutions can be merged into a single one whose
 environment is the first one, where the second one has been applied in a
-pointwise manner. The \emph{Substitution Lemma} central
+pointwise manner.
+%
+The \emph{Substitution Lemma} central
 to most model constructions (see for instance~\cite{mitchell1991kripke}) states
 that a syntactic substitution followed by the evaluation of the resulting term
 into the model is equivalent to the evaluation of the original term with an
 environment corresponding to the evaluated substitution.
 
-A direct application of these results is our (to be published) entry to the
+A direct application of these results is our entry to the
 POPLMark Reloaded challenge (\citeyear{poplmarkreloaded}). By using a
 \AD{Desc}-based representation of intrinsically well typed and well scoped
 terms we directly inherit not only renaming and substitution but also all
@@ -24,8 +30,18 @@ As all of these statements have precisely the same structure, we can
 once more devise a framework which will, provided that its constraints are
 satisfied, prove a generic fusion lemma.
 
-Fusion is more involved than simulation so we will step through
-each one of the constraints individually, trying to give the reader an intuition
+
+Our fundamental lemma of \AR{Fusion} states that from a triple of related
+environments (the exact meaning of ``related'' will be defined in the next
+section), one gets a pair of related computations (again the meaning of
+``related'' will be made formal soon):
+
+\begin{agdasnippet}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{fusiontype}
+\end{agdasnippet}
+
+Fusion is more involved than simulation so we will step through each one of
+the constraints individually, trying to give the reader an intuition
 for why they are shaped the way they are.
 
 
@@ -59,8 +75,10 @@ terms from model values.
 
 Then, we have to think about what happens when going under a binder: \AB{𝓢ᴬ}
 will produce a \AF{Kripke} function space where a syntactic value is required.
-Provided that \AB{𝓥ᴬ} is \AR{VarLike}, we can make use of \AF{reify} to get a
-\AF{Scope} back. Hence the second constraint.
+Provided that \AB{𝓥ᴬ} is \AR{VarLike}, we can make use of \AF{reify}
+(defined in \cref{fig:kripkereify}) to get a
+\AF{Scope} back which will be more amenable to running the semantics \AB{𝓢ᴮ}.
+Hence the second constraint.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{vlV}
 
@@ -73,7 +91,7 @@ function space and getting a \AB{𝓒ᴬ} back and then reifying it thanks to \A
 
 Still thinking about going under binders: if three evaluation environments
 \AB{ρᴬ} of type
-{(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬ} \AB{Δ}}, \AB{𝓥ᴮ}
+{(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬ} \AB{Δ}}, \AB{ρᴮ}
 in {(\AB{Δ} \AR{─Env}) \AB{𝓥ᴮ} \AB{Θ}},
 and \AB{ρᴬᴮ} in {(\AB{Γ} \AR{─Env}) \AB{𝓥ᴬᴮ} \AB{Θ}}
 are related by \AB{𝓔ᴿ} and we are
@@ -83,12 +101,13 @@ thinned \AB{ρᴬᴮ} should still be related.
 
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{thV}
 
-Remembering that \AF{\_>>\_} is used in the definition of \AF{body}
-(cf. \cref{fig:genbody})
+Remembering that \AF{\_++\textasciicircum{}Env\_} is used in the definition
+of \AF{body} (cf. \cref{fig:genbody})
 to combine two disjoint environments {(\AB{Γ} \AR{─Env}) \AB{𝓥} \AB{Θ}} and
 {(\AB{Δ} \AR{─Env}) \AB{𝓥} \AB{Θ}} into one of type
 {((\AB{Γ} \AF{++} \AB{Δ}) \AR{─Env}) \AB{𝓥} \AB{Θ})}, we mechanically need a
-constraint stating that \AF{\_>>\_} is compatible with \AB{𝓔ᴿ}. We demand
+constraint stating that \AF{\_++\textasciicircum{}Env\_} is compatible with
+\AB{𝓔ᴿ}. We demand
 as an extra precondition that the values \AB{ρᴮ} and \AB{ρᴬᴮ} are extended
 with are related in a pointwise manner according to \AB{𝓥ᴿ}. Lastly, for all
 the types to match up, \AB{ρᴬ} has to be extended with placeholder variables
@@ -97,7 +116,7 @@ which we can do thanks to the \AR{VarLike} constraint \ARF{vl\textasciicircum{}�
 \ExecuteMetaData[generic-syntax.agda/Generic/Fusion.tex]{appendR}
 
 We finally arrive at the constraints focusing on the semantical counterparts
-of the terms' constructors. In order to have readable type we introduce an
+of the terms' constructors. In order to have readable types we introduce an
 auxiliary definition \AF{𝓡}. Just like in \cref{sec:fusionrel}, it relates at
 a given type a term and three environments by stating that sequentially evaluating
 the term in the first and then the second environment on the one hand and directly
@@ -123,7 +142,7 @@ of the subterms.
 
 \subsection{Fundamental Lemma of Fusion}
 
-This set of constraint is enough to prove a fundamental lemma
+This set of constraints is enough to prove a fundamental lemma
 of \AR{Fusion} stating that from a triple of related environments,
 one gets a pair of related computations: the composition of \AB{𝓢ᴬ}
 and \AB{𝓢ᴮ} on one hand and \AB{𝓢ᴬᴮ} on the other.
@@ -146,8 +165,8 @@ the recursive substructures are \AF{Kripkeᴿ}-related.
 \end{figure}
 
 The proofs involve two functions we have not mentioned before:
-\AF{zip} maps a proof that a property holds for any recursive substructure
-over the arguments of constructor to obtain a \AF{Zip} object. The proof
+\AF{liftᴿ} maps a proof that a property holds for any recursive substructure
+over the arguments of said constructor to obtain a \AF{⟦ d ⟧ᴿ} object. The proof
 we obtain does not exactly match the premise in \ARF{algᴿ}; we need to
 adjust it by rewriting an \AF{fmap}-fusion equality called \AF{fmap²}.
 
@@ -182,6 +201,8 @@ with itself.
 \caption{Generic Substitution-Substitution Fusion Principle}
 \end{figure}
 
+\subsection{Variations on these results}
+
 Another corollary of the fundamental lemma of fusion is the observation that
 Kaiser, Schäfer, and Stark (\citeyear{Kaiser-wsdebr}) make: \emph{assuming
 functional extensionality}, all of our kind-and-scope safe traversals are
@@ -195,7 +216,17 @@ take equal inputs to equal outputs. An intensional notion of equality will
 simply not do here.
 %
 As a consequence, we refrain from using the generic result in practice when
-an axiom-free alternative is provable. Kaiser, Schäfer and Stark's observation
-naturally raises the question of whether the same semantics are also stable
-under substitution. Our semantics implementing printing with names is a clear
-counter-example.
+an axiom-free alternative is provable.
+
+
+Kaiser, Schäfer and Stark's observation naturally raises the question of whether
+the same semantics are also stable under substitution.
+%
+Our semantics implementing printing with names is a clear counter-example: a
+fresh name is generated each time we go under a binder, meaning that the same
+term will be printed differently dependening on whether it is located under
+one or two binders.
+%
+Consequently, printing $u$ and substituting the result for $t$ during the
+printing of $(λx.t)(λx.λy.t)$ will lead to a different result than printing
+the term $(λx.u)(λx.λy.u)$ where the substitution has already been performed.
