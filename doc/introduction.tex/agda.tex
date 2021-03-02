@@ -116,7 +116,8 @@ the type of pairs defined in \cref{par:recordtypes}.
 \paragraph{Inductive Types}
 
 As is customary in introductions to dependently typed programming, our first
-inductive type will be the natural numbers. They are defined as an inductive
+inductive type will be the Peano-style natural numbers.%
+They are defined as an inductive
 type with two constructors: \AIC{zero} and \AIC{suc}cessor. Our first program
 manipulating them is addition; it is defined by recursion on the first argument.
 
@@ -283,7 +284,7 @@ First, we introduce \AF{replicate} which takes a natural number \AB{n} and a val
 \AB{a} of type \AB{A} and returns a tuple of \AB{A}s of size \AB{n} by duplicating
 \AB{a}. The return type of \AF{replicate} reduces to \AR{⊤} when the natural number
 is \AIC{zero} and (\AB{A} \AR{×} (\AB{n} \AF{-Tuple} \AB{A})) when it is
-(\AIC{suc} \AB{n}).
+(\AIC{suc} \AB{n}) thus making the following definition valid.
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{replicate}
 
@@ -400,7 +401,7 @@ the added bonus that we have now \emph{proven} the function to be total.
 \label{sec:intro-proving}
 We make explicit some of our programs' invariants directly in their
 type thus guaranteeing that the implementation respects them. The
-type of \AF{map} for instance tells us that
+type of \AF{map\textasciicircum{}-Tuple} for instance tells us that
 this is a length preserving operation. We cannot possibly encode all
 of a function's properties directly into its type but we can use
 Agda's to state and prove theorems of interest.
@@ -495,7 +496,8 @@ Second, the \AF{\_⊢\_} combinator makes explicit the \emph{adjustment} made to
 index by a function, conforming to the convention (see e.g. \cite{martin1982constructive})
 of mentioning only context \emph{extensions} when presenting judgements and write
 ({\AB{f} \AF{⊢} \AB{P}}) where \AB{f} is the modification and \AB{P} the indexed
-Set it operates on.
+Set it operates on. This is the reindexing functor we saw in
+\cref{example:reindexingfunctor}.
 
 \ExecuteMetaData[shared/Stdlib.tex]{adjust}
 

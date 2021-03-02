@@ -41,8 +41,9 @@ and $(\_∘\_)$ instead of $(\_∘_{\AB{𝓒}}\_)$ respectively.
 \begin{example}[Discrete category]
 \label{example:discretecat}
 From any type \AB{A} we can create the discrete category corresponding to
-\AB{A}. Its objects are elements of \AB{A} and the only morphisms it has
-are the identity functions from each element to itself.
+\AB{A}. Its objects are values of type \AB{A} and the only morphisms it has
+are the identity functions from each element to itself. It derives its name
+from the total lack of morphisms between distinct objects.
 \end{example}
 
 \begin{example}[Sets and functions]
@@ -80,15 +81,16 @@ morphisms of \AB{𝓒}. It takes objects in \AB{𝓒} to objects in
 \end{definition}
 
 \begin{example}[Reindexing]
- Given two sets \AB{I} and \AB{J}, every function \AB{f}
+\label{example:reindexingfunctor}
+Given two sets \AB{I} and \AB{J}, every function \AB{f}
 from \AB{I} to \AB{J} induces a functor from the category $\Set^J$ to
 $\Set^I$ (cf. \cref{example:familiescat}).
 We write {(\AB{f} ⊢\_)} for this functor (we explain this notation in
-section~\ref{sec:indexed-combinators}) and define its action on objects
+Section~\ref{sec:indexed-combinators}) and define its action on objects
 and morphisms as follows:
 
 \begin{itemize}
-  \item Given an object \AB{P} (i.e. a predicate of type (\AB{J} → Set)),
+  \item Given an object \AB{P} i.e. a predicate of type (\AB{J} → Set),
     we define {(\AB{f} ⊢ \AB{P})} to be the
     family {(λ\AB{i} → \AB{P} (\AB{f} \AB{i}))} of type (\AB{I} → Set)
   \item Given a morphism \AB{prf} from \AB{P} to \AB{Q} (i.e. a function
@@ -158,14 +160,16 @@ $\_^*$ maps its input function on every value in the input list before
 flattening the result. The equality constraints are easily verified.
 \end{example}
 
-We will refine the following example in the next section and revisit it at
-length throughout this thesis as it is the basis of our work.
+We will refine the following example in the next section and revisit it
+in spirit throughout this thesis as expressions-with-variables as monads
+is part of the very foundations of our work.
 
 \begin{example}[Arithmetic expressions with free variables]
 \label{example:arithsetexample}
-An inductive type representing abstract syntax trees of very simple closed
-arithmetic expressions can be described by the following grammar where
-$\underline{n}$ stands for the embedding of a natural number $n$:
+The type of abstract syntax trees of very simple closed arithmetic expressions
+involving natural numbers ($\underline{n}$ stands for the embedding of a natural
+number $n$) and addition of two expressions can be described by following
+grammar:
 
 $$t ::= \underline{n} \mid t + t$$
 
@@ -197,11 +201,11 @@ is a functor \AB{T} from \AB{𝓒} to \AB{𝓓} equipped with:
     {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{A})} (the unit)
   \item For any objects \AB{A} and \AB{B}, a mapping $\_^*$
     from {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{B})}
-    to {\AB{𝓓}(\AB{T} \AB{A}, \AB{T} \AB{A})} (the Kleisli extension)
+    to {\AB{𝓓}(\AB{T} \AB{A}, \AB{T} \AB{B})} (the Kleisli extension)
 \end{enumerate}
 
 such that they verify similar constraints to the ones spelt out in the
-definition of a monad (\ref{def:monad}).
+definition of a monad (cf. definition \ref{def:monad}).
 \end{definition}
 
 \begin{example}[Arithmetic expressions with finitely many free variables]
@@ -213,7 +217,7 @@ we restrict ourselves to using a natural number that represents the number
 of variables that are in scope.
 
 A variable in a tree indexed by $n$ is now a natural number $m$ together
-with a proof that it is smaller than $n$. This new type is functor between
+with a proof that it is smaller than $n$. This new type is a functor between
 the discrete category of natural numbers%
 \footnote{We could pick a source category with more structure and
 obtain a more interesting result but this is beyond the scope of this
@@ -223,5 +227,6 @@ introduction}%
 It is also a relative monad with respect to the trivial functor taking
 a natural number and mapping it to the set of natural numbers that are
 smaller (our notion of variable). Once again mapping is renaming, $η$
-is the var constructor itself, $\_^*$ corresponds to parallel substitution.
+is the var constructor itself, and $\_^*$ corresponds to parallel
+substitution.
 \end{example}

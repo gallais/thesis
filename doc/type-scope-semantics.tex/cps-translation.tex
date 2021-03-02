@@ -79,7 +79,7 @@ explicitly schedule the evaluation order of various subterms.
 
 As explained in Hatcliff and Danvy's paper, the translation from \AD{Type} to
 \AD{CType} fixes the calling convention the CPS translation will have. Both call
-by name (\AF{CBV}) and call by value (\AF{CBV}) can be encoded. They behave the
+by name (\AF{CBN}) and call by value (\AF{CBV}) can be encoded. They behave the
 same way on base types but differ on the way they translate function spaces.
 In \AF{CBN} the argument of a function is a computation (i.e. it is wrapped in
 a \AIC{\#\_} type constructor) whilst it is expected to have been fully evaluated

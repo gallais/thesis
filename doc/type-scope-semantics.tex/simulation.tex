@@ -66,8 +66,8 @@ an (\AB{I}\AF{─Scoped}) family \AB{T} and itself.
 \end{figure}
 
 Once we know what relations are, we are going to have to lift relations on values
-and computations to relations on environments, \AF{Kripke} function spaces or
-on \AB{d}-shaped terms whose subterms have been evaluated already. These relation
+and computations to relations on environments or \AF{Kripke} function spaces.
+These relation
 transformers will be instances of what Kawahara calls `relators'.
 This is what the rest of this section focuses on.
 
@@ -96,7 +96,12 @@ environment \AB{ρ} associates a trivial proof of the statement
 
 The combinators we introduced in Figure~\ref{fig:baseenv} to build environments
 (\AF{ε}, \AF{\_∙\_}, etc.) have natural relational counterparts.
-We reuse the same names for them, simply appending an \AF{ᴿ} suffix.
+
+\begin{convention}[Relational counterparts]
+We systematically reuse the same names for a constructor or a combinator and
+its relational counterpart. We simply append an \AF{ᴿ} suffix to the relational
+version.
+\end{convention}.
 
 
 Once we have all of these definitions, we can spell out what it means to
@@ -114,13 +119,9 @@ one associated to \AB{t} by \AB{𝓢ᴮ} using \AB{ρᴮ}.
 
 The evidence that we have a \AR{Simulation} between two \AR{Semantics}
 (𝓢ᴬ and 𝓢ᴮ) is packaged in a record indexed by the semantics as well
-as two relations. The first one (\AB{𝓥ᴿ}) relates values and the second
-one (\AB{𝓒ᴿ}) describes simulation for computations. Our goal is to prove
-that given that the simulation constraints are satisfied, evaluation in
-semantics 𝓢ᴬ and evaluation in semantics 𝓢ᴮ yield related computations
-provided related environments of values. We start by making formal this
-idea of related evaluations by introducing \AF{𝓡}, a specialisation of
-𝓒ᴿ:
+as the two relations (\AB{𝓥ᴿ} and \AB{𝓒ᴿ}) mentioned earlier.
+We start by making formal this idea of related evaluations by introducing
+\AF{𝓡}, a specialisation of 𝓒ᴿ:
 
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{crel}
 

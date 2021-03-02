@@ -1,7 +1,7 @@
 \chapter{Refactoring Common Traversals}
 
-Once they have a good representation for their language, they will have to
-(re)implement a great number of traversals doing such mundane things as
+Once they have a good representation for their language, DSL writers will have
+to (re)implement a great number of traversals doing such mundane things as
 renaming, substitution, or partial evaluation. Should they want to get help
 from the typechecker in order to fend off common bugs, they will have opted
 for inductive families (\cite{dybjer1991inductive}) to enforce precise
@@ -157,6 +157,17 @@ This is the fundamental lemma of \AR{Kit}s stated and proved in \cref{fig:kitlem
 \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
 \caption{Fundamental lemma of \AR{Kit}\label{fig:kitlemma}}
 \end{figure}
+
+\begin{convention}[Programs as lemmas]
+It may seem strange for us to call a program manipulating abstract syntax trees
+a ``fundamental lemma''. From the Curry-Howard correspondence's point of view,
+types are statements and programs are proofs so the notions may be used
+interchangeably.
+
+We insist on calling this program  (and other ones in this thesis) a
+``fundamental lemma'' because it does embody the essence of the abstraction
+we have just introduced.
+\end{convention}
 
 Thankfully, we can indeed recover renaming and substitution as two instances of
 the fundamental lemma of \AR{Kit}s. We start with the \AR{Kit} for renaming
@@ -694,7 +705,7 @@ We then have a collection of base cases for the data constructors of type
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printcons}
 
 Finally we have purely structural cases: we run the printers for each of~
-the subparts and put the results together, throwing in some extra parenthesis~
+the subparts and put the results together, throwing in some extra parentheses~
 to guarantee that the result is unambiguous.
 
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Printing.tex]{printstruct}

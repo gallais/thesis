@@ -57,7 +57,7 @@ binders, we need to remember to increment the natural numbers
 corresponding to free variables (and only those) every time we push
 the substitution under a binder. This is quite error prone.
 
-\subsection{Well-scoped Representation}
+\subsection{Well Scoped Representation}
 
 As we have just seen, directly manipulating a string-based representation
 or even one using raw de Bruijn indices is error-prone. As a consequence,
@@ -66,7 +66,13 @@ is a popular use case
 (\cite{BELLEGARDE1994287,bird_paterson_1999,altenkirch1999monadic}).
 
 We will study this representation in more details in
-Section~\ref{sec:scopedtypedterms}.
+Section~\ref{sec:scopedtypedterms} but the key idea is that the number
+of free variables is made to be part of the type of terms. This means that
+if the programmer has forgotten to appropriately update a term before pushing
+it under a binder, they will get a static type error.
+
+The illegal state has been made irrepresentable thus rooting out a source
+of errors.
 
 \section{Scope of This Thesis}
 
@@ -136,7 +142,8 @@ these programs.
 
 \section{Source Material}
 
-This thesis is based on the content of two fully-formalised published papers. They
+The core of this thesis is based on the content of two fully-formalised
+published papers. They
 correspond roughly to part one and two on the one hand
 (``Type-and-scope Safe Programs and Their Proofs'' \cite{allais2017type, repo2017})
 and part three on the other
@@ -166,7 +173,7 @@ introductory chapters for the less common topics.
 We use categorical terms whenever it is convenient to concisely describe some
 of the key properties of our constructions. So we provide the reader with an
 \textbf{introduction to category theory in Section~\ref{introduction-category}}.
-A reader familiar with Peirce's `Basic category theory for computer scientists'
+A reader familiar with Pierce's `Basic category theory for computer scientists'
 may skip this section except perhaps for the definition of relative monads
 in Section~\ref{sec:relativemonad}.
 
