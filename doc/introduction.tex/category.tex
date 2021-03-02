@@ -14,6 +14,9 @@ specifically interested in relative monads.
 
 \section{What even is a Category?}
 
+A category is a set of morphisms closed under a well-behaved notion of
+composition. This is made formal by the following definition.
+
 \begin{definition}\label{def:category}
 A \textbf{category} \AB{𝓒} is defined by a set of objects (written Obj(\AB{𝓒}))
 and a family of morphisms (written \AB{𝓒}(\AB{A},\AB{B})) between any two
@@ -35,6 +38,13 @@ information from the context, we may write $id$ instead of $id_{\AB{A}}$
 and $(\_∘\_)$ instead of $(\_∘_{\AB{𝓒}}\_)$ respectively.
 \end{convention}
 
+\begin{example}[Discrete category]
+\label{example:discretecat}
+From any type \AB{A} we can create the discrete category corresponding to
+\AB{A}. Its objects are elements of \AB{A} and the only morphisms it has
+are the identity functions from each element to itself.
+\end{example}
+
 \begin{example}[Sets and functions]
 \label{example:setsfunctionscat}
 In this category called \Set, objects are sets and morphisms are total
@@ -52,6 +62,9 @@ functions of type {(∀\AB{i} → \AB{P} \AB{i} → \AB{Q} \AB{i})}.
 
 \section{Functors}
 
+A functor is a morphism between two categories that is compatible with their
+respective notions of composition.
+
 \begin{definition}[Functor]\label{def:functor}
 A functor \AB{F} between two categories
 \AB{𝓒} and \AB{𝓓} is defined by its action on the objects and
@@ -66,25 +79,20 @@ morphisms of \AB{𝓒}. It takes objects in \AB{𝓒} to objects in
 \end{enumerate}
 \end{definition}
 
-
-\begin{definition}[Endofunctor]\label{def:endofunctor}
-An endofunctor on a category \AB{𝓒} is a functor
-from \AB{𝓒} to \AB{𝓒}.
-\end{definition}
-
-\begin{example} Given a set \AB{I}, every function \AB{f} from \AB{I}
-to itself induces an endofunctor on the category $\Set^I$
-(cf. \cref{example:familiescat}).
+\begin{example}[Reindexing]
+ Given two sets \AB{I} and \AB{J}, every function \AB{f}
+from \AB{I} to \AB{J} induces a functor from the category $\Set^J$ to
+$\Set^I$ (cf. \cref{example:familiescat}).
 We write {(\AB{f} ⊢\_)} for this functor (we explain this notation in
 section~\ref{sec:indexed-combinators}) and define its action on objects
 and morphisms as follows:
 
 \begin{itemize}
-  \item Given an object \AB{P} (i.e. a predicate of type (\AB{I} → Set)),
+  \item Given an object \AB{P} (i.e. a predicate of type (\AB{J} → Set)),
     we define {(\AB{f} ⊢ \AB{P})} to be the
-    family {(λ\AB{i} → \AB{P} (\AB{f} \AB{i}))}
+    family {(λ\AB{i} → \AB{P} (\AB{f} \AB{i}))} of type (\AB{I} → Set)
   \item Given a morphism \AB{prf} from \AB{P} to \AB{Q} (i.e. a function
-    of type {(∀\AB{i} → \AB{P} \AB{i} → \AB{Q} \AB{i})}),
+    of type {(∀\AB{j} → \AB{P} \AB{j} → \AB{Q} \AB{j})}),
     we define {(\AB{f} ⊢ \AB{prf})} to be
     the morphism {(λ \AB{i} \AB{p} → \AB{prf} (\AB{f} \AB{i}) \AB{p})}
 \end{itemize}
@@ -92,7 +100,33 @@ and morphisms as follows:
 The constraints spelt out in the definition of a functor are trivially verified.
 \end{example}
 
-\section{(Co)Monads}
+Programmers may be more familiar with endofunctors: functors whose domain
+and codomain are the same category.
+
+\begin{definition}[Endofunctor]\label{def:endofunctor}
+An endofunctor on a category \AB{𝓒} is a functor
+from \AB{𝓒} to \AB{𝓒}.
+\end{definition}
+
+\begin{example}[List]
+\label{example:listfunctor}
+The inductive type associating to each type \AB{A}, the type of finite
+lists of elements of \AB{A} is an endofunctor on the category of Sets
+and functions (cf. \cref{example:setsfunctionscat}).
+
+Its action on morphism is simply to map the function over all of the lists'
+element. The equality constraints spelt out by the definition of Functor
+correspond to the classic identity and fusion lemmas for the map function.
+We see detailed proofs for a similar result in Section~\ref{sec:intro-proving}
+in the context of proving programs correct in Agda.
+\end{example}
+
+\section{Monads}
+
+A monad is an endofunctor whose action on objects is well-behaved under
+iteration. For any amount of nesting of this action $\AB{T}^n \AB{A}$,
+it has a canonical operation computing a value of type {\AB{T} \AB{A}}
+in a way that is compatible with the functor structure.
 
 \begin{definition}[Monad]
 \label{def:monad}
@@ -117,10 +151,35 @@ such that:
 \end{enumerate}
 \end{definition}
 
-\begin{example}[Maybe]\todo{}
+\begin{example}[List]We have already seen in \cref{example:listfunctor}
+that the \AB{List} type constructor is a functor. It is additionally
+a monad. $η_{\AB{A}}$ takes an element an returns a singleton list, while
+$\_^*$ maps its input function on every value in the input list before
+flattening the result. The equality constraints are easily verified.
 \end{example}
 
-\begin{example}[Expression with free variables]\todo{}
+We will refine the following example in the next section and revisit it at
+length throughout this thesis as it is the basis of our work.
+
+\begin{example}[Arithmetic expressions with free variables]
+\label{example:arithsetexample}
+An inductive type representing abstract syntax trees of very simple closed
+arithmetic expressions can be described by the following grammar where
+$\underline{n}$ stands for the embedding of a natural number $n$:
+
+$$t ::= \underline{n} \mid t + t$$
+
+We can freely add variables to this little language by adding an additional
+constructor for values in a type of variables \AB{I} (we write \AB{i} for any
+value of type \AB{I}).
+
+$$t ::= i \mid \underline{n} \mid t + t$$
+
+This new type is an endofunctor on the category of sets and functions: a
+mapping from {\AB{I} to \AB{J}} can be seen as a variable renaming. It is,
+additionally, a monad: $η$ is the var constructor itself, $\_^*$ corresponds
+to parallel substitution.
+
 \end{example}
 
 \section{Monads need not be Endofunctors}\label{sec:relativemonad}
@@ -144,3 +203,25 @@ is a functor \AB{T} from \AB{𝓒} to \AB{𝓓} equipped with:
 such that they verify similar constraints to the ones spelt out in the
 definition of a monad (\ref{def:monad}).
 \end{definition}
+
+\begin{example}[Arithmetic expressions with finitely many free variables]
+\label{example:arithnatexample}
+
+This example is a slight modification of \cref{example:arithsetexample}.
+Instead of allowing any type to represent the variables free in a term,
+we restrict ourselves to using a natural number that represents the number
+of variables that are in scope.
+
+A variable in a tree indexed by $n$ is now a natural number $m$ together
+with a proof that it is smaller than $n$. This new type is functor between
+the discrete category of natural numbers%
+\footnote{We could pick a source category with more structure and
+obtain a more interesting result but this is beyond the scope of this
+introduction}%
+(cf. \cref{example:discretecat}) and the category of sets and functions.
+
+It is also a relative monad with respect to the trivial functor taking
+a natural number and mapping it to the set of natural numbers that are
+smaller (our notion of variable). Once again mapping is renaming, $η$
+is the var constructor itself, $\_^*$ corresponds to parallel substitution.
+\end{example}
