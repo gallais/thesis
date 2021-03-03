@@ -67,8 +67,12 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 \end{code}
 %</alg>
 %<*semtype>
+%<*semanticstype>
 \begin{code}
  semantics : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
+\end{code}
+%</semanticstype>
+\begin{code}
  body      : (Γ ─Env) 𝓥 Δ → ∀ Θ σ →
              Scope (Tm d s) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
 \end{code}

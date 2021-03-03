@@ -84,10 +84,28 @@ suggests we ought to be able to reuse our interpretation function
 \subsection{Defining a Generic Notion of Semantics}
 
 Based on these observations, we can define a generic notion of semantics
-for all syntax descriptions. It is once more parametrised by two
-{(\AB{I}\AF{─Scoped})} families \AB{𝓥} and \AB{𝓒} corresponding
-respectively to values associated to bound variables and computations
-delivered by evaluating terms.
+for all syntax descriptions. Any pair of {(\AB{I}\AF{─Scoped})} families
+\AB{𝓥} and \AB{𝓒} satisfying the \AR{Semantics} constraints will once
+more give rise to an evaluation function. We introduce a notion of
+computation \AF{\_─Comp} analogous to that defined in \cref{fig:comp}.
+Just as an environment interprets variables in a model, a computation
+gives a meaning to terms into a model.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{comp}
+\caption{\AF{\_─Comp}: Associating Computations to Terms}
+\end{figure}
+
+We expect the fundamental lemma of \AR{Semantics} to be a program
+turning an environment mapping free variables to values into a
+mapping from terms to computations.
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semanticstype}
+
+Now that the goal is clear, let us spell out the \AR{Semantics} constraints.
+As always, they are packed in a record parametrised over the description in
+question and the two {(\AB{I}\AF{─Scoped})} families \AB{𝓥} and \AB{𝓒} used
+to interpret values and computations respectively.
 
 {
 \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{semrec}
@@ -98,13 +116,19 @@ These two families have to abide by three constraints. First, values
 should be thinnable so that we may push the evaluation environment
 under binders.
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{thv}
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{thv}
+\end{agdasnippet}
 
 Second, values should embed into computations for us to be able to
 return the value associated to a variable in the environment as the
 result of its evaluation.
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{var}
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{var}
+\end{agdasnippet}
 
 Third, we have a constraint similar to the one needed to define \AF{fold} in
 \cref{section:data} (\cref{figure:datamu}). We should have an algebra taking
@@ -116,7 +140,10 @@ the substructures have been evaluated. We will look at this definition
 shortly; the important thing to have in mind is that it should behave
 sensibly both for substructures with and without newly bound variables.
 
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{alg}
+\begin{agdasnippet}
+\addtolength{\leftskip}{\parindent}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{alg}
+\end{agdasnippet}
 
 To make formal this idea of ``hav[ing] already been evaluated'' we
 crucially use the fact that the meaning of a description is defined
@@ -147,26 +174,14 @@ thinnings by mapping them over the environment of values thanks to
 \ARF{th\textasciicircum{}𝓥}.
 %
 However this special case is truer to the observations we made earlier
-and gives user a definition that is easier to use.
+and gives users a definition that is easier to use.
 
 
 %The name \AF{Kripke} comes from the connection with the interpretation of
 %implication in Kripke models where if something holds in one world, it holds
 %in all successive ones.
 
-It is once more the case that the abstract notion of Semantics comes with
-a fundamental lemma: all \AB{I} \AF{─Scoped} families \AB{𝓥} and \AB{𝓒}
-satisfying the three criteria we have put forward give rise to an evaluation
-function. We introduce a notion of computation \AF{\_─Comp} analogous to
-that of environments: instead of associating values to variables, it
-associates computations to terms.
-
-\begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Semantics.tex]{comp}
-\caption{\AF{\_─Comp}: Associating Computations to Terms}
-\end{figure}
-
-We can now define the type of the fundamental lemma (called \AF{semantics}) which
+We can now recall the type of the fundamental lemma (called \AF{semantics}) which
 takes a semantics and returns a function from environments to computations. It is
 defined mutually with a function \AF{body} turning syntactic binders into
 semantics binders: to each de Bruijn \AF{Scope} (i.e. a substructure in a potentially
