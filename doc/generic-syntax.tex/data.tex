@@ -1,24 +1,38 @@
 \chapter{A Primer on Universes of Data Types}\label{section:data}
 
-Chapman, Dagand, McBride and Morris
-(CDMM, \citeyear{Chapman:2010:GAL:1863543.1863547})
-defined a universe of data types inspired by Dybjer and Setzer's
-finite axiomatisation of inductive-recursive definitions (\citeyear{Dybjer1999}),
-Altenkirch and McBride's observation that ``generic programming is just
-programming'' within dependent types
-(\citeyear{DBLP:conf/ifip2-1/AltenkirchM02})
-Benke, Dybjer and Jansson's universes for generic programs and proofs
-(\citeyear{benke-ugpp}).
+To achieve a syntax-generic presentation of the work presented in Parts I
+and II, we need to find a language to talk about syntaxes in general.
+The solution we adopt is inspired by previous work on data-generic
+constructions.
+
+There is a long tradition of data-generic developments in dependently typed
+languages because, as  Altenkirch and McBride remark,
+``generic programming is just programming'' within dependent types
+(\citeyear{DBLP:conf/ifip2-1/AltenkirchM02}).
 %
-This explicit definition of \emph{codes} for data types empowers the
-user to write generic programs tackling \emph{all} of the data types
-one can obtain this way. In this section we recall the main aspects
-of this construction we are interested in to build up our generic
-representation of syntaxes with binding.
+This style of programming is typified by Benke, Dybjer and Jansson's
+universes for generic programs and proofs (\citeyear{benke-ugpp}) or
+Chapman, Dagand, McBride and Morris'
+(CDMM, \citeyear{Chapman:2010:GAL:1863543.1863547})
+universe of data types.
+%
+This last work is inspired by Dybjer and Setzer's
+finite axiomatisation of Inductive-Recursive definitions
+(\citeyear{Dybjer1999}).
+
+
+%
+All of these proceed by an explicit definition of syntactic \emph{codes}
+for data types that are given a semantics as objects in the host language.
+Users can perform induction on these codes to write generic programs
+tackling \emph{all} of the data types one can obtain this way.
+%
+In this section we recall the main aspects of this construction we are
+interested in to build up our generic representation of syntaxes with binding.
 
 \section{Datatypes as Fixpoints of Strictly Positive Functors}
 
-The first component of CDMM's universe's definition is an inductive
+The first component of the definition of CDMM's universe is an inductive
 type of \AD{Desc}riptions of strictly positive functors and their
 fixpoints.
 
@@ -32,9 +46,10 @@ payloads. Keeping these index types distinct prevents mistaking one for the
 other when constructing the interpretation of descriptions. Later of course
 we can use these containers as the nodes of recursive datastructures by
 interpreting some payloads sorts as requests for
-subnodes~(\cite{DBLP:journals/jfp/AltenkirchGHMM15}).
+subnodes~(\cite{DBLP:journals/jfp/AltenkirchGHMM15}) i.e. we will identify
+\AB{I} and \AB{J} when the time comes to build a fixpoint.
 
-We will interleave the definition of the type of description and the
+We will interleave the definition of the type of descriptions and the
 recursive function \AF{⟦\_⟧} assigning a meaning to them provided it
 is handed the meaning to attach to the substructures. Interpretation
 of descriptions gives rise to right-nested tuples terminated by equality
@@ -49,7 +64,7 @@ constraints.
 First, \AIC{`σ} stores data. This can be used to either attach a payload
 to a node in which case the rest of the description will be constant in
 the value stored, or offer a choice of possible descriptions computed
-from the stored value.
+from the stored value. It is interpreted as a \AR{Σ} type in the host language.
 
 \noindent\begin{minipage}[t]{0.5\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:sigma}
@@ -57,7 +72,9 @@ from the stored value.
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp:sigma}
 \end{minipage}
 
-Then \AIC{`X} attaches a recursive substructure indexed by $J$.
+Then \AIC{`X} attaches a recursive substructure indexed by $J$. Its
+interpretation is unsuprisingly a simple call to the argument giving
+a meaning to substructures.
 
 \noindent\begin{minipage}{0.5\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc:rec}
@@ -144,6 +161,17 @@ displaying a goal.
 \caption{List Type, Patterns and Example}\label{figure:listpat}
 \end{figure}
 
+\begin{convention}[Patterns for Layers and Datatypes]
+Whenever we work with a specific example in a universe of datatypes or
+syntaxes, we introduce a set of patterns that work on a single
+\AF{⟦\_⟧}-defined layer (the primed version of the pattern) and
+one that works on full \AD{μ}-defined values (the classic version
+of the pattern).
+In most cases users will only use the classic version of the pattern
+to write their programs. But when using generic fold-like function
+(see the next section) they may be faced with a single layer.
+\end{convention}
+
 Now that we have the ability to represent the data we are interested it,
 we are only missing the ability to write programs manipulating it.
 
@@ -179,7 +207,10 @@ was total in~\cref{sec:sizetermination}.
 
 Finally, \cref{fig:listfold} demonstrates that we can get our hands
 on the types' eliminators we are used to by instantiating the generic
-\AF{fold} we have just defined.
+\AF{fold} we have just defined. Note that we are here using the primed
+versions of the patterns: the algebra of a fold takes as argument a
+single layer of data where the substructures have already been replaced
+with inductive hypotheses.
 
 \begin{figure}
   \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{foldr}
@@ -209,7 +240,7 @@ to represent abstract syntax trees equipped with a notion of binding.
 \section{A Free Monad Construction}
 
 The natural candidate to represent trees with binding and thus variables
-is to take not the least fixpoint of the strictly positive functor but
+is to take not the least fixpoint of a strictly positive functor but
 rather the corresponding free monad. It can be easily defined by reusing
 the interpretation function, adding a special case corresponding to the
 notion of variable we may want to use.
