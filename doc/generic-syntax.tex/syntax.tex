@@ -143,7 +143,7 @@ and well typed by construction.
 We start with the simplest example to lay down the foundations: the well
 scoped untyped λ-calculus.
 %
-We then itnroduce a well scoped and well sorted but not well typed
+We then introduce a well scoped and well sorted but not well typed
 bidirectional language.
 %
 We finally consider the code for the intrinsically typed STλC.
@@ -197,6 +197,17 @@ annotation when forming a \AIC{Cut}.
 \end{minipage}
   \caption{Description for the bidirectional STLC\label{fig:descBidiSTLC}}
 \end{figure}
+
+\begin{convention}[Embed and Cut]
+We systematically call the change of direction from a synthesisable to a
+checkable term an \textbf{embedding} as no extra information is tacked onto
+the term.
+
+In the other direction we use terminology from proof theory because we recognise
+the connection between \textbf{cut}-elimination and βι reductions. Putting a
+constructor-headed checkable in a synthesisable position is the first step to
+creating a redex. Hence the analogy.
+\end{convention}
 
 \paragraph{Intrinsically typed STLC}\label{par:intrinsicSTLC}
 In the typed case, we are back to two
