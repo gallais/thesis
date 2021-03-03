@@ -83,7 +83,7 @@ Otherwise we proceed in a manner reminiscent of the pure reification function
 defined in Figure~\ref{fig:kripkereify}. We start by generating an environment
 of names for the newly bound variables by using the fact that \AF{Fresh} composed
 with \AF{Name} is \AR{VarLike} together with the fact that environments are
-Traversable~\cite{mcbride_paterson_2008}, %%%
+Traversable~(\cite{mcbride_paterson_2008}), %%%
 and thus admit the standard Haskell-like \AF{mapA} and \AF{sequenceA}
 traversals. %%%
 We then run the \AF{Kripke} function

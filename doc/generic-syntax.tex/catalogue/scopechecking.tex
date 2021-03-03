@@ -9,9 +9,9 @@ and the third step consists of type checking.
 
 Parsing is currently out of scope for our library; users can write safe
 ad-hoc parsers for their object language by either using a library of total
-parser combinators~\cite{DBLP:conf/icfp/Danielsson10,allais2018agdarsec}
+parser combinators~(\cite{DBLP:conf/icfp/Danielsson10,allais2018agdarsec})
 or invoking a parser generator oracle whose target is a total
-language~\cite{Stump:2016:VFP:2841316}. As we will see shortly, we can
+language~(\cite{Stump:2016:VFP:2841316}). As we will see shortly, we can
 write a generic scope checker transforming terms in a raw syntax where
 variables are represented as strings into a well scoped syntax. We will
 come back to typechecking with a concrete example in section~\ref{section:typechecking}
@@ -104,7 +104,7 @@ down the scope and use \AIC{s} to lift the result to the full scope.
 Scope checking an entire term then amounts to lifting this action on
 variables to an action on terms. The error Monad \AF{Fail} is by
 definition an Applicative and by design our terms are
-Traversable~\cite{bird_paterson_1999,DBLP:journals/jfp/GibbonsO09}.
+Traversable~(\cite{bird_paterson_1999,DBLP:journals/jfp/GibbonsO09}).
 The action on term is defined mutually with the action on scopes.
 As we can see in the second equation for \AF{toScope}, thanks to the
 definition of \AF{WithNames}, concrete names arrive just in time to

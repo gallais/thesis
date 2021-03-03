@@ -6,7 +6,7 @@ module Semantics.Printing where
 open import Size using (∞)
 open import Data.List.Base as List using (List; []; _∷_)
 open import Data.Var hiding (_<$>_; get)
-open import Data.Environment hiding (_<$>_; _>>_)
+open import Data.Environment hiding (_<$>_; _++^Env_)
 open import Syntax.Type
 open import Syntax.Calculus
 open import Semantics.Specification

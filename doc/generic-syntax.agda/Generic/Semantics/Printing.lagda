@@ -41,13 +41,13 @@ open import Generic.Semantics
 \begin{code}
 vl^FreshName : VarLike (λ (σ : I) → Fresh ∘ (Name σ))
 vl^FreshName = record
-  { th^𝓥  = th^Functor functor^M th^Wrap
+  { th^𝓥  = th^Functor functor^Fresh th^Wrap
   ; new   = fresh _
   }
 \end{code}
 %</vlmname>
 \begin{code}
-    where open ST renaming (rawFunctor to functor^M)
+    where open ST renaming (rawFunctor to functor^Fresh)
 
 -- To print a term the user need to explain to us how to display one
 -- layer of term given that the newly-bound variables have been assigned
