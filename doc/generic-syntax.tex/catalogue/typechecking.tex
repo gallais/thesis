@@ -1,7 +1,7 @@
 \section{An Algebraic Approach to Typechecking}
 \label{section:typechecking}
 
-Following Atkey~\citeyear{atkey2015algebraic}, we can consider type
+Following Atkey~(\citeyear{atkey2015algebraic}), we can consider type
 checking and type synthesis as a possible semantics for a
 bidirectional~(\cite{pierce2000local}) language.
 %
@@ -67,15 +67,9 @@ function type. We will have to check that it is and so we introduce
 \AF{isArrow}, a function making sure that our candidate's head
 constructor is indeed an arrow, and returning the domain and codomain.
 
-\begin{figure}[h]
-\begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/TypeChecking.tex]{typeeq}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.45\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/TypeChecking.tex]{isArrow}
-\end{minipage}
-\caption{Tests for \AD{Type}~values}
-\end{figure}
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/TypeChecking.tex]{typeeq}
+
+\ExecuteMetaData[generic-syntax.agda/Generic/Semantics/TypeChecking.tex]{isArrow}
 
 \subsection{Typechecking as a \AR{Semantics}}
 

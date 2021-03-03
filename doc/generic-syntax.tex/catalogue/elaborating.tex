@@ -12,7 +12,7 @@ Let us start with a simple example reusing the different definitions of
 the identity function we introduced in \cref{fig:identity}
 (\AF{id\textasciicircum{}B} for the identity in our little bidirectional
 language and \AF{id\textasciicircum{}S} for the well scoped and typed one
-in STLC). We want a function that will typecheck \AF{id\textasciicircum{}B}
+in STLC). We want a function that typechecks \AF{id\textasciicircum{}B}
 against the candidate (\AIC{α `→ α}), succeeds and returns the
 fully annotated \AF{id\textasciicircum{}S}.
 
@@ -112,7 +112,7 @@ return \AIC{nothing} when failing. Agda's support for (dependent!)
 For the arrow type, we introduce a family \AD{Arrow} constraining the
 shape of its index to be an arrow type and redefine \AF{isArrow} as
 a \emph{view} targeting this inductive
-family~\cite{DBLP:conf/popl/Wadler87,DBLP:journals/jfp/McBrideM04}.
+family~(\cite{DBLP:conf/popl/Wadler87,DBLP:journals/jfp/McBrideM04}).
 %
 We deliberately overload the constructor of the \AD{isArrow} family by calling
 it \AIC{\_`→\_}. This means that the proof that a given type has the shape
@@ -192,12 +192,8 @@ but we can also give a (trivial) initial \AF{Typing}. This leads to the
 definitions in Figure~\ref{fig:typedelaboration}.
 
 \begin{figure}[h]
-\begin{minipage}{0.45\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{typemode}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Semantics/Elaboration/Typed.tex]{type-}
-\end{minipage}
 \caption{Evidence-producing Type (Checking / Synthesis) Function}
 \label{fig:typedelaboration}
 \end{figure}

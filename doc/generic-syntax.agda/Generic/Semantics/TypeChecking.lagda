@@ -117,14 +117,11 @@ type- p = Semantics.closed Typecheck
 \end{code}
 %</type->
 \begin{code}
-module _ where
-
-  private β = α `→ α
 
 \end{code}
 %<*example>
 \begin{code}
-  _ : type- Synth (`app (`cut (β `→ β) id^B) id^B) ≡ just β
-  _ = refl
+_ : let β = α `→ α in type- Synth (`app (`cut (β `→ β) id^B) id^B) ≡ just β
+_ = refl
 \end{code}
 %</example>

@@ -201,17 +201,13 @@ type- Synth  t = closed Elaborate t []
 \begin{code}
 module B = PATTERNS
 
-module _ where
-
-  private
-    β : Type
-    β = α `→ α
 \end{code}
 %<*example>
 \begin{code}
-  _ :  type- Synth  ( B.`app (B.`cut (β `→ β)  id^B)  id^B)
-    ≡  just (β      , S.`app                   id^S   id^S)
-  _ = refl
+_ :  let β = α `→ α in
+     type- Synth  ( B.`app (B.`cut (β `→ β)  id^B)  id^B)
+  ≡  just (β      , S.`app                   id^S   id^S)
+_ = refl
 \end{code}
 %</example>
 
