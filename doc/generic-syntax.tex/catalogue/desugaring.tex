@@ -3,7 +3,7 @@
 One of the advantages of having a universe of programming language
 descriptions is the ability to concisely define an \emph{extension}
 of an existing language by using \AD{Desc}ription transformers
-grafting extra constructors à la W. Swiestra~\citeyear{swierstra_2008}.
+grafting extra constructors à la W. Swiestra~(\citeyear{swierstra_2008}).
 This is made extremely simple by the disjoint sum combinator
 \AF{\_`+\_} which we defined in Figure~\ref{figure:descsum}.
 An example of such an extension is the addition of let-bindings to
@@ -39,7 +39,7 @@ in the presence of let bindings may be a variable standing for an
 expression. The user naturally does not want it to make any difference
 whether they used a variable referring to a let-bound expression or
 the expression itself. Various typechecking strategies can accommodate
-this expectation: in Coq~\cite{Coq:manual} let bindings are primitive
+this expectation: in Coq~(\cite{Coq:manual}) let bindings are primitive
 constructs of the language and have their own typing and reduction
 rules whereas in Agda they are elaborated away to the core language
 by inlining.
@@ -75,9 +75,9 @@ to an elaborator translating away this new construct.
 In \cref{cps-transformation} we had focused on STLC only
 and showed that it is similarly possible to implement a Continuation
 Passing Style transformation as the composition of two semantics
-à la Hatcliff and Danvy~\citeyear{hatcliff1994generic}.
+à la Hatcliff and Danvy~(\citeyear{hatcliff1994generic}).
 The first semantics embeds STLC into Moggi's
-Meta-Language~\citeyear{DBLP:journals/iandc/Moggi91} and thus fixes
+Meta-Language~(\citeyear{DBLP:journals/iandc/Moggi91}) and thus fixes
 an evaluation order. The second one translates Moggi's ML back into
 STLC in terms of explicit continuations with a fixed return type.
 
@@ -88,4 +88,5 @@ it is possible to define \emph{generic} transformations elaborating
 these added features in terms of lower-level ones. This suggests that
 this setup could be a good candidate to implement generic compilation
 passes and could deal with a framework using a wealth of slightly
-different intermediate languages à la Nanopass~\cite{Keep:2013:NFC:2544174.2500618}.
+different intermediate languages à la
+Nanopass~(\cite{Keep:2013:NFC:2544174.2500618}).

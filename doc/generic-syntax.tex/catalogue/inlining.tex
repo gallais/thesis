@@ -11,7 +11,7 @@ As we will see shortly, we can implement reference counting and size
 respecting let-inlining as a generic transformation over all syntaxes
 with binding equipped with let binders. This two-pass simple transformation
 takes linear time which may seem surprising given the results due to Appel and
-Jim~\citeyear{DBLP:journals/jfp/AppelJ97}. Our optimisation only inlines
+Jim~(\citeyear{DBLP:journals/jfp/AppelJ97}). Our optimisation only inlines
 let-bound variables whereas theirs also encompasses the reduction of static
 β-redexes of (potentially) recursive function. While we can easily count how
 often a variable is used in the body of a let binder, the interaction between
