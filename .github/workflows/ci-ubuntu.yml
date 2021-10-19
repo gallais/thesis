@@ -134,4 +134,4 @@ jobs:
       # step.
       - name: Build thesis
         run: |
-          make
+          AGDA="${{ env.AGDA }}" make
