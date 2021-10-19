@@ -128,13 +128,13 @@ jobs:
 ## TESTING AND DEPLOYMENT
 ########################################################################
 
-      ## # By default github actions do not pull the repo
-      ## - name: Checkout thesis
-      ##   uses: actions/checkout@v2
+      # By default github actions do not pull the repo
+      - name: Checkout thesis
+        uses: actions/checkout@v2
 
-      ## # Note that if you want to deploy html for different versions like the
-      ## # standard library does, you will need to be a bit more subtle in this
-      ## # step.
-      ## - name: Build thesis
-      ##   run: |
-      ##     AGDA="${{ env.AGDA }}" make
+      # Note that if you want to deploy html for different versions like the
+      # standard library does, you will need to be a bit more subtle in this
+      # step.
+      - name: Build thesis
+        run: |
+          AGDA="${{ env.AGDA }}" make
