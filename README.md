@@ -2,5 +2,5 @@
 
 # Compilation
 
-* Agda (dev version)
-* Standard Library (dev version, experimental branch)
+* Agda (2.6.1.3)
+* Standard Library (1.5)
