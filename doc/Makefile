@@ -1,7 +1,12 @@
 THESIS=thesis
+STRATH=strath
+
 AGDA?=agda
 
-all: latex/$(THESIS).pdf
+all: strath
+
+strath: latex/$(STRATH).pdf
+thesis: latex/$(THESIS).pdf
 
 AGDA_FILES:=\
   shared/Stdlib.lagda \
@@ -118,6 +123,12 @@ THESIS_DEPENDENCIES:=\
   latex/conclusion.tex \
   $(AGDA_OUTPUT_PROCESSED)
 
+STRATH_DEPENDENCIES:=\
+  latex/$(STRATH).tex \
+  latex/titlingpage.tex \
+  latex/strath_coat.png \
+  $(THESIS_DEPENDENCIES)
+
 latex/main.bib: main.bib
 	@mkdir -p $(dir $@)
 	cp $< $@
@@ -145,11 +156,26 @@ latex/robust-catch.tex: robust-catch.tex
 latex/$(THESIS).pdf: $(THESIS_DEPENDENCIES)
 	cd latex; latexmk -pdf -bibtex $(THESIS).tex
 
+latex/$(STRATH).pdf: $(STRATH_DEPENDENCIES)
+	cd latex; latexmk -pdf -bibtex $(STRATH).tex
+
 latex/$(THESIS).tex: $(THESIS).tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
+latex/$(STRATH).tex: $(STRATH).tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
 latex/cover.tex: cover.tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/strath_coat.png: strath_coat.png
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/titlingpage.tex: titlingpage.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
