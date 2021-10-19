@@ -18,7 +18,7 @@ on:
 ##
 ## STDLIB_VERSION picks the version of the stdlib to pull. The current
 ## design requires that the number corresponds to a released version
-## but we could change that to a commit-based approach if you need to.
+## but we could change that to a commit-based approach if needed.
 ##
 ## The rest:
 ##
@@ -51,11 +51,11 @@ env:
   GHC_VERSION: 8.6.5
   CABAL_VERSION: 3.2.0.0
   CABAL_INSTALL: cabal install --overwrite-policy=always --ghc-options='-O1 +RTS -M6G -RTS'
-  AGDA: agda --auto-inline -Werror +RTS -M6G -H3.5G -A128M -RTS -i. -i src/
+  AGDA: agda +RTS -M3.5G -H3.5G -A128M -RTS
 
 jobs:
-  test-thesis:
-    runs-on: ubuntu-latest
+  build-thesis:
+    runs-on: ubuntu-20.04
     steps:
 
 ########################################################################
@@ -63,9 +63,9 @@ jobs:
 ########################################################################
 
       # The script won't be able to find Agda if we don't tell it to look at the
-      # content of ~/.cabal/bin
+      # content of ~/.cabal/bin/
       - name: Put cabal programs in PATH
-        run: echo "~/.cabal/bin" >> $GITHUB_PATH
+        run: echo "$HOME/.cabal/bin/" >> $GITHUB_PATH
 
 ########################################################################
 ## CACHING
@@ -88,6 +88,9 @@ jobs:
 ########################################################################
 ## INSTALLATION STEPS
 ########################################################################
+
+      - name: Install dependencies
+        run: sudo apt-get install -y latexmk texlive-base texlive-plain-generic texlive-latex-extra texlive-science
 
       - name: Install ghc and cabal
         if: steps.cache-cabal.outputs.cache-hit != 'true'
