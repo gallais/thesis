@@ -1,4 +1,4 @@
-\documentclass{memoir}
+\documentclass[11pt]{memoir}
 
 \usepackage{agda}
 \usepackage{catchfilebetweentags}
@@ -25,10 +25,12 @@
     }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%% ligatures
 %% disable the >> ligatures
 \DisableLigatures[>]{}
 %% disable the -- ligatures
 \DisableLigatures[-]{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{abbrvnat}
 
@@ -76,6 +78,7 @@
 \begin{KeepFromToc}
 \tableofcontents
 \end{KeepFromToc}
+
 
 \input{introduction.tex/intro}
 %\input{introduction.tex/type-theory}
