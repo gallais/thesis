@@ -97,7 +97,8 @@ We have not used the \AIC{⊥} constructor so \emph{if} the evaluation terminate
 (by disabling totality checking we have lost all guarantees of the sort) we know
 we will get a term in normal form. See for instance in
 Figure~\ref{fig:normuntyped} the evaluation of an untyped yet normalising
-term: {(λx. x) ((λx. x) (λx. x))} normalises to {(λx. x)}.
+term: {\app{(\lam{x}{x})}{(\app{(\lam{x}{x})}{(\lam{x}{x})})}}
+normalises to {(\lam{x}{x})}.
 
 \begin{figure}[h]
 \ExecuteMetaData[generic-syntax.agda/Generic/Examples/NbyE.tex]{example}
