@@ -93,7 +93,8 @@ possible input values have been covered by the pattern-matching equations
 the user has written. The coverage checker performs this analysis.
 
 \begin{feature}[Coverage Checking] During typechecking the coverage checker
-elaborates the given pattern-matching equations into a case tree. It makes
+elaborates the given pattern-matching equations into a case tree
+(\cite{DBLP:journals/jfp/CockxA20}). It makes
 sure that all the branches are either assigned a right-hand side or obviously
 impossible. This allows users to focus on the cases of interest, letting the
 machine check the other ones.
@@ -336,9 +337,11 @@ then its content. We use postfix projections (hence the dot preceding the field'
 
 \ExecuteMetaData[introduction.agda/introduction.tex]{maptuple}
 
-When record values are going to appear in types, it is often a good idea to define
-them by copattern-matching: this prevents the definition from being unfolded eagerly
-thus making the goal more readable during interactive development.
+\begin{technique}[Lazily unfolded definitions]
+  When record values are going to appear in types, it is often a good idea to define
+  them by copattern-matching: this prevents the definition from being unfolded eagerly
+  thus making the goal more readable during interactive development.
+\end{technique}
 
 \paragraph{Strict Positivity} In order to rule out definitions leading to
 inconsistencies, all datatype definitions need to be strictly positive.
@@ -404,7 +407,7 @@ type thus guaranteeing that the implementation respects them. The
 type of \AF{map\textasciicircum{}-Tuple} for instance tells us that
 this is a length preserving operation. We cannot possibly encode all
 of a function's properties directly into its type but we can use
-Agda's to state and prove theorems of interest.
+Agda's type system to state and prove theorems of interest.
 
 In Agda, programming \emph{is} proving. The main distinction between
 a proof and a program is a social one: we tend to call programs the
@@ -493,8 +496,8 @@ the function space pointwise with \AF{\_⇒\_}.
 \ExecuteMetaData[shared/Stdlib.tex]{arrow}
 
 Second, the \AF{\_⊢\_} combinator makes explicit the \emph{adjustment} made to the
-index by a function, conforming to the convention (see e.g. \cite{martin1982constructive})
-of mentioning only context \emph{extensions} when presenting judgements and write
+index by a function. Conforming to the convention (see e.g. \cite{martin1982constructive})
+of mentioning only context \emph{extensions} when presenting judgements, we write
 ({\AB{f} \AF{⊢} \AB{P}}) where \AB{f} is the modification and \AB{P} the indexed
 Set it operates on. This is the reindexing functor we saw in
 \cref{example:reindexingfunctor}.

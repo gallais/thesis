@@ -91,3 +91,20 @@ data Term : Type ─Scoped where
               ⇒ Term σ ]
 \end{code}
 %</term>
+
+\begin{code}
+private
+\end{code}
+%<*id>
+\begin{code}
+ id : ∀[ Term (σ `→ σ) ]
+ id = `lam (`var z)
+\end{code}
+%</id>
+
+%<*not>
+\begin{code}
+ not : ∀[ Term (`Bool `→ `Bool) ]
+ not = `lam (`ifte (`var z) `ff `tt)
+\end{code}
+%</not>

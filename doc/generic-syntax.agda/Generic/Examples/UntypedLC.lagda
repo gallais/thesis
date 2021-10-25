@@ -30,7 +30,7 @@ pattern `lam b    = `con (false , b , refl)
 %</patterns>
 %<*identity>
 \begin{code}
-`id : TM UTLC tt
-`id = `lam (`var z)
+id^U : TM UTLC tt
+id^U = `lam (`var z)
 \end{code}
 %</identity>

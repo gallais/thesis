@@ -97,7 +97,7 @@ variable case is trivial.
 
 With these definitions in hand, we can instantiate the \AR{NBE} interface we
 introduced in \cref{fig:nbeinterface}. This gives us access to a normaliser
-by kickstarting the evaluation with an environment of placeholder values
+by kick-starting the evaluation with an environment of placeholder values
 obtained by reflecting the term's free variables and then reifying the
 result.
 
@@ -108,7 +108,7 @@ result.
 
 We can now observe the effect of this normaliser implementing a stronger
 equational theory by running our \AF{test} defined \cref{fig:nbetest} and
-obtaining {(λb.λu. \texttt{one})}. In the previous section, the normaliser
+obtaining {(\lam{b}{\lam{u}{\uni}})}. In the previous section, the normaliser
 yielded a term still containing a stuck if-then-else conditional that has
 here been replaced with the only normal form of the unit type.
 

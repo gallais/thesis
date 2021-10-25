@@ -97,7 +97,7 @@ use backquotes to make explicit the fact that we are manipulating
 quoted objects.
 \end{convention}
 
-The language's constructs are layed out in~\cref{fig:grammar:term}.
+The language's constructs are laid out in~\cref{fig:grammar:term}.
 They naturally include the basic constructs of any λ-calculus: variables,
 application and λ-abstraction. We then have a constructor for values of
 the unit type but no eliminator (a term of unit type carries no information).
@@ -246,7 +246,25 @@ a \AIC{`lam}.
 \end{figure}
 
 \begin{convention}[Using Comments to Mimick Natural Deduction Rules]
-In the definition of the calculus' syntax we use comment lines to mimick
+In the definition of the calculus' syntax we use comment lines to mimic
 inference rules in natural deduction. This definition style is already
 present in Pollack's PhD thesis (\citeyear{pollack1994}).
 \end{convention}
+
+In \cref{fig:idnotexamples}, we provide two examples: {(\lam{x}{x})}
+and {(\lam{b}{\ifte{b}{\fls{}}{\tru{}}})}.
+%
+In this representation writing a term amounts to typechecking it so
+these examples are proofs that the identity function can be checked
+at any type σ and that negation is indeed a function from \bool{} to
+\bool.
+
+\begin{figure}[h]
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{id}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{not}
+\end{minipage}
+\caption{Identity and Negation as Well Scoped and Typed Terms\label{fig:idnotexamples}}
+\end{figure}

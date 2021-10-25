@@ -27,7 +27,7 @@ for data types that are given a semantics as objects in the host language.
 Users can perform induction on these codes to write generic programs
 tackling \emph{all} of the data types one can obtain this way.
 %
-In this section we recall the main aspects of this construction we are
+In this chapter we recall the main aspects of this construction we are
 interested in to build up our generic representation of syntaxes with binding.
 
 \section{Datatypes as Fixpoints of Strictly Positive Functors}
@@ -73,7 +73,7 @@ from the stored value. It is interpreted as a \AR{Σ} type in the host language.
 \end{minipage}
 
 Then \AIC{`X} attaches a recursive substructure indexed by $J$. Its
-interpretation is unsuprisingly a simple call to the argument giving
+interpretation is unsurprisingly a simple call to the argument giving
 a meaning to substructures.
 
 \noindent\begin{minipage}{0.5\textwidth}
@@ -271,7 +271,7 @@ with the free monad construction from CDMM uniformly adding the variable
 case. Whilst a good start, \AD{Desc} treats its index types as unstructured,
 so this construction is blind to what makes the {\AD{List} I} index a
 \emph{scope}. The resulting `bind' operator demands a function which maps
-variables in \emph{any} sort and scope to terms in the \emph{same} sort
+variables in \emph{any} sort and scope to terms in \emph{any} sort
 and scope. However, the behaviour we need is to preserve sort while mapping
 between specific source and target scopes which may differ. We need to
 account for the fact that scopes change only by extension, and hence that our

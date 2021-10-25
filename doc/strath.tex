@@ -1,0 +1,135 @@
+\documentclass[11pt]{memoir}
+
+\usepackage{agda}
+\usepackage{catchfilebetweentags}
+\usepackage[T1]{fontenc}
+\usepackage{mathpartir}
+\usepackage{natbib}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{afterpage}
+\usepackage{tcolorbox}
+%\usepackage{savetrees}
+%\usepackage{showframe}
+\usepackage{microtype}
+
+%%%%%%% strathclyde margins
+\renewcommand{\baselinestretch}{1.5}
+\usepackage{geometry}
+\geometry
+    { lmargin = 4cm
+    , rmargin = 2.5cm
+    , tmargin = 2cm
+    , bmargin = 4cm
+    }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%% ligatures
+%% disable the >> ligatures
+\DisableLigatures[>]{}
+%% disable the -- ligatures
+\DisableLigatures[-]{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{abbrvnat}
+
+\setlength\mathindent{0.5em}
+
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage{xparse}
+\input{convention}
+
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{example}{Example}
+
+%\newtheorem{convention}{Convention}
+%\newtheorem{feature}{Feature}
+%\newtheorem{technique}{Technique}
+\newtheorem{remark}{Remark}
+
+\newenvironment{agdasnippet}[1][0]
+ {\ifx{#1}\undefined
+   \centering
+  \else
+  \fi
+}{\ignorespacesafterend%
+}
+
+\input{unicode}
+\input{commands}
+\input{robust-catch}
+
+\begin{document}
+
+\frontmatter
+%% \input{cover}
+%% \cleardoublepage{}
+
+\input{titlingpage}
+
+\mainmatter
+\pagestyle{ruled}
+\begin{KeepFromToc}
+\tableofcontents
+\end{KeepFromToc}
+
+
+\input{introduction.tex/intro}
+%\input{introduction.tex/type-theory}
+\input{introduction.tex/category}
+\input{introduction.tex/agda}
+
+
+\part{Type and Scope Preserving Programs}
+\label{type-scope-semantics}
+\input{type-scope-semantics.tex/syntax.tex}
+\input{type-scope-semantics.tex/refactoring.tex}
+\input{type-scope-semantics.tex/normalization.tex}
+\input{type-scope-semantics.tex/cps-translation.tex}
+\input{type-scope-semantics.tex/program-conclusion.tex}
+
+\part{And Their Proofs}
+\label{properties}
+\input{type-scope-semantics.tex/simulation.tex}
+\input{type-scope-semantics.tex/fusion.tex}
+
+\input{type-scope-semantics.tex/proof-conclusion.tex}
+
+\part{A Universe of Well Kinded-and-Scoped Syntaxes with Binding, their Programs and their Proofs}
+\label{a-universe}
+
+\input{generic-syntax.tex/a-universe.tex}
+\input{generic-syntax.tex/data.tex}
+\input{generic-syntax.tex/syntax.tex}
+
+\input{generic-syntax.tex/safe-programs.tex}
+\input{generic-syntax.tex/compiling.tex}
+\input{generic-syntax.tex/other-programs.tex}
+
+\input{generic-syntax.tex/proofs.tex}
+
+\input{conclusion}
+
+\cleardoublepage{}
+
+
+\appendix
+
+\chapter{Conventions and Techniques}\label{sec:conventions}
+\allconventions
+\alltechniques
+
+\chapter{Agda Features}\label{sec:features}
+\allfeatures
+
+\clearpage
+\listoffigures
+\bibliography{main}
+
+\end{document}

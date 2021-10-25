@@ -120,8 +120,12 @@ There are three differences between the two functions.
 \end{enumerate}
 
 \begin{figure}[h]
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
-\ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
+\end{minipage}
 \caption{Renaming\label{ren} and Substitution\label{sub} for the ST$λ$C}
 \end{figure}
 
@@ -602,7 +606,7 @@ functor. The unit is trivially the \AIC{`var} constructor.
 \section{Printing with Names}
 \label{prettyprint}
 
-As a warmup exercise, let us a look at a relatively simple semantics.
+As a warm-up exercise, let us a look at a relatively simple semantics.
 Before considering the various model constructions involved in defining
 normalisation functions deciding different equational theories, we will
 look at what an \emph{actual} semantics looks like by considering printing
@@ -720,7 +724,7 @@ be replaced with a more sophisticated one in a user-facing language: we could
 e.g. use naming hints for user-introduced binders and type-based schemes otherwise
 ($f$ or $g$ for functions, $i$ or $j$ for integers, etc.).
 
-In order to kickstart the evaluation, we still need to provide \AR{Name}s for each
+In order to kick-start the evaluation, we still need to provide \AR{Name}s for each
 one of the free variables in scope. We will see in \cref{section:genericprinting}
 how to build an initial environment to print open terms using more advanced tools.
 Here we are satisfied with a simple \AF{print} function for closed terms.

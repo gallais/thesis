@@ -106,12 +106,12 @@ normal form.
 \caption{Reify}\label{fig:bix:reify}
 \end{figure}
 
-\subsection{A \AR{Semantics} Targetting our \AF{Model}}
+\subsection{A \AR{Semantics} Targeting our \AF{Model}}
 
 Now that we have defined the \AF{Model} we are interested in and that
 we have proved that we can both embed stuck computations into it and
 obtain normal forms from it, it is time to define a \AR{Semantics}
-targetting it. We will study the most striking semantic combinators
+targeting it. We will study the most striking semantic combinators
 one by one and then put everything together.
 
 Semantic application is perhaps the most interesting of the combinators
@@ -155,7 +155,7 @@ of placeholder values.
 
 Now that we have our definition of \AF{NBE} for the βιξ rules, we
 can run the \AF{test} defined in \cref{fig:nbetest} and, obtaining
-(λb.λu. \texttt{if~} b \texttt{~then~()~else~}u),
+(\lam{b}{\lam{u}{\ifte{b}{\uni}{u}}}),
 observe that
 we have indeed reduced all of the βι redexes, even if they were
 hidden under a λ-abstraction. Note however that we still have a stuck

@@ -30,7 +30,7 @@ normal forms (\AD{Nf} \AB{σ} \AB{Γ}) from elements of the model
 (\AB{Model} \AB{σ} \AB{Γ}). NBE composes the two procedures.
 
 The definition of this \AF{eval} function is a natural candidate for our
-\AF{Semantics} framework. We introduce in \cref{fig:nbeinterface}) an abstract
+\AF{Semantics} framework. We introduce in \cref{fig:nbeinterface} an abstract
 interface for NBE formalising this observation.
 %
 We will see in this chapter that the various variations on normalisation by
@@ -64,9 +64,10 @@ function with the reification procedure yields the normalisation procedure.
 \end{figure}
 
 During the course of this chapter, we will consider the action of \AF{nbe}
-over the following term (λb.λu. (λx.x) (\texttt{if~} b \texttt{~then~()~else~}u))
-of type (\texttt{`Bool `→ `Unit `→ `Unit}). In \cref{fig:nbetest} we can see how this
-test is implemented in our formalisation.
+over the following term (\lam{b}{\lam{u}{\app{(\lam{x}{x})}{(\ifte{b}{\uni{}}{u}})}})
+of type (\arrow{\bool}{\arrow{\unit}{\unit}}).
+%
+In \cref{fig:nbetest} we can see how this test is implemented in our formalisation.
 
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/NormalisationByEvaluation/Specification.tex]{test}
@@ -97,18 +98,18 @@ applied to concrete booleans may return the appropriate branch.
 \begin{mathpar}
   \inferrule
       { }
-      {(λx. t) u ↝ t [u / x]}
+      {\app{(\lam{x}{t})}{u} ↝ t [u / x]}
       {β}
 \end{mathpar}
 \begin{mathpar}
   \inferrule
       { }
-      {\mathtt{if ~true~ then~} l \mathtt{~else~} r \leadsto l}
+      {\ifte{\tru}{l}{r} \leadsto l}
       {ι_1}
   \and
   \inferrule
       { }
-      {\mathtt{if~ false~ then~} l \mathtt{~else~} r \leadsto r}
+      {\ifte{\fls}{l}{r} \leadsto r}
       {ι_2}
 \end{mathpar}
 \caption{Computation rules: β and ι reductions}\label{fig:betaiotarules}
@@ -121,11 +122,11 @@ to \texttt{one}.
 
 \begin{figure}[h]
 \begin{mathpar}
-\inferrule{Γ ⊢ t : σ → τ
-  }{t \leadsto{} λx.t\,x
+\inferrule{Γ ⊢ t : \arrow{σ}{τ}
+  }{t \leadsto{} \lam{x}{\app{t}{x}}
   }{η_1}
-\and \inferrule{Γ ⊢ t : \mathtt{Unit}
-  }{t \leadsto{} \mathtt{one}
+\and \inferrule{Γ ⊢ t : \unit
+  }{t \leadsto{} \uni
   }{η_2}
 \end{mathpar}
 \caption{Canonicity rules: η rules for function and unit types\label{fig:etarules}}

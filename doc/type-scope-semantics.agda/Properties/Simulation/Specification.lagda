@@ -38,15 +38,12 @@ record Simulation  (𝓢ᴬ : Semantics 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Semantics �
   𝓡 σ ρᴬ ρᴮ t = rel 𝓒ᴿ σ (semantics 𝓢ᴬ ρᴬ t) (semantics 𝓢ᴮ ρᴮ t)
 \end{code}
 %</crel>
-\begin{code}
-  open Rel 𝓥ᴿ renaming (rel to 𝓡ⱽ)
-\end{code}
 %<*rkripke>
 \begin{code}
   Kripkeᴿ :  ∀ {Γ Δ} σ τ → (Γ ─Env) 𝓥ᴬ Δ → (Γ ─Env) 𝓥ᴮ Δ →
              Term τ (σ ∷ Γ) → Set
   Kripkeᴿ {Γ} {Δ} σ τ ρᴬ ρᴮ b =
-    ∀ {Θ} (ρ : Thinning Δ Θ) {uᴬ uᴮ} → 𝓡ⱽ σ uᴬ uᴮ →
+    ∀ {Θ} (ρ : Thinning Δ Θ) {uᴬ uᴮ} → 𝓥ᴿ .rel σ uᴬ uᴮ →
     𝓡 τ (th^Env 𝓢ᴬ.th^𝓥 ρᴬ ρ ∙ uᴬ) (th^Env 𝓢ᴮ.th^𝓥 ρᴮ ρ ∙ uᴮ) b
 \end{code}
 %</rkripke>
@@ -55,7 +52,7 @@ record Simulation  (𝓢ᴬ : Semantics 𝓥ᴬ 𝓒ᴬ) (𝓢ᴮ : Semantics �
 \end{code}
 %<*thV>
 \begin{code}
-    th^𝓥ᴿ  : (ρ : Thinning Δ Θ) → 𝓡ⱽ σ vᴬ vᴮ → 𝓡ⱽ σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
+    th^𝓥ᴿ  : (ρ : Thinning Δ Θ) → 𝓥ᴿ .rel σ vᴬ vᴮ → 𝓥ᴿ .rel σ (𝓢ᴬ.th^𝓥 vᴬ ρ) (𝓢ᴮ.th^𝓥 vᴮ ρ)
 \end{code}
 %</thV>
 %<*var>
