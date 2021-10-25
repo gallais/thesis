@@ -141,9 +141,9 @@ latex/unicode.tex: unicode.tex
 	@mkdir -p $(dir $@)
 	cp $< $@
 
-latex/agda.sty: $(AGDA_OUTPUT)
+latex/agda.sty: agda.sty
 	@mkdir -p $(dir $@)
-	cp latex-agda-output/shared/agda.sty $@
+	cp $< $@
 
 latex/commands.tex: commands.tex
 	@mkdir -p $(dir $@)
