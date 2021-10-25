@@ -155,7 +155,7 @@ of placeholder values.
 
 Now that we have our definition of \AF{NBE} for the βιξ rules, we
 can run the \AF{test} defined in \cref{fig:nbetest} and, obtaining
-(λb.λu. \texttt{if~} b \texttt{~then~()~else~}u),
+(\lam{b}{\lam{u}{\ifte{b}{\uni}{u}}}),
 observe that
 we have indeed reduced all of the βι redexes, even if they were
 hidden under a λ-abstraction. Note however that we still have a stuck
