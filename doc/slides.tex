@@ -1,0 +1,175 @@
+\documentclass{beamer}
+\setbeamertemplate{navigation symbols}{}
+
+\input{unicode}
+
+\usepackage{agda}
+\usepackage{mathpartir}
+\usepackage{catchfilebetweentags}
+
+\usepackage[T1]{fontenc}
+
+\setlength{\mathindent}{-.5cm}
+% \let\\=\newline
+%\renewcommand{\mathcal}[1]{#1}
+
+\title{Syntaxes with Binding,\\ Their Programs, and Proofs}
+\author{Guillaume Allais}
+\institute{University of Strathclyde}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Boilerplate}
+
+  To define safe eDSLs in strongly typed hosts:
+
+  \bigskip
+
+  \begin{itemize}
+    \item Write a definition of the language
+    \item Re-implement the usual traversals
+    \item Prove their properties
+  \end{itemize}
+
+  \vfill
+
+  Repeat for every Intermediate Representation.
+
+\end{frame}
+
+\begin{frame}{Intrinsic Typing}
+  \ExecuteMetaData[shared/Data/Var.tex]{var}
+  \vfill
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{stlc}
+\end{frame}
+
+\begin{frame}{Renaming}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{ren}
+\end{frame}
+
+\begin{frame}{Substitution}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{sub}
+\end{frame}
+
+\begin{frame}{Kit}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitdef}
+  \vfill
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{kitsem}
+\end{frame}
+
+
+\begin{frame}{But wait... there's more!}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Kit.tex]{nbe}
+
+  \vfill
+
+  And also printing with names,
+  continuation-passing style transformation
+\end{frame}
+
+
+\begin{frame}{Generalised Kit}
+  \AgdaNoSpaceAroundCode{
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}\\
+  \AgdaKeyword{field}\\~~~~~~
+  \begin{minipage}{0.9\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{app}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
+  \end{minipage}}
+
+  \vfill
+
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-type}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-var}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-app}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-lam}
+
+\end{frame}
+
+\begin{frame}{Boilerplate²}
+
+  To define safe eDSLs in strongly typed hosts:
+
+  \bigskip
+
+  \begin{itemize}
+    \item Write a definition of the language
+    \item Re-implement the generalised kit
+    \item Re-implement the proofs
+  \end{itemize}
+
+  \vfill
+
+  Repeat for every Intermediate Representation.
+
+\end{frame}
+
+\begin{frame}{Structure of the Generalised Kit}
+  \ExecuteMetaData[type-scope-semantics.agda/StateOfTheArt/McBride05/Base.tex]{stlc}
+
+  \vfill
+
+  \AgdaNoSpaceAroundCode{
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{recsem}\\
+  \AgdaKeyword{field}\\~~~~~~
+  \begin{minipage}{0.9\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{thV}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{var}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{app}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{lam}
+  \end{minipage}}
+\end{frame}
+
+
+\begin{frame}{Structure of the Generalised Kit (ctd)}
+
+  \AgdaNoSpaceAroundCode{
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:decl}\\~~~~
+  \begin{minipage}{0.9\textwidth}
+    \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:base}\\
+  \end{minipage}}
+  \vfill
+
+  \AgdaKeyword{field}\\~~~~~~
+  \begin{minipage}{0.9\textwidth}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{one}\vspace{.1em}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{bool}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}{Structure of the Generalised Kit (ctd)}
+
+  \ExecuteMetaData[type-scope-semantics.agda/Syntax/Calculus.tex]{termcompact:ifte}
+
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{ifte}
+
+\end{frame}
+
+\begin{frame}{Generic Programming, and Proving}
+
+  Why give users an \emph{informal} recipe to follow when there
+  is so much \emph{structure} to exploit?
+
+  \vfill
+
+  Given an inspectable definition of the language,\\
+  we can generically \emph{compute} the traversals, and their proofs.
+\end{frame}
+
+\begin{frame}{No boilerplate}
+
+  \begin{itemize}
+    \item Write a description of the language
+  \end{itemize}
+
+  \vfill
+
+  Repeat for every Intermediate Representation.
+
+\end{frame}
+
+\end{document}

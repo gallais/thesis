@@ -15,11 +15,18 @@ private
   variable
     σ τ : Type
     Γ Δ : List Type
+\end{code}
 
+%<*stlc>
+\begin{code}
 data Tm : Type ─Scoped where
-  `var : ∀[ Var σ               ⇒ Tm σ         ]
-  `app : ∀[ Tm (arr σ τ) ⇒ Tm σ ⇒ Tm τ         ]
-  `lam : ∀[ (σ ∷_) ⊢ Tm τ       ⇒ Tm (arr σ τ) ]
+  `var  : ∀[ Var σ                ⇒ Tm σ          ]
+  `app  : ∀[ Tm (arr σ τ) ⇒ Tm σ  ⇒ Tm τ          ]
+  `lam  : ∀[ (σ ∷_) ⊢ Tm τ        ⇒ Tm (arr σ τ)  ]
+\end{code}
+%</stlc>
+
+\begin{code}
 
 module RenSub where
 \end{code}

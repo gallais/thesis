@@ -50,11 +50,15 @@ module DISPLAYONLY where
    `app     : ∀[  Term (σ `→ τ)
             ⇒     Term σ
             ⇒     Term τ ]
+\end{code}
+%<*termcompact:ifte>
+\begin{code}
    `ifte    : ∀[  Term `Bool
             ⇒     Term σ ⇒ Term σ
             ⇒     Term σ ]
 \end{code}
 %</termcompact:struct>
+%</termcompact:ifte>
 
 
 \end{code}
