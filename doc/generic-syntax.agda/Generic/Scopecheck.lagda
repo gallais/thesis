@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 open import Relation.Binary using (Decidable)
 open import Relation.Binary.PropositionalEquality

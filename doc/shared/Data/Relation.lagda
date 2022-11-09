@@ -1,15 +1,13 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS --safe #-}
 
 module Data.Relation where
 
-open import Size
 open import Data.Sum
 open import Data.List.Base hiding (lookup ; [_])
 
 open import Data.Var hiding (_<$>_)
 open import Data.Environment
-open import Generic.Syntax
 open import Relation.Unary hiding (U)
 open import Agda.Builtin.Equality
 open import Function
@@ -110,9 +108,4 @@ module _ {A B : I ─Scoped} where
 
   HEqᴿ : Rel A B
   rel HEqᴿ i = λ a b → a ≅ b
-
-module _ {d : Desc I} where
-
- VarTmᴿ : Rel Var (Tm d ∞)
- rel VarTmᴿ i v t = `var v ≡ t
 \end{code}

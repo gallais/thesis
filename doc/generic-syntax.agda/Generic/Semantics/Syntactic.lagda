@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS --sized-types #-}
 
 open import Generic.Syntax using (Desc)
 
@@ -16,6 +16,7 @@ open import Data.Var
 open import Data.Var.Varlike
 open import Data.Environment
 open import Data.Relation
+open import Data.Relation.Sized
 open import Generic.Syntax
 open import Generic.Semantics
 

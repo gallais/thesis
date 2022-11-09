@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 open import Data.Var hiding (_<$>_; z; s)
 open import Data.Relation
@@ -25,7 +25,7 @@ private
     σ : I
     vᴬ : 𝓥ᴬ σ Γ
     vᴮ : 𝓥ᴮ σ Γ
-    s : Size
+    size : Size
     ρᴬ : (Γ ─Env) 𝓥ᴬ Δ
     ρᴮ : (Γ ─Env) 𝓥ᴮ Δ
 
@@ -52,7 +52,7 @@ module _ (𝓥ᴿ  : Rel 𝓥ᴬ 𝓥ᴮ) (𝓒ᴿ  : Rel 𝓒ᴬ 𝓒ᴮ) where
             varᴿ  : rel 𝓥ᴿ σ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.var vᴬ) (𝓢ᴮ.var vᴮ)
      bodyᴿ : ⟦ d ⟧ (Kripke 𝓥ᴬ 𝓒ᴬ) σ Δ → ⟦ d ⟧ (Kripke 𝓥ᴮ 𝓒ᴮ) σ Δ → Set
      bodyᴿ vᴬ vᴮ = ⟦ d ⟧ᴿ (Kripkeᴿ 𝓥ᴿ 𝓒ᴿ) vᴬ vᴮ
-     field  algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
+     field  algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d size)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
                     let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
                          vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
                     in bodyᴿ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
@@ -92,7 +92,7 @@ record Simulation (d : Desc I)
 \end{code}
 %<*algR>
 \begin{code}
-    algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d s)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
+    algᴿ  : (b : ⟦ d ⟧ (Scope (Tm d size)) σ Γ) → All 𝓥ᴿ Γ ρᴬ ρᴮ →
             let  vᴬ = fmap d (𝓢ᴬ.body ρᴬ) b
                  vᴮ = fmap d (𝓢ᴮ.body ρᴮ) b
             in bodyᴿ vᴬ vᴮ → rel 𝓒ᴿ σ (𝓢ᴬ.alg vᴬ) (𝓢ᴮ.alg vᴮ)
@@ -101,12 +101,12 @@ record Simulation (d : Desc I)
 %<*simbody>
 %<*simtype>
 \begin{code}
-  sim   :  All 𝓥ᴿ Γ ρᴬ ρᴮ → (t : Tm d s σ Γ) →
+  sim   :  All 𝓥ᴿ Γ ρᴬ ρᴮ → (t : Tm d size σ Γ) →
            rel 𝓒ᴿ σ (𝓢ᴬ.semantics ρᴬ t) (𝓢ᴮ.semantics ρᴮ t)
 \end{code}
 %</simtype>
 \begin{code}
-  body  :  All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ Δ j → (t : Scope (Tm d s) Δ j Γ) →
+  body  :  All 𝓥ᴿ Γ ρᴬ ρᴮ → ∀ Δ j → (t : Scope (Tm d size) Δ j Γ) →
            Kripkeᴿ 𝓥ᴿ 𝓒ᴿ Δ j (𝓢ᴬ.body ρᴬ Δ j t) (𝓢ᴮ.body ρᴮ Δ j t)
 
   sim ρᴿ (`var k) = varᴿ (lookupᴿ ρᴿ k)

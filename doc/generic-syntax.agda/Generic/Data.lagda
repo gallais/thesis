@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Data where
 
 open import Relation.Unary

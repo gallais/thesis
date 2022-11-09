@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS --safe #-}
 
 module Syntax.Type where
 

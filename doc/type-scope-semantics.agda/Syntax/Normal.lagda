@@ -1,4 +1,7 @@
 \begin{code}
+
+{-# OPTIONS --safe #-}
+
 open import Syntax.Type
 
 module Syntax.Normal (NoEta : Type → Set) where

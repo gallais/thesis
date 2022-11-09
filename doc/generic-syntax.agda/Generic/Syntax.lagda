@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 module Generic.Syntax where
 
@@ -49,7 +49,7 @@ private
     I : Set
     i σ : I
     Γ₁ Γ₂ : List I
-    s : Size
+    size : Size
     X Y : List I → I ─Scoped
 \end{code}
 %<*interp:type>
@@ -88,8 +88,8 @@ module _ {I : Set} where
 %<*mu>
 \begin{code}
  data Tm (d : Desc I) : Size → I ─Scoped where
-   `var  : ∀[ Var i                     ⇒ Tm d (↑ s) i ]
-   `con  : ∀[ ⟦ d ⟧ (Scope (Tm d s)) i  ⇒ Tm d (↑ s) i ]
+   `var  : ∀[ Var i                        ⇒ Tm d (↑ size) i ]
+   `con  : ∀[ ⟦ d ⟧ (Scope (Tm d size)) i  ⇒ Tm d (↑ size) i ]
 \end{code}
 %</mu>
 \begin{code}

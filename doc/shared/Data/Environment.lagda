@@ -1,9 +1,8 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS --safe #-}
 
 module Data.Environment where
 
-open import Size
 open import Data.Nat.Base as ℕ
 open import Data.List.Base using (List; []; _∷_; _++_)
 open import Data.Sum using (_⊎_)
@@ -266,23 +265,6 @@ module DI where
 
   run : Thinnable T → ∀[ ◇ T ⇒ T ]
   run = uncurry
-
--- stack-based environment
-infix 4 _⊣_,,_
-
-data SEnv (𝓥 : I ─Scoped) : Size → (Γ Δ : List I) → Set where
-  [_]    : ∀{Γ} → ∀[ (Γ ─Env) 𝓥 ⇒ SEnv 𝓥 (↑ i) Γ ]
-  _⊣_,,_ : ∀ Γ₂ {Γ₁} → ∀[ (Γ₂ ─Env) 𝓥 ⇒ ◇ (SEnv 𝓥 i Γ₁) ⇒ SEnv 𝓥 (↑ i) (Γ₂ ++ Γ₁) ]
-
-infix 3 _─◇Env
-_─◇Env : (Γ : List I) (𝓥 : I ─Scoped) (Δ : List I) → Set
-(Γ ─◇Env) 𝓥 Δ = SEnv 𝓥 _ Γ Δ
-
-slookup : SEnv 𝓥 i Γ Δ → Var σ Γ → ◇ (𝓥 σ) Δ
-slookup [ ρ ]           k = DI.pure (lookup ρ k)
-slookup (Γ ⊣ ρ₂ ,, ◇ρ₁) k with split Γ k
-... | inj₁ kˡ = DI.pure (lookup ρ₂ kˡ)
-... | inj₂ kʳ = ◇ρ₁ DI.>>= λ ρ₁ → slookup ρ₁ kʳ
 \end{code}
 %<*thConst>
 \begin{code}

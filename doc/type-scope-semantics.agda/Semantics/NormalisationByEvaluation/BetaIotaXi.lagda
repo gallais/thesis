@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 module Semantics.NormalisationByEvaluation.BetaIotaXi where
 
 open import Data.Unit using (⊤)

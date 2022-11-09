@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 module Generic.Semantics.Printing {I : Set} where
 

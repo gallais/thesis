@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 module Semantics.Syntactic.Instances where
 
 open import Data.List.Base using (List; []; _∷_)

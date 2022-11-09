@@ -9,7 +9,7 @@
 -- with renaming, substitution, and let-elaboration simpler.
 --------------------------------------------------------------------------------
 
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 module Generic.Fusion.Specialised.Propositional where
 

@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Examples.UntypedLC where
 
 open import Size

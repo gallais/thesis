@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Examples.STLC where
 
 open import Size

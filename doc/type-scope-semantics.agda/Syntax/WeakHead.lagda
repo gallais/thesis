@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 module Syntax.WeakHead where
 
 open import Syntax.Type

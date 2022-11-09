@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Syntax.Extended where
 
 open import Generic.Syntax

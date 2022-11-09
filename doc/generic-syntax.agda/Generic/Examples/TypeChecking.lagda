@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module Generic.Examples.TypeChecking where
 
 open import Size

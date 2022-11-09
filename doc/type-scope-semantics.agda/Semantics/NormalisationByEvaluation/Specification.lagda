@@ -1,4 +1,5 @@
 \begin{code}
+{-# OPTIONS --safe #-}
 
 module Semantics.NormalisationByEvaluation.Specification where
 

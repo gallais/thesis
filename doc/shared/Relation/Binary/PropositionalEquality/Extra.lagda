@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 module Relation.Binary.PropositionalEquality.Extra where
 
 open import Relation.Binary.PropositionalEquality public

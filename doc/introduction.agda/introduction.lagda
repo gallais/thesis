@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --sized-types #-}
+
 module introduction where
 
 open import Agda.Builtin.Equality

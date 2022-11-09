@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --safe --sized-types #-}
+{-# OPTIONS  --sized-types #-}
 
 module Generic.Semantics where
 
@@ -11,6 +11,7 @@ open import Data.Var.Varlike using (VarLike; base)
 open import Data.Relation
 open import Relation.Unary
 open import Data.Environment
+open import Data.Environment.Sized
 open import Function using (flip)
 open import Generic.Syntax
 
@@ -19,7 +20,7 @@ private
     I : Set
     σ : I
     Γ Δ : List I
-    s : Size
+    size : Size
     d : Desc I
 
 module _  {d : Desc I} where
@@ -28,7 +29,7 @@ module _  {d : Desc I} where
 %<*comp>
 \begin{code}
   _─Comp : List I → I ─Scoped → List I → Set
-  (Γ ─Comp) 𝓒 Δ = ∀ {s σ} → Tm d s σ Γ → 𝓒 σ Δ
+  (Γ ─Comp) 𝓒 Δ = ∀ {size σ} → Tm d size σ Γ → 𝓒 σ Δ
 \end{code}
 %</comp>
 \begin{code}
@@ -74,7 +75,7 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 %</semanticstype>
 \begin{code}
  body      : (Γ ─Env) 𝓥 Δ → ∀ Θ σ →
-             Scope (Tm d s) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
+             Scope (Tm d size) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
 \end{code}
 %</semtype>
 %<*semproof>
@@ -92,7 +93,7 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 \begin{code}
  ◇-sem  : (Γ ─◇Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
  ◇-body : (Γ ─◇Env) 𝓥 Δ → ∀ Θ σ →
-          Scope (Tm d s) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
+          Scope (Tm d size) Θ σ Γ → Kripke 𝓥 𝓒 Θ σ Δ
 
  ◇-sem ρ (`var k) = var (DI.run th^𝓥 (slookup ρ k))
  ◇-sem ρ (`con t) = alg (fmap d (◇-body ρ) t)
@@ -108,7 +109,7 @@ record Semantics (d : Desc I) (𝓥 𝓒 : I ─Scoped) : Set where
 %</closed>
 %<*eval>
 \begin{code}
- eval : VarLike 𝓥 → ∀[ Tm d s σ ⇒ 𝓒 σ ]
+ eval : VarLike 𝓥 → ∀[ Tm d size σ ⇒ 𝓒 σ ]
  eval vl^𝓥 = semantics (base vl^𝓥)
 \end{code}
 %</eval>

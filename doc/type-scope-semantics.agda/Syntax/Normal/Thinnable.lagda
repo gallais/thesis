@@ -1,4 +1,6 @@
 \begin{code}
+{-# OPTIONS --safe #-}
+
 module Syntax.Normal.Thinnable where
 
 open import Data.List.Base using (List; []; _∷_)
@@ -20,7 +22,7 @@ private
 {-
 mutual
 
-  wk^nf-trans′ : 
+  wk^nf-trans′ :
     ∀ {Γ Δ Θ σ R inc₁ inc₃} {inc₂ : Renaming Δ Θ} →
     `∀[ Equality ] (Env.trans inc₁ inc₂) inc₃ →
     (t : Γ ⊢[ R ]^nf σ) → wk^nf inc₂ (wk^nf inc₁ t) ≡ wk^nf inc₃ t
@@ -29,9 +31,9 @@ mutual
   wk^nf-trans′ eq `tt         = refl
   wk^nf-trans′ eq `ff         = refl
   wk^nf-trans′ eq (`λ t)      =
-    cong `λ $ wk^nf-trans′ ((cong 1+_ ∘ lookup^R eq) ∙^R′ refl) t 
+    cong `λ $ wk^nf-trans′ ((cong 1+_ ∘ lookup^R eq) ∙^R′ refl) t
 
-  wk^ne-trans′ : 
+  wk^ne-trans′ :
     ∀ {Γ Δ Θ σ R inc₁ inc₃} {inc₂ : Renaming Δ Θ} →
     `∀[ Equality ] (Env.trans inc₁ inc₂) inc₃ →
     (t : Γ ⊢[ R ]^ne σ) → wk^ne inc₂ (wk^ne inc₁ t) ≡ wk^ne inc₃ t
@@ -43,12 +45,12 @@ mutual
 
 wk^nf-trans :
   ∀ {Γ Δ Θ σ R inc₁} {inc₂ : Renaming Δ Θ} →
-  (t : Γ ⊢[ R ]^nf σ) → wk^nf inc₂ (wk^nf inc₁ t) ≡ wk^nf (Env.trans inc₁ inc₂) t  
+  (t : Γ ⊢[ R ]^nf σ) → wk^nf inc₂ (wk^nf inc₁ t) ≡ wk^nf (Env.trans inc₁ inc₂) t
 wk^nf-trans = wk^nf-trans′ $ pack^R $ λ _ → refl
 
 wk^ne-trans :
   ∀ {Γ Δ Θ σ R inc₁} {inc₂ : Renaming Δ Θ} →
-  (t : Γ ⊢[ R ]^ne σ) → wk^ne inc₂ (wk^ne inc₁ t) ≡ wk^ne (Env.trans inc₁ inc₂) t  
+  (t : Γ ⊢[ R ]^ne σ) → wk^ne inc₂ (wk^ne inc₁ t) ≡ wk^ne (Env.trans inc₁ inc₂) t
 wk^ne-trans = wk^ne-trans′ $ pack^R $ λ _ → refl
 -}
 \end{code}

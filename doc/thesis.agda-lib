@@ -4,3 +4,6 @@ include: shared
        , introduction.agda
        , type-scope-semantics.agda
        , generic-syntax.agda
+
+flags:
+  --warning=noUnsupportedIndexedMatch

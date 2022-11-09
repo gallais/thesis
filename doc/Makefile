@@ -2,7 +2,7 @@ THESIS=thesis
 STRATH=strath
 SLIDES=slides
 
-AGDA?=agda-2.6.1.3
+AGDA?=agda-2.6.4
 
 all: slides
 
@@ -15,7 +15,9 @@ AGDA_FILES:=\
   shared/Data/Var.lagda \
   shared/Data/Var/Varlike.lagda \
   shared/Data/Environment.lagda \
+  shared/Data/Environment/Sized.lagda \
   shared/Data/Relation.lagda \
+  shared/Data/Relation/Sized.lagda \
   shared/Relation/Binary/PropositionalEquality/Extra.lagda \
   introduction.agda/introduction.lagda \
   type-scope-semantics.agda/StateOfTheArt/McBride05/Base.lagda \
