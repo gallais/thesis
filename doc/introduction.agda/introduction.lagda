@@ -80,6 +80,19 @@ data ℕ : Set where
 \end{code}
 %</nat>
 
+%<*natural>
+\begin{code}
+record Natural (A : Set) : Set where
+  constructor mkNatural
+  field
+    fromℕ : ℕ → A
+  BinOp : Set
+  BinOp = A → A → A
+  field
+    _+_ : BinOp
+    _*_ : BinOp
+\end{code}
+%</natural>
 
 %<*add>
 \begin{code}
