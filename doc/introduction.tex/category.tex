@@ -204,9 +204,28 @@ is a functor \AB{T} from \AB{𝓒} to \AB{𝓓} equipped with:
     to {\AB{𝓓}(\AB{T} \AB{A}, \AB{T} \AB{B})} (the Kleisli extension)
 \end{enumerate}
 
-such that they verify similar constraints to the ones spelt out in the
-definition of a monad (cf. definition \ref{def:monad}).
+such that:
+
+\begin{enumerate}
+  \item For any object \AB{A}, $η_{\AB{A}}\,^*$ is equal to $id_{\AB{T}\, \AB{A}}$
+
+  \item For any objects \AB{A} and \AB{B} and \AB{f} a morphism of type
+    {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{B})}, $\AB{f}\,^* ∘ η_{\AB{A}}$ is equal to \AB{f}
+  \item For any objects \AB{A}, \AB{B}, \AB{C} and two morphisms
+    \AB{f} in {\AB{𝓓}(\AB{V} \AB{A}, \AB{T} \AB{B})}
+    and \AB{g} in {\AB{𝓓}(\AB{V} \AB{B}, \AB{T} \AB{C})},
+    $(\AB{g}^* ∘ \AB{f})^*$ is equal to $(\AB{g}^* ∘ \AB{f}^*)$
+\end{enumerate}
 \end{definition}
+
+\begin{remark}
+  These three constraints on {(𝓣, \AB{η}, $\_^*$)} are exactly the same as
+  the ones we gave for monads, at slightly different types.
+  This is due to our deliberate choice to give a definition based on Kleisli
+  triples. There is another presentation of monad based on a $μ_{\AB{A}}$
+  family of operators of type {\AB{𝓒}(\AB{T} (\AB{T} \AB{A}), \AB{T} \AB{A})}
+  where the generalisation to relative monads is not as straightforward.
+\end{remark}
 
 \begin{example}[Arithmetic expressions with finitely many free variables]
 \label{example:arithnatexample}
