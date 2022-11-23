@@ -9,6 +9,7 @@ open import Agda.Builtin.List
 open import Agda.Builtin.Equality
 open import Function
 
+open import Relation.Unary
 open import Data.Var
 open import Generic.Syntax
 
@@ -21,21 +22,41 @@ data Type : Set where
 -- where phases are statically checked
 
 \end{code}
-%<*tagmode>
+%<*mode>
 \begin{code}
 data Mode : Set where
   Check Synth : Mode
-
+\end{code}
+%</mode>
+%<*tag>
+\begin{code}
 data `Bidi : Set where
   App Lam Emb : `Bidi
   Cut : Type → `Bidi
 \end{code}
-%</tagmode>
+%</tag>
 \begin{code}
 
 private
   variable
-    σ : Mode
+    m : Mode
+
+-- typesetting only
+module TYPESETTING-BIDI where
+\end{code}
+%<*databidi>
+\begin{code}
+ data Bidi : Mode ─Scoped where
+   `var : ∀[ Var m ⇒ Bidi m ]
+   -- choice of four constructors:
+   `app : ∀[ Bidi Synth ⇒ Bidi Check ⇒
+          Bidi Synth ]
+   `lam : ∀[ (Synth ∷_) ⊢ Bidi Check ⇒
+          Bidi Check ]
+   `cut : Type → ∀[ Bidi Check ⇒ Bidi Synth ]
+   `emb : ∀[ Bidi Synth ⇒ Bidi Check ]
+\end{code}
+%</databidi>
 
 -- On top of the traditional Application and Lambda-Abstraction constructors,
 -- we have two change of direction ones: `Emb` which takes inferable terms and
@@ -48,8 +69,11 @@ private
 \begin{code}
 Bidi : Desc Mode
 Bidi  =  `σ `Bidi $ λ where
-  App      → `X [] Synth (`X [] Check (`∎ Synth))
-  Lam      → `X (Synth ∷ []) Check (`∎ Check)
+  -- var will be freely adjoined
+  App      → `X [] Synth (`X [] Check
+             (`∎ Synth))
+  Lam      → `X (Synth ∷ []) Check
+             (`∎ Check)
   (Cut σ)  → `X [] Check (`∎ Synth)
   Emb      → `X [] Synth (`∎ Check)
 \end{code}

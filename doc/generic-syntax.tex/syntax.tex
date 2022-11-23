@@ -140,6 +140,9 @@ a few constructors, we are going to give codes for 3 variations on the
 λ-calculus to show the whole spectrum of syntaxes: untyped, well sorted,
 and well typed by construction.
 %
+In each example, we will display the description side by side with the high
+level inductive family declaration it encodes.
+%
 We start with the simplest example to lay down the foundations: the well
 scoped untyped λ-calculus.
 %
@@ -168,7 +171,11 @@ one extra bound variable. Both constructors' descriptions end with
 (\AIC{`∎} \AIC{tt}), the only inhabitant of the trivial sort.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
+\noindent\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{ulc}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/UntypedLC.tex]{dataulc}
+\end{minipage}
 \caption{\AF{Desc}ription of The Untyped Lambda Calculus
 \label{fig:desculc}\label{fig:descUTLC}}
 \end{figure}
@@ -189,11 +196,18 @@ remaining constructors correspond to changes of direction: one can freely
 annotation when forming a \AIC{Cut}.
 
 \begin{figure}[h]
-\noindent\begin{minipage}[t]{0.35\textwidth}
-  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{tagmode}
+\noindent\begin{minipage}[t]{.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{mode}
 \end{minipage}
-\begin{minipage}[t]{0.65\textwidth}
+\begin{minipage}[t]{.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{tag}
+\end{minipage}
+
+\noindent\begin{minipage}[t]{.47\textwidth}
   \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{desc}
+\end{minipage}
+\begin{minipage}[t]{.53\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax/Bidirectional.tex]{databidi}
 \end{minipage}
   \caption{Description for the bidirectional STLC\label{fig:descBidiSTLC}}
 \end{figure}
@@ -227,7 +241,14 @@ variable of type \AB{σ}. The overall type of the branch is once more enforced
 by \AIC{`∎}: it is (\AB{σ} \AIC{`→} \AB{τ}).
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{stlc}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{tag}
+
+  \begin{minipage}{.48\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{stlc}
+  \end{minipage}
+  \begin{minipage}{.52\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Examples/STLC.tex]{datastlc}
+  \end{minipage}
 \caption{\AF{Desc}ription of the Simply Typed Lambda Calculus\label{fig:descstlc}\label{fig:descSTLC}}
 \end{figure}
 

@@ -13,15 +13,30 @@ open import Relation.Unary
 open import Data.Var
 open import Generic.Syntax
 
+-- typesetting only
+module TYPESETTING-UTLC where
+\end{code}
+%<*dataulc>
+\begin{code}
+ data UTLC : ⊤ ─Scoped where
+   `var : ∀[ Var _ ⇒ UTLC _ ]
+   -- choice of two constructors:
+   `app : ∀[ UTLC _ ⇒ UTLC _ ⇒ UTLC _ ]
+   `lam : ∀[ (tt ∷_) ⊢ UTLC _ ⇒ UTLC _ ]
+\end{code}
+%</dataulc>
+
 \end{code}
 %<*ulc>
 \begin{code}
 UTLC : Desc ⊤
+-- var will be freely adjoined
 UTLC = `σ Bool $ λ isApp → if isApp
   then  `X [] tt (`X [] tt (`∎ tt))
   else  `X (tt ∷ []) tt (`∎ tt)
 \end{code}
 %</ulc>
+
 %<*patterns>
 \begin{code}
 pattern `app f t  = `con (true , f , t , refl)
