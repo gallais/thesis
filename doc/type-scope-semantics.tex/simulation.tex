@@ -186,6 +186,10 @@ thinning of the evaluation context and provided two related inputs, the
 evaluation of the body in each thinned environment extended with the
 appropriate value should yield related computations.
 
+Note that this is a definition local to the \AR{Simulation} record declaration hence
+its ability to mention all of the record's parameters (cf.~\cref{par:recordslocaldef}
+for the description of definitions local to a record type declaration).
+
 \begin{figure}[h]
 \ExecuteMetaData[type-scope-semantics.agda/Properties/Simulation/Specification.tex]{rkripke}
 \caption{Relational Kripke Function Spaces: From Related Inputs to Related Outputs\label{fig:relationalkripke}}

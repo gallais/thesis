@@ -245,6 +245,28 @@ should be considered implicitly bound at the beginning of the telescope. In the 
 example, \AB{A} and \AB{B} are introduced using this mechanism.
 \end{feature}
 
+\paragraph{Record type declarations with local definitions}\label{par:recordslocaldef}
+
+It is sometimes handy to introduce a local definition inside a record that
+can be used to compactly state the type of further fields. This is possible
+by interleaving \AK{field} and unindented definition blocks inside of the
+record definition introduced by a \AK{where} keyword.
+
+In the following example we define a record \AR{Natural} similar in spirit to
+Haskell's \texttt{Num} typeclass but only concerning itself with non-negative
+numbers.
+%
+It is parameterised by a type \AB{A}, its object of discourse.
+%
+We start by asking for an embedding \ARF{fromℕ} from \AD{ℕ} to \AB{A}.
+We then introduce an auxiliary definition \AF{BinOp} describing what
+it means to be a binary operator on \AB{A}.
+In a further \AK{field} block we then insist we should be given two
+binary operations: \ARF{\_+\_}, and \ARF{\_*\_}.
+
+
+\ExecuteMetaData[introduction.agda/introduction.tex]{natural}
+
 \paragraph{Recursive Functions}
 
 Definitions taking values of an inductive type as argument are constructed by
