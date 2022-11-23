@@ -97,7 +97,18 @@ Note that our universe definition precludes higher-order branching
 objects.
 
 These constructors give the programmer the ability to build up the data
-types they are used to. For instance, the functor corresponding
+types they are used to.
+%
+We present below two descriptions of common datatypes side-by-side with
+their high level syntax in Agda.
+%
+These definition using a high level syntax can be automatically elaborated
+into their corresponding descriptions as demonstrated by
+Dagand and McBride~(\citeyear{DBLP:journals/corr/abs-1210-6390}).
+This is however outside the scope of this thesis.
+
+\paragraph{List}
+For instance, the functor corresponding
 to lists of elements in $A$ stores a \AD{Bool}ean which stands for whether
 the current node is the empty list or not. Depending on its value, the
 rest of the description is either the ``stop'' token or a pair of an element
@@ -106,11 +117,16 @@ The \AD{List} type is unindexed, we represent the lack of an index with
 the unit type \AD{$\top$}.
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listD}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{listD}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{datalist}
+\end{minipage}
 \caption{The Description of the base functor for \AD{List}~\AB{A}}
 \label{figure:listD}
 \end{figure}
 
+\paragraph{Vec}
 Indices can be used to enforce invariants. For example, the type
 ({\AD{Vec} \AB{A} \AB{n}}) of length-indexed lists. It has the
 same structure as the definition of \AF{listD}.
@@ -121,7 +137,12 @@ non-empty one in which case we store a natural number \AB{n}, the head of type
 (\AIC{suc} \AB{n}).
 
 \begin{figure}[h]
-\ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{vecD}
+\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{vecD}
+\end{minipage}\begin{minipage}{0.5\textwidth}
+  \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{datavec}
+\end{minipage}
+
 \caption{The Description of the base functor for \AD{Vec}~\AB{A}~\AB{n}}\label{figure:vecD}
 \end{figure}
 
