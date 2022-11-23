@@ -13,10 +13,16 @@ open import Relation.Unary
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 open import Function
 
-R^βιξ : Type → Set
-R^βιξ _ = ⊤
+\end{code}
+%<*noeta>
+\begin{code}
+NoEta^βιξ : Type → Set
+NoEta^βιξ _ = ⊤
+\end{code}
+%</noeta>
+\begin{code}
 
-open import Syntax.Normal R^βιξ
+open import Syntax.Normal NoEta^βιξ
 open import Syntax.Normal.Thinnable
 open import Semantics.Specification
 open import Semantics.NormalisationByEvaluation.Specification

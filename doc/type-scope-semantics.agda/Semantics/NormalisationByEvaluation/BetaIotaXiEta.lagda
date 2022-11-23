@@ -11,10 +11,17 @@ open import Syntax.Calculus hiding (module DISPLAYONLY)
 open import Relation.Unary
 open import Function
 
-data R^βιξη : Type → Set where
-  `Bool : R^βιξη `Bool
+\end{code}
+%<*noeta>
+\begin{code}
+data NoEta^βιξη : Type → Set where
+  `Bool : NoEta^βιξη `Bool
+\end{code}
+%</noeta>
+\begin{code}
 
-open import Syntax.Normal R^βιξη public
+
+open import Syntax.Normal NoEta^βιξη public
 open import Syntax.Normal.Thinnable
 open import Semantics.Specification
 open import Semantics.NormalisationByEvaluation.Specification
