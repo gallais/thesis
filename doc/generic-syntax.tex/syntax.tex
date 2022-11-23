@@ -372,8 +372,10 @@ outside the scope of this thesis.
 \label{desccomb}
 
 In order to avoid repeatedly re-encoding the same logic, we introduce
-a combinator demonstrating that descriptions are closed under finite
-sums.
+generic combinators demonstrating that descriptions are closed under
+sums and products.
+
+\subsection{Closure under Sums}
 
 As we wrote, the construction used in \cref{fig:desculc} to define the
 syntax for the untyped λ-calculus is classic. It is actually the third
@@ -401,6 +403,59 @@ A concrete use case for the disjoint union combinator and its eliminator
 will be given in \cref{section:letbinding} where we explain how to seamlessly
 enrich any existing syntax with let-bindings and how to use the \AR{Semantics}
 framework to elaborate them away.
+
+\subsection{Closure under Product}
+
+In our paper~(\cite{generic-syntax}), we claimed that the universe was not
+closed under product because two arbitrary right-nested products can disagree
+on the sort of the term they are constructing.
+%
+Andreas Nuyts however corrected us in private communications: given that
+\AIC{`σ} can store arbitrary data, we can in particular use it to store
+a proof that two sorts are equal. This enables to define a product
+that allows the pairing of exactly the terms that do agree.
+
+The definition goes in two steps. First we define a restriction operator
+\AF{\_\%\_} which, given a description and a sort, produces the restriction
+of this description to only building terms of that sort.
+
+\begin{figure}[h]
+\ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{descrestriction}
+\caption{Restriction of a description to a specific sort}
+\end{figure}
+
+It proceeds by induction on the input description and is purely structural in
+all the cases except for the \AIC{`∎} one. In this last case, we insist that the
+sort being returned happens to be equal to the one we are restricting the
+description by.
+
+We can now define the product proper: we take two descriptions and proceed by
+induction on the first. All the cases are once again purely structural except
+for the \AIC{`∎} one where we get our hands on the sort of the term the first
+description builds and use it to restrict the second one description.
+
+\begin{figure}[h]
+  \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{descprod}
+\caption{Product of descriptions}
+\end{figure}
+
+For these definitions to be effective, we need to be able to build such pairs
+and take them apart.
+%
+We give the type but leave out the slightly technical implementation of
+\AF{curry} and \AF{uncurry}, and invite the interested reader to try to
+re-implement themselves or look at the accompanying code.
+
+\begin{figure}[h]
+  \begin{minipage}{.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{curry}
+  \end{minipage}
+  \begin{minipage}{.5\textwidth}
+    \ExecuteMetaData[generic-syntax.agda/Generic/Syntax.tex]{uncurry}
+  \end{minipage}
+\caption{Building and taking pairs apart}
+\end{figure}
+
 
 %% \subsection{Closure Under Finite Product of Recursive Positions}
 
@@ -433,3 +488,6 @@ framework to elaborate them away.
 %% let-bindings where the number and the types of the bound expressions can be arbitrary.
 %% We will not go into the details of this construction as it is essentially a combination
 %% of \AF{Xs}, \AF{unXs} and the techniques used when defining single let-bindings.
+
+Now that we are equipped with descriptions and well scoped and sorted terms as
+their free relative monads, we are going to study the generic programs traversing them.
