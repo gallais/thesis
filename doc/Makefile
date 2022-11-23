@@ -4,7 +4,7 @@ SLIDES=slides
 
 AGDA?=agda-2.6.1.3
 
-all: slides
+all: thesis
 
 strath: latex/$(STRATH).pdf
 thesis: latex/$(THESIS).pdf
