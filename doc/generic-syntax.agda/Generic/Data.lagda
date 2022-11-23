@@ -127,10 +127,24 @@ fs n k = `con (n , false , k , refl)
 \begin{code}
 listD : Set → Desc ⊤ ⊤
 listD A =  `σ Bool $ λ isNil →
-           if isNil then `∎ tt
-           else `σ A (λ _ → `X tt (`∎ tt))
+  if isNil then `∎ tt
+  else `σ A (λ _ → `X tt (`∎ tt))
 \end{code}
 %</listD>
+\begin{code}
+
+-- typesetting only
+module TYPESETTING-LIST where
+\end{code}
+%<*datalist>
+\begin{code}
+ data List (A : Set) : Set where
+   -- choice of two constructors
+   [] : List A
+   _∷_ : A → List A → List A
+\end{code}
+%</datalist>
+
 
 %<*list>
 \begin{code}
@@ -196,10 +210,26 @@ module List where
 \begin{code}
 vecD : Set → Desc ℕ ℕ
 vecD A =  `σ Bool $ λ isNil →
-          if isNil then `∎ 0
-          else `σ ℕ (λ n → `σ A (λ _ → `X n (`∎ (suc n))))
+  if isNil then `∎ 0
+  else  `σ ℕ (λ n → `σ A (λ _ →
+        `X n (`∎ (suc n))))
 \end{code}
 %</vecD>
+\begin{code}
+
+-- typesetting only
+module TYPESETTING-VEC where
+\end{code}
+%<*datavec>
+\begin{code}
+ data Vec (A : Set) : ℕ → Set where
+   -- choice of two constructors
+   [] : Vec A 0
+   _∷_ : ∀ {n} → A →
+         Vec A n → Vec A (suc n)
+\end{code}
+%</datavec>
+
 \begin{code}
 Vec : Set → ℕ → Set
 Vec A = μ (vecD A) ∞
