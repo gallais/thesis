@@ -31,6 +31,7 @@ Kripke : (𝓥 𝓒 : Type ─Scoped) → Type → Type → List Type → Set
 Kripke 𝓥 𝓒 σ τ Γ = ∀[ Thinning Γ ⇒ 𝓥 σ ⇒ 𝓒 τ ]
 \end{code}
 %</kripke>
+%<*wholerecsem>
 %<*recsem>
 \begin{code}
 record Semantics (𝓥 𝓒 : Type ─Scoped) : Set where
@@ -39,6 +40,7 @@ record Semantics (𝓥 𝓒 : Type ─Scoped) : Set where
 \begin{code}
   field
 \end{code}
+%<*recfields>
 %<*thV>
 \begin{code}
     th^𝓥   :  Thinnable (𝓥 σ)
@@ -75,6 +77,8 @@ record Semantics (𝓥 𝓒 : Type ─Scoped) : Set where
     ifte   :  ∀[ 𝓒 `Bool ⇒ 𝓒 σ ⇒ 𝓒 σ ⇒ 𝓒 σ ]
 \end{code}
 %</ifte>
+%</recfields>
+%</wholerecsem>
 \begin{code}
 Evaluation : (𝓥 𝓒 : Type ─Scoped) → Set
 Evaluation 𝓥 𝓒 = ∀ {Γ Δ} → (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
@@ -84,12 +88,13 @@ Evaluation' 𝓒 = ∀ {Γ} → (Γ ─Comp) 𝓒 Γ
 
 \end{code}
 %<*fundamental>
-\begin{AgdaSuppressSpace}
+%<*fundamentalheader>
 \begin{code}
 module _ (𝓢 : Semantics 𝓥 𝓒) where
   open Semantics 𝓢
-
 \end{code}
+%</fundamentalheader>
+%<*fundamentalbody>
 %<*semantics-type>
 \begin{code}
   semantics : (Γ ─Env) 𝓥 Δ → (Γ ─Comp) 𝓒 Δ
@@ -126,5 +131,5 @@ module _ (𝓢 : Semantics 𝓥 𝓒) where
   semantics ρ (`ifte b l r)  = ifte (semantics ρ b) (semantics ρ l) (semantics ρ r)
 \end{code}
 %</semantics-ifte>
-\end{AgdaSuppressSpace}
+%</fundamentalbody>
 %</fundamental>

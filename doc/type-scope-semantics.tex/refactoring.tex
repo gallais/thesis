@@ -508,6 +508,21 @@ Or the `if-then-else' eliminator for booleans.
 \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{semantics-ifte}
 \end{AgdaSuppressSpace}
 
+This concludes the definition of the \AF{Semantics} record together with its
+\AF{semantics} eliminator. Putting everything together we get the following
+definitions.
+
+\begin{figure}[h]
+\begin{AgdaMultiCode}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{wholerecsem}
+\end{AgdaMultiCode}
+
+\begin{AgdaMultiCode}
+  \ExecuteMetaData[type-scope-semantics.agda/Semantics/Specification.tex]{fundamental}
+\end{AgdaMultiCode}
+\caption{\AR{Semantics}~together with their fundamental lemma\label{fig:semanticfun}}
+\end{figure}
+
 The type we chose for \ARF{lam} makes the \AF{Semantics} notion powerful
 enough that even logical predicates are instances of it. And we will indeed
 exploit this power when defining normalisation by evaluation as a semantics
