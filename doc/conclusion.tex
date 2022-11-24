@@ -334,15 +334,6 @@ a thinning and an environment of values for the newly bound variables onto
 the evaluation stack (which is essentially a type-aligned list of frames).
 
 
-\paragraph{Closure under Products} Our current universe of descriptions is
-closed under sums as demonstrated in Section~\ref{desccomb}. It is however
-not closed under products: two arbitrary right-nested products conforming
-to a description may disagree on the sort of the term they are constructing.
-An approach where the sort is an input from which the description of allowed
-constructors is computed (à la \cite{DBLP:phd/ethos/Dagand13} where,
-for instance, the \AIC{`lam} constructor is only offered if the input sort is
-a function type) would not suffer from this limitation.
-
 \paragraph{Unrestricted Variables} Our current notion of variable can be used
 to form a term of any kind. We remarked in Sections~\ref{section:typechecking}
 and \ref{section:elaboration} that in some languages we want to restrict this
