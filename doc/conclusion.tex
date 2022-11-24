@@ -74,14 +74,57 @@ present here is based on a flat, lexical scoping strategy. There are
 other strategies and it would be interesting to see whether
 our approach could be reused in these cases.
 
+\subsubsection{Groups of binders}
+
 Weirich, Yorgey, and Sheard's work~(\citeyear{DBLP:conf/icfp/WeirichYS11})
-encompassing a large array of patterns (nested, recursive, telescopic, and
-n-ary) can inform our design. They do not enforce scoping invariants internally
+encompasses a large array of patterns (n-ary, nested, recursive, and telescopic)
+and can inform our design. They do not enforce scoping invariants internally
 which forces them to introduce separate constructors for a simple binder, a
 recursive one, or a telescopic pattern. They recover guarantees by giving
 their syntaxes a nominal semantics thus bolting down the precise meaning of
 each combinator and then proving that users may only generate well formed
-terms.
+terms. We discuss below these various kind of binders and how they relate to
+our framework.
+
+\paragraph{N-ary binders} bring multiple variables into scope in one fell
+swoop, for instance an n-ary λ-abstraction (λ x₁, ⋯, xₙ → b).
+Our setting readily supports n-ary binders as
+the \AIC{`X} constructor indeed takes a list of sorts that are bound in
+the subterm.
+
+\paragraph{Nested binders} bring multiple variables into scope where
+latter binders may have an associated subterm that can refer to earlier
+binders, for instance a let-binding
+operator (let x₁ = e₁, ⋯, xₙ = eₙ in b) where each eᵢ can refer to any
+of the xⱼ for $j < i$.
+%
+We can easily model these by using the \AIC{`σ} constructor to store a list
+of sorts and then compute the rest of the description
+by induction over it.
+
+\paragraph{Recursive binders}
+bring multiple variables into scope where each binder may have an associated
+subterm that can refer to any of the binders, for instance a mutually recursive
+let-binding operator  (let x₁ = e₁, ⋯, xₙ = eₙ in b) where each eᵢ can refer to
+any of the xⱼ.
+%
+These binders are not special either: syntactically they are simply nested
+n-ary binders, and their recursive nature only becomes apparent in the
+user-provided interpretation of the constructors.
+
+\paragraph{Telescopes}
+Last but not least, telescopes bring multiple variables into scope where
+the \emph{sort} of latter variables can depend on earlier ones, for instance
+dependent lambda abstractions.
+%
+These are much harder to handle because they equip contexts with their
+own internal binding structure. Chapman, Kireev, Nester, and Wadler's work on
+an intrinsic formulation of System F~(\citeyear{DBLP:conf/mpc/ChapmanKNW19})
+offers a worked out example of such a system. Extracting a general framework
+from their specific approach would be a really valuable contribution but we
+expect it to be quite challenging.
+
+\subsubsection{Binding in imperative languages}
 
 Bach Poulsen, Rouvoet, Tolmach, Krebbers and Visser~(\citeyear{BachPoulsen})
 introduce notions of scope graphs and frames to scale the techniques typical
@@ -89,7 +132,7 @@ of well scoped and typed deep embeddings to imperative languages.
 They showcase the core ideas of their work using STLC extended with references
 and then demonstrate that they can already handle a large subset of Middleweight
 Java.
-%
+
 We have demonstrated that our framework could be used to define effectful
 semantics by choosing an appropriate monad
 stack~(\cite{DBLP:journals/iandc/Moggi91}).
@@ -99,14 +142,39 @@ generality, out of reach for our framework. In contrast, our work shines by
 its generality: we define an entire universe of syntaxes and provide users
 with traversals and lemmas implemented \emph{once and for all}.
 
+\subsubsection{Pattern-matching binders}
+
 Many other opportunities to enrich the notion of binder in our library are
-highlighted by Cheney~(\citeyear{DBLP:conf/icfp/Cheney05a}).%
-As we have demonstrated
-in Sections~\ref{section:letbinding} and \ref{section:inlining} we can already
-handle let-bindings generically for all syntaxes. We are currently considering
-the modification of our system to handle deeply-nested patterns by removing the
-constraint that the binders' and variables' sorts are identical. A notion of
-binding corresponding to hierarchical namespaces would be an exciting addition.
+highlighted by Cheney~(\citeyear{DBLP:conf/icfp/Cheney05a}).
+%
+Our framework has nothing to say about global scoping or namespaces but
+could be extended to handle pattern bindings.
+
+Currently, our terms are always relative monads with respect to the built-in
+\AD{Var} functor of scoped de Bruijn variables. Its type is
+{(\AB{I} → \AD{List} \AB{I} → \AD{Set})} which forces term sorts and
+scope sorts to be identical.
+%
+By decoupling the sorts of terms and context entries, and letting users
+define their own notion of variable, we could handle pattern binders by
+declaring for instance that each pattern binder is pushing a list of
+term sorts in the context (the variables bound by the pattern) and
+defining a type family of `nested' de Bruijn indices of type
+{(\AB{I} → \AD{List} (\AD{List} \AB{I}) → \AD{Set})} that selects a
+pattern binder first, and then a specific variable bound by that pattern.
+
+We do not expect such an extension to represent a lot of work.
+
+\subsubsection{Substructural logics}
+
+The ability to constrain the ways in which variables may be duplicated, used,
+or discarded is a natural extension of our work.
+%
+Wood and Atkey already offer a very convincing generalisation of our framework
+describing substructural type systems~(\citeyear{DBLP:conf/esop/WoodA22}).
+
+In their presentation, substitutions have an associated matrix describing its
+action on the quantities associated to the variables in scope.
 
 %% We have demonstrated how to write g eneric programs over the potentially
 %% cyclic structures of Ghani, Hamana, Uustalu and Vene~\citeyear{ghani2006representing}.
