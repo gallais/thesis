@@ -16,6 +16,7 @@ private
    A B : Set
 
 \end{code}
+%<*desc>
 %<*desc:type>
 \begin{code}
 data Desc (I J : Set) : Set₁ where
@@ -37,6 +38,7 @@ data Desc (I J : Set) : Set₁ where
   `∎ : I → Desc I J
 \end{code}
 %</desc:stop>
+%</desc>
 \begin{code}
 
 module _ {I J : Set} where
@@ -52,6 +54,7 @@ module _ {I J : Set} where
  _`+_ : Desc I J → Desc I J → Desc I J
  d `+ e = `σ Bool $ λ { true  → d ; false → e }
 \end{code}
+%<*interp>
 %<*interp:type>
 \begin{code}
  ⟦_⟧ : Desc I J → (J → Set) → (I → Set)
@@ -72,6 +75,7 @@ module _ {I J : Set} where
  ⟦ `∎ j    ⟧ X i = i ≡ j
 \end{code}
 %</interp:stop>
+%</interp>
 %<*fmap>
 \begin{code}
  fmap : (d : Desc I J) → ∀[ X ⇒ Y ] → ∀[ ⟦ d ⟧ X ⇒ ⟦ d ⟧ Y ]

@@ -96,6 +96,22 @@ Note that our universe definition precludes higher-order branching
 \emph{by choice}: we are interested in terms and these are first-order
 objects.
 
+Collecting all of these constructors, and their interpretations we
+get the two following definition.
+
+\begin{figure}[h]
+  \begin{minipage}[t]{0.5\textwidth}
+    \begin{AgdaMultiCode}
+      \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{desc}
+    \end{AgdaMultiCode}
+  \end{minipage}\begin{minipage}[t]{0.5\textwidth}
+    \begin{AgdaMultiCode}
+      \ExecuteMetaData[generic-syntax.agda/Generic/Data.tex]{interp}
+    \end{AgdaMultiCode}
+  \end{minipage}
+  \caption{Descriptions and their interpretation as functors}
+\end{figure}
+
 These constructors give the programmer the ability to build up the data
 types they are used to.
 %
