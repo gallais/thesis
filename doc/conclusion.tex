@@ -173,8 +173,9 @@ or discarded is a natural extension of our work.
 Wood and Atkey already offer a very convincing generalisation of our framework
 describing substructural type systems~(\citeyear{DBLP:conf/esop/WoodA22}).
 
-In their presentation, substitutions have an associated matrix describing its
-action on the quantities associated to the variables in scope.
+The key idea that makes their approach work is that renamings and substitutions
+have an associated matrix describing their respective action on the quantities
+associated to the variables in scope.
 
 %% We have demonstrated how to write g eneric programs over the potentially
 %% cyclic structures of Ghani, Hamana, Uustalu and Vene~\citeyear{ghani2006representing}.
@@ -189,7 +190,7 @@ action on the quantities associated to the variables in scope.
 of a general \emph{semantic} framework for signatures with binding, algebras
 for such signatures, and initiality of the term algebra, giving rise to a
 categorical `program' for substitution and proofs of its properties, was given
-by Fiore, Plotkin and Turi~(\citeyear{FiorePlotkinTuri99}).%
+by Fiore, Plotkin and Turi~(\citeyear{FiorePlotkinTuri99}).
 They worked in the category of presheaves
 over renamings, (a skeleton of) the category of finite sets. The presheaf
 condition corresponds to our notion of being \AF{Thinnable}. Exhibiting
@@ -218,9 +219,10 @@ interactive theorem prover.
 
 Polonowski's DBGen~(\citeyear{polonowski:db}) takes as input a raw syntax with
 comments annotating binding sites. It generates a module defining lifting,
-substitution as well as a raw syntax using names and a validation function
+and substitution as well as a raw syntax using names and a validation function
 transforming named terms into de Bruijn ones; we refrain from calling it a
 scopechecker as terms are not statically proven to be well scoped.
+
 
 Kaiser, Schäfer, and Stark~(\citeyear{Kaiser-wsdebr}) build on our previous paper
 to draft possible theoretical foundations for Autosubst, a so-far untrusted
@@ -232,6 +234,13 @@ of these syntaxes' semantics and proofs.
 Keuchel, Weirich, and Schrijvers' Needle~(\citeyear{needleandknot}) is a code
 generator written in Haskell producing syntax-specific Coq modules
 implementing common traversals and lemmas about them.
+
+All of theses approaches, although relying on an untrusted generator and
+not encompassing as many traversals as we are, have the advantage of letting
+users declare their own datatype of syntax instead of working in an encoding.
+%
+We expect a thin layer of meta-programming on top of library should allow for
+similar ergonomics.
 
 \subsection{Universes of Syntaxes with Binding} Keeping in mind Altenkirch
 and McBride's observation that generic programming is everyday programming
@@ -289,6 +298,12 @@ Copello~(\citeyear{copello2017}) works with \emph{named} binders and
 defines nominal techniques (e.g. name swapping) and ultimately
 $\alpha$-equivalence over a universe of regular trees with binders
 inspired by Morris'~(\citeyear{morris-regulartt}).
+%
+This work focuses on variable binding and putting the tools to the test by
+deriving classic meta-theoretical results e.g. the Church-Rosser theorem,
+or subject reduction for a the simply-typed lambda calculus.
+%
+They do not consider what semantics these syntactic constructs could be given.
 
 \subsection{Fusion of Successive Traversals}
 
