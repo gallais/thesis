@@ -326,7 +326,6 @@ meaning-preserving.
 
 \section{Limitations of the Current Framework}
 
-
 Although quite versatile already our current framework has some limitations
 which suggest avenues for future work. We list these limitations from easiest
 to hardest to resolve. Remember that each modification to the universe of
@@ -347,7 +346,11 @@ thinnings and actually apply them to the original value.
 Intuitively, going under a binder amounts to pushing a frame consisting of
 a thinning and an environment of values for the newly bound variables onto
 the evaluation stack (which is essentially a type-aligned list of frames).
-
+%
+It should be fairly easy to prove that this traversal using a modified
+environment yields computations equivalent to the usual one. We should then
+be able to transport all the results obtained for the more naïve \AF{semantics}
+over to the more efficient one.
 
 \paragraph{Unrestricted Variables} Our current notion of variable can be used
 to form a term of any kind. We remarked in Sections~\ref{section:typechecking}
@@ -357,17 +360,34 @@ to use variables at the kind \AIC{Infer} of our bidirectional language. For the
 time being we made do by restricting the environment values our \AR{Semantics}
 use to a subset of the kinds: terms with variables of the wrong kind will not be
 given a semantics.
+%
+We expect that it should be fairly easy to change the notion of descriptions
+so that users can pick different sorts for terms and context entries as long
+as they provide a well-behaved alternative to the type \AD{Var} of scoped de
+Bruijn variables.
+%
+The only part that will require a bit of ingenuosity will be identifying
+the constraints this \AD{Var} replacement should satisfy so that we can still
+generate all the traversals and proofs we are interested in.
 
 \paragraph{Flat Binding Structure} Our current setup limits us to flat binding
 structures: variable and binder share the same kinds. This prevents us from
 representing languages with binding patterns, for instance pattern-matching
 let-binders which can have arbitrarily nested patterns taking pairs apart.
+%
+We expect that we can tackle this issue by refining the approach suggested in
+the previous paragraph.
 
 \paragraph{Closure under Derivation} One-hole contexts play a major role in the
-theory of programming languages. Just like the one-hole context of a datatype is
+theory of programming languages.
+Just like the one-hole context of a datatype is
 a datatype~(\cite{DBLP:journals/fuin/AbbottAMG05}), we would like our universe
 to be closed under derivatives so that the formalisation of e.g. evaluation
 contexts could benefit directly from the existing machinery.
+%
+We expect this goal to be quite challenging as it will require incorporating
+an entirely separate fourth strand of research to our work which already combines
+intrinsic scoping, generic programming, and denotational semantics.
 
 \paragraph{Closure under Closures} Jander's work on formalising and certifying
 continuation passing style transformations~(\cite{Jander:Thesis:2019})
@@ -408,6 +428,10 @@ To tackle modern languages with support for implicit arguments, a total account
 of (higher-order) unification is needed. It would ideally be defined generically
 over our notion of syntax thus allowing us to progressively extend our language
 as we see fit without having to revisit that part of the compiler.
+%
+We expect this to be very challenging, especially if meta-variables have
+explicit binding sites in terms and so potentially need to be moved around
+during unification as constraints are being discovered.
 
 \subsection{Generic Meta-Theory}
 
@@ -422,6 +446,10 @@ We can in fact guarantee such results by carefully managing the flow of
 information in the judgments and imposing that no information ever comes
 out of nowhere. This calls for the definition of a universe of typing
 judgments and the careful analysis of its properties.
+
+We expect this to be very challenging as such a generic treatment of
+type theories will require a generic treatment of judgemental equality
+based on user-provided evaluation rules.
 
 \subsection{A Theory of Ornaments for Syntaxes}
 
