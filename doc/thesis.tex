@@ -1,5 +1,9 @@
 \documentclass{memoir}
 
+\usepackage{tocbasic}
+\DeclareTOCStyleEntry[dynnumwidth]{tocline}{figure}% for figure entries
+\DeclareTOCStyleEntry[dynnumwidth]{tocline}{table}
+
 \usepackage{agda}
 \usepackage{catchfilebetweentags}
 \usepackage[T1]{fontenc}
