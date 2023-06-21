@@ -4,7 +4,7 @@ SLIDES=slides
 
 AGDA?=agda-2.6.1.3
 
-all: thesis
+all: thesis strath
 
 strath: latex/$(STRATH).pdf
 thesis: latex/$(THESIS).pdf
@@ -128,6 +128,7 @@ THESIS_DEPENDENCIES:=\
 STRATH_DEPENDENCIES:=\
   latex/$(STRATH).tex \
   latex/titlingpage.tex \
+  latex/acknowledgments.tex \
   latex/strath_coat.png \
   $(THESIS_DEPENDENCIES)
 
@@ -193,6 +194,10 @@ latex/titlingpage.tex: titlingpage.tex
 	cp $< $@
 
 latex/convention.tex: convention.tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/acknowledgments.tex: acknowledgments.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 
