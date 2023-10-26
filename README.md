@@ -1,4 +1,4 @@
-# DRAFT of Syntaxes with Binding, Their Programs, and Proofs
+# Sources of Syntaxes with Binding, Their Programs, and Proofs
 
 # Compilation
 
